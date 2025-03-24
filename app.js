@@ -18,8 +18,18 @@ class TrackerApp {
       traitsContainer: document.getElementById('traits-container'),
       save: document.getElementById('save'),
       peopleList: document.getElementById('people-list'),
-      themeToggle: document.getElementById('theme-toggle')
+      themeToggle: document.getElementById('theme-toggle'),
+      modal: document.createElement('div'),
+      modalContent: document.createElement('div'),
+      modalClose: document.createElement('button')
     };
+    this.elements.modal.className = 'modal';
+    this.elements.modalContent.className = 'modal-content';
+    this.elements.modalClose.className = 'modal-close';
+    this.elements.modalClose.textContent = '✨ Close';
+    this.elements.modalContent.appendChild(this.elements.modalClose);
+    this.elements.modal.appendChild(this.elements.modalContent);
+    document.body.appendChild(this.elements.modal);
   }
 
   addEventListeners() {
@@ -34,6 +44,16 @@ class TrackerApp {
     this.elements.save.addEventListener('click', () => this.savePerson());
     this.elements.themeToggle.addEventListener('click', () => {
       document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    });
+    this.elements.peopleList.addEventListener('click', (e) => {
+      const personLi = e.target.closest('.person');
+      if (personLi) {
+        const personId = parseInt(personLi.dataset.id);
+        this.showPersonDetails(personId);
+      }
+    });
+    this.elements.modalClose.addEventListener('click', () => {
+      this.elements.modal.style.display = 'none';
     });
   }
 
@@ -109,9 +129,50 @@ class TrackerApp {
         .map(([trait, value]) => `${trait}: ${value}`)
         .join(', ');
       this.elements.peopleList.innerHTML += `
-        <li class="person">${person.name} (${person.role} - ${person.style})<br><small>${traitSummary}</small></li>
+        <li class="person" data-id="${person.id}">
+          ${person.name} (${person.role} - ${person.style})<br><small>${traitSummary}</small>
+        </li>
       `;
     });
+  }
+
+  showPersonDetails(personId) {
+    const person = this.people.find(p => p.id === personId);
+    if (!person) return;
+
+    const roleData = bdsmData[person.role];
+    const coreTraits = roleData.coreTraits;
+    const styleTraits = roleData.styles.find(s => s.name.toLowerCase() === person.style.toLowerCase())?.traits || [];
+
+    let html = `<h2>🌸 ${person.name}'s KinkCompass Breakdown 🌸</h2>`;
+    html += `<p><strong>Role:</strong> ${person.role} | <strong>Style:</strong> ${person.style}</p>`;
+
+    const renderTraitDetails = (trait, value) => {
+      const suggestion = value <= 3 ? trait.improvement[value] : trait.support[value];
+      return `
+        <div class="trait-detail">
+          <h3>${trait.name.charAt(0).toUpperCase() + trait.name.slice(1)}: ${value}</h3>
+          <p><strong>You said:</strong> ${trait.desc[value]}</p>
+          <p><strong>${value <= 3 ? 'Grow with a Giggle' : 'Shine Even Brighter'}:</strong> ${suggestion}</p>
+        </div>
+      `;
+    };
+
+    html += '<h3>Core Traits</h3>';
+    coreTraits.forEach(trait => {
+      const value = person.traits[trait.name];
+      html += renderTraitDetails(trait, value);
+    });
+
+    html += '<h3>Style Traits</h3>';
+    styleTraits.forEach(trait => {
+      const value = person.traits[trait.name];
+      html += renderTraitDetails(trait, value);
+    });
+
+    this.elements.modalContent.innerHTML = html;
+    this.elements.modalContent.appendChild(this.elements.modalClose);
+    this.elements.modal.style.display = 'block';
   }
 }
 
