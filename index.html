@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Power Dynamic Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-theme="light">
+  <button id="theme-toggle">🌙 Toggle Theme</button>
+  <main>
+    <div class="left-column">
+      <section class="tab-content active">
+        <h2>💖 Add Person</h2>
+        <div class="form-grid">
+          <div>
+            <label>Role:</label>
+            <select id="role">
+              <option value="submissive">Submissive</option>
+              <option value="dominant">Dominant</option>
+            </select>
+          </div>
+          <div>
+            <label>Name:</label>
+            <input type="text" id="name" placeholder="E.g., Alex">
+          </div>
+          <div>
+            <label>Style:</label>
+            <select id="style">
+              <option value="">Select Style</option>
+            </select>
+          </div>
+        </div>
+        <div id="traits-container"></div>
+        <button id="save">Save Person</button>
+      </section>
+    </div>
+    <div class="right-column">
+      <section>
+        <h2>💌 Saved People</h2>
+        <ul id="people-list"></ul>
+      </section>
+    </div>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
