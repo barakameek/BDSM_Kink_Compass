@@ -57,12 +57,13 @@ class TrackerApp {
       window.open('https://username.github.io/style-finder/', '_blank');
     });
     this.elements.peopleList.addEventListener('click', (e) => {
-      if (e.target.classList.contains('edit-btn')) {
+      const personLi = e.target.closest('.person');
+      if (personLi && !e.target.classList.contains('edit-btn')) {
+        const personId = parseInt(personLi.dataset.id);
+        this.showPersonDetails(personId);
+      } else if (e.target.classList.contains('edit-btn')) {
         const personId = parseInt(e.target.parentElement.dataset.id);
         this.editPerson(personId);
-      } else if (e.target.classList.contains('person')) {
-        const personId = parseInt(e.target.dataset.id);
-        this.showPersonDetails(personId);
       }
     });
     this.elements.modalClose.addEventListener('click', () => {
@@ -205,10 +206,9 @@ class TrackerApp {
     const person = this.people.find(p => p.id === personId);
     if (!person) return;
     const roleData = bdsmData[person.role];
-    const allTraits = [...roleData.coreTraits, ...roleData.styles.find(s => s.name.toLowerCase() === person.style.toLowerCase()).traits];
+    const allTraits = [...roleData.coreTraits, ...roleData.styles.find(s => s.name.toLowerCase() === person.style.toLowerCase())?.traits || []];
     let html = `<h2>✨ ${person.name} (${person.role} - ${person.style}) ✨</h2>`;
 
-    // Select the appropriate breakdown function based on role
     const getStyleBreakdown = person.role === 'submissive' ? getSubBreakdown : getDomBreakdown;
     const styleBreakdown = getStyleBreakdown(person.style, person.traits);
     html += `
@@ -225,7 +225,6 @@ class TrackerApp {
       </div>
     `;
 
-    // Traits section
     html += `<h3>🎀 Traits</h3>`;
     for (const [traitName, score] of Object.entries(person.traits)) {
       const traitData = allTraits.find(t => t.name === traitName);
@@ -242,7 +241,6 @@ class TrackerApp {
       }
     }
 
-    // Journal and badges
     html += `
       <h3>📖 Kink Journal</h3>
       <textarea id="journal-${person.id}" rows="5" style="width: 100%;">${person.journal || ''}</textarea>
