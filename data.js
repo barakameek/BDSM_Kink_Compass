@@ -1,16 +1,40 @@
 export const bdsmData = {
   submissive: {
     coreTraits: [
-      {
-        name: "obedience",
-        desc: {
-          "1": "Following instructions? Oh, that’s a tough one for me! I tend to resist or question authority, and it feels like I’m marching to my own beat. Maybe I need to figure out why obedience feels tricky—it could open new doors in my dynamic!",
-          "2": "I can follow instructions sometimes, but I’m more like a curious cat than a loyal pup—I hesitate or ask ‘why’ a lot. I’m dipping my toes into obedience, and it’s starting to feel kinda fun when I get it right!",
-          "3": "I’m pretty good at following instructions, though I might need a gentle nudge or a ‘pretty please’ now and then. Obedience is like a dance I’m learning, and I’m getting the steps down!",
-          "4": "I love following instructions and feel a little glow of pride when I do it well. It’s becoming second nature, and I’m excited to see how far I can take this in my dynamic!",
-          "5": "Obedience is my jam! I thrive on following instructions—it makes me feel connected and fulfilled, like I’ve found my perfect rhythm. It’s who I am at my core!"
-        }
-      },
+     {
+  name: "obedience",
+  desc: {
+    "1": "Following instructions? Oh, that’s a tough one for me! ...",
+    "2": "I can follow instructions sometimes, but I’m more like a curious cat ...",
+    "3": "I’m pretty good at following instructions, though I might need a gentle nudge ...",
+    "4": "I love following instructions and feel a little glow of pride when I do it well ...",
+    "5": "Obedience is my jam! I thrive on following instructions—it makes me feel connected ..."
+  },
+  improvement: {
+    "1": {
+      paraphrase: "Struggling with obedience? Start small and build your confidence!",
+      text: "Try following a simple instruction today, like organizing your space or completing a small task. Celebrate your effort with a treat!"
+    },
+    "2": {
+      paraphrase: "Getting there with obedience? Keep practicing with small steps!",
+      text: "Challenge yourself to follow a slightly more complex instruction, like cooking a new recipe. Reflect on how it felt and share with your partner."
+    },
+    "3": {
+      paraphrase: "Doing well with obedience! Refine your skills further.",
+      text: "Take on a task requiring focus, like following a detailed plan. Ask for feedback and celebrate your progress."
+    }
+  },
+  support: {
+    "4": {
+      paraphrase: "Great job with obedience! Nurture this strength.",
+      text: "Keep taking on tasks that challenge your obedience in new ways. Share your experiences and celebrate with your partner."
+    },
+    "5": {
+      paraphrase: "Master of obedience! Keep shining and inspiring.",
+      text: "Consider mentoring someone new to obedience. Share your journey and celebrate with a special reward."
+    }
+  }
+},
       {
         name: "trust",
         desc: {
