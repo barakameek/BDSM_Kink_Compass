@@ -1,4 +1,5 @@
-// Paraphrasing suggestions for submissive styles
+import { bdsmData } from './data.js';
+
 const subStyleSuggestions = {
   submissive: {
     1: { paraphrase: "New to Submissive? Start simply!", suggestion: "Help with a duty and smile to celebrate! 😊" },
@@ -46,7 +47,6 @@ export function getStyleBreakdown(styleName, traits) {
       improvements: "Pick a style to see personalized tips and tricks to grow. 😸"
     };
   }
-  // Compute average score of this style's traits
   const roleData = bdsmData.submissive;
   const styleObj = roleData.styles.find(s => s.name.toLowerCase() === styleKey);
   const traitScores = styleObj ? styleObj.traits.map(t => parseInt(traits[t.name]) || 3) : [];
