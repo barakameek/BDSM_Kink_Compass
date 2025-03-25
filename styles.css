@@ -1,25 +1,24 @@
 :root {
-  --bg-color: #f9f9ff;
-  --card-bg-color: #ffffff;
-  --text-color: #333;
-  --accent-color: #9c27b0;
-  --muted-text-color: #555;
+  --bg-color: #fff0f5;
+  --card-bg-color: #fff;
+  --text-color: #4a2c3d;
+  --accent-color: #ff69b4;
+  --muted-text-color: #8a5a6d;
 }
 
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: 'Comic Sans MS', 'Arial', sans-serif;
   background: var(--bg-color);
   color: var(--text-color);
 }
 
-/* Dark mode variables */
 body[data-theme="dark"] {
-  --bg-color: #1e1e1e;
-  --card-bg-color: #2c2c2c;
-  --text-color: #ddd;
-  --accent-color: #bb86fc;
-  --muted-text-color: #aaa;
+  --bg-color: #2a1b2a;
+  --card-bg-color: #3c2f3c;
+  --text-color: #f4d4e4;
+  --accent-color: #ff85cb;
+  --muted-text-color: #c49db1;
 }
 
 header {
@@ -27,37 +26,44 @@ header {
   text-align: center;
   background: var(--accent-color);
   color: #fff;
+  border-bottom: 3px dashed #fff;
 }
 
 header h1 {
   margin: 0;
-  font-size: 1.5em;
+  font-size: 2em;
+  text-shadow: 2px 2px #4a2c3d;
 }
 
 #theme-toggle {
   position: absolute;
   top: 15px;
   right: 15px;
-  background: transparent;
-  border: none;
-  font-size: 1.2em;
+  background: none;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  font-size: 1.5em;
   cursor: pointer;
   color: #fff;
+  padding: 5px;
 }
 
 .container {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   padding: 1em;
-  max-width: 900px;
+  max-width: 1200px;
   margin: 0 auto;
-  gap: 2em;
+  gap: 1em;
 }
 
-.form-section, .list-section {
+.form-section, .list-section, .preview-section {
   background: var(--card-bg-color);
   padding: 1em;
-  border-radius: 8px;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  flex: 1;
+  min-width: 300px;
 }
 
 .field-group {
@@ -67,175 +73,110 @@ header h1 {
 .field-group label {
   display: block;
   font-weight: bold;
-  margin-bottom: 0.3em;
+  margin-bottom: 0.5em;
+  color: var(--accent-color);
 }
 
 .field-group input, .field-group select {
   width: 100%;
-  padding: 0.4em;
+  padding: 0.5em;
   font-size: 1em;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 2px solid var(--accent-color);
+  border-radius: 10px;
+  background: #fff;
 }
 
 #save {
   background: var(--accent-color);
   color: #fff;
   border: none;
-  padding: 0.6em 1em;
-  font-size: 1em;
-  border-radius: 4px;
+  padding: 0.8em 1.5em;
+  font-size: 1.2em;
+  border-radius: 20px;
   cursor: pointer;
-  margin-top: 0.5em;
+  transition: transform 0.2s;
 }
 
 #save:hover {
-  opacity: 0.9;
+  transform: scale(1.1);
 }
 
 #people-list {
   list-style: none;
   padding: 0;
-  margin: 0;
 }
 
 .person {
   padding: 0.5em;
-  margin: 0.3em 0;
+  margin: 0.5em 0;
   background: var(--bg-color);
-  color: var(--text-color);
-  border-radius: 4px;
+  border: 2px dotted var(--accent-color);
+  border-radius: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.person:nth-child(even) {
-  background: var(--bg-color);
 }
 
 .person .edit-btn {
   background: var(--accent-color);
   color: #fff;
   border: none;
-  padding: 0.2em 0.6em;
-  border-radius: 4px;
+  padding: 0.3em 0.8em;
+  border-radius: 15px;
   cursor: pointer;
-  font-size: 0.9em;
-}
-
-.person .edit-btn:hover {
-  opacity: 0.8;
-}
-
-#traits-container {
-  margin-top: 1em;
 }
 
 .trait {
   margin-bottom: 1em;
+  background: #ffe6f0;
+  padding: 0.5em;
+  border-radius: 10px;
 }
 
 .trait label {
-  font-weight: bold;
-  display: block;
-  margin-bottom: 0.2em;
+  color: var(--accent-color);
 }
 
 .trait input[type="range"] {
   width: 100%;
+  accent-color: var(--accent-color);
 }
 
 .trait-desc {
   font-size: 0.9em;
   color: var(--muted-text-color);
-  margin-top: 0.2em;
+  background: #fff;
+  padding: 0.5em;
+  border-radius: 5px;
 }
 
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
+.preview-section {
+  background: linear-gradient(135deg, #ffebef, #f4d4e4);
+}
+
+#live-preview {
+  padding: 1em;
+  border: 2px solid var(--accent-color);
+  border-radius: 10px;
+  background: #fff;
 }
 
 .modal-content {
   background: var(--card-bg-color);
-  color: var(--text-color);
-  padding: 1em 1.5em;
-  border-radius: 8px;
-  max-width: 600px;
-  width: 90%;
-  position: relative;
-}
-
-.modal-content h2 {
-  text-align: center;
-  color: var(--accent-color);
+  padding: 1.5em;
+  border-radius: 20px;
+  max-width: 700px;
+  border: 3px solid var(--accent-color);
 }
 
 .modal-close {
-  position: absolute;
-  top: 8px;
-  right: 8px;
   background: var(--accent-color);
-  color: #fff;
-  border: none;
-  padding: 0.3em 0.6em;
-  border-radius: 4px;
-  cursor: pointer;
+  border-radius: 15px;
+  padding: 0.5em 1em;
 }
 
-.modal-close:hover {
-  opacity: 0.9;
-}
-
-.modal-content h3 {
-  margin-top: 1em;
-  color: var(--accent-color);
-}
-
-.style-breakdown {
-  display: flex;
-  flex-direction: column;
-  gap: 1em;
-  margin-bottom: 1em;
-}
-
-.style-breakdown .strengths, .style-breakdown .improvements {
-  background: var(--bg-color);
-  padding: 0.8em;
-  border-radius: 6px;
-}
-
-.style-breakdown h4 {
-  margin-top: 0;
-}
-
-.trait-detail {
-  margin-bottom: 1em;
-}
-
-.trait-detail h4 {
-  margin-bottom: 0.2em;
-}
-
-/* Responsive layout for wider screens */
 @media (min-width: 768px) {
   .container {
-    flex-direction: row;
-    align-items: flex-start;
-  }
-  .form-section, .list-section {
-    flex: 1;
-  }
-  .form-section {
-    margin-right: 1em;
+    flex-wrap: nowrap;
   }
 }
