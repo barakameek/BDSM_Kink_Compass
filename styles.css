@@ -137,10 +137,14 @@ button:hover {
 
 .trait-detail {
   margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid var(--secondary);
+  border-radius: 10px;
 }
 
 .trait-detail h4 {
   color: var(--primary);
+  margin: 0 0 5px;
 }
 
 textarea {
@@ -165,6 +169,30 @@ textarea {
   padding: 5px 10px;
   border-radius: 15px;
   font-size: 0.9em;
+}
+
+.style-breakdown {
+  margin: 20px 0;
+  padding: 15px;
+  background: rgba(255, 112, 150, 0.1);
+  border-radius: 15px;
+  border: 2px dashed var(--secondary);
+}
+
+.strengths, .improvements {
+  margin-bottom: 15px;
+}
+
+.strengths h4, .improvements h4 {
+  color: var(--primary);
+  font-size: 1.2em;
+  margin: 0 0 10px;
+}
+
+.strengths p, .improvements p {
+  font-size: 1em;
+  line-height: 1.5;
+  margin: 0;
 }
 
 @keyframes fadeIn {
