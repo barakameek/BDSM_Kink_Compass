@@ -62,37 +62,39 @@ class TrackerApp {
   }
 
   renderTraits(role, style) {
-    this.elements.traitsContainer.innerHTML = '';
-    const coreTraits = bdsmData[role].coreTraits;
-    let styleTraits = [];
-    if (style) {
-      const styleObj = bdsmData[role].styles.find(s => s.name.toLowerCase() === style.toLowerCase());
-      styleTraits = styleObj ? styleObj.traits : [];
-    }
-    const renderTrait = (trait) => {
-      const displayName = trait.name.charAt(0).toUpperCase() + trait.name.slice(1);
-      return `<div class="trait">
-        <label>${displayName}</label>
-        <input type="range" min="1" max="5" value="3" class="trait-slider" data-trait="${trait.name}" />
-        <div class="trait-desc"></div>
-      </div>`;
-    };
-    coreTraits.forEach(trait => this.elements.traitsContainer.innerHTML += renderTrait(trait));
-    styleTraits.forEach(trait => this.elements.traitsContainer.innerHTML += renderTrait(trait));
-    const sliders = this.elements.traitsContainer.querySelectorAll('.trait-slider');
-    sliders.forEach(slider => {
-      const traitName = slider.getAttribute('data-trait');
-      const descDiv = slider.parentElement.querySelector('.trait-desc');
-      const traitData = [...coreTraits, ...styleTraits].find(t => t.name === traitName);
-      const updateDesc = () => {
-        const val = slider.value;
-        if (traitData && traitData.desc[val]) descDiv.textContent = traitData.desc[val];
-        this.updateLivePreview();
-      };
-      slider.addEventListener('input', updateDesc);
-      updateDesc();
-    });
+  this.elements.traitsContainer.innerHTML = '';
+  const coreTraits = bdsmData[role].coreTraits;
+  let styleTraits = [];
+  if (style) {
+    const styleObj = bdsmData[role].styles.find(s => s.name.toLowerCase() === style.toLowerCase());
+    styleTraits = styleObj ? styleObj.traits : [];
+    console.log("Style traits loaded:", styleTraits);
   }
+  const renderTrait = (trait) => {
+    const displayName = trait.name.charAt(0).toUpperCase() + trait.name.slice(1);
+    return `<div class="trait">
+      <label>${displayName}</label>
+      <input type="range" min="1" max="5" value="3" class="trait-slider" data-trait="${trait.name}" />
+      <div class="trait-desc"></div>
+    </div>`;
+  };
+  coreTraits.forEach(trait => this.elements.traitsContainer.innerHTML += renderTrait(trait));
+  styleTraits.forEach(trait => this.elements.traitsContainer.innerHTML += renderTrait(trait));
+  const sliders = this.elements.traitsContainer.querySelectorAll('.trait-slider');
+  console.log("Sliders rendered:", sliders.length);
+  sliders.forEach(slider => {
+    const traitName = slider.getAttribute('data-trait');
+    const descDiv = slider.parentElement.querySelector('.trait-desc');
+    const traitData = [...coreTraits, ...styleTraits].find(t => t.name === traitName);
+    const updateDesc = () => {
+      const val = slider.value;
+      if (traitData && traitData.desc[val]) descDiv.textContent = traitData.desc[val];
+      this.updateLivePreview();
+    };
+    slider.addEventListener('input', updateDesc);
+    updateDesc();
+  });
+}
 
   savePerson() {
     const name = this.elements.name.value.trim() || "Unnamed";
