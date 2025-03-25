@@ -81,16 +81,16 @@ export const bdsmData = {
         ]
       },
       {
-        name: "Switch",
+        name: "puppy",
         traits: [
-          { name: "versatility", desc: {
+          { name: "eagerness", desc: {
             "1": "I stick to one role like glue—switching feels overwhelming! Maybe trying a little flip could be an adventure.",
             "2": "I can switch, but I’m wobbly—like a newbie on skates. I’m getting the hang of it, though!",
             "3": "I switch roles comfortably enough—it’s like changing hats! Versatility’s growing on me.",
             "4": "I’m a versatility champ—I flow between roles with ease! It’s a fun part of my dynamic.",
             "5": "Versatility is my crown—I’m a master of both worlds, flipping roles like a pro! It’s my ultimate strength."
           }},
-          { name: "balance", desc: {
+          { name: "energy", desc: {
             "1": "Balance? I’m all lopsided—one role rules my world! Finding middle ground could smooth things out.",
             "2": "I try to balance roles, but I lean hard one way—like a seesaw with a mind of its own. I’m leveling up!",
             "3": "I balance submissive and dominant vibes decently—like a tightrope walker finding their stride!",
