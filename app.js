@@ -1,4 +1,5 @@
 import { bdsmData } from './data.js';
+import { getStyleBreakdown } from './paraphrasing_sub.js';
 
 class TrackerApp {
   constructor() {
@@ -52,7 +53,7 @@ class TrackerApp {
       document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
     });
     this.elements.findStyle.addEventListener('click', () => {
-      window.open('https://username.github.io/style-finder/', '_blank'); // Replace with your Style Finder URL
+      window.open('https://username.github.io/style-finder/', '_blank');
     });
     this.elements.peopleList.addEventListener('click', (e) => {
       if (e.target.classList.contains('edit-btn')) {
@@ -204,7 +205,26 @@ class TrackerApp {
     if (!person) return;
     const roleData = bdsmData[person.role];
     const allTraits = [...roleData.coreTraits, ...roleData.styles.find(s => s.name.toLowerCase() === person.style.toLowerCase()).traits];
-    let html = `<h2>${person.name} (${person.role} - ${person.style})</h2><h3>Traits</h3>`;
+    let html = `<h2>✨ ${person.name} (${person.role} - ${person.style}) ✨</h2>`;
+
+    // Add the style breakdown from paraphrasing_sub.js
+    const styleBreakdown = getStyleBreakdown(person.style, person.traits);
+    html += `
+      <h3>🌟 Your Style Strengths & Growth 🌟</h3>
+      <div class="style-breakdown">
+        <div class="strengths">
+          <h4>💪 Your Superpowers</h4>
+          <p>${styleBreakdown.strengths}</p>
+        </div>
+        <div class="improvements">
+          <h4>🌱 Areas to Bloom</h4>
+          <p>${styleBreakdown.improvements}</p>
+        </div>
+      </div>
+    `;
+
+    // Traits section
+    html += `<h3>🎀 Traits</h3>`;
     for (const [traitName, score] of Object.entries(person.traits)) {
       const traitData = allTraits.find(t => t.name === traitName);
       if (traitData) {
@@ -219,8 +239,16 @@ class TrackerApp {
         `;
       }
     }
-    html += `<h3>📖 Kink Journal</h3><textarea id="journal-${person.id}" rows="5" style="width: 100%;">${person.journal || ''}</textarea><button onclick="saveJournal(${person.id})">Save Journal</button>`;
-    html += `<h3>🏅 Badges Earned</h3><div class="badges">${person.badges.map(badge => `<span class="badge">${badge} ${getBadgeEmoji(badge)}</span>`).join('')}</div>`;
+
+    // Journal and badges
+    html += `
+      <h3>📖 Kink Journal</h3>
+      <textarea id="journal-${person.id}" rows="5" style="width: 100%;">${person.journal || ''}</textarea>
+      <button onclick="saveJournal(${person.id})">Save Journal</button>
+      <h3>🏅 Badges Earned</h3>
+      <div class="badges">${person.badges.map(badge => `<span class="badge">${badge} ${getBadgeEmoji(badge)}</span>`).join('')}</div>
+    `;
+
     this.elements.modalContent.innerHTML = html;
     this.elements.modalContent.appendChild(this.elements.modalClose);
     this.elements.modal.style.display = 'block';
