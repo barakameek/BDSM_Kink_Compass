@@ -1,4 +1,5 @@
-// Paraphrasing suggestions for dominant styles
+import { bdsmData } from './data.js';
+
 const domStyleSuggestions = {
   dominant: {
     1: { paraphrase: "New to Dominant? Start small!", suggestion: "Take the lead in a tiny way and give yourself a nod! 😊" },
