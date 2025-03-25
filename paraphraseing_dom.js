@@ -221,14 +221,11 @@ const dominantStyles = {
 export function getStyleBreakdown(style, traits) {
   const styleData = dominantStyles[style.toLowerCase()];
   if (!styleData) return { strengths: "Oops! Style not found! 😿", improvements: "Try picking a style, cutie! 💕" };
-
   const traitScores = styleData.traits.map(trait => parseInt(traits[trait]) || 3);
   const averageScore = Math.round(traitScores.reduce((a, b) => a + b, 0) / traitScores.length);
-
   const { paraphrase, suggestion } = styleData.scores[averageScore];
   const isStrength = averageScore >= 4;
   const strengths = isStrength ? `${paraphrase} ${suggestion}` : "You're growing so fast! Keep shining, sweetie! 🌈";
   const improvements = !isStrength ? `${paraphrase} ${suggestion}` : "You’re a superstar—keep dazzling us! ✨";
-
   return { strengths, improvements };
 }
