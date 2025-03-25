@@ -1,5 +1,6 @@
 import { bdsmData } from './data.js';
-import { getStyleBreakdown } from './paraphrasing_sub.js';
+import { getStyleBreakdown as getSubBreakdown } from './paraphrasing_sub.js';
+import { getStyleBreakdown as getDomBreakdown } from './paraphrasing_dom.js';
 
 class TrackerApp {
   constructor() {
@@ -207,7 +208,8 @@ class TrackerApp {
     const allTraits = [...roleData.coreTraits, ...roleData.styles.find(s => s.name.toLowerCase() === person.style.toLowerCase()).traits];
     let html = `<h2>✨ ${person.name} (${person.role} - ${person.style}) ✨</h2>`;
 
-    // Add the style breakdown from paraphrasing_sub.js
+    // Select the appropriate breakdown function based on role
+    const getStyleBreakdown = person.role === 'submissive' ? getSubBreakdown : getDomBreakdown;
     const styleBreakdown = getStyleBreakdown(person.style, person.traits);
     html += `
       <h3>🌟 Your Style Strengths & Growth 🌟</h3>
