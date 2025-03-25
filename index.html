@@ -1,48 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KinkCompass</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body data-theme="light">
-  <button id="theme-toggle">🌙 Toggle Theme</button>
-  <main>
-    <div class="left-column">
-      <section class="tab-content active">
-        <h2>💖 Add Person</h2>
-        <div class="form-grid">
-          <div>
-            <label>Role:</label>
-            <select id="role">
-              <option value="submissive">Submissive</option>
-              <option value="dominant">Dominant</option>
-            </select>
-          </div>
-          <div>
-            <label>Name:</label>
-            <input type="text" id="name" placeholder="E.g., Alex">
-          </div>
-          <div>
-            <label>Style:</label>
-            <select id="style">
-              <option value="">Select Style</option>
-            </select>
-            <button id="find-style">🔍 Find My Style</button>
-          </div>
-        </div>
-        <div id="traits-container"></div>
-        <button id="save">Save Person</button>
-      </section>
-    </div>
-    <div class="right-column">
-      <section>
-        <h2>💌 Saved People</h2>
-        <ul id="people-list"></ul>
-      </section>
-    </div>
+<body>
+  <header>
+    <h1>KinkCompass</h1>
+    <button id="theme-toggle" title="Toggle light/dark mode">🌙</button>
+  </header>
+  <main class="container">
+    <section class="form-section">
+      <h2>Create / Edit Profile</h2>
+      <div class="field-group">
+        <label for="name">Name (or Alias)</label>
+        <input type="text" id="name" placeholder="Enter name" />
+      </div>
+      <div class="field-group">
+        <label for="role">Role</label>
+        <select id="role">
+          <option value="dominant">Dominant</option>
+          <option value="submissive" selected>Submissive</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label for="style">Style</label>
+        <select id="style">
+          <!-- Options will be populated dynamically -->
+        </select>
+      </div>
+      <div id="traits-container"><!-- Trait sliders will be populated here --></div>
+      <button id="save">Save Profile</button>
+    </section>
+    <section class="list-section">
+      <h2>Profiles</h2>
+      <ul id="people-list">
+        <!-- Profile list items will be rendered here -->
+      </ul>
+    </section>
   </main>
+  <div class="modal" id="detail-modal" style="display:none;">
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close">Close</button>
+      <div id="modal-body"><!-- Profile details will be injected here --></div>
+    </div>
+  </div>
   <script type="module" src="app.js"></script>
 </body>
 </html>
