@@ -1,209 +1,241 @@
 :root {
-  --primary: #ff7096;
-  --secondary: #ff85a6;
-  --bg-light: #fff0f5;
-  --bg-dark: #2b1a2a;
-  --text-dark: #3b233a;
-  --text-light: #f8e1e9;
-  --card-bg: #fff0f5;
-  --shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  --bg-color: #f9f9ff;
+  --card-bg-color: #ffffff;
+  --text-color: #333;
+  --accent-color: #9c27b0;
+  --muted-text-color: #555;
 }
 
 body {
-  font-family: 'Arial', sans-serif;
   margin: 0;
-  padding: 20px;
-  background: var(--bg-light);
-  color: var(--text-dark);
-  transition: all 0.3s ease;
+  font-family: Arial, sans-serif;
+  background: var(--bg-color);
+  color: var(--text-color);
 }
 
+/* Dark mode variables */
 body[data-theme="dark"] {
-  background: var(--bg-dark);
-  color: var(--text-light);
-  --card-bg: #3b233a;
+  --bg-color: #1e1e1e;
+  --card-bg-color: #2c2c2c;
+  --text-color: #ddd;
+  --accent-color: #bb86fc;
+  --muted-text-color: #aaa;
 }
 
-.tab-content {
-  background: var(--card-bg);
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: var(--shadow);
+header {
+  padding: 1em;
+  text-align: center;
+  background: var(--accent-color);
+  color: #fff;
 }
 
-h2 {
-  color: var(--primary);
+header h1 {
+  margin: 0;
+  font-size: 1.5em;
 }
 
-.form-grid {
-  display: grid;
-  gap: 15px;
-}
-
-input, select, textarea {
-  padding: 10px;
-  border: 1px solid var(--secondary);
-  border-radius: 10px;
-  background: var(--bg-light);
-  color: var(--text-dark);
-}
-
-button {
-  background: var(--primary);
-  color: white;
+#theme-toggle {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
   border: none;
-  padding: 10px 20px;
-  border-radius: 20px;
+  font-size: 1.2em;
   cursor: pointer;
-  transition: all 0.2s ease;
+  color: #fff;
 }
 
-button:hover {
-  background: var(--secondary);
-  transform: scale(1.05);
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 1em;
+  max-width: 900px;
+  margin: 0 auto;
+  gap: 2em;
 }
 
-.trait {
-  margin: 15px 0;
+.form-section, .list-section {
+  background: var(--card-bg-color);
+  padding: 1em;
+  border-radius: 8px;
 }
 
-.trait-slider {
+.field-group {
+  margin-bottom: 1em;
+}
+
+.field-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.3em;
+}
+
+.field-group input, .field-group select {
   width: 100%;
+  padding: 0.4em;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
-.slider-description {
-  font-size: 0.9em;
-  margin-top: 5px;
+#save {
+  background: var(--accent-color);
+  color: #fff;
+  border: none;
+  padding: 0.6em 1em;
+  font-size: 1em;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 0.5em;
+}
+
+#save:hover {
+  opacity: 0.9;
 }
 
 #people-list {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
 .person {
-  background: var(--card-bg);
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 10px;
-  cursor: pointer;
+  padding: 0.5em;
+  margin: 0.3em 0;
+  background: var(--bg-color);
+  color: var(--text-color);
+  border-radius: 4px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.edit-btn {
-  padding: 5px 10px;
-  font-size: 0.8em;
+.person:nth-child(even) {
+  background: var(--bg-color);
+}
+
+.person .edit-btn {
+  background: var(--accent-color);
+  color: #fff;
+  border: none;
+  padding: 0.2em 0.6em;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.person .edit-btn:hover {
+  opacity: 0.8;
+}
+
+#traits-container {
+  margin-top: 1em;
+}
+
+.trait {
+  margin-bottom: 1em;
+}
+
+.trait label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 0.2em;
+}
+
+.trait input[type="range"] {
+  width: 100%;
+}
+
+.trait-desc {
+  font-size: 0.9em;
+  color: var(--muted-text-color);
+  margin-top: 0.2em;
 }
 
 .modal {
-  display: none;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  justify-content: center;
+  background: rgba(0,0,0,0.5);
+  display: flex;
   align-items: center;
-  z-index: 1000;
+  justify-content: center;
+  z-index: 100;
 }
 
 .modal-content {
-  background: var(--card-bg);
-  padding: 20px;
-  border-radius: 15px;
+  background: var(--card-bg-color);
+  color: var(--text-color);
+  padding: 1em 1.5em;
+  border-radius: 8px;
   max-width: 600px;
   width: 90%;
-  max-height: 80vh;
-  overflow-y: auto;
-  box-shadow: var(--shadow);
   position: relative;
-  animation: fadeIn 0.3s ease;
+}
+
+.modal-content h2 {
+  text-align: center;
+  color: var(--accent-color);
 }
 
 .modal-close {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  background: var(--primary);
-  color: white;
+  top: 8px;
+  right: 8px;
+  background: var(--accent-color);
+  color: #fff;
   border: none;
-  padding: 5px 10px;
-  border-radius: 10px;
+  padding: 0.3em 0.6em;
+  border-radius: 4px;
   cursor: pointer;
 }
 
-.trait-detail {
-  margin-bottom: 20px;
-  padding: 10px;
-  border: 1px solid var(--secondary);
-  border-radius: 10px;
+.modal-close:hover {
+  opacity: 0.9;
 }
 
-.trait-detail h4 {
-  color: var(--primary);
-  margin: 0 0 5px;
-}
-
-textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid var(--secondary);
-  border-radius: 10px;
-  background: var(--bg-light);
-  color: var(--text-dark);
-  font-family: inherit;
-}
-
-.badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.badge {
-  background: var(--primary);
-  color: white;
-  padding: 5px 10px;
-  border-radius: 15px;
-  font-size: 0.9em;
+.modal-content h3 {
+  margin-top: 1em;
+  color: var(--accent-color);
 }
 
 .style-breakdown {
-  margin: 20px 0;
-  padding: 15px;
-  background: rgba(255, 112, 150, 0.1);
-  border-radius: 15px;
-  border: 2px dashed var(--secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  margin-bottom: 1em;
 }
 
-.strengths, .improvements {
-  margin-bottom: 15px;
+.style-breakdown .strengths, .style-breakdown .improvements {
+  background: var(--bg-color);
+  padding: 0.8em;
+  border-radius: 6px;
 }
 
-.strengths h4, .improvements h4 {
-  color: var(--primary);
-  font-size: 1.2em;
-  margin: 0 0 10px;
+.style-breakdown h4 {
+  margin-top: 0;
 }
 
-.strengths p, .improvements p {
-  font-size: 1em;
-  line-height: 1.5;
-  margin: 0;
+.trait-detail {
+  margin-bottom: 1em;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+.trait-detail h4 {
+  margin-bottom: 0.2em;
 }
 
+/* Responsive layout for wider screens */
 @media (min-width: 768px) {
-  main {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+  .container {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  .form-section, .list-section {
+    flex: 1;
+  }
+  .form-section {
+    margin-right: 1em;
   }
 }
