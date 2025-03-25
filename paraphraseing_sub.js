@@ -225,10 +225,10 @@ const submissiveStyles = {
       5: { paraphrase: "A Maid star—shine bright!", suggestion: "Create a tidy ritual and celebrate! 🧹" }
     }
   },
-  'babygirl/babyboy': {
+  'babygirl': {
     traits: ['neediness', 'playfulness'],
     scores: {
-      1: { paraphrase: "New to Babygirl/Babyboy? Start small!", suggestion: "Be needy and giggle! 😄" },
+      1: { paraphrase: "New to Babygirl/babyboy? Start small!", suggestion: "Be needy and giggle! 😄" },
       2: { paraphrase: "Dipping into it? Add spark!", suggestion: "Play lightly and chat! 💬" },
       3: { paraphrase: "Halfway there—refine it!", suggestion: "Mix neediness and cheer! 🎶" },
       4: { paraphrase: "Shining bright—keep it cute!", suggestion: "Stretch play and treat! 🍭" },
