@@ -18,6 +18,7 @@ class TrackerApp {
       modalBody: document.getElementById('modal-body'),
       modalClose: document.getElementById('modal-close')
     };
+    if (!this.elements.save) console.error("Save button not found!");
     this.addEventListeners();
     this.renderStyles(this.elements.role.value);
     this.renderTraits(this.elements.role.value, '');
@@ -68,6 +69,7 @@ class TrackerApp {
     if (style) {
       const styleObj = bdsmData[role].styles.find(s => s.name.toLowerCase() === style.toLowerCase());
       styleTraits = styleObj ? styleObj.traits : [];
+      if (!styleObj) console.warn(`Style "${style}" not found for role "${role}"`);
     }
     const renderTrait = (trait) => {
       const displayName = trait.name.charAt(0).toUpperCase() + trait.name.slice(1);
@@ -84,6 +86,7 @@ class TrackerApp {
       this.elements.traitsContainer.innerHTML += renderTrait(trait);
     });
     const sliders = this.elements.traitsContainer.querySelectorAll('.trait-slider');
+    if (sliders.length === 0) console.warn("No trait sliders rendered!");
     sliders.forEach(slider => {
       const traitName = slider.getAttribute('data-trait');
       const descDiv = slider.parentElement.querySelector('.trait-desc');
@@ -107,8 +110,13 @@ class TrackerApp {
       alert("Please select a style for the profile.");
       return;
     }
+    const sliders = this.elements.traitsContainer.querySelectorAll('.trait-slider');
+    if (sliders.length === 0) {
+      alert("No traits available to save. Please ensure a style is selected and traits are loaded.");
+      return;
+    }
     const traits = {};
-    this.elements.traitsContainer.querySelectorAll('.trait-slider').forEach(slider => {
+    sliders.forEach(slider => {
       traits[slider.getAttribute('data-trait')] = slider.value;
     });
     if (this.currentEditId) {
