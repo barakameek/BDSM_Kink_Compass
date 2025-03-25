@@ -8,15 +8,15 @@
 </head>
 <body>
   <header>
-    <h1>KinkCompass</h1>
+    <h1>🌸 KinkCompass 🌸</h1>
     <button id="theme-toggle" title="Toggle light/dark mode">🌙</button>
   </header>
   <main class="container">
     <section class="form-section">
-      <h2>Create / Edit Profile</h2>
+      <h2>✨ Craft Your Kinky Persona ✨</h2>
       <div class="field-group">
         <label for="name">Name (or Alias)</label>
-        <input type="text" id="name" placeholder="Enter name" />
+        <input type="text" id="name" placeholder="Who are you, cutie?" />
       </div>
       <div class="field-group">
         <label for="role">Role</label>
@@ -28,23 +28,25 @@
       <div class="field-group">
         <label for="style">Style</label>
         <select id="style">
-          <!-- Options will be populated dynamically -->
+          <option value="">Pick your flavor!</option>
         </select>
       </div>
-      <div id="traits-container"><!-- Trait sliders will be populated here --></div>
-      <button id="save">Save Profile</button>
+      <div id="traits-container"></div>
+      <button id="save">Save Your Sparkle! 💖</button>
     </section>
     <section class="list-section">
-      <h2>Profiles</h2>
-      <ul id="people-list">
-        <!-- Profile list items will be rendered here -->
-      </ul>
+      <h2>🌟 Your Kinky Crew</h2>
+      <ul id="people-list"></ul>
+    </section>
+    <section class="preview-section">
+      <h2>🎈 Live Peek!</h2>
+      <div id="live-preview"><p>Slide those traits to see your vibe! 🌈</p></div>
     </section>
   </main>
   <div class="modal" id="detail-modal" style="display:none;">
     <div class="modal-content">
       <button class="modal-close" id="modal-close">Close</button>
-      <div id="modal-body"><!-- Profile details will be injected here --></div>
+      <div id="modal-body"></div>
     </div>
   </div>
   <script type="module" src="app.js"></script>
