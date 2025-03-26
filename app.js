@@ -17,10 +17,10 @@ class TrackerApp {
       name: document.getElementById('name'),
       role: document.getElementById('role'),
       style: document.getElementById('style'),
-      goals: document.getElementById('goals'),
+      goals: document.getElementById('goals'), // Needs ID in HTML
       traitsContainer: document.getElementById('traits-container'),
       save: document.getElementById('save'),
-      clearForm: document.getElementById('clear-form'),
+      clearForm: document.getElementById('clear-form'), // Needs ID in HTML
 
       // List Elements
       peopleList: document.getElementById('people-list'),
@@ -34,9 +34,9 @@ class TrackerApp {
       modalClose: document.getElementById('modal-close'),
 
       // Resources Modal Elements
-      resourcesBtn: document.getElementById('resources-btn'),
-      resourcesModal: document.getElementById('resources-modal'),
-      resourcesClose: document.getElementById('resources-close'),
+      resourcesBtn: document.getElementById('resources-btn'), // Needs ID in HTML
+      resourcesModal: document.getElementById('resources-modal'), // Needs ID in HTML
+      resourcesClose: document.getElementById('resources-close'), // Needs ID in HTML
 
       // Theme Toggle
       themeToggle: document.getElementById('theme-toggle')
@@ -56,9 +56,7 @@ class TrackerApp {
 
     if (essentialElementMissing) {
         document.body.innerHTML = '<p style="color: red; padding: 1em;">Error: Critical HTML element missing. App cannot start. Check console (F12).</p>';
-        // Optionally throw an error to completely stop script execution
         throw new Error("Missing critical HTML elements for app initialization.");
-        // return; // Alternative: just stop constructor if not throwing
     }
 
     console.log("TrackerApp Constructor: Elements found. Adding listeners...");
@@ -85,9 +83,7 @@ class TrackerApp {
           console.log(`Loaded ${this.people.length} profiles from localStorage.`);
       } catch (error) {
           console.error("Error loading profiles from localStorage:", error);
-          this.people = []; // Reset to empty array on error
-          // Avoid alert here as it can be annoying on every load if storage is weird
-          // Consider a less intrusive notification if needed
+          this.people = [];
       }
   }
 
@@ -478,7 +474,10 @@ class TrackerApp {
     const goals = this.elements.goals.value.trim();
     const traits = {};
     this.elements.traitsContainer.querySelectorAll('.trait-slider').forEach(slider => {
-      traits[slider.getAttribute('data-trait')] = slider.value;
+      const traitName = slider.getAttribute('data-trait');
+      if (traitName) { // Ensure trait name exists
+          traits[traitName] = slider.value;
+      }
     });
 
     const previewData = { name, role, style, traits, goals };
@@ -495,6 +494,7 @@ class TrackerApp {
         html += `<p><strong>Style:</strong> ${previewData.style ? this.escapeHTML(previewData.style) : "N/A"}</p>`;
         if (goals) html += `<p><strong>Goals:</strong> ${this.escapeHTML(goals)}</p>`;
         html += `<div class="style-breakdown preview-breakdown">`;
+        // Use innerHTML as breakdown text contains HTML (like <strong>)
         if (breakdown.strengths) html += `<div class="strengths"><h4>✨ Strengths & Powers</h4><div>${breakdown.strengths}</div></div>`;
         if (breakdown.improvements) html += `<div class="improvements"><h4>🌟 Growth Opportunities</h4><div>${breakdown.improvements}</div></div>`;
         html += `</div>`;
@@ -520,15 +520,15 @@ class TrackerApp {
     html += `<p class="modal-subtitle">${person.role.charAt(0).toUpperCase() + person.role.slice(1)} - ${person.style ? this.escapeHTML(person.style) : 'N/A'}</p>`;
 
     const intro = this.getIntroForStyle(person.style); // Use corrected function
-    if (intro) html += `<p class="modal-intro">${intro}</p>`; // Intros assumed safe/pre-escaped
+    if (intro) html += `<p class="modal-intro">${intro}</p>`;
 
     if (person.goals) {
         html += `<h3>🎯 Current Goals</h3><p class="well">${this.escapeHTML(person.goals)}</p>`;
     }
 
     html += `<h3>🌈 Strengths & Growth Areas</h3><div class="style-breakdown modal-breakdown">`;
-    if (breakdown.strengths) html += `<div class="strengths"><h4>✨ Your Powers</h4><div>${breakdown.strengths}</div></div>`;
-    if (breakdown.improvements) html += `<div class="improvements"><h4>🌟 Your Next Quest</h4><div>${breakdown.improvements}</div></div>`;
+    if (breakdown.strengths) html += `<div class="strengths"><h4>✨ Your Powers</h4><div>${breakdown.strengths}</div></div>`; // Breakdown text contains HTML
+    if (breakdown.improvements) html += `<div class="improvements"><h4>🌟 Your Next Quest</h4><div>${breakdown.improvements}</div></div>`; // Breakdown text contains HTML
     html += `</div>`;
 
     html += `<h3>🎨 Your Trait Tales</h3>`;
@@ -594,11 +594,9 @@ class TrackerApp {
 
   // --- Helper Functions ---
 
-  // THIS IS THE CORRECTED FUNCTION
   getIntroForStyle(styleName) {
-    // Normalize name for consistent lookup
-    const key = styleName?.toLowerCase().replace(/\(.*?\)/g, '').replace(/ \/ /g, '/').trim() || ''; // Use 'key' here
-    const intros = { /* Intros object as provided before */
+    const key = styleName?.toLowerCase().replace(/\(.*?\)/g, '').replace(/ \/ /g, '/').trim() || '';
+    const intros = {
         // Submissive Intros
         "submissive": "Welcome, lovely Submissive! Ready to explore the beauty of yielding? ✨",
         "brat": "Hehe, ready to stir up some delightful trouble, Brat? 😉 Let the games begin!",
@@ -624,7 +622,6 @@ class TrackerApp {
         "maid": "Impeccable Maid, ready to bring sparkle and order with dutiful grace? Precision! ✨",
         "painslut": "Eager and ready, devoted Painslut? Time to test those limits and revel in sensation! 🔥",
         "bottom": "Open heart, yielding power, beautiful Bottom. Ready to receive and connect deeply? 💖",
-
         // Dominant Intros
         "dominant": "Step into your power, noble Dominant! Ready to lead and inspire? 🔥",
         "assertive": "Clear voice, strong boundaries, confident Assertive! Ready to communicate your truth? 💪",
@@ -647,8 +644,7 @@ class TrackerApp {
         "goddess": "Radiant power, adored Goddess! Ready to inspire worship and command devotion? ✨",
         "commander": "Strategic mind, decisive voice, effective Commander! Ready to lead the charge? 🎖️"
     };
-    // Use the 'key' variable for lookup here
-    return intros[key] || "Explore your unique and wonderful expression!"; // Fallback
+    return intros[key] || "Explore your unique and wonderful expression!";
   }
 
   getFlairForScore(score) {
