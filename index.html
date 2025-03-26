@@ -3,230 +3,95 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KinkCompass</title>
+  <title>KinkCompass & Style Finder</title> <!-- Updated Title -->
   <link rel="stylesheet" href="styles.css" />
-  <!-- Chart.js CDN (requires internet for history chart) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Optional Favicon -->
-  <!-- <link rel="icon" href="favicon.ico" type="image/x-icon"> -->
+  <!-- Confetti script for Style Finder result -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 </head>
 <body>
   <header>
     <h1>🌸 KinkCompass 🌸</h1>
     <nav class="header-nav">
-        <!-- Header Buttons -->
-        <button id="style-discovery-btn" class="header-btn" title="Explore All Styles">🧭 Explore</button>
+        <!-- Added Style Finder Trigger -->
+        <button id="style-finder-trigger-btn" class="header-btn" title="Find Your Kink Style!">🧭 Style Finder</button>
+        <!-- Other header buttons -->
+        <button id="style-discovery-btn" class="header-btn" title="Explore All Styles">🔭 Explore</button> <!-- Changed Icon -->
         <button id="glossary-btn" class="header-btn" title="Kink Glossary">📚 Glossary</button>
         <button id="resources-btn" class="header-btn" title="Helpful Resources">🔗 Resources</button>
         <button id="themes-btn" class="header-btn" title="Change Theme">🎨 Themes</button>
         <button id="export-btn" class="header-btn" title="Export Data">💾 Export</button>
         <button id="import-btn" class="header-btn" title="Import Data">📁 Import</button>
-        <input type="file" id="import-file-input" accept=".json" style="display: none;" /> <!-- Hidden file input -->
+        <input type="file" id="import-file-input" accept=".json" style="display: none;" />
         <button id="theme-toggle" class="header-btn theme-btn" title="Toggle light/dark mode">🌙</button>
     </nav>
   </header>
 
   <main class="container">
-    <!-- Form Section -->
+    <!-- KinkCompass Main Form Section -->
     <section id="form-section" class="form-section card">
-      <h2>✨ Your Kinky Persona ✨</h2> <!-- Shortened Title -->
-
-      <!-- Avatar Picker -->
+      <h2>✨ Your Kinky Persona ✨</h2>
       <div class="field-group avatar-group">
         <fieldset class="avatar-picker-fieldset">
             <legend>Avatar:</legend>
             <div class="avatar-picker">
                 <span id="avatar-display" aria-hidden="true">❓</span>
                 <input type="hidden" id="avatar-input" value="❓">
-                <button class="avatar-btn" data-emoji="🎀" aria-label="Select Ribbon Avatar">🎀</button>
-                <button class="avatar-btn" data-emoji="✨" aria-label="Select Sparkles Avatar">✨</button>
-                <button class="avatar-btn" data-emoji="💖" aria-label="Select Sparkling Heart Avatar">💖</button>
-                <button class="avatar-btn" data-emoji="🔥" aria-label="Select Fire Avatar">🔥</button>
-                <button class="avatar-btn" data-emoji="😈" aria-label="Select Smiling Devil Avatar">😈</button>
-                <button class="avatar-btn" data-emoji="😇" aria-label="Select Smiling Angel Avatar">😇</button>
-                <button class="avatar-btn" data-emoji="🐶" aria-label="Select Dog Face Avatar">🐶</button>
-                <button class="avatar-btn" data-emoji="🦊" aria-label="Select Fox Face Avatar">🦊</button>
-                <button class="avatar-btn" data-emoji="👑" aria-label="Select Crown Avatar">👑</button>
-                <!-- Add more avatars if desired -->
+                <button class="avatar-btn" data-emoji="🎀" aria-label="Ribbon">🎀</button>
+                <button class="avatar-btn" data-emoji="✨" aria-label="Sparkles">✨</button>
+                <button class="avatar-btn" data-emoji="💖" aria-label="Sparkling Heart">💖</button>
+                <button class="avatar-btn" data-emoji="🔥" aria-label="Fire">🔥</button>
+                <button class="avatar-btn" data-emoji="😈" aria-label="Devil">😈</button>
+                <button class="avatar-btn" data-emoji="😇" aria-label="Angel">😇</button>
+                <button class="avatar-btn" data-emoji="🐶" aria-label="Dog">🐶</button>
+                <button class="avatar-btn" data-emoji="🦊" aria-label="Fox">🦊</button>
+                <button class="avatar-btn" data-emoji="👑" aria-label="Crown">👑</button>
             </div>
         </fieldset>
       </div>
-
-      <!-- Name Input -->
-      <div class="field-group">
-        <label for="name">Name (or Alias)</label>
-        <input type="text" id="name" placeholder="Who are you, cutie?" autocomplete="name" />
-      </div>
-
-      <!-- Role Selector -->
-      <div class="field-group">
-        <label for="role">Role</label>
-        <select id="role" autocomplete="off">
-          <option value="dominant">Dominant</option>
-          <option value="submissive" selected>Submissive</option>
-        </select>
-      </div>
-
-      <!-- Style Selector -->
-      <div class="field-group">
-        <label for="style">Style</label>
-        <select id="style" autocomplete="off">
-          <option value="">Pick your flavor!</option>
-          <!-- Options populated by JS -->
-        </select>
-      </div>
-
-      <!-- Goals Info (Textarea moved to modal) -->
-       <div class="field-group">
-        <label>Goals</label>
-        <p class="muted-text">(Goals added/edited in profile details)</p>
-      </div>
-
-      <!-- Traits Container -->
-      <div id="traits-container">
-          <p class="muted-text">Select Role & Style for traits...</p>
-          <!-- Traits populated by JS -->
-      </div>
-
-      <!-- Trait Info Popup Area (Initially Hidden) -->
-      <div id="trait-info-popup" class="trait-info-popup card" style="display: none;">
-          <button id="trait-info-close" class="modal-close" aria-label="Close trait info">×</button>
-          <h4 id="trait-info-title">Trait Info</h4>
-          <div id="trait-info-body">
-              <!-- Trait descriptions populated by JS -->
-          </div>
-      </div>
-
-      <!-- Form Actions -->
-      <div class="form-actions">
-          <button id="save" class="save-btn">Save Your Sparkle! 💖</button>
-          <button id="clear-form" class="clear-btn">Clear Form 🧹</button>
-      </div>
+      <div class="field-group"> <label for="name">Name</label> <input type="text" id="name" placeholder="Who are you?" autocomplete="name" /> </div>
+      <div class="field-group"> <label for="role">Role</label> <select id="role" autocomplete="off"><option value="dominant">Dominant</option><option value="submissive" selected>Submissive</option></select> </div>
+      <div class="field-group"> <label for="style">Style</label> <select id="style" autocomplete="off"><option value="">Pick flavor!</option></select> </div>
+      <div class="field-group"> <label>Goals</label> <p class="muted-text">(Goals in details)</p> </div>
+      <div id="traits-container"> <p class="muted-text">Select Role & Style...</p> </div>
+      <div id="trait-info-popup" class="trait-info-popup card" style="display:none;"> <button id="trait-info-close" class="modal-close">×</button> <h4 id="trait-info-title">Trait Info</h4> <div id="trait-info-body"></div> </div>
+      <div class="form-actions"> <button id="save" class="save-btn">Save Sparkle! 💖</button> <button id="clear-form" class="clear-btn">Clear 🧹</button> </div>
     </section>
 
-    <!-- List Section -->
-    <section class="list-section card">
-      <h2>🌟 Your Kinky Crew</h2>
-      <ul id="people-list">
-          <li>Loading profiles...</li>
-          <!-- List populated by JS -->
-      </ul>
-    </section>
+    <!-- KinkCompass List Section -->
+    <section class="list-section card"> <h2>🌟 Kinky Crew</h2> <ul id="people-list"><li>Loading...</li></ul> </section>
 
-    <!-- Preview Section -->
-    <section class="preview-section card">
-      <h2>🎈 Live Peek!</h2>
-      <div id="live-preview">
-          <p class="muted-text">Fill form for live vibe! 🌈</p>
-          <!-- Live preview populated by JS -->
-      </div>
-    </section>
+    <!-- KinkCompass Preview Section -->
+    <section class="preview-section card"> <h2>🎈 Live Peek!</h2> <div id="live-preview"><p>Fill form! 🌈</p></div> </section>
   </main>
 
-  <!-- Detail Modal -->
-  <div class="modal" id="detail-modal" style="display:none;" role="dialog" aria-labelledby="detail-modal-title" aria-modal="true">
-    <div class="modal-content card">
-      <button class="modal-close" id="modal-close" aria-label="Close details modal">×</button>
-      <div id="modal-body">
-            <!-- Modal content generated dynamically by JS -->
-      </div>
+  <!-- KinkCompass Modals (Detail, Resources, Glossary, Style Discovery, Themes) -->
+  <div class="modal" id="detail-modal" style="display:none;"> <div class="modal-content card"> <button class="modal-close" id="modal-close">×</button> <div id="modal-body"></div> </div> </div>
+  <div class="modal" id="resources-modal" style="display:none;"> <div class="modal-content card"> <button class="modal-close" id="resources-close">×</button> <h2 id="resources-modal-title">🔗 Resources</h2> <dl> <!-- Expanded content here --> </dl> <hr><p><em>Disclaimer...</em></p> </div> </div>
+  <div class="modal" id="glossary-modal" style="display:none;"> <div class="modal-content card"> <button class="modal-close" id="glossary-close">×</button> <h2>📚 Glossary</h2> <div id="glossary-body"><p>Loading...</p></div> </div> </div>
+  <div class="modal" id="style-discovery-modal" style="display:none;"> <div class="modal-content card wide-modal"> <button class="modal-close" id="style-discovery-close">×</button> <h2>🧭 Explore Styles</h2> <div class="style-discovery-controls"> <label for="style-discovery-role">Filter:</label> <select id="style-discovery-role"><option value="all">All</option><option value="submissive">Sub</option><option value="dominant">Dom</option></select> </div> <div id="style-discovery-body"><p>Loading...</p></div> </div> </div>
+  <div class="modal" id="themes-modal" style="display:none;"> <div class="modal-content card"> <button class="modal-close" id="themes-close">×</button> <h2>🎨 Themes</h2> <div id="themes-body" class="theme-options"> <button class="theme-option-btn" data-theme="light">🌸 Light</button> <button class="theme-option-btn" data-theme="dark">🌙 Dark</button> <button class="theme-option-btn" data-theme="pastel">🍬 Pastel</button> <button class="theme-option-btn" data-theme="velvet">💜 Velvet</button> </div> </div> </div>
+
+  <!-- *** NEW: Style Finder Modal *** -->
+  <div id="style-finder-modal" class="modal sf-modal"> <!-- Added sf-modal class -->
+    <div class="modal-content sf-modal-content"> <!-- Added sf-modal-content class -->
+      <button class="modal-close" id="sf-close-style-finder">×</button> <!-- Prefixed ID -->
+      <h3>🧭 BDSM Style Finder 🧭</h3>
+      <div id="sf-progress-tracker" class="sf-progress-tracker"></div> <!-- Prefixed ID -->
+      <div id="sf-step-content"></div> <!-- Prefixed ID -->
+      <p id="sf-feedback" class="sf-feedback"></p> <!-- Prefixed ID -->
+      <div id="sf-dashboard" class="sf-dashboard"></div> <!-- Prefixed ID -->
     </div>
   </div>
+  <!-- *** END Style Finder Modal *** -->
 
-  <!-- Resources Modal -->
-  <div class="modal" id="resources-modal" style="display:none;" role="dialog" aria-labelledby="resources-modal-title" aria-modal="true">
-      <div class="modal-content card">
-          <button class="modal-close" id="resources-close" aria-label="Close resources modal">×</button>
-          <h2 id="resources-modal-title">🔗 Helpful Kink Resources</h2>
-          <!-- Static, expanded content -->
-          <p>Exploring kink is exciting! Remember to prioritize safety, continuous learning, and clear communication. Here are some core concepts:</p>
-          <dl>
-              <dt>💖 Consent Models</dt>
-              <dd>Frameworks for enthusiastic agreement:
-                  <ul>
-                      <li><strong>SSC (Safe, Sane, Consensual):</strong> Baseline for physical/mental safety & agreement.</li>
-                      <li><strong>RACK (Risk-Aware Consensual Kink):</strong> Acknowledges inherent risks, focuses on understanding & acceptance with consent.</li>
-                      <li><strong>PRICK (Personal Responsibility, Informed Consensual Kink):</strong> Emphasizes individual boundaries, informed choices, & consent.</li>
-                      <li><strong>FRIES (Freely Given, Reversible, Informed, Enthusiastic, Specific):</strong> Consent checklist - no coercion, withdrawable, understood, eager, specific acts.</li>
-                  </ul>
-              </dd>
-              <dt>💬 Communication & Negotiation</dt>
-              <dd>Talk before, during, and after!
-                  <ul>
-                      <li><strong>Negotiation:</strong> Discuss desires, limits (hard/soft), safewords, aftercare *before* play.</li>
-                      <li><strong>Safewords:</strong> Pre-agreed signals (e.g., Red/Yellow/Green, non-verbal) for distress/stop/slowdown.</li>
-                      <li><strong>Check-ins:</strong> Briefly ask "Feeling good?" during play.</li>
-                  </ul>
-              </dd>
-              <dt>🧸 Aftercare</dt>
-              <dd>Cool-down support after scenes (especially intense ones). Needs vary! Discuss beforehand (cuddles, water, reassurance, quiet time, etc.). Tops need it too!</dd>
-               <dt>🤝 Vetting Partners</dt>
-              <dd>Take time, communicate openly, meet safely (public first?), observe consistency, watch for red flags (disrespect, boundary pushing), trust your gut.</dd>
-               <dt>🛠️ Safety</dt>
-              <dd>Includes physical tools (e.g., safety shears) and emotional tools (safewords, check-ins, aftercare).</dd>
-              <dt>📚 Further Learning</dt>
-              <dd>Seek reputable educators, communities (use discernment), workshops, books.</dd>
-          </dl>
-          <hr>
-          <p><em><strong>Disclaimer:</strong> General info only. Not a substitute for research, advice, or direct communication. Prioritize safety & informed consent.</em></p>
-      </div>
-  </div>
 
-  <!-- Glossary Modal -->
-  <div class="modal" id="glossary-modal" style="display:none;" role="dialog" aria-labelledby="glossary-modal-title" aria-modal="true">
-      <div class="modal-content card">
-          <button class="modal-close" id="glossary-close" aria-label="Close glossary modal">×</button>
-          <h2 id="glossary-modal-title">📚 Kink Glossary</h2>
-          <div id="glossary-body">
-              <p>Loading glossary...</p>
-              <!-- Glossary terms populated by JS -->
-          </div>
-      </div>
-  </div>
-
-  <!-- Style Discovery Modal -->
-  <div class="modal" id="style-discovery-modal" style="display:none;" role="dialog" aria-labelledby="style-discovery-title" aria-modal="true">
-      <div class="modal-content card wide-modal">
-          <button class="modal-close" id="style-discovery-close" aria-label="Close style discovery modal">×</button>
-          <h2 id="style-discovery-title">🧭 Explore Kink Styles</h2>
-          <div class="style-discovery-controls">
-              <label for="style-discovery-role">Filter by Role:</label>
-              <select id="style-discovery-role">
-                  <option value="all">All Roles</option>
-                  <option value="submissive">Submissive</option>
-                  <option value="dominant">Dominant</option>
-              </select>
-          </div>
-          <div id="style-discovery-body">
-              <p>Loading styles...</p>
-              <!-- Styles populated by JS -->
-          </div>
-      </div>
-  </div>
-
-  <!-- Themes Modal -->
-  <div class="modal" id="themes-modal" style="display:none;" role="dialog" aria-labelledby="themes-modal-title" aria-modal="true">
-      <div class="modal-content card">
-          <button class="modal-close" id="themes-close" aria-label="Close themes modal">×</button>
-          <h2 id="themes-modal-title">🎨 Select Theme</h2>
-          <div id="themes-body" class="theme-options">
-              <button class="theme-option-btn" data-theme="light">🌸 Light</button>
-              <button class="theme-option-btn" data-theme="dark">🌙 Dark</button>
-              <button class="theme-option-btn" data-theme="pastel">🍬 Pastel Dreams</button>
-              <button class="theme-option-btn" data-theme="velvet">💜 Midnight Velvet</button>
-              <!-- Add more theme buttons here if desired -->
-          </div>
-      </div>
-  </div>
-
-  <footer>
-      <p>KinkCompass - Navigate your desires with sparkle ✨</p>
-  </footer>
+  <footer> <p>KinkCompass - Navigate your desires ✨</p> </footer>
 
   <!-- Load JS modules last -->
   <script type="module" src="glossary.js"></script>
   <script type="module" src="prompts.js"></script>
   <script type="module" src="achievements.js"></script>
-  <script type="module" src="app.js"></script> <!-- Ensure app.js is last -->
+  <script type="module" src="app.js"></script> <!-- app.js now contains ALL logic -->
 </body>
 </html>
