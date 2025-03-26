@@ -178,3 +178,11 @@ footer { text-align: center; padding: 1.5em; margin-top: 2em; color: var(--muted
 /* ... (Keep as before) ... */
 @media (max-width: 768px) { .container { padding: 1em; gap: 1em; } .card { padding: 1em; } header { padding: 0.8em 1em; } header h1 { font-size: 1.4em; margin-right: 0.5em; margin-bottom: 0; } .header-nav { gap: 0.3em; } .header-btn { padding: 0.2em 0.5em; font-size: 0.75em;} .theme-btn { font-size: 1em;} .modal-content { padding: 1.5em; max-width: 95%; width: auto; } .modal-content.wide-modal { width: 95%; } .form-actions { flex-direction: column; } }
 @media (max-width: 480px) { body { font-size: 15px; } header { flex-direction: column; align-items: flex-start; } header h1 { margin-bottom: 0.5em; } .header-nav { margin-left: 0; width: 100%; justify-content: space-around; } .container { grid-template-columns: 1fr; } }
+/* --- Style Discovery Modal --- */
+/* ... (keep existing styles) ... */
+.style-discovery-item p { /* Style for the summary */
+    font-style: italic;
+    color: var(--muted-text-color);
+    margin-bottom: 0.8em;
+}
+/* ... */
