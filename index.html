@@ -5,14 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KinkCompass</title>
   <link rel="stylesheet" href="styles.css" />
+  <!-- Consider adding a fun favicon -->
+  <!-- <link rel="icon" href="favicon.ico" type="image/x-icon"> -->
 </head>
 <body>
   <header>
     <h1>🌸 KinkCompass 🌸</h1>
-    <button id="theme-toggle" title="Toggle light/dark mode">🌙</button>
+    <nav class="header-nav">
+        <button id="resources-btn" class="header-btn" title="Helpful Resources">📚 Resources</button>
+        <button id="theme-toggle" class="header-btn theme-btn" title="Toggle light/dark mode">🌙</button>
+    </nav>
   </header>
+
   <main class="container">
-    <section class="form-section">
+    <section class="form-section card">
       <h2>✨ Craft Your Kinky Persona ✨</h2>
       <div class="field-group">
         <label for="name">Name (or Alias)</label>
@@ -29,26 +35,69 @@
         <label for="style">Style</label>
         <select id="style">
           <option value="">Pick your flavor!</option>
+          <!-- Options populated by JS -->
         </select>
       </div>
-      <div id="traits-container"></div>
-      <button id="save">Save Your Sparkle! 💖</button>
+       <div class="field-group">
+        <label for="goals">Current Goals</label>
+        <textarea id="goals" rows="3" placeholder="What are you working towards? (e.g., 'Improve communication', 'Explore rope more')"></textarea>
+      </div>
+      <div id="traits-container">
+          <!-- Traits populated by JS -->
+          <p class="muted-text">Select a Role and Style to see traits...</p>
+      </div>
+      <div class="form-actions">
+          <button id="save" class="save-btn">Save Your Sparkle! 💖</button>
+          <button id="clear-form" class="clear-btn">Clear Form 🧹</button>
+      </div>
     </section>
-    <section class="list-section">
+
+    <section class="list-section card">
       <h2>🌟 Your Kinky Crew</h2>
-      <ul id="people-list"></ul>
+      <ul id="people-list">
+          <!-- List populated by JS -->
+          <li>Loading profiles...</li>
+      </ul>
     </section>
-    <section class="preview-section">
+
+    <section class="preview-section card">
       <h2>🎈 Live Peek!</h2>
-      <div id="live-preview"><p>Slide those traits to see your vibe! 🌈</p></div>
+      <div id="live-preview"><p class="muted-text">Fill the form to see your vibe update live! 🌈</p></div>
     </section>
   </main>
-  <div class="modal" id="detail-modal" style="display:none;">
-    <div class="modal-content">
-      <button class="modal-close" id="modal-close">Close</button>
-      <div id="modal-body"></div>
+
+  <!-- Detail Modal -->
+  <div class="modal" id="detail-modal" style="display:none;" role="dialog" aria-labelledby="detail-modal-title" aria-modal="true">
+    <div class="modal-content card">
+      <button class="modal-close" id="modal-close" aria-label="Close details modal">×</button>
+      {/* Content Added Dynamically */}
+      <div id="modal-body">
+            {/* Title, breakdown, traits, goals, reflections added by JS */}
+      </div>
     </div>
   </div>
+
+  <!-- Resources Modal -->
+  <div class="modal" id="resources-modal" style="display:none;" role="dialog" aria-labelledby="resources-modal-title" aria-modal="true">
+      <div class="modal-content card">
+          <button class="modal-close" id="resources-close" aria-label="Close resources modal">×</button>
+          <h2 id="resources-modal-title">📚 Helpful Kink Resources</h2>
+          <p>Remember to always do your own research and prioritize safety, communication, and consent!</p>
+          <ul>
+              <li><strong>Consent Models:</strong> SSC (Safe, Sane, Consensual), RACK (Risk-Aware Consensual Kink), PRICK (Personal Responsibility, Informed Consensual Kink). Understand their nuances.</li>
+              <li><strong>Communication:</strong> Practice clear negotiation, setting boundaries, using safewords, and checking in before, during, and after play.</li>
+              <li><strong>Aftercare:</strong> Essential for emotional and physical well-being after intense scenes. Discuss needs beforehand (cuddles, water, reassurance, etc.).</li>
+              <li><strong>Vetting Partners:</strong> Take your time getting to know potential partners. Look for consistency, respect for boundaries, and open communication.</li>
+              <li><strong>Further Learning:</strong> Explore reputable online communities (like FetLife - use discernment!), read books, attend workshops (online or local).</li>
+              <li><em>Disclaimer: This app provides general information and is not a substitute for thorough education or professional advice.</em></li>
+          </ul>
+      </div>
+  </div>
+
+  <footer>
+      <p>KinkCompass - Navigate your desires with sparkle ✨</p>
+  </footer>
+
   <script type="module" src="app.js"></script>
 </body>
 </html>
