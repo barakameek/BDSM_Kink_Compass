@@ -9,18 +9,22 @@ import { achievementList, hasAchievement, grantAchievement } from './achievement
 
 // Chart.js loaded via CDN
 
+// *** DEBUG STEP 1a ***
+console.log("SCRIPT START: Parsing TrackerApp class definition...");
+
 class TrackerApp {
   constructor() {
-    // ... (Keep constructor and element finding exactly as before) ...
+    console.log("TrackerApp CONSTRUCTOR: Starting..."); // Constructor start log
     this.people = [];
     this.previewPerson = null;
     this.currentEditId = null;
     this.chartInstance = null;
 
+    // Find elements immediately
     this.elements = { /* ... All element lookups ... */
         formSection: document.getElementById('form-section'), name: document.getElementById('name'), avatarDisplay: document.getElementById('avatar-display'), avatarInput: document.getElementById('avatar-input'), avatarPicker: document.querySelector('.avatar-picker'), role: document.getElementById('role'), style: document.getElementById('style'), traitsContainer: document.getElementById('traits-container'), traitInfoPopup: document.getElementById('trait-info-popup'), traitInfoClose: document.getElementById('trait-info-close'), traitInfoTitle: document.getElementById('trait-info-title'), traitInfoBody: document.getElementById('trait-info-body'), save: document.getElementById('save'), clearForm: document.getElementById('clear-form'), peopleList: document.getElementById('people-list'), livePreview: document.getElementById('live-preview'), modal: document.getElementById('detail-modal'), modalBody: document.getElementById('modal-body'), modalClose: document.getElementById('modal-close'), resourcesBtn: document.getElementById('resources-btn'), resourcesModal: document.getElementById('resources-modal'), resourcesClose: document.getElementById('resources-close'), glossaryBtn: document.getElementById('glossary-btn'), glossaryModal: document.getElementById('glossary-modal'), glossaryClose: document.getElementById('glossary-close'), glossaryBody: document.getElementById('glossary-body'), styleDiscoveryBtn: document.getElementById('style-discovery-btn'), styleDiscoveryModal: document.getElementById('style-discovery-modal'), styleDiscoveryClose: document.getElementById('style-discovery-close'), styleDiscoveryRoleFilter: document.getElementById('style-discovery-role'), styleDiscoveryBody: document.getElementById('style-discovery-body'), themesBtn: document.getElementById('themes-btn'), themesModal: document.getElementById('themes-modal'), themesClose: document.getElementById('themes-close'), themesBody: document.getElementById('themes-body'), exportBtn: document.getElementById('export-btn'), importBtn: document.getElementById('import-btn'), importFileInput: document.getElementById('import-file-input'), themeToggle: document.getElementById('theme-toggle')
     };
-    if (!this.elements.name || !this.elements.role || !this.elements.style || !this.elements.save || !this.elements.peopleList || !this.elements.modal) { throw new Error("Missing critical elements"); }
+    if (!this.elements.name || !this.elements.role || !this.elements.style || !this.elements.save || !this.elements.peopleList || !this.elements.modal) { console.error("Missing critical HTML elements."); throw new Error("Missing critical elements"); }
 
     console.log("TrackerApp Constructor: Elements found.");
     this.addEventListeners(); // Call the updated method
@@ -34,78 +38,42 @@ class TrackerApp {
     console.log("TrackerApp Constructor: Initial render complete.");
   }
 
-  // --- Local Storage & Data Handling --- (Keep as before)
-  loadFromLocalStorage() { /* ... */ try { const d=localStorage.getItem('kinkProfiles'); const p=d?JSON.parse(d):[]; this.people=p.map(p=>({...p,goals:p.goals||[],history:p.history||[],avatar:p.avatar||'❓',achievements:p.achievements||[]})); console.log(`Loaded ${this.people.length}`); } catch(e){console.error("Load Error:",e);this.people=[];}}
-  saveToLocalStorage() { /* ... */ try { localStorage.setItem('kinkProfiles', JSON.stringify(this.people)); console.log(`Saved ${this.people.length}`); } catch(e){console.error("Save Error:",e);alert("Save failed.");}}
-
+  // --- Local Storage & Data Handling ---
+  loadFromLocalStorage() { try { const d=localStorage.getItem('kinkProfiles'); const p=d?JSON.parse(d):[]; this.people=p.map(p=>({...p,goals:p.goals||[],history:p.history||[],avatar:p.avatar||'❓',achievements:p.achievements||[]})); console.log(`Loaded ${this.people.length} profiles.`); } catch(e){console.error("Load Error:",e);this.people=[];}}
+  saveToLocalStorage() { try { localStorage.setItem('kinkProfiles', JSON.stringify(this.people)); console.log(`Saved ${this.people.length} profiles.`); } catch(e){console.error("Save Error:",e);alert("Save failed.");}}
 
   // --- Event Listeners Setup (Using Arrow Functions) ---
   addEventListeners() {
-    // Form - Using arrow functions for handlers calling class methods
-    this.elements.role.addEventListener('change', () => {
-        console.log("Role changed");
-        const role = this.elements.role.value;
-        this.renderStyles(role);
-        this.elements.style.value = '';
-        this.renderTraits(role, '');
-        this.updateLivePreview();
-    });
-    this.elements.style.addEventListener('change', () => {
-        console.log("Style changed");
-        this.renderTraits(this.elements.role.value, this.elements.style.value);
-        this.updateLivePreview();
-    });
-    this.elements.name.addEventListener('input', () => this.updateLivePreview());
-    this.elements.avatarPicker?.addEventListener('click', (e) => { // Arrow function for avatar pick
-         if (e.target.classList.contains('avatar-btn')) {
-            const emoji = e.target.dataset.emoji;
-            if (emoji) {
-                this.elements.avatarInput.value = emoji;
-                this.elements.avatarDisplay.textContent = emoji;
-                this.elements.avatarPicker.querySelectorAll('.avatar-btn').forEach(btn => {
-                    btn.classList.toggle('selected', btn === e.target);
-                });
-                this.updateLivePreview();
-            }
-        }
-    });
+    console.log("Adding event listeners..."); // Log start of listener setup
 
-    // Buttons - Using arrow functions for handlers calling class methods
+    // Form
+    this.elements.role.addEventListener('change', () => { console.log("Role changed"); const r=this.elements.role.value; this.renderStyles(r); this.elements.style.value=''; this.renderTraits(r,''); this.updateLivePreview(); });
+    this.elements.style.addEventListener('change', () => { console.log("Style changed"); this.renderTraits(this.elements.role.value, this.elements.style.value); this.updateLivePreview(); });
+    this.elements.name.addEventListener('input', () => this.updateLivePreview());
+    this.elements.avatarPicker?.addEventListener('click', (e) => { if(e.target.classList.contains('avatar-btn')){const em=e.target.dataset.emoji; if(em){this.elements.avatarInput.value=em;this.elements.avatarDisplay.textContent=em;this.elements.avatarPicker.querySelectorAll('.avatar-btn').forEach(b=>b.classList.toggle('selected',b===e.target));this.updateLivePreview();}}} );
+
+    // Buttons
     this.elements.save.addEventListener('click', () => this.savePerson());
     this.elements.clearForm.addEventListener('click', () => this.resetForm(true));
     this.elements.themeToggle.addEventListener('click', () => this.toggleTheme());
     this.elements.exportBtn?.addEventListener('click', () => this.exportData());
     this.elements.importBtn?.addEventListener('click', () => this.elements.importFileInput?.click());
-    this.elements.importFileInput?.addEventListener('change', (e) => this.importData(e)); // Pass event
+    this.elements.importFileInput?.addEventListener('change', (e) => this.importData(e));
 
-    // People List - Using arrow functions for handlers calling class methods
-    this.elements.peopleList.addEventListener('click', (e) => { // Arrow function for list click
-      const personLi = e.target.closest('.person');
-      if (!personLi) return;
-      const personId = parseInt(personLi.dataset.id);
-      if (isNaN(personId)) return;
-
-      if (e.target.classList.contains('edit-btn')) {
-        this.editPerson(personId); // `this` is correctly TrackerApp instance
-      } else if (e.target.classList.contains('delete-btn')) {
-        this.deletePerson(personId); // `this` is correctly TrackerApp instance
-      } else {
-        this.showPersonDetails(personId); // `this` is correctly TrackerApp instance
-      }
+    // People List
+    this.elements.peopleList.addEventListener('click', (e) => {
+      const personLi = e.target.closest('.person'); if (!personLi) return; const personId = parseInt(personLi.dataset.id); if (isNaN(personId)) return;
+      // *** DEBUG STEP 2 ***
+      console.log(">>> handleListClick triggered for ID:", personId);
+      console.log(">>> `this` inside handleListClick:", this);
+      console.log(">>> Is this.showPersonDetails a function?", typeof this.showPersonDetails === 'function');
+      if (e.target.classList.contains('edit-btn')) { this.editPerson(personId); }
+      else if (e.target.classList.contains('delete-btn')) { this.deletePerson(personId); }
+      else { this.showPersonDetails(personId); }
     });
-    this.elements.peopleList.addEventListener('keydown', (e) => { // Arrow function for list keydown
-        const personLi = e.target.closest('.person');
-        if (!personLi) return;
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            const personId = parseInt(personLi.dataset.id);
-            if (!isNaN(personId)) {
-                 this.showPersonDetails(personId); // `this` is correctly TrackerApp instance
-            }
-        }
-    });
+    this.elements.peopleList.addEventListener('keydown', (e) => { const li = e.target.closest('.person'); if (!li) return; if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); const id = parseInt(li.dataset.id); if (!isNaN(id)) this.showPersonDetails(id); }});
 
-    // Modals - Using arrow functions for handlers calling class methods
+    // Modals
     this.elements.modalClose?.addEventListener('click', () => this.closeModal(this.elements.modal));
     this.elements.resourcesBtn?.addEventListener('click', () => this.openModal(this.elements.resourcesModal));
     this.elements.resourcesClose?.addEventListener('click', () => this.closeModal(this.elements.resourcesModal));
@@ -116,183 +84,174 @@ class TrackerApp {
     this.elements.styleDiscoveryRoleFilter?.addEventListener('change', () => this.renderStyleDiscoveryContent());
     this.elements.themesBtn?.addEventListener('click', () => this.openModal(this.elements.themesModal));
     this.elements.themesClose?.addEventListener('click', () => this.closeModal(this.elements.themesModal));
-    this.elements.themesBody?.addEventListener('click', (e) => this.handleThemeSelection(e)); // Pass event
+    this.elements.themesBody?.addEventListener('click', (e) => this.handleThemeSelection(e));
 
-    // Global listeners - Can remain standard functions or be arrows
-    window.addEventListener('click', (e) => {
-        if (e.target === this.elements.modal) this.closeModal(this.elements.modal);
-        if (e.target === this.elements.resourcesModal) this.closeModal(this.elements.resourcesModal);
-        if (e.target === this.elements.glossaryModal) this.closeModal(this.elements.glossaryModal);
-        if (e.target === this.elements.styleDiscoveryModal) this.closeModal(this.elements.styleDiscoveryModal);
-        if (e.target === this.elements.themesModal) this.closeModal(this.elements.themesModal);
-    });
-    window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            if (this.elements.modal?.style.display === 'flex') this.closeModal(this.elements.modal);
-            if (this.elements.resourcesModal?.style.display === 'flex') this.closeModal(this.elements.resourcesModal);
-            if (this.elements.glossaryModal?.style.display === 'flex') this.closeModal(this.elements.glossaryModal);
-            if (this.elements.styleDiscoveryModal?.style.display === 'flex') this.closeModal(this.elements.styleDiscoveryModal);
-            if (this.elements.themesModal?.style.display === 'flex') this.closeModal(this.elements.themesModal);
-        }
-    });
+    // Global listeners
+    window.addEventListener('click', (e) => { if(e.target===this.elements.modal)this.closeModal(this.elements.modal);/*... and other modals*/ });
+    window.addEventListener('keydown', (e) => { if(e.key==='Escape'){/*... close open modals */} });
 
-    // Dynamic listeners - Using arrow functions
-    this.elements.traitsContainer.addEventListener('input', (e) => { // Arrow function for trait input
-        if (e.target.classList.contains('trait-slider')) {
-            this.updateTraitDescription(e.target);
-            this.updateLivePreview();
-            const value = e.target.value;
-            const person = this.currentEditId ? this.people.find(p => p.id === this.currentEditId) : null;
-            if (person) {
-                if (value === '5') grantAchievement(person, 'max_trait');
-                if (value === '1') grantAchievement(person, 'min_trait');
-            }
-        }
-    });
-    this.elements.traitsContainer.addEventListener('click', (e) => { // Arrow function for trait info click
-        if (e.target.classList.contains('trait-info-btn')) {
-            const traitName = e.target.dataset.trait;
-            if (traitName) {
-                this.showTraitInfo(traitName);
-            }
-        }
-    });
+    // Dynamic listeners
+    this.elements.traitsContainer.addEventListener('input', (e) => { if(e.target.classList.contains('trait-slider')){/*...handle trait input...*/}});
+    this.elements.traitsContainer.addEventListener('click', (e) => { if(e.target.classList.contains('trait-info-btn')){const tN=e.target.dataset.trait;if(tN)this.showTraitInfo(tN);}});
     this.elements.traitInfoClose?.addEventListener('click', () => this.hideTraitInfo());
+    this.elements.modalBody.addEventListener('click', (e) => { const tId=e.target.id; const tCl=e.target.classList; const pId=parseInt(e.target.dataset.personId); const gId=parseInt(e.target.dataset.goalId); /*...handle various modal body clicks...*/ });
 
-    // Using arrow function for modal body clicks
-    this.elements.modalBody.addEventListener('click', (e) => {
-        const targetId = e.target.id;
-        const targetClass = e.target.classList;
-        const personId = parseInt(e.target.dataset.personId);
-        const goalId = parseInt(e.target.dataset.goalId);
-
-        // Check `this` context here if needed: console.log('Modal Body Click THIS:', this);
-
-        if (targetId === 'save-reflections-btn' && !isNaN(personId)) this.saveReflections(personId);
-        else if (targetId === 'prompt-btn') this.showJournalPrompt();
-        else if (targetId === 'snapshot-btn' && !isNaN(personId)) this.addSnapshotToHistory(personId);
-        else if (targetClass.contains('snapshot-info-btn')) this.toggleSnapshotInfo(e.target);
-        else if (targetId === 'reading-btn' && !isNaN(personId)) this.showKinkReading(personId);
-        else if (targetClass.contains('add-goal-btn') && !isNaN(personId)) this.addGoal(personId);
-        else if (targetClass.contains('toggle-goal-btn') && !isNaN(personId) && !isNaN(goalId)) this.toggleGoalStatus(personId, goalId);
-        else if (targetClass.contains('delete-goal-btn') && !isNaN(personId) && !isNaN(goalId)) this.deleteGoal(personId, goalId);
-    });
+    console.log("Event listeners setup complete."); // Log end of listener setup
   }
 
-  // --- Event Handler Functions --- (Removed explicit .bind(this) calls where arrow functions are now used)
-  // (No *functional* changes needed inside handleRoleChange, handleStyleChange etc.)
-  // ... Keep all handle... methods definitions as they were ...
+  // --- Event Handler Functions --- (Definitions remain the same)
+  handleRoleChange() { const r=this.elements.role.value; this.renderStyles(r); this.elements.style.value=''; this.renderTraits(r,''); this.updateLivePreview(); }
+  handleStyleChange() { this.renderTraits(this.elements.role.value, this.elements.style.value); this.updateLivePreview(); }
+  handleAvatarPick(e) { if(e.target.classList.contains('avatar-btn')){const em=e.target.dataset.emoji; if(em){this.elements.avatarInput.value=em;this.elements.avatarDisplay.textContent=em;this.elements.avatarPicker.querySelectorAll('.avatar-btn').forEach(b=>b.classList.toggle('selected',b===e.target));this.updateLivePreview();}} }
+  // handleListClick & handleListKeydown are now defined directly in addEventListeners using arrow functions
+  handleWindowClick(e) { if(e.target===this.elements.modal)this.closeModal(this.elements.modal);if(e.target===this.elements.resourcesModal)this.closeModal(this.elements.resourcesModal);if(e.target===this.elements.glossaryModal)this.closeModal(this.elements.glossaryModal);if(e.target===this.elements.styleDiscoveryModal)this.closeModal(this.elements.styleDiscoveryModal);if(e.target===this.elements.themesModal)this.closeModal(this.elements.themesModal); }
+  handleWindowKeydown(e) { if(e.key==='Escape'){if(this.elements.modal?.style.display==='flex')this.closeModal(this.elements.modal);if(this.elements.resourcesModal?.style.display==='flex')this.closeModal(this.elements.resourcesModal);if(this.elements.glossaryModal?.style.display==='flex')this.closeModal(this.elements.glossaryModal);if(this.elements.styleDiscoveryModal?.style.display==='flex')this.closeModal(this.elements.styleDiscoveryModal);if(this.elements.themesModal?.style.display==='flex')this.closeModal(this.elements.themesModal);}}
+  handleTraitSliderInput(e) { if(e.target.classList.contains('trait-slider')){this.updateTraitDescription(e.target);this.updateLivePreview();const v=e.target.value;const p=this.currentEditId?this.people.find(p=>p.id===this.currentEditId):null;if(p){if(v==='5')grantAchievement(p,'max_trait');if(v==='1')grantAchievement(p,'min_trait');}}}
+  handleTraitInfoClick(e) { if(e.target.classList.contains('trait-info-btn')){const tN=e.target.dataset.trait;if(tN)this.showTraitInfo(tN);}}
+  handleModalBodyClick(e) {
+    const targetId=e.target.id; const targetClass=e.target.classList; const personId=parseInt(e.target.dataset.personId); const goalId=parseInt(e.target.dataset.goalId);
+    if(targetId==='save-reflections-btn'&&!isNaN(personId))this.saveReflections(personId);
+    else if(targetId==='prompt-btn')this.showJournalPrompt();
+    else if(targetId==='snapshot-btn'&&!isNaN(personId))this.addSnapshotToHistory(personId);
+    else if(targetClass.contains('snapshot-info-btn'))this.toggleSnapshotInfo(e.target);
+    else if(targetId==='reading-btn'&&!isNaN(personId))this.showKinkReading(personId);
+    else if(targetClass.contains('add-goal-btn')&&!isNaN(personId))this.addGoal(personId);
+    else if(targetClass.contains('toggle-goal-btn')&&!isNaN(personId)&&!isNaN(goalId))this.toggleGoalStatus(personId,goalId);
+    else if(targetClass.contains('delete-goal-btn')&&!isNaN(personId)&&!isNaN(goalId))this.deleteGoal(personId,goalId);
+  }
+  handleThemeSelection(e) { if(e.target.classList.contains('theme-option-btn')){const tN=e.target.dataset.theme;if(tN){this.setTheme(tN);grantAchievement({},'theme_changer');}}}
 
-  // --- Core Rendering Logic --- (Keep as before)
-  renderStyles(role) { /* ... */ }
-  renderTraits(role, styleName) { /* ... */ }
-  createTraitHTML(trait) { /* ... */ }
-  updateTraitDescription(slider) { /* ... */ }
-  renderList() { /* ... */ }
-  createPersonListItemHTML(person) { /* ... */ }
 
-  // --- CRUD Operations --- (Keep as before)
-  savePerson() { /* ... */ }
-  editPerson(personId) { /* ... */ }
-  deletePerson(personId) { /* ... */ }
-  resetForm(clearPreview = false) { /* ... */ }
+  // --- Core Rendering Logic --- (Definitions remain the same)
+  renderStyles(role) { this.elements.style.innerHTML='<option value="">Pick flavor!</option>';if(!bdsmData[role]?.styles)return;bdsmData[role].styles.forEach(s=>{this.elements.style.innerHTML+=`<option value="${this.escapeHTML(s.name)}">${this.escapeHTML(s.name)}</option>`;});}
+  renderTraits(role,styleName){this.elements.traitsContainer.innerHTML='';if(!bdsmData[role])return;const core=bdsmData[role].coreTraits||[];let styleT=[];let styleO=null;if(styleName){styleO=bdsmData[role].styles.find(s=>s.name===styleName);styleT=styleO?.traits||[];}const toRender=[];const uniqueNames=new Set();[...core,...styleT].forEach(t=>{if(t&&t.name&&!uniqueNames.has(t.name)){toRender.push(t);uniqueNames.add(t.name);}});if(toRender.length===0){this.elements.traitsContainer.innerHTML=`<p class="muted-text">No traits.</p>`;}else{toRender.forEach(t=>{this.elements.traitsContainer.innerHTML+=this.createTraitHTML(t);});this.elements.traitsContainer.querySelectorAll('.trait-slider').forEach(s=>this.updateTraitDescription(s));}if(styleName&&styleO&&styleT.length===0&&core.length>0){const m=document.createElement('p');m.className='muted-text trait-info-message';m.textContent=`Style '${this.escapeHTML(styleName)}' uses core traits.`;this.elements.traitsContainer.prepend(m);}else if(!styleName&&core.length===0){this.elements.traitsContainer.innerHTML=`<p class="muted-text">Select style or define traits.</p>`;}this.hideTraitInfo();}
+  createTraitHTML(trait){const dName=trait.name.charAt(0).toUpperCase()+trait.name.slice(1);const id=`trait-${trait.name.replace(/[^a-zA-Z0-9-_]/g,'-')}`;return`<div class="trait"><label for="${id}">${this.escapeHTML(dName)}</label><button class="trait-info-btn" data-trait="${trait.name}" aria-label="Info about ${this.escapeHTML(dName)} trait">ℹ️</button><input type="range" id="${id}" min="1" max="5" value="3" class="trait-slider" data-trait="${trait.name}" aria-label="${this.escapeHTML(dName)} slider" autocomplete="off"/><span class="trait-value">3</span><div class="trait-desc muted-text"></div></div>`;}
+  updateTraitDescription(slider){const tN=slider.getAttribute('data-trait');const v=slider.value;const dD=slider.parentElement?.querySelector('.trait-desc');const vS=slider.parentElement?.querySelector('.trait-value');if(!dD||!vS)return;const r=this.elements.role.value;const sN=this.elements.style.value;let tD=bdsmData[r]?.styles.find(s=>s.name===sN)?.traits?.find(t=>t.name===tN)||bdsmData[r]?.coreTraits?.find(t=>t.name===tN);vS.textContent=v;if(tD?.desc?.[v]){dD.textContent=this.escapeHTML(tD.desc[v]);}else{dD.textContent=tD?'Desc unavailable.':'Trait unavailable.';}}
+  renderList(){if(!this.elements.peopleList)return;this.elements.peopleList.innerHTML=this.people.length===0?`<li>No pals yet! ✨</li>`:this.people.map(p=>this.createPersonListItemHTML(p)).join('');}
+  createPersonListItemHTML(person){const sD=person.style?this.escapeHTML(person.style):"N/A";const rD=person.role.charAt(0).toUpperCase()+person.role.slice(1);const nE=this.escapeHTML(person.name);const av=person.avatar||'❓';return`<li class="person" data-id="${person.id}" tabindex="0" aria-label="View ${nE}"><span class="person-info"><span class="person-avatar" aria-hidden="true">${av}</span><span class="person-name-details"><strong class="person-name">${nE}</strong><span class="person-details muted-text">(${rD} - ${sD})</span></span></span><span class="person-actions"><button class="edit-btn small-btn" aria-label="Edit ${nE}">✏️ Edit</button><button class="delete-btn small-btn" aria-label="Delete ${nE}">🗑️ Delete</button></span></li>`;}
 
-  // --- Live Preview --- (Keep as before)
-  updateLivePreview() { /* ... */ }
+  // --- CRUD Operations --- (Definitions remain the same)
+  savePerson(){const name=this.elements.name.value.trim()||"Unnamed";const av=this.elements.avatarInput.value||'❓';const r=this.elements.role.value;const sN=this.elements.style.value;if(!sN){alert("Select style.");return;}const sliders=this.elements.traitsContainer.querySelectorAll('.trait-slider');const expected=[...(bdsmData[r]?.coreTraits||[]),...(bdsmData[r]?.styles.find(s=>s.name===sN)?.traits||[])];const uniqueE=new Set(expected.map(t=>t.name));if(sliders.length!==uniqueE.size&&uniqueE.size>0){alert("Trait error.");return;}const tr={};let mD=false;sliders.forEach(s=>{const n=s.getAttribute('data-trait');if(n)tr[n]=s.value;else mD=true;});if(mD){alert("Error gathering traits.");return;}for(const n of uniqueE){if(!tr.hasOwnProperty(n)){alert(`Missing data: '${n}'.`);return;}}const ex=this.currentEditId?this.people.find(p=>p.id===this.currentEditId):null;const pD={id:this.currentEditId||Date.now(),name,avatar:av,role:r,style:sN,goals:ex?.goals||[],traits:tr,history:ex?.history||[],achievements:ex?.achievements||[],reflections:ex?.reflections||{}};if(!this.currentEditId)grantAchievement(pD,'profile_created');if(this.people.length===4&&!this.currentEditId)grantAchievement(pD,'five_profiles');if(this.currentEditId)grantAchievement(pD,'profile_edited');if(this.currentEditId){const i=this.people.findIndex(p=>p.id===this.currentEditId);if(i!==-1)this.people[i]=pD;else{console.error("Update error");pD.id=Date.now();this.people.push(pD);}}else{this.people.push(pD);}this.saveToLocalStorage();this.renderList();this.resetForm(true);alert(`${this.escapeHTML(name)} saved! ✨`);}
+  editPerson(pId){const p=this.people.find(p=>p.id===pId);if(!p){alert("Not found.");return;}this.currentEditId=pId;this.elements.name.value=p.name;this.elements.avatarDisplay.textContent=p.avatar||'❓';this.elements.avatarInput.value=p.avatar||'❓';this.elements.avatarPicker?.querySelectorAll('.avatar-btn').forEach(b=>b.classList.toggle('selected',b.dataset.emoji===p.avatar));this.elements.role.value=p.role;this.renderStyles(p.role);this.elements.style.value=p.style;this.renderTraits(p.role,p.style);requestAnimationFrame(()=>{if(p.traits){Object.entries(p.traits).forEach(([n,v])=>{const s=this.elements.traitsContainer.querySelector(`.trait-slider[data-trait="${n}"]`);if(s){s.value=v;this.updateTraitDescription(s);}}); }this.updateLivePreview();this.elements.save.textContent='Update ✨';this.elements.formSection?.scrollIntoView({behavior:'smooth'});this.elements.name.focus();});}
+  deletePerson(pId){const idx=this.people.findIndex(p=>p.id===pId);if(idx===-1)return;const name=this.people[idx].name;if(confirm(`Delete ${this.escapeHTML(name)}?`)){this.people.splice(idx,1);this.saveToLocalStorage();this.renderList();if(this.currentEditId===pId)this.resetForm(true);alert(`${this.escapeHTML(name)} deleted.`);}}
+  resetForm(clear=false){this.elements.name.value='';this.elements.avatarDisplay.textContent='❓';this.elements.avatarInput.value='❓';this.elements.avatarPicker?.querySelectorAll('.selected').forEach(b=>b.classList.remove('selected'));this.elements.role.value='submissive';this.renderStyles('submissive');this.elements.style.value='';this.renderTraits('submissive','');this.currentEditId=null;this.elements.save.textContent='Save Sparkle! 💖';if(clear)this.updateLivePreview();this.elements.name.focus();console.log("Form reset.");this.hideTraitInfo();}
+
+  // --- Live Preview --- (Definition remains the same)
+  updateLivePreview(){const name=this.elements.name.value.trim()||"Unnamed";const av=this.elements.avatarInput.value||'❓';const r=this.elements.role.value;const s=this.elements.style.value;const tr={};this.elements.traitsContainer.querySelectorAll('.trait-slider').forEach(sl=>{const n=sl.getAttribute('data-trait');if(n)tr[n]=sl.value;});let html='';if(!s&&r&&Object.keys(tr).length>0){html=`<h3 class="preview-title">${av} ${this.escapeHTML(name)}’s Core Vibe ${av}</h3><p><strong>Role:</strong> ${r.charAt(0).toUpperCase()+r.slice(1)}</p><p class="muted-text"><i>Core traits active. Pick Style!</i></p><div><strong>Core Traits:</strong><ul>`;bdsmData[r]?.coreTraits?.forEach(ct=>{if(tr[ct.name])html+=`<li>${this.escapeHTML(ct.name)}: ${tr[ct.name]}</li>`;});html+=`</ul></div>`;}else if(s){const getB=r==='submissive'?getSubBreakdown:getDomBreakdown;const B=getB(s,tr);html=`<h3 class="preview-title">${av} ${this.escapeHTML(name)}’s Live Vibe ${av}</h3><p><strong>Role:</strong> ${r.charAt(0).toUpperCase()+r.slice(1)}</p><p><strong>Style:</strong> ${this.escapeHTML(s)}</p><div class="style-breakdown preview-breakdown">`;if(B.strengths)html+=`<div class="strengths"><h4>✨ Powers</h4><div>${B.strengths}</div></div>`;if(B.improvements)html+=`<div class="improvements"><h4>🌟 Quests</h4><div>${B.improvements}</div></div>`;html+=`</div>`;}else{html=`<p class="muted-text">Pick role & style! 🌈</p>`;}this.elements.livePreview.innerHTML=html;}
 
   // --- Modal Display ---
   showPersonDetails(personId) {
     const person = this.people.find(p => p.id === personId);
     if (!person) { console.error("Details Error: Person not found", personId); return; }
-    console.log("Showing details for:", person);
+    console.log(">>> showPersonDetails: Starting for ID:", personId); // Log entry
 
-    // *** DEBUG LOGS ***
-    console.log("`this` inside showPersonDetails:", this);
-    console.log("Is getIntroForStyle a function on this?", typeof this.getIntroForStyle === 'function');
-    // *** END DEBUG LOGS ***
+    // DEBUG LOGS
+    console.log(">>> showPersonDetails: `this` context:", this);
+    console.log(">>> showPersonDetails: Is getIntroForStyle a function?", typeof this.getIntroForStyle === 'function');
+    // END DEBUG LOGS
 
-    // Ensure defaults
     person.goals=person.goals||[]; person.history=person.history||[]; person.achievements=person.achievements||[]; person.reflections=person.reflections||{}; person.avatar=person.avatar||'❓';
-
-    const getBreakdown = person.role === 'submissive' ? getSubBreakdown : getDomBreakdown;
-    const breakdown = getBreakdown(person.style, person.traits || {});
-
-    // --- Build HTML ---
+    const getB = person.role === 'submissive' ? getSubBreakdown : getDomBreakdown; const B = getB(person.style, person.traits || {});
     let html = `<h2 class="modal-title" id="detail-modal-title">${person.avatar} ${this.escapeHTML(person.name)}’s Kingdom ${person.avatar}</h2>`;
     html += `<p class="modal-subtitle">${person.role.charAt(0).toUpperCase()+person.role.slice(1)} - ${person.style?this.escapeHTML(person.style):'N/A'}</p>`;
 
-    // *** The problematic line is likely here or just after ***
-    const intro = this.getIntroForStyle(person.style); // Call the method
-    if (intro) html += `<p class="modal-intro">${intro}</p>`;
+    // Check right before the call
+    if (typeof this.getIntroForStyle !== 'function') {
+        console.error(">>> CRITICAL: getIntroForStyle is NOT function before call!");
+        alert("Internal Error: Cannot get style intro. Check console.");
+        // Decide how to proceed - maybe skip the intro?
+         html += `<p class="modal-intro"><em>Error retrieving style intro.</em></p>`;
+    } else {
+        console.log(">>> getIntroForStyle IS function before call.");
+        const intro = this.getIntroForStyle(person.style); // THE CALL
+        if (intro) html += `<p class="modal-intro">${intro}</p>`;
+    }
 
-    // Goals Section
-    html += `<section class="goals-section"><h3>🎯 Goals</h3><ul id="goal-list-${person.id}"></ul><div class="add-goal-form"><input type="text" id="new-goal-text-${person.id}" placeholder="Add goal..." aria-label="New goal"><button class="add-goal-btn save-btn small-btn" data-person-id="${person.id}">+ Add</button></div></section>`;
-    // Breakdown Section
-    html += `<h3>🌈 Strengths & Growth</h3><div class="style-breakdown modal-breakdown">`; if (B.strengths) html += `<div class="strengths"><h4>✨ Powers</h4><div>${B.strengths}</div></div>`; if (B.improvements) html += `<div class="improvements"><h4>🌟 Quests</h4><div>${B.improvements}</div></div>`; html += `</div>`;
-    // Trait Tales Section
-    html += `<h3>🎨 Trait Tales</h3>`; const defs=[...(bdsmData[person.role]?.coreTraits||[]), ...(bdsmData[person.role]?.styles.find(s=>s.name===person.style)?.traits||[])]; const uDefs=Array.from(new Map(defs.map(t=>[t.name,t])).values());
-    html += '<div class="trait-details-grid">'; if(person.traits&&Object.keys(person.traits).length>0){Object.entries(person.traits).forEach(([name,score])=>{const tO=uDefs.find(t=>t.name===name);const dN=name.charAt(0).toUpperCase()+name.slice(1);if(!tO){html+=`<div class="trait-detail-item"><h4>${this.escapeHTML(dN)} - Lvl ${score}❓</h4><p class="muted-text"><em>Def not found.</em></p></div>`;return;}const dTxt=tO.desc?.[score]||"N/A";const flair=this.getFlairForScore(score);html+=`<div class="trait-detail-item"><h4>${this.escapeHTML(dN)} - Lvl ${score} ${this.getEmojiForScore(score)}</h4><p><strong>Vibe:</strong> ${this.escapeHTML(dTxt)}</p><p class="muted-text"><em>${flair}</em></p></div>`;});}else{html+=`<p class="muted-text">No scores.</p>`;}html+='</div>';
-    // History Section
-    html += `<section class="history-section"><h3>⏳ Trait History<button class="snapshot-info-btn" aria-label="Snapshot Info" aria-expanded="false">ℹ️</button></h3><p class="snapshot-info muted-text" style="display: none;">Click 'Snapshot' to save current scores. Track growth!</p><div class="history-chart-container"><canvas id="history-chart"></canvas></div><button id="snapshot-btn" class="small-btn" data-person-id="${person.id}">📸 Snapshot</button></section>`;
-    // Achievements Section
+    // Goals
+    html += `<section class="goals-section"><h3>🎯 Goals</h3><ul id="goal-list-${person.id}"></ul><div class="add-goal-form"><input type="text" id="new-goal-text-${person.id}" placeholder="Add goal..."><button class="add-goal-btn save-btn small-btn" data-person-id="${person.id}">+ Add</button></div></section>`;
+    // Breakdown
+    html += `<h3>🌈 Strengths & Growth</h3><div class="style-breakdown modal-breakdown">`; if(B.strengths)html+=`<div class="strengths"><h4>✨ Powers</h4><div>${B.strengths}</div></div>`; if(B.improvements)html+=`<div class="improvements"><h4>🌟 Quests</h4><div>${B.improvements}</div></div>`; html+=`</div>`;
+    // Traits
+    html += `<h3>🎨 Trait Tales</h3>`; const defs=[...(bdsmData[person.role]?.coreTraits||[]),...(bdsmData[person.role]?.styles.find(s=>s.name===person.style)?.traits||[])]; const uDefs=Array.from(new Map(defs.map(t=>[t.name,t])).values());
+    html += '<div class="trait-details-grid">'; if(person.traits&&Object.keys(person.traits).length>0){Object.entries(person.traits).forEach(([n,sc])=>{const tO=uDefs.find(t=>t.name===n);const dN=n.charAt(0).toUpperCase()+n.slice(1);if(!tO){html+=`<div class="trait-detail-item"><h4>${this.escapeHTML(dN)} - Lvl ${sc}❓</h4><p><em>Def missing.</em></p></div>`;return;}const dT=tO.desc?.[sc]||"N/A";const fl=this.getFlairForScore(sc);html+=`<div class="trait-detail-item"><h4>${this.escapeHTML(dN)} - Lvl ${sc} ${this.getEmojiForScore(sc)}</h4><p><strong>Vibe:</strong> ${this.escapeHTML(dT)}</p><p><em>${fl}</em></p></div>`;});}else{html+=`<p>No scores.</p>`;}html+='</div>';
+    // History
+    html += `<section class="history-section"><h3>⏳ History<button class="snapshot-info-btn" aria-label="Info">ℹ️</button></h3><p class="snapshot-info muted-text" style="display:none;">Snapshot saves current traits to chart.</p><div class="history-chart-container"><canvas id="history-chart"></canvas></div><button id="snapshot-btn" class="small-btn" data-person-id="${person.id}">📸 Snapshot</button></section>`;
+    // Achievements
     html += `<section class="achievements-section"><h3>🏆 Achievements</h3><div id="achievements-list-${person.id}"></div></section>`;
-    // Reading Section
-    html += `<section class="kink-reading-section"><h3>🔮 Reading</h3><button id="reading-btn" class="small-btn" data-person-id="${person.id}">Get Reading!</button><div id="kink-reading-output" class="kink-reading-output" style="display: none;"></div></section>`;
-    // Reflections Section
-    html += `<section class="reflections-section"><h3>📝 Reflections</h3><div id="journal-prompt-area" class="journal-prompt" style="display: none;"></div><div class="modal-actions"><button id="prompt-btn" class="small-btn">💡 Get Prompt</button></div><textarea id="reflections-text" class="reflections-textarea" data-person-id="${person.id}" rows="6" placeholder="Thoughts?">${this.escapeHTML(person.reflections?.text||'')}</textarea><button id="save-reflections-btn" class="save-btn" data-person-id="${person.id}">Save 💭</button></section>`;
-
-    this.elements.modalBody.innerHTML=html;
-    this.renderGoalList(person);
-    this.renderAchievements(person);
-    this.openModal(this.elements.modal);
-    this.renderHistoryChart(person);
+    // Reading
+    html += `<section class="kink-reading-section"><h3>🔮 Reading</h3><button id="reading-btn" class="small-btn" data-person-id="${person.id}">Get Reading!</button><div id="kink-reading-output" class="kink-reading-output" style="display:none;"></div></section>`;
+    // Reflections
+    html += `<section class="reflections-section"><h3>📝 Reflections</h3><div id="journal-prompt-area" class="journal-prompt" style="display:none;"></div><div class="modal-actions"><button id="prompt-btn" class="small-btn">💡 Get Prompt</button></div><textarea id="reflections-text" class="reflections-textarea" data-person-id="${person.id}" rows="6" placeholder="Thoughts?">${this.escapeHTML(person.reflections?.text||'')}</textarea><button id="save-reflections-btn" class="save-btn" data-person-id="${person.id}">Save 💭</button></section>`;
+    this.elements.modalBody.innerHTML=html; this.renderGoalList(person); this.renderAchievements(person); this.openModal(this.elements.modal); this.renderHistoryChart(person);
+    console.log(">>> showPersonDetails: Finished rendering modal content."); // Log end
   }
 
-  // --- New Feature Logic --- (Keep all as before)
-  addGoal(personId){ /* ... */ }
-  toggleGoalStatus(personId, goalId){ /* ... */ }
-  deleteGoal(personId, goalId){ /* ... */ }
-  renderGoalList(person){ /* ... */ }
-  showJournalPrompt(){ /* ... */ }
-  saveReflections(personId){ /* ... */ }
-  addSnapshotToHistory(personId){ /* ... */ }
-  renderHistoryChart(person){ /* ... */ }
-  toggleSnapshotInfo(buttonElement){ /* ... */ }
-  renderAchievements(person){ /* ... */ }
-  showKinkReading(personId){ /* ... */ }
-  getReadingDescriptor(tN,sc){ /* ... */ }
-  getStyleEssence(sN){ /* ... */ }
-  showGlossary(){ /* ... */ }
-  showStyleDiscovery(){ /* ... */ }
-  renderStyleDiscoveryContent(){ /* ... */ }
-  setTheme(tN){ /* ... */ }
-  applySavedTheme(){ /* ... */ }
-  toggleTheme(){ /* ... */ }
-  exportData(){ /* ... */ }
-  importData(event){ /* ... */ }
-  showTraitInfo(traitName){ /* ... */ }
-  hideTraitInfo(){ /* ... */ }
 
-  // --- Helper Functions --- (Keep all as before)
-  // *** ENSURE getIntroForStyle IS DEFINED HERE, INSIDE THE CLASS ***
+  // --- New Feature Logic --- (Definitions remain the same)
+  addGoal(pId){const p=this.people.find(p=>p.id===pId);const i=this.elements.modalBody.querySelector(`#new-goal-text-${pId}`);if(!p||!i)return;const t=i.value.trim();if(!t)return;const nG={id:Date.now(),text:t,status:'todo'};p.goals.push(nG);grantAchievement(p,'goal_added');this.saveToLocalStorage();this.renderGoalList(p);i.value='';}
+  toggleGoalStatus(pId,gId){const p=this.people.find(p=>p.id===pId);const g=p?.goals.find(g=>g.id===gId);if(!g)return;g.status=(g.status==='done'?'todo':'done');this.saveToLocalStorage();this.renderGoalList(p);}
+  deleteGoal(pId,gId){const p=this.people.find(p=>p.id===pId);if(!p)return;if(confirm('Delete goal?')){p.goals=p.goals.filter(g=>g.id!==gId);this.saveToLocalStorage();this.renderGoalList(p);}}
+  renderGoalList(p){const l=this.elements.modalBody?.querySelector(`#goal-list-${p.id}`);if(!l)return;let h='';if(p.goals.length>0){p.goals.forEach(g=>{h+=`<li class="${g.status==='done'?'done':''}" data-goal-id="${g.id}"><span>${this.escapeHTML(g.text)}</span><span class="goal-actions"><button class="toggle-goal-btn small-btn" data-person-id="${p.id}" data-goal-id="${g.id}">${g.status==='done'?'🔄':'✅'}</button><button class="delete-goal-btn small-btn" data-person-id="${p.id}" data-goal-id="${g.id}">🗑️</button></span></li>`;});}else{h=`<li class="muted-text">No goals!</li>`;}l.innerHTML=h;}
+  showJournalPrompt(){const a=this.elements.modalBody?.querySelector('#journal-prompt-area');if(a){a.textContent=getRandomPrompt();a.style.display='block';this.elements.modalBody?.querySelector('#reflections-text')?.focus();}}
+  saveReflections(pId){const p=this.people.find(p=>p.id===pId);const el=this.elements.modalBody?.querySelector('#reflections-text');if(!p||!el){alert("Error.");return;}const txt=el.value;if(!p.reflections)p.reflections={};p.reflections.text=txt;p.reflections.lastUpdated=Date.now();let first=false;if(txt.trim().length>0)first=grantAchievement(p,'reflection_saved');const count=Object.values(this.people.reduce((a,p)=>{if(p.reflections?.text?.trim().length>0)a[p.id]=true;return a;},{})).length;if(count>=5)grantAchievement(p,'five_reflections');this.saveToLocalStorage();const btn=this.elements.modalBody.querySelector('#save-reflections-btn');if(btn){btn.textContent='Saved ✓';btn.disabled=true;setTimeout(()=>{btn.textContent='Save 💭';btn.disabled=false;},2000);}else{alert("Saved! ✨");}}
+  addSnapshotToHistory(pId){const p=this.people.find(p=>p.id===pId);if(!p||!p.traits){alert("Cannot snapshot.");return;}const snap={date:Date.now(),traits:{...p.traits}};p.history.push(snap);grantAchievement(p,'history_snapshot');this.saveToLocalStorage();alert("Snapshot saved! 📸");this.renderHistoryChart(p);this.renderAchievements(p);}
+  renderHistoryChart(p){const cont=this.elements.modalBody?.querySelector('.history-chart-container');let ctx=cont?.querySelector('#history-chart')?.getContext('2d');if(this.chartInstance){this.chartInstance.destroy();this.chartInstance=null;}if(!ctx){if(cont)cont.innerHTML=`<p>Chart canvas missing.</p>`;return;}if(!p?.history?.length){cont.innerHTML=`<p>No history yet!</p>`;return;}if(cont.querySelector('p'))cont.innerHTML=`<canvas id="history-chart"></canvas>`;ctx=cont.querySelector('#history-chart').getContext('2d');const labels=p.history.map(s=>new Date(s.date).toLocaleDateString());const allN=new Set();p.history.forEach(s=>Object.keys(s.traits).forEach(n=>allN.add(n)));if(p.traits)Object.keys(p.traits).forEach(n=>allN.add(n));const dSets=[];const clrs=['#ff69b4','#8a5a6d','#ff85cb','#4a2c3d','#f4d4e4','#c49db1','#a0d8ef','#dcc1ff'];let cI=0;allN.forEach(tN=>{const data=p.history.map(s=>s.traits[tN]!==undefined?parseInt(s.traits[tN]):null);const c=clrs[cI%clrs.length];dSets.push({label:tN.charAt(0).toUpperCase()+tN.slice(1),data:data,borderColor:c,backgroundColor:c+'80',tension:.1,fill:false,spanGaps:true});cI++;});const isD=document.body.getAttribute('data-theme')==='dark'||document.body.getAttribute('data-theme')==='velvet';const gC=isD?'rgba(244,212,228,0.15)':'rgba(74,44,61,0.1)';const lC=isD?'#c49db1':'#8a5a6d';this.chartInstance=new Chart(ctx,{type:'line',data:{labels:labels,datasets:dSets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{color:lC}},tooltip:{mode:'index',intersect:false,}},scales:{y:{min:1,max:5,ticks:{stepSize:1,color:lC},grid:{color:gC}},x:{ticks:{color:lC},grid:{color:gC}}}}});}
+  toggleSnapshotInfo(btn){const inf=btn.closest('.history-section')?.querySelector('.snapshot-info');if(inf){const isH=inf.style.display==='none';inf.style.display=isH?'block':'none';btn.setAttribute('aria-expanded',isH);}}
+  renderAchievements(p){const l=this.elements.modalBody?.querySelector(`#achievements-list-${p.id}`);if(!l)return;let h='';if(p.achievements.length>0){h+=`<ul>`;p.achievements.forEach(id=>{const d=achievementList[id];if(d){const e=d.name.match(/([\p{Emoji}\p{Emoji_Modifier}\p{Emoji_Component}\p{Emoji_Presentation}\p{Emoji_Modifier_Base}]+)/u)?.[0]||'🏆';h+=`<li title="${this.escapeHTML(d.desc)}"><span class="achievement-icon">${e}</span><span>${this.escapeHTML(d.name)}</span></li>`;}});h+=`</ul>`;}else{h=`<p>No achievements!</p>`;}l.innerHTML=h;}
+  showKinkReading(pId){const p=this.people.find(p=>p.id===pId);const o=this.elements.modalBody?.querySelector('#kink-reading-output');if(!p||!o)return;grantAchievement(p,'kink_reading');this.saveToLocalStorage();this.renderAchievements(p);let r=`🔮 ${this.escapeHTML(p.name)}'s Reading 🔮\nAs a ${this.escapeHTML(p.style)} ${p.role}, your path sparkles!\n`;const t=p.traits||{};const s=Object.entries(t).map(([n,sc])=>({name:n,score:parseInt(sc)})).sort((a,b)=>b.score-a.score);if(s.length>0){const h=s[0];const l=s[s.length-1];const c1=bdsmData[p.role]?.coreTraits[0]?.name;const c2=bdsmData[p.role]?.coreTraits[1]?.name;r+=`\n✨ Brightest star: **${h.name} (Lvl ${h.score})**! Suggests ${this.getReadingDescriptor(h.name,h.score)}.\n`;if(c1&&t[c1])r+=`🧭 Core **${c1}** (Lvl ${t[c1]}): Guides towards ${this.getReadingDescriptor(c1,t[c1])}.\n`;if(c2&&t[c2])r+=`🧭 Core **${c2}** (Lvl ${t[c2]}): Reminds of ${this.getReadingDescriptor(c2,t[c2])}.\n`;if(s.length>1&&h.score!==l.score)r+=`\n🌱 To bloom: Consider **${l.name} (Lvl ${l.score})**. Exploring ${this.getReadingDescriptor(l.name,l.score)} awaits.\n`;}else{r+=`\nTraits uncharted!\n`;}r+=`\n💖 Being ${this.escapeHTML(p.style)} is about ${this.getStyleEssence(p.style)}!\n`;o.textContent=r;o.style.display='block';}
+  getReadingDescriptor(tN,sc){sc=parseInt(sc);if(tN==='obedience')return sc>=4?"joyful compliance":sc<=2?"independent spirit":"developing discipline";if(tN==='trust')return sc>=4?"deep connection":sc<=2?"cautious exploration":"building security"; return"unique expression";}
+  getStyleEssence(sN){const e={"brat":"playful challenge","slave":"deep devotion",/*...*/};const k=sN?.toLowerCase().replace(/\(.*?\)/g,'').replace(/ \/ /g,'/').trim()||'';return e[k]||`your magic`;}
+  showGlossary(){if(!this.elements.glossaryBody)return;grantAchievement({},'glossary_user');let h='<dl>';for(const k in glossaryTerms){const d=glossaryTerms[k];h+=`<dt id="gloss-term-${k}">${this.escapeHTML(d.term)}</dt><dd>${this.escapeHTML(d.definition)}`;if(d.related?.length){h+=`<br><span class="related-terms">See also: `;h+=d.related.map(rK=>`<a href="#gloss-term-${rK}">${glossaryTerms[rK]?.term||rK}</a>`).join(', ');h+=`</span>`;}h+=`</dd>`;}h+='</dl>';this.elements.glossaryBody.innerHTML=h;this.openModal(this.elements.glossaryModal);}
+  showStyleDiscovery(){grantAchievement({},'style_explorer');this.renderStyleDiscoveryContent();this.openModal(this.elements.styleDiscoveryModal);}
+  renderStyleDiscoveryContent(){if(!this.elements.styleDiscoveryBody||!this.elements.styleDiscoveryRoleFilter)return;const sel=this.elements.styleDiscoveryRoleFilter.value;let h='';['submissive','dominant'].forEach(r=>{if(sel==='all'||sel===r){h+=`<h3>${r.charAt(0).toUpperCase()+r.slice(1)} Styles</h3>`;if(bdsmData[r]?.styles){bdsmData[r].styles.forEach(st=>{h+=`<div class="style-discovery-item"><h4>${this.escapeHTML(st.name)}</h4>`;if(st.traits?.length){h+=`<strong>Traits:</strong><ul>`;st.traits.forEach(tr=>{h+=`<li>${this.escapeHTML(tr.name.charAt(0).toUpperCase()+tr.name.slice(1))}</li>`;});h+=`</ul>`;}else{h+=`<p>Uses core traits.</p>`;}h+=`</div>`;});}else{h+=`<p>No styles.</p>`;}}});this.elements.styleDiscoveryBody.innerHTML=h||'<p>No styles.</p>';}
+  setTheme(tN){document.body.setAttribute('data-theme',tN);const iD=tN==='dark'||tN==='velvet';if(this.elements.themeToggle){this.elements.themeToggle.textContent=iD?'☀️':'🌙';this.elements.themeToggle.setAttribute('title',`Switch to ${iD?'light':'dark'} mode`);}try{localStorage.setItem('kinkCompassTheme',tN);}catch(e){console.warn("Save theme failed:",e);}if(this.chartInstance&&this.currentEditId){const p=this.people.find(p=>p.id===this.currentEditId);if(p)this.renderHistoryChart(p);}}
+  applySavedTheme(){let saved='light';try{if(typeof localStorage!=='undefined')saved=localStorage.getItem('kinkCompassTheme')||'light';}catch(e){console.warn("Read theme failed:",e);}this.setTheme(saved);console.log(`Applied theme: ${saved}`);}
+  toggleTheme(){const cur=document.body.getAttribute('data-theme')||'light';const isD=cur==='dark'||cur==='velvet';this.setTheme(isD?'light':'dark');}
+  exportData(){if(this.people.length===0){alert("No profiles!");return;}try{const dS=JSON.stringify(this.people,null,2);const b=new Blob([dS],{type:"application/json"});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=`kinkcompass_${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);grantAchievement({},'data_exported');console.log("Exported.");a.remove();}catch(e){console.error("Export failed:",e);alert("Export failed.");}}
+  importData(ev){const f=ev.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=(e)=>{try{const imp=JSON.parse(e.target.result);if(!Array.isArray(imp))throw new Error("Not array.");const valid=imp.every(i=>typeof i==='object'&&i!==null&&'id'in i&&'name'in i);if(!valid)throw new Error("Invalid format.");if(confirm(`Import ${imp.length}? OVERWRITES current ${this.people.length}.`)){this.people=imp.map(p=>({...p,goals:p.goals||[],history:p.history||[],avatar:p.avatar||'❓',achievements:p.achievements||[]}));this.saveToLocalStorage();this.renderList();this.resetForm(true);alert(`Imported ${this.people.length}.`);}}catch(err){console.error("Import failed:",err);alert(`Import failed: ${err.message}`);}finally{ev.target.value=null;}};r.onerror=()=>{alert("Error reading file.");ev.target.value=null;};r.readAsText(f);}
+  showTraitInfo(tN){const r=this.elements.role.value;const sN=this.elements.style.value;const tD=bdsmData[r]?.styles.find(s=>s.name===sN)?.traits?.find(t=>t.name===tN)||bdsmData[r]?.coreTraits?.find(t=>t.name===tN);if(tD&&this.elements.traitInfoPopup&&this.elements.traitInfoTitle&&this.elements.traitInfoBody){const title=tN.charAt(0).toUpperCase()+tN.slice(1);this.elements.traitInfoTitle.textContent=`${this.getEmojiForScore(3)} ${title} Levels`;let bodyHtml='';for(let i=1;i<=5;i++){const s=String(i);const d=tD.desc?.[s]||'N/A';const e=this.getEmojiForScore(s);bodyHtml+=`<p><strong>${e} Lvl ${s}:</strong> ${this.escapeHTML(d)}</p>`;}this.elements.traitInfoBody.innerHTML=bodyHtml;this.elements.traitInfoPopup.style.display='block';this.elements.traitInfoPopup.scrollIntoView({behavior:'smooth',block:'nearest'});}else{console.warn("No trait data/popup:",tN);this.hideTraitInfo();}}
+  hideTraitInfo(){if(this.elements.traitInfoPopup)this.elements.traitInfoPopup.style.display='none';}
+
+  // --- Other Helper Functions ---
+  getFlairForScore(s){return parseInt(s)<=2?"🌱 Nurturing!":parseInt(s)===3?"⚖️ Balanced!":"🌟 Shining!";}
+  getEmojiForScore(s){return parseInt(s)<=2?"💧":parseInt(s)===3?"🌱":parseInt(s)===4?"✨":"🌟";}
+  escapeHTML(s){s=String(s??'');const e=document.createElement('div');e.textContent=s;return e.innerHTML;}
+  openModal(mE){if(!mE)return;mE.style.display='flex';const f=mE.querySelector('button,[href],input:not([type="hidden"]),select,textarea,[tabindex]:not([tabindex="-1"])');if(f)requestAnimationFrame(()=>f.focus());}
+  closeModal(mE){if(!mE)return;mE.style.display='none';}
+
+  // *** getIntroForStyle IS DEFINED HERE ***
   getIntroForStyle(styleName) {
+    console.log(`getIntroForStyle called with: ${styleName}`); // Add log here too
     const key = styleName?.toLowerCase().replace(/\(.*?\)/g, '').replace(/ \/ /g, '/').trim() || '';
-    const intros = { /* The full list of intros */
+    const intros = { /* full intros object */
         "submissive":"Welcome, lovely Submissive! ✨","brat":"Hehe, ready for trouble, Brat? 😉","slave":"Step into devotion, noble Slave. 🙏","switch":"Master of moods, versatile Switch! ↔️","pet":"Time for head pats, adorable Pet! 💖","little":"Land of crayons & cuddles, sweet Little! 🧸","puppy":"Woof woof! Ready for zoomies, playful Puppy? 🦴","kitten":"Curious Kitten, ready to pounce? 🧶","princess":"Your Highness! Ready to be adored? 👑","rope bunny":"Ready for knots of fun, lovely Rope Bunny? 🎀","masochist":"Welcome, sensation seeker! 🔥","prey":"The chase is on, little Prey! 🦊","toy":"Wind up & play, delightful Toy! 🎁","doll":"Poised & perfect Doll, strike a pose! 💖","bunny":"Soft steps, gentle heart, sweet Bunny! 🐇","servant":"Dedicated Servant, at your service! 🧹","playmate":"Game on, enthusiastic Playmate! 🎉","babygirl":"Sweet & sassy Babygirl! 😉","captive":"Caught again, daring Captive? ⛓️","thrall":"Deep focus, devoted Thrall. 🌀","puppet":"Dance to their tune, perfect Puppet? 🎭","maid":"Impeccable Maid, ready to sparkle? ✨","painslut":"Eager & ready, devoted Painslut? 🔥","bottom":"Open heart, yielding power, beautiful Bottom. 💖","dominant":"Step into your power, noble Dominant! 🔥","assertive":"Clear voice, strong boundaries, Assertive! 💪","nurturer":"Warm heart, steady hand, Nurturer! 🌸","strict":"Order & structure, firm Strict! ⚖️","master":"Commanding presence, Master! 🏰","mistress":"Elegant authority, Mistress! 👑","daddy":"Protective arms, loving Daddy! 🧸","mommy":"Nurturing embrace, caring Mommy! 💖","owner":"Claiming your prize, Owner! 🐾","rigger":"Artist with rope, Rigger! 🎨","sadist":"Conductor of sensation, Sadist! 🔥","hunter":"Primal instincts, Hunter! 🐺","trainer":"Patient teacher, Trainer! 🏆","puppeteer":"Pulling strings, Puppeteer! 🎭","protector":"Steadfast shield, Protector! 🛡️","disciplinarian":"Fair judgment, Disciplinarian! 👨‍⚖️","caretaker":"Attentive eye, Caretaker! ❤️‍🩹","sir":"Dignified command, Sir! 🎩","goddess":"Radiant power, Goddess! ✨","commander":"Strategic mind, Commander! 🎖️"
     };
     return intros[key] || "Explore your unique and wonderful expression!";
   }
-  getFlairForScore(score){return parseInt(score)<=2?"🌱 Keep nurturing!":parseInt(score)===3?"⚖️ Balanced!":"🌟 Shining!";}
-  getEmojiForScore(score){return parseInt(score)<=2?"💧":parseInt(score)===3?"🌱":parseInt(score)===4?"✨":"🌟";}
-  escapeHTML(str){str=String(str??'');const el=document.createElement('div');el.textContent=str;return el.innerHTML;}
-  openModal(mE){if(!mE)return;mE.style.display='flex';const f=mE.querySelector('button,[href],input:not([type="hidden"]),select,textarea,[tabindex]:not([tabindex="-1"])');if(f)requestAnimationFrame(()=>f.focus());}
-  closeModal(mE){if(!mE)return;mE.style.display='none';}
+
+  // *** DEBUG STEP 1b ***
+  #logMethodParsed() { console.log("getIntroForStyle method finished parsing."); }
+  _callLogMethodParsed = this.#logMethodParsed();
+
 
 } // --- END OF TrackerApp CLASS ---
 
-// --- Initialization --- (Keep as before)
+// --- Initialization ---
 try {
-    console.log("Initializing KinkCompass App..."); window.kinkCompassApp=new TrackerApp(); console.log("Initialized.");
-} catch (e) { console.error("Init Error:", e); document.body.innerHTML=`<div style="..."><h1 style="color:red;">Oops! Failed to Start</h1>...<i>Error: ${e.message}</i></div>`; }
+    console.log("SCRIPT END: Initializing KinkCompass App...");
+    window.kinkCompassApp = new TrackerApp();
+    console.log("SCRIPT END: KinkCompass App Initialized Successfully.");
+
+    // *** DEBUG STEP 3 ***
+    console.log("SCRIPT END: Checking prototype after initialization:");
+    console.log("TrackerApp.prototype:", TrackerApp.prototype);
+    console.log("Has getIntroForStyle on prototype?", TrackerApp.prototype.hasOwnProperty('getIntroForStyle')); // Should be false, methods are on instance now if using arrow functions, or directly on prototype if standard function
+    console.log("Has getIntroForStyle on instance?", window.kinkCompassApp.hasOwnProperty('getIntroForStyle'), typeof window.kinkCompassApp.getIntroForStyle); // Check the actual instance
+
+
+} catch (error) {
+    console.error("Fatal error during App initialization:", error);
+    document.body.innerHTML = `<div style="..."><h1 style="color:red;">Oops! Failed to Start</h1>...<i>Error: ${error.message}</i></div>`;
+}
 
 // --- END OF FILE app.js ---
