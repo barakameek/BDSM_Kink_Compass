@@ -5,29 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KinkCompass</title>
   <link rel="stylesheet" href="styles.css" />
+  <!-- Optional Favicon -->
   <!-- <link rel="icon" href="favicon.ico" type="image/x-icon"> -->
 </head>
 <body>
   <header>
     <h1>🌸 KinkCompass 🌸</h1>
     <nav class="header-nav">
+        {/* ADD ID HERE */}
         <button id="resources-btn" class="header-btn" title="Helpful Resources">📚 Resources</button>
         <button id="theme-toggle" class="header-btn theme-btn" title="Toggle light/dark mode">🌙</button>
     </nav>
   </header>
 
   <main class="container">
-    <!-- Ensure this ID matches the one used in app.js -->
+    {/* ADD ID HERE */}
     <section id="form-section" class="form-section card">
       <h2>✨ Craft Your Kinky Persona ✨</h2>
       <div class="field-group">
         <label for="name">Name (or Alias)</label>
-        <!-- Added autocomplete="name" and ensured 'for' matches 'id' -->
         <input type="text" id="name" placeholder="Who are you, cutie?" autocomplete="name" />
       </div>
       <div class="field-group">
         <label for="role">Role</label>
-        <!-- Added autocomplete="off" and ensured 'for' matches 'id' -->
         <select id="role" autocomplete="off">
           <option value="dominant">Dominant</option>
           <option value="submissive" selected>Submissive</option>
@@ -35,7 +35,6 @@
       </div>
       <div class="field-group">
         <label for="style">Style</label>
-        <!-- Added autocomplete="off" and ensured 'for' matches 'id' -->
         <select id="style" autocomplete="off">
           <option value="">Pick your flavor!</option>
           <!-- Options populated by JS -->
@@ -43,7 +42,7 @@
       </div>
        <div class="field-group">
         <label for="goals">Current Goals</label>
-        <!-- Added autocomplete="off" and ensured 'for' matches 'id' -->
+        {/* ADD ID HERE */}
         <textarea id="goals" rows="3" placeholder="What are you working towards? (e.g., 'Improve communication', 'Explore rope more')" autocomplete="off"></textarea>
       </div>
       <div id="traits-container">
@@ -52,6 +51,7 @@
       </div>
       <div class="form-actions">
           <button id="save" class="save-btn">Save Your Sparkle! 💖</button>
+          {/* ADD ID HERE */}
           <button id="clear-form" class="clear-btn">Clear Form 🧹</button>
       </div>
     </section>
@@ -81,8 +81,10 @@
   </div>
 
   <!-- Resources Modal -->
+  {/* ADD ID HERE */}
   <div class="modal" id="resources-modal" style="display:none;" role="dialog" aria-labelledby="resources-modal-title" aria-modal="true">
       <div class="modal-content card">
+          {/* ADD ID HERE */}
           <button class="modal-close" id="resources-close" aria-label="Close resources modal">×</button>
           <h2 id="resources-modal-title">📚 Helpful Kink Resources</h2>
           <p>Remember to always do your own research and prioritize safety, communication, and consent!</p>
