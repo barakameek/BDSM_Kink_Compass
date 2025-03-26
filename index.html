@@ -1,192 +1,72 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="light">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KinkCompass</title>
-  <link rel="stylesheet" href="styles.css" />
-  <!-- Chart.js CDN (requires internet) -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-  <header>
-    <h1>🌸 KinkCompass 🌸</h1>
-    <nav class="header-nav">
-        <!-- Header Buttons -->
-        <button id="style-discovery-btn" class="header-btn" title="Explore All Styles">🧭 Explore</button>
-        <button id="glossary-btn" class="header-btn" title="Kink Glossary">📚 Glossary</button>
-        <button id="resources-btn" class="header-btn" title="Helpful Resources">🔗 Resources</button>
-        <button id="themes-btn" class="header-btn" title="Change Theme">🎨 Themes</button>
-        <button id="export-btn" class="header-btn" title="Export Data">💾 Export</button>
-        <button id="import-btn" class="header-btn" title="Import Data">📁 Import</button>
-        <input type="file" id="import-file-input" accept=".json" style="display: none;" /> <!-- Hidden file input -->
-        <button id="theme-toggle" class="header-btn theme-btn" title="Toggle light/dark mode">🌙</button>
-    </nav>
-  </header>
-
-  <main class="container">
-    <section id="form-section" class="form-section card">
-      <h2>✨ Your Kinky Persona ✨</h2>
-      <!-- Avatar Picker -->
-      <div class="field-group avatar-group">
-        <fieldset class="avatar-picker-fieldset">
-            <legend>Avatar:</legend>
-            <div class="avatar-picker">
-                <span id="avatar-display" aria-hidden="true">❓</span>
-                <input type="hidden" id="avatar-input" value="❓">
-                <button class="avatar-btn" data-emoji="🎀" aria-label="Select Ribbon Avatar">🎀</button>
-                <button class="avatar-btn" data-emoji="✨" aria-label="Select Sparkles Avatar">✨</button>
-                <button class="avatar-btn" data-emoji="💖" aria-label="Select Sparkling Heart Avatar">💖</button>
-                <button class="avatar-btn" data-emoji="🔥" aria-label="Select Fire Avatar">🔥</button>
-                <button class="avatar-btn" data-emoji="😈" aria-label="Select Smiling Devil Avatar">😈</button>
-                <button class="avatar-btn" data-emoji="😇" aria-label="Select Smiling Angel Avatar">😇</button>
-                <button class="avatar-btn" data-emoji="🐶" aria-label="Select Dog Face Avatar">🐶</button>
-                <button class="avatar-btn" data-emoji="🦊" aria-label="Select Fox Face Avatar">🦊</button>
-                <button class="avatar-btn" data-emoji="👑" aria-label="Select Crown Avatar">👑</button>
-            </div>
-        </fieldset>
-      </div>
-      <!-- Name, Role, Style -->
-      <div class="field-group">
-        <label for="name">Name (or Alias)</label>
-        <input type="text" id="name" placeholder="Who are you, cutie?" autocomplete="name" />
-      </div>
-      <div class="field-group">
-        <label for="role">Role</label>
-        <select id="role" autocomplete="off">
-          <option value="dominant">Dominant</option>
-          <option value="submissive" selected>Submissive</option>
-        </select>
-      </div>
-      <div class="field-group">
-        <label for="style">Style</label>
-        <select id="style" autocomplete="off">
-          <option value="">Pick your flavor!</option>
-          <!-- Options populated by JS -->
-        </select>
-      </div>
-       <div class="field-group">
-        <label>Goals</label>
-        <p class="muted-text">(Goals added/edited in profile details)</p>
-      </div>
-      <!-- Traits Container -->
-      <div id="traits-container">
-          <p class="muted-text">Select Role & Style for traits...</p>
-      </div>
-      <!-- Trait Info Popup Area (Initially Hidden) -->
-      <div id="trait-info-popup" class="trait-info-popup card" style="display: none;">
-          <button id="trait-info-close" class="modal-close" aria-label="Close trait info">×</button>
-          <h4 id="trait-info-title">Trait Info</h4>
-          <div id="trait-info-body"></div>
-      </div>
-      <!-- Form Actions -->
-      <div class="form-actions">
-          <button id="save" class="save-btn">Save Your Sparkle! 💖</button>
-          <button id="clear-form" class="clear-btn">Clear Form 🧹</button>
-      </div>
-    </section>
-
-    <!-- List Section -->
-    <section class="list-section card">
-      <h2>🌟 Your Kinky Crew</h2>
-      <ul id="people-list">
-          <!-- List populated by JS -->
-          <li>Loading profiles...</li>
-      </ul>
-    </section>
-
-    <!-- Preview Section -->
-    <section class="preview-section card">
-      <h2>🎈 Live Peek!</h2>
-      <div id="live-preview">
-          <p class="muted-text">Fill form for live vibe! 🌈</p>
-      </div>
-    </section>
-  </main>
-
-  <!-- Detail Modal -->
-  <div class="modal" id="detail-modal" style="display:none;" role="dialog" aria-labelledby="detail-modal-title" aria-modal="true">
-    <div class="modal-content card">
-      <button class="modal-close" id="modal-close" aria-label="Close details modal">×</button>
-      <div id="modal-body">
-            <!-- Modal content generated dynamically by JS -->
-      </div>
-    </div>
-  </div>
-
   <!-- Resources Modal -->
   <div class="modal" id="resources-modal" style="display:none;" role="dialog" aria-labelledby="resources-modal-title" aria-modal="true">
       <div class="modal-content card">
           <button class="modal-close" id="resources-close" aria-label="Close resources modal">×</button>
           <h2 id="resources-modal-title">🔗 Helpful Kink Resources</h2>
-          <!-- Static content -->
-          <p>Remember to always do your own research and prioritize safety, communication, and consent!</p>
-          <ul>
-              <li><strong>Consent Models:</strong> SSC, RACK, PRICK. Understand their nuances.</li>
-              <li><strong>Communication:</strong> Negotiation, boundaries, safewords, check-ins.</li>
-              <li><strong>Aftercare:</strong> Essential for emotional/physical well-being. Discuss needs.</li>
-              <li><strong>Vetting Partners:</strong> Take time. Look for consistency, respect, communication.</li>
-              <li><strong>Further Learning:</strong> Reputable communities (use discernment!), books, workshops.</li>
-              <li><em>Disclaimer: This app provides general info, not professional advice.</em></li>
-          </ul>
+          <p>Exploring kink is exciting! Remember to prioritize safety, continuous learning, and clear communication. Here are some core concepts:</p>
+          <dl>
+              <dt>💖 Consent Models</dt>
+              <dd>These frameworks help ensure everyone feels respected and enthusiastic. Common ones include:
+                  <ul>
+                      <li><strong>SSC (Safe, Sane, Consensual):</strong> Activities should be physically safe (within reason), participants mentally sound, and everyone enthusiastically agrees. A good starting point.</li>
+                      <li><strong>RACK (Risk-Aware Consensual Kink):</strong> Acknowledges some activities carry inherent risks (e.g., impact play, edge play). Focuses on understanding, accepting, and mitigating those risks *with* explicit consent.</li>
+                      <li><strong>PRICK (Personal Responsibility, Informed Consensual Kink):</strong> Emphasizes that individuals are responsible for knowing and stating their own boundaries, consent must be fully informed about potential risks/outcomes, and agreement is key.</li>
+                      <li><strong>FRIES (Freely Given, Reversible, Informed, Enthusiastic, Specific):</strong> A great checklist! Consent isn't coerced, can be withdrawn anytime, requires understanding what you're agreeing to, should be eager ('yes!', not 'maybe...'), and applies to specific acts ('yes' to kissing doesn't mean 'yes' to more).</li>
+                  </ul>
+              </dd>
+
+              <dt>💬 Communication & Negotiation</dt>
+              <dd>Talk, talk, talk! Before play (negotiation), during play (check-ins, safewords), and after play (aftercare, feedback).
+                  <ul>
+                      <li><strong>Negotiation:</strong> Discuss desires, fantasies, hard limits (absolute 'no's), soft limits (maybes/cautions), health considerations, safewords, and aftercare preferences *before* you play. Write it down if it helps!</li>
+                      <li><strong>Safewords:</strong> Crucial signals when normal speech is hard. Simple systems like Green (All good!), Yellow (Slow down/Caution), Red (Full stop NOW, scene ends) are common. Non-verbal signals (like dropping an object or specific hand signs) are important backups. Agree on yours!</li>
+                      <li><strong>Check-ins:</strong> Briefly ask "How are you feeling?", "Good?", "Green?" during play, especially during intense moments or after trying something new.</li>
+                  </ul>
+              </dd>
+
+              <dt>🧸 Aftercare</dt>
+              <dd>The cool-down period after a scene, especially intense ones. It helps manage adrenaline drops ('sub drop' or 'dom drop') and reinforces connection. Needs vary hugely! Discuss beforehand. Common elements include:
+                  <ul>
+                      <li>Hydration & Snacks</li>
+                      <li>Warmth (blankets)</li>
+                      <li>Cuddling or Physical Closeness</li>
+                      <li>Verbal Reassurance & Praise</li>
+                      <li>Processing the Scene (talking about what happened)</li>
+                      <li>Quiet Time / Alone Time</li>
+                      <li>Remember: Doms/Tops need aftercare too!</li>
+                  </ul>
+              </dd>
+
+               <dt>🤝 Vetting Partners</dt>
+              <dd>Finding compatible and safe partners takes time and care.
+                  <ul>
+                      <li><strong>Communicate Early:</strong> Discuss expectations, limits, and safety philosophies openly.</li>
+                      <li><strong>Meet Safely:</strong> Consider initial meetings in public, neutral places ('vanilla date').</li>
+                      <li><strong>Observe Consistency:</strong> Do their words match their actions over time? Do they respect small boundaries before playing?</li>
+                      <li><strong>Look for Red Flags:</strong> Pushing limits too fast, disrespecting safewords/boundaries, blaming others, lack of transparency, badmouthing past partners without context.</li>
+                      <li><strong>Trust Your Gut:</strong> If something feels off, it probably is. It's okay to say no or walk away at *any* point.</li>
+                  </ul>
+              </dd>
+
+               <dt>🛠️ Physical & Emotional Safety</dt>
+              <dd>Beyond consent, consider practical safety.
+                  <ul>
+                      <li><strong>Physical Tools:</strong> Safety shears for rope, knowledge of basic first aid, understanding anatomy relevant to play (e.g., avoiding major nerves during impact).</li>
+                      <li><strong>Emotional Tools:</strong> Safewords, clear boundaries, check-ins, aftercare plans, ability to recognize and respect emotional distress.</li>
+                      <li><strong>Risk Profile:</strong> Understand your own comfort level with physical and emotional risk, and communicate it.</li>
+                  </ul>
+              </dd>
+
+              <dt>📚 Further Learning</dt>
+              <dd>The journey never ends!
+                  <ul>
+                      <li><strong>Reputable Sources:</strong> Look for well-regarded educators, community organizations (local or online like FetLife - *use discernment and verify information*), and authors specializing in kink education and safety.</li>
+                      <li><strong>Workshops:</strong> Great for hands-on learning (e.g., rope, impact) from experienced instructors.</li>
+                      <li><strong>Books:</strong> Guides on negotiation, safety, specific kinks, and the psychology of BDSM can be invaluable.</li>
+                  </ul>
+              </dd>
+          </dl>
+          <hr>
+          <p><em><strong>Disclaimer:</strong> This app provides general information for personal reflection and is not a substitute for thorough research, professional advice, or direct communication with partners. Always prioritize safety and informed consent.</em></p>
       </div>
   </div>
-
-  <!-- Glossary Modal -->
-  <div class="modal" id="glossary-modal" style="display:none;" role="dialog" aria-labelledby="glossary-modal-title" aria-modal="true">
-      <div class="modal-content card">
-          <button class="modal-close" id="glossary-close" aria-label="Close glossary modal">×</button>
-          <h2 id="glossary-modal-title">📚 Kink Glossary</h2>
-          <div id="glossary-body">
-              <!-- Glossary terms will be populated by JS -->
-              <p>Loading glossary...</p>
-          </div>
-      </div>
-  </div>
-
-  <!-- Style Discovery Modal -->
-  <div class="modal" id="style-discovery-modal" style="display:none;" role="dialog" aria-labelledby="style-discovery-title" aria-modal="true">
-      <div class="modal-content card wide-modal">
-          <button class="modal-close" id="style-discovery-close" aria-label="Close style discovery modal">×</button>
-          <h2 id="style-discovery-title">🧭 Explore Kink Styles</h2>
-          <div class="style-discovery-controls">
-              <label for="style-discovery-role">Filter by Role:</label>
-              <select id="style-discovery-role">
-                  <option value="all">All Roles</option>
-                  <option value="submissive">Submissive</option>
-                  <option value="dominant">Dominant</option>
-              </select>
-          </div>
-          <div id="style-discovery-body">
-              <!-- Styles will be populated by JS -->
-              <p>Loading styles...</p>
-          </div>
-      </div>
-  </div>
-
-  <!-- Themes Modal -->
-  <div class="modal" id="themes-modal" style="display:none;" role="dialog" aria-labelledby="themes-modal-title" aria-modal="true">
-      <div class="modal-content card">
-          <button class="modal-close" id="themes-close" aria-label="Close themes modal">×</button>
-          <h2 id="themes-modal-title">🎨 Select Theme</h2>
-          <div id="themes-body" class="theme-options">
-              <button class="theme-option-btn" data-theme="light">🌸 Light</button>
-              <button class="theme-option-btn" data-theme="dark">🌙 Dark</button>
-              <button class="theme-option-btn" data-theme="pastel">🍬 Pastel Dreams</button>
-              <button class="theme-option-btn" data-theme="velvet">💜 Midnight Velvet</button>
-              <!-- Add more theme buttons here -->
-          </div>
-      </div>
-  </div>
-
-  <footer>
-      <p>KinkCompass - Navigate your desires with sparkle ✨</p>
-  </footer>
-
-  <!-- Load JS modules last -->
-  <script type="module" src="glossary.js"></script>
-  <script type="module" src="prompts.js"></script>
-  <script type="module" src="achievements.js"></script>
-  <script type="module" src="app.js"></script>
-</body>
-</html>
