@@ -706,22 +706,64 @@ class TrackerApp {
 
   // --- Helper Functions ---
 
-  getIntroForStyle(styleName) {
-    // Simple map for intros - expand as needed
+ // Inside the TrackerApp class in app.js
+
+getIntroForStyle(styleName) {
+    // Normalize name for consistent lookup
+    const key = styleName?.toLowerCase().replace(/\(.*?\)/g, '').replace(/ \/ /g, '/').trim() || '';
     const intros = {
-      "submissive": "Welcome to the path of delightful deference!",
-      "brat": "Ready to stir up some playful trouble? Let the games begin!",
-      "slave": "Embrace the beauty of deep devotion and surrender.",
-      "pet": "Time for head pats and happy wags! Explore your affectionate side.",
-      "little": "Enter a world of innocence, play, and caring guidance.",
-      "masochist": "Explore the fascinating edge where sensation meets release.",
-      "dominant": "Step into your power and guide the dynamic with confidence.",
-      "master / mistress": "Command respect and cultivate excellence with clear authority.",
-      "sadist": "Delve into the art of sensation and the psychology of reaction.",
-      "caregiver / daddy / mommy": "Rule with a nurturing heart, providing structure and warmth.",
-      "primal (hunter / beast)": "Unleash your instincts and dominate with raw power."
-      // Add more...
+      // Submissive Intros
+      "submissive": "Welcome, lovely Submissive! Ready to explore the beauty of yielding? ✨",
+      "brat": "Hehe, ready to stir up some delightful trouble, Brat? 😉 Let the games begin!",
+      "slave": "Step into the sanctuary of devotion, noble Slave. Surrender awaits. 🙏",
+      "switch": "Master of moods! Ready to dance between dynamics, versatile Switch? ↔️",
+      "pet": "Time for head pats and happy wags, adorable Pet! Let your loyalty shine! 💖",
+      "little": "Welcome to the land of crayons and cuddles, sweet Little! Playtime! 🧸",
+      "puppy": "Woof woof! Ready for zoomies and eager learning, playful Puppy? 🦴",
+      "kitten": "Curious Kitten, ready to pounce and purr? The world is your yarn ball! 🧶",
+      "princess": "Your Highness! Ready to be adored and perhaps a *little* demanding, Princess? 👑",
+      "rope bunny": "Ready to be tied up in knots of fun, lovely Rope Bunny? Let's get tangled! 🎀",
+      "masochist": "Welcome, sensation seeker! Ready to explore the beautiful edge, Masochist? 🔥",
+      "prey": "The chase is on, little Prey! Ready for the thrill of pursuit and capture? 🦊",
+      "toy": "Wind up and get ready to play, delightful Toy! Time to shine and be adored! 🎁",
+      "doll": "Poised and perfect Doll, ready to be admired and arranged? Strike a pose! 💖",
+      "bunny": "Soft steps and gentle heart, sweet Bunny! Ready for quiet affection? 🐇",
+      "servant": "Dedicated Servant, ready to bring order and fulfill needs with grace? At your service! 🧹",
+      "playmate": "Game on, enthusiastic Playmate! Ready for fun, laughter, and adventure? 🎉",
+      "babygirl": "Sweet and sassy Babygirl, ready to charm and be cherished? Flutter those lashes! 😉",
+      "captive": "Oh no, caught again, daring Captive? Ready for the dramatic escape... or surrender? ⛓️",
+      "thrall": "Deep focus, open mind, devoted Thrall. Ready to connect on a different plane? 🌀",
+      "puppet": "Whose strings are pulled today, perfect Puppet? Ready to dance to their tune? 🎭",
+      "maid": "Impeccable Maid, ready to bring sparkle and order with dutiful grace? Precision! ✨",
+      "painslut": "Eager and ready, devoted Painslut? Time to test those limits and revel in sensation! 🔥",
+      "bottom": "Open heart, yielding power, beautiful Bottom. Ready to receive and connect deeply? 💖",
+
+      // Dominant Intros
+      "dominant": "Step into your power, noble Dominant! Ready to lead and inspire? 🔥",
+      "assertive": "Clear voice, strong boundaries, confident Assertive! Ready to communicate your truth? 💪",
+      "nurturer": "Warm heart, steady hand, caring Nurturer! Ready to support and uplift? 🌸",
+      "strict": "Order and structure, firm Strict! Ready to guide with clear rules and expectations? ⚖️",
+      "master": "Commanding presence, high standards, revered Master! Ready to shape your domain? 🏰",
+      "mistress": "Elegant authority, captivating grace, adored Mistress! Ready to rule your world? 👑",
+      "daddy": "Protective arms, guiding voice, loving Daddy! Ready to provide safety and warmth? 🧸",
+      "mommy": "Nurturing embrace, gentle rules, caring Mommy! Ready to kiss it better? 💖",
+      "owner": "Claiming your prize, devoted Owner! Ready to train, cherish, and possess? 🐾",
+      "rigger": "Artist with rope, skilled Rigger! Ready to bind beauty and test limits? 🎨",
+      "sadist": "Conductor of sensation, curious Sadist! Ready to explore the edges of pleasure and pain? 🔥",
+      "hunter": "Primal instincts, thrilling chase, focused Hunter! Ready for the pursuit? 🐺",
+      "trainer": "Patient teacher, skilled Trainer! Ready to cultivate potential and achieve goals? 🏆",
+      "puppeteer": "Pulling the strings, clever Puppeteer! Ready to direct the perfect performance? 🎭",
+      "protector": "Steadfast shield, watchful Protector! Ready to defend and ensure safety? 🛡️",
+      "disciplinarian": "Fair judgment, firm hand, focused Disciplinarian! Ready to maintain order? 👨‍⚖️",
+      "caretaker": "Attentive eye, healing touch, devoted Caretaker! Ready to ensure total well-being? ❤️‍🩹",
+      "sir": "Dignified command, respected Sir! Ready to lead with formal grace? 🎩",
+      "goddess": "Radiant power, adored Goddess! Ready to inspire worship and command devotion? ✨",
+      "commander": "Strategic mind, decisive voice, effective Commander! Ready to lead the charge? 🎖️"
     };
+    return intros[key] || "Explore your unique and wonderful expression!"; // Fallback
+}
+
+// ... rest of app.js remains the same ...
     // Normalize key for lookup
     const normalizedKey = styleName?.toLowerCase().replace(/ \/ /g, '/').replace(/\(.*\)/g, '').trim() || '';
     return intros[normalizedKey] || "Explore your unique expression!";
