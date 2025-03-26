@@ -6,20 +6,21 @@ import { getStyleBreakdown as getDomBreakdown } from './paraphrasing_dom.js';
 
 class TrackerApp {
   constructor() {
-    // ... (Keep the entire constructor as it was) ...
-    this.people = JSON.parse(localStorage.getItem('kinkProfiles')) || [];
-    this.previewPerson = null;
-    this.currentEditId = null;
+    this.people = []; // Initialize empty, load later
+    this.previewPerson = null; // Used for temporary preview before saving a *new* person
+    this.currentEditId = null; // ID of the person being edited
+
+    // Find elements immediately
     this.elements = {
+      formSection: document.getElementById('form-section'), // For scrolling into view
       // Form Elements
-      formSection: document.getElementById('form-section'), // Add this
       name: document.getElementById('name'),
       role: document.getElementById('role'),
       style: document.getElementById('style'),
-      goals: document.getElementById('goals'), // New Goal field
+      goals: document.getElementById('goals'),
       traitsContainer: document.getElementById('traits-container'),
       save: document.getElementById('save'),
-      clearForm: document.getElementById('clear-form'), // New Clear button
+      clearForm: document.getElementById('clear-form'),
 
       // List Elements
       peopleList: document.getElementById('people-list'),
@@ -40,10 +41,36 @@ class TrackerApp {
       // Theme Toggle
       themeToggle: document.getElementById('theme-toggle')
     };
-    // Add console log to verify constructor runs
-    console.log("TrackerApp Constructor: Finding elements complete. Adding listeners...");
+
+    // Check if essential elements were found
+    let essentialElementMissing = false;
+    for (const key in this.elements) {
+        if (!this.elements[key]) {
+            console.error(`Essential element not found in constructor: ID '${key}' might be missing or misspelled in index.html.`);
+            essentialElementMissing = true;
+            // You could throw an error here to halt execution if an element is crucial
+            // throw new Error(`Essential element missing: ${key}`);
+        }
+    }
+
+    if (essentialElementMissing) {
+        // Optionally display an error to the user if critical elements are missing
+        document.body.innerHTML = '<p style="color: red; padding: 1em;">Error: Critical HTML element missing. App cannot start. Check console (F12).</p>';
+        return; // Prevent further execution
+    }
+
+
+    console.log("TrackerApp Constructor: Elements found. Adding listeners...");
     this.addEventListeners();
-    console.log("TrackerApp Constructor: Listeners added. Performing initial render...");
+    console.log("TrackerApp Constructor: Listeners added. Loading data and performing initial render...");
+
+    // Load data from localStorage
+    this.loadFromLocalStorage();
+
+    // Apply theme *before* rendering potentially themed elements
+    this.applySavedTheme();
+
+    // Initial render based on default/loaded state
     this.renderStyles(this.elements.role.value);
     this.renderTraits(this.elements.role.value, '');
     this.renderList();
@@ -51,12 +78,32 @@ class TrackerApp {
     console.log("TrackerApp Constructor: Initial render complete.");
   }
 
-  addEventListeners() {
-    // ... (Keep the entire addEventListeners method as it was) ...
+  loadFromLocalStorage() {
+      try {
+          const storedPeople = localStorage.getItem('kinkProfiles');
+          this.people = storedPeople ? JSON.parse(storedPeople) : [];
+          console.log(`Loaded ${this.people.length} profiles from localStorage.`);
+      } catch (error) {
+          console.error("Error loading profiles from localStorage:", error);
+          this.people = []; // Reset to empty array on error
+          alert("Could not load saved profiles. Starting fresh.");
+      }
+  }
 
-    // Add console logs inside a few listeners to test
+  saveToLocalStorage() {
+    try {
+        localStorage.setItem('kinkProfiles', JSON.stringify(this.people));
+        console.log(`Saved ${this.people.length} profiles to localStorage.`);
+    } catch (error) {
+        console.error("Error saving to localStorage:", error);
+        alert("Could not save profiles to local storage. Storage might be full or disabled.");
+    }
+  }
+
+  addEventListeners() {
+    // Form interactions
     this.elements.role.addEventListener('change', () => {
-        console.log("Role changed!"); // Test log
+        console.log("Role changed");
         const role = this.elements.role.value;
         this.renderStyles(role);
         this.elements.style.value = ''; // Reset style dropdown
@@ -64,106 +111,181 @@ class TrackerApp {
         this.updateLivePreview();
     });
 
-     this.elements.save.addEventListener('click', () => {
-        console.log("Save button clicked!"); // Test log
-        this.savePerson();
+    this.elements.style.addEventListener('change', () => {
+        console.log("Style changed");
+        this.renderTraits(this.elements.role.value, this.elements.style.value);
+        this.updateLivePreview();
+    });
+
+    this.elements.name.addEventListener('input', () => this.updateLivePreview());
+    this.elements.goals.addEventListener('input', () => this.updateLivePreview());
+
+    // Buttons
+    this.elements.save.addEventListener('click', () => this.savePerson());
+    this.elements.clearForm.addEventListener('click', () => this.resetForm(true));
+    this.elements.themeToggle.addEventListener('click', () => this.toggleTheme());
+
+    // People List interactions (using event delegation)
+    this.elements.peopleList.addEventListener('click', (e) => {
+      const personLi = e.target.closest('.person');
+      if (!personLi) return;
+
+      const personId = parseInt(personLi.dataset.id);
+      if (isNaN(personId)) return; // Ignore if ID is invalid
+
+      if (e.target.classList.contains('edit-btn')) {
+        this.editPerson(personId);
+      } else if (e.target.classList.contains('delete-btn')) {
+        this.deletePerson(personId);
+      } else {
+        // Click anywhere else on the item that isn't a button
+        this.showPersonDetails(personId);
+      }
+    });
+
+     // Allow keyboard activation for list items
+    this.elements.peopleList.addEventListener('keydown', (e) => {
+        const personLi = e.target.closest('.person');
+        if (!personLi) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault(); // Prevent space bar scrolling
+            const personId = parseInt(personLi.dataset.id);
+            if (!isNaN(personId)) {
+                 this.showPersonDetails(personId);
+            }
+        }
+    });
+
+    // Modal interactions
+    this.elements.modalClose.addEventListener('click', () => this.closeModal(this.elements.modal));
+    this.elements.resourcesBtn.addEventListener('click', () => this.openModal(this.elements.resourcesModal));
+    this.elements.resourcesClose.addEventListener('click', () => this.closeModal(this.elements.resourcesModal));
+
+    // Close modals if clicking outside the content
+    window.addEventListener('click', (e) => {
+        if (e.target === this.elements.modal) this.closeModal(this.elements.modal);
+        if (e.target === this.elements.resourcesModal) this.closeModal(this.elements.resourcesModal);
+    });
+     // Close modals with Escape key
+     window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            if (this.elements.modal.style.display === 'flex') {
+                 this.closeModal(this.elements.modal);
+            }
+             if (this.elements.resourcesModal.style.display === 'flex') {
+                 this.closeModal(this.elements.resourcesModal);
+            }
+        }
      });
 
-     // ... (Keep all other listeners) ...
-     this.elements.clearForm.addEventListener('click', () => this.resetForm(true));
-     this.elements.themeToggle.addEventListener('click', () => this.toggleTheme());
-     this.elements.peopleList.addEventListener('click', (e) => { /* ... */ });
-     this.elements.modalClose.addEventListener('click', () => this.closeModal(this.elements.modal));
-     this.elements.resourcesBtn.addEventListener('click', () => this.openModal(this.elements.resourcesModal));
-     this.elements.resourcesClose.addEventListener('click', () => this.closeModal(this.elements.resourcesModal));
-     window.addEventListener('click', (e) => { /* ... */ });
-     this.elements.traitsContainer.addEventListener('input', (e) => { /* ... */ });
-     this.elements.modalBody.addEventListener('click', (e) => { /* ... */ });
-     this.elements.name.addEventListener('input', () => this.updateLivePreview());
-     this.elements.goals.addEventListener('input', () => this.updateLivePreview());
+    // Dynamic listener for trait sliders (attached in renderTraits)
+    this.elements.traitsContainer.addEventListener('input', (e) => {
+        if (e.target.classList.contains('trait-slider')) {
+            this.updateTraitDescription(e.target);
+            this.updateLivePreview(); // Update preview on slider change
+        }
+    });
 
+     // Dynamic listener for saving reflections (attached in showPersonDetails)
+     // Use delegation on the modal body
+     this.elements.modalBody.addEventListener('click', (e) => {
+        if (e.target.id === 'save-reflections-btn') {
+            const personId = parseInt(e.target.dataset.personId);
+             if (!isNaN(personId)) {
+                this.saveReflections(personId);
+            }
+        }
+    });
   }
 
   // --- Rendering Functions ---
-  // ... (Keep renderStyles, renderTraits, createTraitHTML, updateTraitDescription, renderList, createPersonListItemHTML as they were) ...
-   renderStyles(role) {
+
+  renderStyles(role) {
     this.elements.style.innerHTML = '<option value="">Pick your flavor!</option>';
     if (!bdsmData[role] || !bdsmData[role].styles) return; // Safety check
 
     bdsmData[role].styles.forEach(s => {
-      this.elements.style.innerHTML += `<option value="${s.name}">${s.name}</option>`; // Use exact name for value
+      // Use the exact style name for both the value and the displayed text
+      this.elements.style.innerHTML += `<option value="${this.escapeHTML(s.name)}">${this.escapeHTML(s.name)}</option>`;
     });
   }
 
   renderTraits(role, styleName) {
-    this.elements.traitsContainer.innerHTML = '';
+    this.elements.traitsContainer.innerHTML = ''; // Clear previous traits
     if (!bdsmData[role]) return; // Safety check
 
     const coreTraits = bdsmData[role].coreTraits || [];
     let styleTraits = [];
+    let styleObj = null; // Keep track of the style object
 
     if (styleName) {
-      const styleObj = bdsmData[role].styles.find(s => s.name === styleName);
-      styleTraits = styleObj ? styleObj.traits : [];
+      styleObj = bdsmData[role].styles.find(s => s.name === styleName);
+      styleTraits = styleObj ? (styleObj.traits || []) : [];
     }
 
-    const allTraits = [...coreTraits, ...styleTraits];
-
-    // Clearer logic for rendering
+    // Determine which traits to render
     let traitsToRender = [];
+    const uniqueTraitNames = new Set();
+
+    // Always include core traits first
+    coreTraits.forEach(trait => {
+        if (!uniqueTraitNames.has(trait.name)) {
+            traitsToRender.push(trait);
+            uniqueTraitNames.add(trait.name);
+        }
+    });
+
+    // Add style traits if a style is selected, avoiding duplicates
     if (styleName) {
-        // If a style is selected, render its specific traits AND the core traits
-        traitsToRender = [...coreTraits, ...styleTraits];
-         // De-duplicate if a style trait accidentally has the same name as a core trait
-         const uniqueNames = new Set();
-         traitsToRender = traitsToRender.filter(trait => {
-             if (uniqueNames.has(trait.name)) return false;
-             uniqueNames.add(trait.name);
-             return true;
-         });
-    } else {
-        // If no style is selected, render only core traits
-        traitsToRender = [...coreTraits];
+        styleTraits.forEach(trait => {
+            if (!uniqueTraitNames.has(trait.name)) {
+                traitsToRender.push(trait);
+                uniqueTraitNames.add(trait.name);
+            }
+        });
     }
 
-
+    // Render the combined list
     if (traitsToRender.length === 0) {
-         this.elements.traitsContainer.innerHTML = `<p class="muted-text">No traits defined for this selection yet.</p>`;
+         this.elements.traitsContainer.innerHTML = `<p class="muted-text">No traits defined for this selection.</p>`;
     } else {
         traitsToRender.forEach(trait => {
             this.elements.traitsContainer.innerHTML += this.createTraitHTML(trait);
         });
-         // Initial description update for all sliders *after* they are added to DOM
+        // Initial description update for all sliders *after* they are added to DOM
         this.elements.traitsContainer.querySelectorAll('.trait-slider').forEach(slider => {
             this.updateTraitDescription(slider);
         });
     }
 
-     // Add message if style selected but has no specific traits
-     if (styleName && styleTraits.length === 0 && coreTraits.length > 0) {
+     // Add informational message if style selected but has no *specific* traits
+     if (styleName && styleObj && styleTraits.length === 0 && coreTraits.length > 0) {
         const messageP = document.createElement('p');
-        messageP.className = 'muted-text';
-        messageP.textContent = `No style-specific traits for ${styleName}; showing core traits only.`;
-        this.elements.traitsContainer.prepend(messageP); // Add message at the top
+        messageP.className = 'muted-text trait-info-message'; // Added class for potential styling
+        messageP.textContent = `Style '${this.escapeHTML(styleName)}' uses the core traits.`;
+        // Prepend puts it before the traits
+        this.elements.traitsContainer.prepend(messageP);
     } else if (!styleName && coreTraits.length === 0) {
-         // Message if no style selected AND no core traits (unlikely but possible)
-          this.elements.traitsContainer.innerHTML = `<p class="muted-text">Select a style to see traits.</p>`;
+        // Message if no style selected AND no core traits defined for the role
+        this.elements.traitsContainer.innerHTML = `<p class="muted-text">Select a style or define core traits for this role.</p>`;
     }
-
   }
 
   createTraitHTML(trait) {
     const displayName = trait.name.charAt(0).toUpperCase() + trait.name.slice(1);
+    // Create a unique ID for the input based on the trait name (ensure it's valid)
+    const inputId = `trait-${trait.name.replace(/[^a-zA-Z0-9-_]/g, '-')}`; // Sanitize ID
     return `
       <div class="trait">
-        <label>${displayName}</label>
-        <input type="range" min="1" max="5" value="3" class="trait-slider" data-trait="${trait.name}" aria-label="${displayName} slider"/>
+        <label for="${inputId}">${this.escapeHTML(displayName)}</label>
+        {/* Add autocomplete="off" to sliders */}
+        <input type="range" id="${inputId}" min="1" max="5" value="3" class="trait-slider" data-trait="${trait.name}" aria-label="${this.escapeHTML(displayName)} slider" autocomplete="off"/>
         <span class="trait-value">3</span>
         <div class="trait-desc muted-text"></div>
       </div>`;
   }
 
-   updateTraitDescription(slider) {
+  updateTraitDescription(slider) {
       const traitName = slider.getAttribute('data-trait');
       const value = slider.value;
       const descDiv = slider.parentElement.querySelector('.trait-desc');
@@ -175,184 +297,212 @@ class TrackerApp {
       let traitData = null;
        if (styleName) {
           const styleObj = bdsmData[role]?.styles.find(s => s.name === styleName);
-          traitData = styleObj?.traits.find(t => t.name === traitName);
+          traitData = styleObj?.traits?.find(t => t.name === traitName);
       }
       if (!traitData) {
-           traitData = bdsmData[role]?.coreTraits.find(t => t.name === traitName);
+           traitData = bdsmData[role]?.coreTraits?.find(t => t.name === traitName);
       }
-
 
       if (valueSpan) valueSpan.textContent = value; // Update numeric value display
 
       if (descDiv && traitData && traitData.desc && traitData.desc[value]) {
-          descDiv.textContent = traitData.desc[value];
+          descDiv.textContent = this.escapeHTML(traitData.desc[value]);
       } else if (descDiv) {
           // Clear description or show default if data missing
           descDiv.textContent = traitData ? 'Description for this level unavailable.' : 'Trait definition unavailable.';
       }
   }
 
-   renderList() {
+  renderList() {
+    if (!this.elements.peopleList) return; // Safety check
     this.elements.peopleList.innerHTML = this.people.length === 0 ?
       `<li>No kinky pals yet—add some sparkle! ✨</li>` :
       this.people.map(person => this.createPersonListItemHTML(person)).join('');
   }
 
-   createPersonListItemHTML(person) {
-       const styleDisplay = person.style || "N/A";
+  createPersonListItemHTML(person) {
+       const styleDisplay = person.style ? this.escapeHTML(person.style) : "N/A";
        const roleDisplay = person.role.charAt(0).toUpperCase() + person.role.slice(1);
+       const escapedName = this.escapeHTML(person.name);
        return `
-        <li class="person" data-id="${person.id}" tabindex="0" aria-label="View details for ${person.name}">
+        <li class="person" data-id="${person.id}" tabindex="0" aria-label="View details for ${escapedName}">
           <span class="person-info">
-            <strong class="person-name">${this.escapeHTML(person.name)}</strong>
+            <strong class="person-name">${escapedName}</strong>
             <span class="person-details muted-text">(${roleDisplay} - ${styleDisplay})</span>
           </span>
           <span class="person-actions">
-            <button class="edit-btn small-btn" aria-label="Edit ${this.escapeHTML(person.name)}">✏️ Edit</button>
-            <button class="delete-btn small-btn" aria-label="Delete ${this.escapeHTML(person.name)}">🗑️ Delete</button>
+            <button class="edit-btn small-btn" aria-label="Edit ${escapedName}">✏️ Edit</button>
+            <button class="delete-btn small-btn" aria-label="Delete ${escapedName}">🗑️ Delete</button>
           </span>
         </li>
       `;
    }
 
-
   // --- Data Handling Functions ---
-  // ... (Keep savePerson, editPerson, deletePerson, resetForm, saveToLocalStorage as they were) ...
-    savePerson() {
-        const name = this.elements.name.value.trim() || "Unnamed";
-        const role = this.elements.role.value;
-        const styleName = this.elements.style.value; // Use the selected style name
-        const goals = this.elements.goals.value.trim();
 
-        if (!styleName) {
-        alert("Please select a style for the profile.");
+  savePerson() {
+    const name = this.elements.name.value.trim() || "Unnamed";
+    const role = this.elements.role.value;
+    const styleName = this.elements.style.value;
+    const goals = this.elements.goals.value.trim();
+
+    if (!styleName) {
+      alert("Please select a style for the profile.");
+      this.elements.style.focus(); // Focus the style dropdown
+      return;
+    }
+
+    const sliders = this.elements.traitsContainer.querySelectorAll('.trait-slider');
+    // Check if traits *should* be present based on data.js
+    const expectedTraits = [
+        ...(bdsmData[role]?.coreTraits || []),
+        ...(bdsmData[role]?.styles.find(s => s.name === styleName)?.traits || [])
+    ];
+    // Use Set to count unique expected traits
+    const uniqueExpectedTraitNames = new Set(expectedTraits.map(t => t.name));
+
+    if (sliders.length !== uniqueExpectedTraitNames.size && uniqueExpectedTraitNames.size > 0) {
+        // Discrepancy between rendered sliders and expected unique traits
+        console.error("Save Error: Mismatch between rendered sliders and expected traits.", {
+             renderedCount: sliders.length,
+             expectedUniqueCount: uniqueExpectedTraitNames.size,
+             role, styleName
+        });
+        alert("Error: Traits may not have loaded correctly. Cannot save. Please try selecting the style again or refresh the page.");
         return;
+    }
+
+    const traits = {};
+    sliders.forEach(slider => {
+      traits[slider.getAttribute('data-trait')] = slider.value;
+    });
+
+    // Ensure all *unique* expected traits for the selected role/style combo have a value
+    // This acts as a final check, though the slider count check above is usually sufficient
+    for (const traitName of uniqueExpectedTraitNames) {
+        if (!traits.hasOwnProperty(traitName)) {
+             // This case implies a slider was expected but not found, error out
+             console.error(`Save Error: Expected trait '${traitName}' value missing from sliders.`);
+             alert(`Error: Missing data for trait '${traitName}'. Cannot save.`);
+             return;
         }
-
-        const sliders = this.elements.traitsContainer.querySelectorAll('.trait-slider');
-        // Check if traits *should* be present but aren't rendered
-        const expectedTraits = [
-            ...(bdsmData[role]?.coreTraits || []),
-            ...(bdsmData[role]?.styles.find(s => s.name === styleName)?.traits || [])
-        ];
-        if (sliders.length === 0 && expectedTraits.length > 0) {
-            console.error("Save Error: Sliders not found in DOM, but expected traits exist.", {role, styleName, expectedTraits});
-            alert("Error: Traits not loaded correctly. Cannot save. Please refresh or select style again.");
-            return;
-        }
+    }
 
 
-        const traits = {};
-        sliders.forEach(slider => {
-        traits[slider.getAttribute('data-trait')] = slider.value;
-        });
+    const personData = {
+      id: this.currentEditId || Date.now(), // Use existing ID if editing, generate new if not
+      name,
+      role,
+      style: styleName,
+      goals,
+      traits,
+      // Preserve reflections only if editing, otherwise initialize empty
+      reflections: this.currentEditId ? (this.people.find(p => p.id === this.currentEditId)?.reflections || {}) : {}
+    };
 
-        // Ensure core traits that might *not* be displayed (e.g. if only style traits shown) are still saved with a default or current value if available
-         bdsmData[role]?.coreTraits.forEach(coreTrait => {
-            if (!traits.hasOwnProperty(coreTrait.name)) {
-                 // If editing, try to get value from original person data if available
-                 const originalPerson = this.currentEditId ? this.people.find(p => p.id === this.currentEditId) : null;
-                 traits[coreTrait.name] = originalPerson?.traits?.[coreTrait.name] || '3'; // Default to 3 if not editing or not found
-            }
-        });
+    if (this.currentEditId) {
+      // Update existing person
+      const index = this.people.findIndex(p => p.id === this.currentEditId);
+      if (index !== -1) {
+        this.people[index] = personData;
+        console.log(`Updated profile for ${name} (ID: ${this.currentEditId})`);
+      } else {
+        console.error("Error updating person: ID not found during save", this.currentEditId);
+        alert("Error: Could not find the profile to update. Saving as new instead.");
+         personData.id = Date.now(); // Generate a new ID
+         this.people.push(personData);
+      }
+      this.currentEditId = null; // Clear edit state
+      this.elements.save.textContent = 'Save Your Sparkle! 💖'; // Reset button text
+    } else {
+      // Add new person
+      this.people.push(personData);
+       console.log(`Added new profile for ${name} (ID: ${personData.id})`);
+    }
 
-
-        const personData = {
-        id: this.currentEditId || Date.now(), // Use existing ID if editing
-        name,
-        role,
-        style: styleName, // Store the exact style name
-        goals,
-        traits,
-        reflections: this.currentEditId ? (this.people.find(p => p.id === this.currentEditId)?.reflections || {}) : {} // Preserve reflections on edit
-        };
-
-        if (this.currentEditId) {
-        // Update existing person
-        const index = this.people.findIndex(p => p.id === this.currentEditId);
-        if (index !== -1) {
-            this.people[index] = personData;
-        } else {
-            // Should not happen if UI is correct, but handle defensively
-            console.error("Error updating person: ID not found", this.currentEditId);
-             this.people.push(personData); // Add as new if update failed? Or show error?
-        }
-        this.currentEditId = null; // Clear edit state
-        this.elements.save.textContent = 'Save Your Sparkle! 💖'; // Reset button text
-        } else {
-        // Add new person
-        this.people.push(personData);
-        }
-
-        this.saveToLocalStorage();
-        this.renderList();
-        this.resetForm(true); // Clear form and preview after saving
-        alert(`${name}'s profile saved successfully! ✨`);
+    this.saveToLocalStorage();
+    this.renderList();
+    this.resetForm(true); // Clear form and preview after saving
+    alert(`${this.escapeHTML(name)}'s profile saved successfully! ✨`);
   }
 
   editPerson(personId) {
-        const person = this.people.find(p => p.id === personId);
-        if (!person) {
-            console.error("Edit Error: Person not found with ID", personId);
-            return;
-        }
+    const person = this.people.find(p => p.id === personId);
+    if (!person) {
+        console.error("Edit Error: Person not found with ID", personId);
+        alert("Error: Could not find the profile to edit.");
+        return;
+    }
 
-        console.log("Editing person:", person); // Log data being loaded
+    console.log("Editing person:", person);
 
-        this.currentEditId = personId; // Set edit state
+    this.currentEditId = personId; // Set edit state
 
-        // Populate form fields
-        this.elements.name.value = person.name;
-        this.elements.role.value = person.role;
-        this.elements.goals.value = person.goals || '';
+    // Populate form fields
+    this.elements.name.value = person.name;
+    this.elements.role.value = person.role;
+    this.elements.goals.value = person.goals || '';
 
-        // Render styles first, then set the value, then render traits
-        this.renderStyles(person.role);
-        this.elements.style.value = person.style; // Set the style dropdown
+    // Render styles for the person's role
+    this.renderStyles(person.role);
+    // Set the style dropdown value *after* options are rendered
+    this.elements.style.value = person.style;
 
-        // Ensure traits are rendered *after* style is set
-        this.renderTraits(person.role, person.style);
+    // Render traits based on the person's role and *now selected* style
+    this.renderTraits(person.role, person.style);
 
-        // Set slider values *after* traits are rendered in the DOM
-        // Use requestAnimationFrame or setTimeout to ensure DOM update cycle completes
-        requestAnimationFrame(() => {
-            console.log("Setting slider values for:", person.traits);
-            Object.entries(person.traits).forEach(([traitName, value]) => {
+    // Set slider values after traits are rendered in the DOM
+    // Use requestAnimationFrame to wait for the next repaint cycle
+    requestAnimationFrame(() => {
+        console.log("Setting slider values for:", person.traits);
+        if (person.traits) {
+             Object.entries(person.traits).forEach(([traitName, value]) => {
                 const slider = this.elements.traitsContainer.querySelector(`.trait-slider[data-trait="${traitName}"]`);
                 if (slider) {
-                    console.log(`Setting slider ${traitName} to ${value}`);
+                    // console.log(`Setting slider ${traitName} to ${value}`);
                     slider.value = value;
                     this.updateTraitDescription(slider); // Update description immediately
                 } else {
-                     console.warn(`Slider not found for trait: ${traitName}`);
+                    console.warn(`Slider not found during edit for trait: ${traitName}. It might be obsolete or belong to a different style.`);
+                    // Do not error out, just note the mismatch. The save function will handle discrepancies.
                 }
             });
-             this.updateLivePreview(); // Update preview after all fields are set
-             this.elements.save.textContent = 'Update Sparkle! ✨'; // Change button text
-             // Scroll form into view smoothly
+        } else {
+            console.warn("Person object has no 'traits' property during edit.", person);
+        }
+
+        this.updateLivePreview(); // Update preview after all fields are set
+        this.elements.save.textContent = 'Update Sparkle! ✨'; // Change button text
+
+        // Scroll form into view smoothly and focus name field
+        if (this.elements.formSection) {
              this.elements.formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-             // Focus the name field for immediate editing
-             this.elements.name.focus();
-        });
+        }
+        this.elements.name.focus();
+    });
   }
 
-   deletePerson(personId) {
-      const person = this.people.find(p => p.id === personId);
-      if (!person) return;
+  deletePerson(personId) {
+      const personIndex = this.people.findIndex(p => p.id === personId);
+      if (personIndex === -1) {
+           console.error("Delete Error: Person not found with ID", personId);
+           return;
+      }
+      const personName = this.people[personIndex].name;
 
-      // Use name in confirmation for clarity
-      if (confirm(`Are you sure you want to delete ${person.name}'s profile? This cannot be undone.`)) {
-          this.people = this.people.filter(p => p.id !== personId);
+      if (confirm(`Are you sure you want to delete ${this.escapeHTML(personName)}'s profile? This cannot be undone.`)) {
+          this.people.splice(personIndex, 1); // Remove the person from the array
           this.saveToLocalStorage();
           this.renderList();
+
           // If the deleted person was being edited, reset the form
           if (this.currentEditId === personId) {
               this.resetForm(true);
           }
-          alert(`${person.name}'s profile deleted.`)
+          alert(`${this.escapeHTML(personName)}'s profile deleted.`);
+          console.log(`Deleted profile for ${personName} (ID: ${personId})`);
       }
   }
-
 
   resetForm(clearPreview = false) {
     this.elements.name.value = '';
@@ -365,290 +515,320 @@ class TrackerApp {
     this.elements.save.textContent = 'Save Your Sparkle! 💖'; // Reset button text
 
     if (clearPreview) {
-      this.previewPerson = null; // Clear specific preview data
+      this.previewPerson = null; // Not strictly needed if preview always reads form, but good practice
       this.updateLivePreview(); // Update to show default state
     }
-    // Optionally focus the name field
+    // Focus the name field for a new entry
     this.elements.name.focus();
+    console.log("Form reset.");
   }
-
-   saveToLocalStorage() {
-        try {
-            localStorage.setItem('kinkProfiles', JSON.stringify(this.people));
-        } catch (error) {
-            console.error("Error saving to localStorage:", error);
-            // Handle potential storage errors (e.g., quota exceeded)
-            alert("Could not save profiles to local storage. Storage might be full or disabled.");
-        }
-   }
 
 
   // --- Live Preview ---
-  // ... (Keep updateLivePreview as it was) ...
-   updateLivePreview() {
-        const name = this.elements.name.value.trim() || "Unnamed";
-        const role = this.elements.role.value;
-        const style = this.elements.style.value;
-        const goals = this.elements.goals.value.trim();
 
-        // Get current trait values from sliders
-        const traits = {};
-        this.elements.traitsContainer.querySelectorAll('.trait-slider').forEach(slider => {
-        traits[slider.getAttribute('data-trait')] = slider.value;
-        });
+  updateLivePreview() {
+    const name = this.elements.name.value.trim() || "Unnamed";
+    const role = this.elements.role.value;
+    const style = this.elements.style.value;
+    const goals = this.elements.goals.value.trim();
 
+    // Get current trait values from sliders displayed in the form
+    const traits = {};
+    this.elements.traitsContainer.querySelectorAll('.trait-slider').forEach(slider => {
+      traits[slider.getAttribute('data-trait')] = slider.value;
+    });
 
-        // Construct preview data directly from form state
-        const previewData = { name, role, style, traits, goals };
+    // Construct preview data directly from the current form state
+    const previewData = { name, role, style, traits, goals };
 
-        // Generate HTML based on previewData
-        let html = '';
-        if (!style) {
-            html = `<p class="muted-text">Pick a style to see your kinky magic unfold! 🌈</p>`;
-        } else {
-            const getBreakdown = role === 'submissive' ? getSubBreakdown : getDomBreakdown;
-             // Ensure breakdown function handles potentially missing traits gracefully
-            const breakdown = getBreakdown(previewData.style, traits);
+    // Generate HTML based on previewData
+    let html = '';
+    if (!style) {
+        html = `<p class="muted-text">Pick a style to see your kinky magic unfold! 🌈</p>`;
+    } else {
+        const getBreakdown = role === 'submissive' ? getSubBreakdown : getDomBreakdown;
+        // Pass the traits currently shown in the form to the breakdown function
+        const breakdown = getBreakdown(previewData.style, traits);
 
-            html = `<h3 class="preview-title">🎀 ${this.escapeHTML(name)}’s Live Vibe 🎀</h3>`;
-            html += `<p><strong>Role:</strong> ${role.charAt(0).toUpperCase() + role.slice(1)}</p>`;
-            html += `<p><strong>Style:</strong> ${previewData.style || "N/A"}</p>`;
-            if (goals) {
-                html += `<p><strong>Goals:</strong> ${this.escapeHTML(goals)}</p>`;
-            }
-            html += `<div class="style-breakdown preview-breakdown">`;
-            if (breakdown.strengths) {
-                // Use innerHTML for breakdown text which might contain <strong> etc.
-                html += `<div class="strengths"><h4>✨ Strengths & Powers</h4><div>${breakdown.strengths}</div></div>`;
-            }
-            if (breakdown.improvements) {
-                html += `<div class="improvements"><h4>🌟 Growth Opportunities</h4><div>${breakdown.improvements}</div></div>`;
-            }
-            html += `</div>`;
+        html = `<h3 class="preview-title">🎀 ${this.escapeHTML(name)}’s Live Vibe 🎀</h3>`;
+        html += `<p><strong>Role:</strong> ${role.charAt(0).toUpperCase() + role.slice(1)}</p>`;
+        html += `<p><strong>Style:</strong> ${previewData.style ? this.escapeHTML(previewData.style) : "N/A"}</p>`;
+        if (goals) {
+            html += `<p><strong>Goals:</strong> ${this.escapeHTML(goals)}</p>`;
         }
+        html += `<div class="style-breakdown preview-breakdown">`;
+        // Use innerHTML for breakdown text which might contain HTML tags like <strong>
+        if (breakdown.strengths) {
+            html += `<div class="strengths"><h4>✨ Strengths & Powers</h4><div>${breakdown.strengths}</div></div>`;
+        }
+        if (breakdown.improvements) {
+            html += `<div class="improvements"><h4>🌟 Growth Opportunities</h4><div>${breakdown.improvements}</div></div>`;
+        }
+        html += `</div>`;
+    }
 
-        this.elements.livePreview.innerHTML = html;
+    this.elements.livePreview.innerHTML = html;
   }
 
 
   // --- Modal Display ---
-  // ... (Keep showPersonDetails, saveReflections as they were) ...
-   showPersonDetails(personId) {
-        const person = this.people.find(p => p.id === personId);
-        if (!person) return;
 
-        const getBreakdown = person.role === 'submissive' ? getSubBreakdown : getDomBreakdown;
-        // Ensure traits are passed correctly, handle missing traits if necessary
-        const breakdown = getBreakdown(person.style, person.traits || {});
+  showPersonDetails(personId) {
+    const person = this.people.find(p => p.id === personId);
+    if (!person) {
+         console.error("Show Details Error: Person not found with ID", personId);
+         return;
+    }
 
-        // --- Header & Intro ---
-        let html = `<h2 class="modal-title" id="detail-modal-title">🎉 ${this.escapeHTML(person.name)}’s Kinky Kingdom 🎉</h2>`; // Add id for aria-labelledby
-        html += `<p class="modal-subtitle">${person.role.charAt(0).toUpperCase() + person.role.slice(1)} - ${person.style}</p>`;
+    console.log("Showing details for:", person);
 
-        const intro = this.getIntroForStyle(person.style);
-        if (intro) {
-            html += `<p class="modal-intro">${intro}</p>`;
-        }
+    const getBreakdown = person.role === 'submissive' ? getSubBreakdown : getDomBreakdown;
+    // Ensure traits object exists, even if empty, for breakdown function
+    const breakdown = getBreakdown(person.style, person.traits || {});
 
-        // --- Goals ---
-        if (person.goals) {
-            html += `<h3>🎯 Current Goals</h3>`;
-            html += `<p class="well">${this.escapeHTML(person.goals)}</p>`;
-        }
+    // --- Header & Intro ---
+    let html = `<h2 class="modal-title" id="detail-modal-title">🎉 ${this.escapeHTML(person.name)}’s Kinky Kingdom 🎉</h2>`;
+    html += `<p class="modal-subtitle">${person.role.charAt(0).toUpperCase() + person.role.slice(1)} - ${person.style ? this.escapeHTML(person.style) : 'N/A'}</p>`;
 
-        // --- Style Breakdown ---
-        html += `<h3>🌈 Strengths & Growth Areas</h3>`;
-        html += `<div class="style-breakdown modal-breakdown">`;
-        if (breakdown.strengths) {
-            html += `<div class="strengths"><h4>✨ Your Powers</h4><div>${breakdown.strengths}</div></div>`; // Use div + innerHTML
-        }
-        if (breakdown.improvements) {
-            html += `<div class="improvements"><h4>🌟 Your Next Quest</h4><div>${breakdown.improvements}</div></div>`; // Use div + innerHTML
-        }
-        html += `</div>`;
+    const intro = this.getIntroForStyle(person.style);
+    if (intro) {
+        html += `<p class="modal-intro">${intro}</p>`; // Intro text assumed safe or pre-escaped if needed
+    }
 
-        // --- Trait Details ---
-        html += `<h3>🎨 Your Trait Tales</h3>`;
-        const allTraitsData = [
-            ...(bdsmData[person.role]?.coreTraits || []),
-            ...(bdsmData[person.role]?.styles.find(s => s.name === person.style)?.traits || [])
-        ];
-        // Ensure uniqueness in case of overlap
-        const uniqueTraitData = Array.from(new Map(allTraitsData.map(t => [t.name, t])).values());
+    // --- Goals ---
+    if (person.goals) {
+        html += `<h3>🎯 Current Goals</h3>`;
+        html += `<p class="well">${this.escapeHTML(person.goals)}</p>`;
+    }
 
+    // --- Style Breakdown ---
+    html += `<h3>🌈 Strengths & Growth Areas</h3>`;
+    html += `<div class="style-breakdown modal-breakdown">`;
+    if (breakdown.strengths) {
+        html += `<div class="strengths"><h4>✨ Your Powers</h4><div>${breakdown.strengths}</div></div>`;
+    }
+    if (breakdown.improvements) {
+        html += `<div class="improvements"><h4>🌟 Your Next Quest</h4><div>${breakdown.improvements}</div></div>`;
+    }
+    html += `</div>`;
 
-        html += '<div class="trait-details-grid">'; // Use grid for better layout
-        if (Object.keys(person.traits || {}).length > 0) {
-             for (const [traitName, score] of Object.entries(person.traits)) {
-                const traitObj = uniqueTraitData.find(t => t.name === traitName);
-                if (!traitObj) {
-                     console.warn(`Definition not found for saved trait: ${traitName}`);
-                     continue; // Skip if trait definition not found
-                 }
+    // --- Trait Details ---
+    html += `<h3>🎨 Your Trait Tales</h3>`;
+    // Combine core and style traits definitions for lookup
+    const allTraitDefinitions = [
+        ...(bdsmData[person.role]?.coreTraits || []),
+        ...(bdsmData[person.role]?.styles.find(s => s.name === person.style)?.traits || [])
+    ];
+    // Ensure uniqueness in definitions based on trait name
+    const uniqueTraitDefinitions = Array.from(new Map(allTraitDefinitions.map(t => [t.name, t])).values());
 
 
-                const descText = traitObj.desc?.[score] || "No description for this level.";
-                const flair = this.getFlairForScore(score);
-                const displayName = traitName.charAt(0).toUpperCase() + traitName.slice(1);
+    html += '<div class="trait-details-grid">';
+    if (person.traits && Object.keys(person.traits).length > 0) {
+         Object.entries(person.traits).forEach(([traitName, score]) => {
+            const traitObj = uniqueTraitDefinitions.find(t => t.name === traitName);
+            if (!traitObj) {
+                 console.warn(`Definition not found for saved trait: ${traitName} in role ${person.role}. Displaying basic info.`);
+                 // Display trait even if definition is missing/obsolete
+                  html += `
+                    <div class="trait-detail-item">
+                      <h4>${this.escapeHTML(traitName.charAt(0).toUpperCase() + traitName.slice(1))} - Level ${score}❓</h4>
+                      <p class="muted-text"><em>Trait definition not found.</em></p>
+                    </div>`;
+                 return; // Skip the rest of the loop for this trait
+             }
 
-                html += `
-                <div class="trait-detail-item">
-                <h4>${displayName} - Level ${score} ${this.getEmojiForScore(score)}</h4>
-                <p><strong>Your Vibe:</strong> ${this.escapeHTML(descText)}</p>
-                <p class="muted-text"><em>${flair}</em></p>
-                </div>`;
-            }
-        } else {
-             html += `<p class="muted-text">No trait scores recorded for this profile.</p>`;
-        }
+            const descText = traitObj.desc?.[score] || "No description for this level.";
+            const flair = this.getFlairForScore(score);
+            const displayName = traitName.charAt(0).toUpperCase() + traitName.slice(1);
 
-        html += '</div>'; // Close grid
-
-
-        // --- Reflections ---
-        html += `<h3>📝 Reflections & Journal</h3>`;
-        html += `<p>Use this space to jot down thoughts, experiences, or progress related to this profile.</p>`;
-        // Load existing reflection text if available
-        const reflectionText = person.reflections?.text || '';
-        html += `<textarea id="reflections-text" class="reflections-textarea" data-person-id="${person.id}" rows="6" placeholder="How are things progressing? What have you learned?">${this.escapeHTML(reflectionText)}</textarea>`;
-        html += `<button id="save-reflections-btn" class="save-btn" data-person-id="${person.id}">Save Reflections 💭</button>`;
+            html += `
+            <div class="trait-detail-item">
+              <h4>${this.escapeHTML(displayName)} - Level ${score} ${this.getEmojiForScore(score)}</h4>
+              <p><strong>Your Vibe:</strong> ${this.escapeHTML(descText)}</p>
+              <p class="muted-text"><em>${flair}</em></p> {/* Flair text assumed safe */}
+            </div>`;
+        });
+    } else {
+         html += `<p class="muted-text">No specific trait scores recorded for this profile.</p>`;
+    }
+    html += '</div>'; // Close grid
 
 
-        this.elements.modalBody.innerHTML = html;
-        this.openModal(this.elements.modal);
+    // --- Reflections ---
+    html += `<h3>📝 Reflections & Journal</h3>`;
+    html += `<p>Use this space to jot down thoughts, experiences, or progress related to this profile.</p>`;
+    const reflectionText = person.reflections?.text || '';
+    html += `<textarea id="reflections-text" class="reflections-textarea" data-person-id="${person.id}" rows="6" placeholder="How are things progressing? What have you learned?">${this.escapeHTML(reflectionText)}</textarea>`;
+    html += `<button id="save-reflections-btn" class="save-btn" data-person-id="${person.id}">Save Reflections 💭</button>`;
+
+
+    this.elements.modalBody.innerHTML = html;
+    this.openModal(this.elements.modal);
   }
 
-   saveReflections(personId) {
+  saveReflections(personId) {
         const person = this.people.find(p => p.id === personId);
         // Get textarea within the currently open modal body
-        const reflectionTextEl = this.elements.modalBody.querySelector('#reflections-text');
-        const reflectionText = reflectionTextEl?.value;
+        const reflectionTextEl = this.elements.modalBody?.querySelector('#reflections-text');
 
-        if (!person || reflectionText === undefined) {
+        if (!person || !reflectionTextEl) {
             alert("Error saving reflections. Could not find person or text area.");
+            console.error("Save Reflections Error: Missing person or textarea element.", { personId, personExists: !!person, textareaExists: !!reflectionTextEl });
             return;
         }
 
+        const reflectionText = reflectionTextEl.value;
+
+        // Initialize reflections object if it doesn't exist
         if (!person.reflections) {
             person.reflections = {};
         }
         person.reflections.text = reflectionText;
         person.reflections.lastUpdated = Date.now();
 
-        this.saveToLocalStorage();
-        alert("Reflections saved! ✨");
-        // Optional: Indicate save success visually without closing modal
+        this.saveToLocalStorage(); // Save the updated people array
+        console.log(`Reflections saved for ${person.name} (ID: ${personId})`);
+
+        // Provide visual feedback
         const saveBtn = this.elements.modalBody.querySelector('#save-reflections-btn');
          if(saveBtn) {
             saveBtn.textContent = 'Reflections Saved ✓';
-            setTimeout(() => { saveBtn.textContent = 'Save Reflections 💭'; }, 2000);
+            saveBtn.disabled = true; // Briefly disable to prevent double-clicks
+            setTimeout(() => {
+                saveBtn.textContent = 'Save Reflections 💭';
+                saveBtn.disabled = false;
+            }, 2000);
+         } else {
+              alert("Reflections saved! ✨"); // Fallback alert
          }
     }
 
   // --- Helper Functions ---
-  // ... (Keep getIntroForStyle, getFlairForScore, getEmojiForScore, escapeHTML, toggleTheme, openModal, closeModal as they were) ...
-   getIntroForStyle(styleName) {
-        // Simple map for intros - expand as needed
-        const intros = {
-          "submissive": "Welcome to the path of delightful deference!",
-          "brat": "Ready to stir up some playful trouble? Let the games begin!",
-          "slave": "Embrace the beauty of deep devotion and surrender.",
-          "pet": "Time for head pats and happy wags! Explore your affectionate side.",
-          "little": "Enter a world of innocence, play, and caring guidance.",
-          "masochist": "Explore the fascinating edge where sensation meets release.",
-          "dominant": "Step into your power and guide the dynamic with confidence.",
-          "master / mistress": "Command respect and cultivate excellence with clear authority.",
-          "sadist": "Delve into the art of sensation and the psychology of reaction.",
-          "caregiver / daddy / mommy": "Rule with a nurturing heart, providing structure and warmth.",
-          "primal (hunter / beast)": "Unleash your instincts and dominate with raw power."
-          // Add more...
-        };
-        // Normalize key for lookup
-         const normalizedKey = styleName?.toLowerCase().replace(/ \/ /g, '/').replace(/\(.*\)/g, '').trim() || '';
-        return intros[normalizedKey] || "Explore your unique expression!";
-    }
 
-    getFlairForScore(score) {
-        score = parseInt(score);
-        return score <= 2 ? "🌱 Keep nurturing this trait!" :
-               score === 3 ? "⚖️ Solidly balanced, ready to grow further!" :
-               "🌟 Wow, this trait shines brightly!";
-    }
-
-     getEmojiForScore(score) {
-        score = parseInt(score);
-        return score <= 2 ? "💧" : score === 3 ? "🌱" : score === 4 ? "✨" : "🌟";
-    }
-
-    escapeHTML(str) {
-        if (typeof str !== 'string') return str === null || str === undefined ? '' : str; // Return non-strings safely
-        const element = document.createElement('div');
-        element.textContent = str;
-        return element.innerHTML;
-        /* // Manual replacement - less robust for complex cases but avoids DOM creation
-        return str.replace(/[&<>"']/g, function(match) {
-            const escape = { '&': '&', '<': '<', '>': '>', '"': '"', "'": ''' };
-            return escape[match];
-        }); */
-    }
-
-
-   toggleTheme() {
-      const currentTheme = document.body.getAttribute('data-theme') || 'light';
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      document.body.setAttribute('data-theme', newTheme);
-      this.elements.themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙'; // Update icon
-      // Optional: Save theme preference to localStorage
-      try {
-         localStorage.setItem('kinkCompassTheme', newTheme);
-      } catch (error) {
-          console.warn("Could not save theme preference to localStorage:", error);
-      }
+  getIntroForStyle(styleName) {
+    // Simple map for intros - expand as needed
+    const intros = {
+      "submissive": "Welcome to the path of delightful deference!",
+      "brat": "Ready to stir up some playful trouble? Let the games begin!",
+      "slave": "Embrace the beauty of deep devotion and surrender.",
+      "pet": "Time for head pats and happy wags! Explore your affectionate side.",
+      "little": "Enter a world of innocence, play, and caring guidance.",
+      "masochist": "Explore the fascinating edge where sensation meets release.",
+      "dominant": "Step into your power and guide the dynamic with confidence.",
+      "master / mistress": "Command respect and cultivate excellence with clear authority.",
+      "sadist": "Delve into the art of sensation and the psychology of reaction.",
+      "caregiver / daddy / mommy": "Rule with a nurturing heart, providing structure and warmth.",
+      "primal (hunter / beast)": "Unleash your instincts and dominate with raw power."
+      // Add more...
+    };
+    // Normalize key for lookup
+    const normalizedKey = styleName?.toLowerCase().replace(/ \/ /g, '/').replace(/\(.*\)/g, '').trim() || '';
+    return intros[normalizedKey] || "Explore your unique expression!";
   }
 
-  // Apply saved theme on load (call this at the end of the constructor)
+  getFlairForScore(score) {
+    score = parseInt(score);
+    return score <= 2 ? "🌱 Keep nurturing this trait!" :
+           score === 3 ? "⚖️ Solidly balanced, ready to grow further!" :
+           "🌟 Wow, this trait shines brightly!";
+  }
+
+  getEmojiForScore(score) {
+    score = parseInt(score);
+    return score <= 2 ? "💧" : score === 3 ? "🌱" : score === 4 ? "✨" : "🌟";
+  }
+
+  escapeHTML(str) {
+    // Handles null, undefined, numbers, etc., converts others to string first
+    str = String(str ?? ''); // Convert null/undefined to empty string, others to string
+    const element = document.createElement('div');
+    element.textContent = str;
+    return element.innerHTML; // Use browser's mechanism for robust escaping
+  }
+
+  toggleTheme() {
+    const currentTheme = document.body.getAttribute('data-theme') || 'light';
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.body.setAttribute('data-theme', newTheme);
+    if (this.elements.themeToggle) {
+        this.elements.themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        this.elements.themeToggle.setAttribute('title', `Switch to ${currentTheme} mode`);
+    }
+    // Save theme preference
+    try {
+       localStorage.setItem('kinkCompassTheme', newTheme);
+    } catch (error) {
+        console.warn("Could not save theme preference to localStorage:", error);
+    }
+    console.log(`Theme switched to ${newTheme}`);
+  }
+
   applySavedTheme() {
      let savedTheme = 'light';
      try {
-        savedTheme = localStorage.getItem('kinkCompassTheme') || 'light';
+        // Check if localStorage is available and accessible
+         if (typeof localStorage !== 'undefined') {
+             savedTheme = localStorage.getItem('kinkCompassTheme') || 'light';
+         }
      } catch (error) {
          console.warn("Could not read theme preference from localStorage:", error);
      }
       document.body.setAttribute('data-theme', savedTheme);
-      this.elements.themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+      if (this.elements.themeToggle) {
+          this.elements.themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+          this.elements.themeToggle.setAttribute('title', `Switch to ${savedTheme === 'dark' ? 'light' : 'dark'} mode`);
+      }
+      console.log(`Applied saved theme: ${savedTheme}`);
   }
 
-   openModal(modalElement) {
+  openModal(modalElement) {
       if (modalElement) {
           modalElement.style.display = 'flex';
           // Focus first focusable element in modal for accessibility
-          const focusable = modalElement.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+          // Include common interactive elements
+          const focusable = modalElement.querySelector(
+              'button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])'
+          );
           if (focusable) {
-              focusable.focus();
+               // Delay focus slightly to ensure modal is fully visible and ready
+              requestAnimationFrame(() => {
+                 focusable.focus();
+              });
           }
+          console.log(`Opened modal: #${modalElement.id}`);
+      } else {
+          console.error("Attempted to open a non-existent modal element.");
       }
   }
 
   closeModal(modalElement) {
        if (modalElement) {
           modalElement.style.display = 'none';
-           // Return focus to the element that opened the modal if possible (more advanced)
+           // Optional: Return focus to the element that opened the modal
+           // This requires storing the previously focused element, adding complexity.
+           console.log(`Closed modal: #${modalElement.id}`);
        }
   }
 
-}
+} // End of TrackerApp class
 
-// Initialize the app - This runs after the script is parsed because it's a module at the end of body
+// --- Initialization ---
+// This runs after the HTML is parsed because the script tag is type="module" and at the end of <body>.
 try {
     console.log("Initializing TrackerApp...");
-    new TrackerApp();
+    window.kinkCompassApp = new TrackerApp(); // Assign to window for potential debugging access
     console.log("TrackerApp Initialized Successfully.");
 } catch (error) {
     console.error("Fatal error during TrackerApp initialization:", error);
-    // Display a user-friendly error message on the page
-    document.body.innerHTML = `<div style="padding: 2em; text-align: center; color: red;">
-        <h1>Oops! Something went wrong.</h1>
-        <p>KinkCompass could not start. Please check the console (F12) for errors or try refreshing the page.</p>
+    // Display a user-friendly error message ON the page
+    document.body.innerHTML = `<div style="padding: 2em; margin: 2em; border: 2px solid red; background: #fff0f0; color: #333;">
+        <h1 style="color: red;">Oops! Something went wrong.</h1>
+        <p>KinkCompass could not start correctly due to an unexpected error.</p>
+        <p>Please check the browser's console (Press F12, then click 'Console') for specific error details.</p>
+        <p>You might need to refresh the page or ensure your browser supports modern JavaScript.</p>
         <p><i>Error: ${error.message}</i></p>
     </div>`;
 }
+
+// --- END OF FILE app.js ---
