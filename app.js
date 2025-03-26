@@ -21,7 +21,6 @@ class TrackerApp {
     this.elements = {
       formSection: document.getElementById('form-section'), name: document.getElementById('name'), avatarDisplay: document.getElementById('avatar-display'), avatarInput: document.getElementById('avatar-input'), avatarPicker: document.querySelector('.avatar-picker'), role: document.getElementById('role'), style: document.getElementById('style'), traitsContainer: document.getElementById('traits-container'), traitInfoPopup: document.getElementById('trait-info-popup'), traitInfoClose: document.getElementById('trait-info-close'), traitInfoTitle: document.getElementById('trait-info-title'), traitInfoBody: document.getElementById('trait-info-body'), save: document.getElementById('save'), clearForm: document.getElementById('clear-form'), peopleList: document.getElementById('people-list'), livePreview: document.getElementById('live-preview'), modal: document.getElementById('detail-modal'), modalBody: document.getElementById('modal-body'), modalClose: document.getElementById('modal-close'), resourcesBtn: document.getElementById('resources-btn'), resourcesModal: document.getElementById('resources-modal'), resourcesClose: document.getElementById('resources-close'), glossaryBtn: document.getElementById('glossary-btn'), glossaryModal: document.getElementById('glossary-modal'), glossaryClose: document.getElementById('glossary-close'), glossaryBody: document.getElementById('glossary-body'), styleDiscoveryBtn: document.getElementById('style-discovery-btn'), styleDiscoveryModal: document.getElementById('style-discovery-modal'), styleDiscoveryClose: document.getElementById('style-discovery-close'), styleDiscoveryRoleFilter: document.getElementById('style-discovery-role'), styleDiscoveryBody: document.getElementById('style-discovery-body'), themesBtn: document.getElementById('themes-btn'), themesModal: document.getElementById('themes-modal'), themesClose: document.getElementById('themes-close'), themesBody: document.getElementById('themes-body'), exportBtn: document.getElementById('export-btn'), importBtn: document.getElementById('import-btn'), importFileInput: document.getElementById('import-file-input'), themeToggle: document.getElementById('theme-toggle')
     };
-    // Check critical elements
     if (!this.elements.name || !this.elements.role || !this.elements.style || !this.elements.save || !this.elements.peopleList || !this.elements.modal) {
          console.error("Missing critical HTML elements."); throw new Error("Missing critical elements");
     }
@@ -58,8 +57,8 @@ class TrackerApp {
     this.elements.importBtn?.addEventListener('click',() => this.elements.importFileInput?.click());
     this.elements.importFileInput?.addEventListener('change',(e) => this.importData(e));
     // People List
-    this.elements.peopleList?.addEventListener('click',(e) => { const li=e.target.closest('.person');if(!li)return;const id=parseInt(li.dataset.id);if(isNaN(id))return;console.log("List Click on ID:",id,"Target:",e.target);if(e.target.classList.contains('edit-btn'))this.editPerson(id);else if(e.target.classList.contains('delete-btn'))this.deletePerson(id);else this.showPersonDetails(id); });
-    this.elements.peopleList?.addEventListener('keydown',(e) => { const li=e.target.closest('.person');if(!li)return;if(e.key==='Enter'||e.key===' '){e.preventDefault();const id=parseInt(li.dataset.id);if(!isNaN(id))this.showPersonDetails(id);}});
+    this.elements.peopleList?.addEventListener('click',(e) => this.handleListClick(e)); // Use named handler
+    this.elements.peopleList?.addEventListener('keydown',(e) => this.handleListKeydown(e)); // Use named handler
     // Modals
     this.elements.modalClose?.addEventListener('click',() => this.closeModal(this.elements.modal));
     this.elements.resourcesBtn?.addEventListener('click',() => this.openModal(this.elements.resourcesModal));
@@ -72,9 +71,26 @@ class TrackerApp {
     this.elements.themesBtn?.addEventListener('click',() => this.openModal(this.elements.themesModal));
     this.elements.themesClose?.addEventListener('click',() => this.closeModal(this.elements.themesModal));
     this.elements.themesBody?.addEventListener('click',(e) => this.handleThemeSelection(e));
-    // Global
-    window.addEventListener('click',(e) => { if(e.target===this.elements.modal)this.closeModal(this.elements.modal);if(e.target===this.elements.resourcesModal)this.closeModal(this.elements.resourcesModal);if(e.target===this.elements.glossaryModal)this.closeModal(this.elements.glossaryModal);if(e.target===this.elements.styleDiscoveryModal)this.closeModal(this.elements.styleDiscoveryModal);if(e.target===this.elements.themesModal)this.closeModal(this.elements.themesModal); });
-    window.addEventListener('keydown',(e) => { if(e.key==='Escape'){if(this.elements.modal?.style.display==='flex')this.closeModal(this.elements.modal);if(this.elements.resourcesModal?.style.display==='flex')this.closeModal(this.elements.resourcesModal);if(this.elements.glossaryModal?.style.display==='flex')this.closeModal(this.elements.glossaryModal);if(this.elements.styleDiscoveryModal?.style.display==='flex')this.closeModal(this.elements.styleDiscoveryModal);if(this.elements.themesModal?.style.display==='flex')this.closeModal(this.elements.themesModal);}});
+
+    // --- Corrected Global Listeners ---
+    window.addEventListener('click', (e) => {
+        if (e.target === this.elements.modal) this.closeModal(this.elements.modal);
+        if (e.target === this.elements.resourcesModal) this.closeModal(this.elements.resourcesModal);
+        if (e.target === this.elements.glossaryModal) this.closeModal(this.elements.glossaryModal);
+        if (e.target === this.elements.styleDiscoveryModal) this.closeModal(this.elements.styleDiscoveryModal);
+        if (e.target === this.elements.themesModal) this.closeModal(this.elements.themesModal);
+    });
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            if (this.elements.modal?.style.display === 'flex') this.closeModal(this.elements.modal);
+            if (this.elements.resourcesModal?.style.display === 'flex') this.closeModal(this.elements.resourcesModal);
+            if (this.elements.glossaryModal?.style.display === 'flex') this.closeModal(this.elements.glossaryModal);
+            if (this.elements.styleDiscoveryModal?.style.display === 'flex') this.closeModal(this.elements.styleDiscoveryModal);
+            if (this.elements.themesModal?.style.display === 'flex') this.closeModal(this.elements.themesModal);
+        }
+    });
+    // --- End Corrected Global Listeners ---
+
     // Dynamic
     this.elements.traitsContainer?.addEventListener('input',(e) => { if(e.target.classList.contains('trait-slider')){this.updateTraitDescription(e.target);this.updateLivePreview();const v=e.target.value;const p=this.currentEditId?this.people.find(p=>p.id===this.currentEditId):null;if(p){if(v==='5')grantAchievement(p,'max_trait');if(v==='1')grantAchievement(p,'min_trait');}}} );
     this.elements.traitsContainer?.addEventListener('click',(e) => { if(e.target.classList.contains('trait-info-btn')){const tN=e.target.dataset.trait;if(tN)this.showTraitInfo(tN);}} );
@@ -84,7 +100,8 @@ class TrackerApp {
   }
 
   // --- Event Handlers ---
-  handleThemeSelection(e){if(e.target.classList.contains('theme-option-btn')){const tN=e.target.dataset.theme;if(tN){this.setTheme(tN);grantAchievement({},'theme_changer');}}}
+  handleListClick(e){const li=e.target.closest('.person');if(!li)return;const id=parseInt(li.dataset.id);if(isNaN(id))return;console.log("List Click on ID:",id,"Target:",e.target);if(e.target.classList.contains('edit-btn'))this.editPerson(id);else if(e.target.classList.contains('delete-btn'))this.deletePerson(id);else this.showPersonDetails(id);}
+  handleListKeydown(e){const li=e.target.closest('.person');if(!li)return;if(e.key==='Enter'||e.key===' '){e.preventDefault();const id=parseInt(li.dataset.id);if(!isNaN(id))this.showPersonDetails(id);}}
   handleModalBodyClick(e){
     console.log("Modal Click:",e.target);const btn=e.target.closest('button');const tgt=e.target;const check=btn||tgt;
     if(!check||(check.tagName!=='BUTTON'&&!check.classList.contains('snapshot-info-btn'))){return;}
@@ -100,7 +117,7 @@ class TrackerApp {
     else if(cl.contains('delete-goal-btn')&&!isNaN(pId)&&!isNaN(gId)){console.log("Match: delete-goal");this.deleteGoal(pId,gId);}
     else{console.log("No matching modal action.");}
   }
-
+  handleThemeSelection(e){if(e.target.classList.contains('theme-option-btn')){const tN=e.target.dataset.theme;if(tN){this.setTheme(tN);grantAchievement({},'theme_changer');}}}
 
   // --- Core Rendering ---
   renderStyles(r){this.elements.style.innerHTML='<option value="">Pick flavor!</option>';if(!bdsmData[r]?.styles)return;bdsmData[r].styles.forEach(s=>{this.elements.style.innerHTML+=`<option value="${this.escapeHTML(s.name)}">${this.escapeHTML(s.name)}</option>`;});}
@@ -124,26 +141,25 @@ class TrackerApp {
       const person = this.people.find(p => p.id === personId); if (!person) return;
       console.log("Showing details:", person);
       person.goals=person.goals||[];person.history=person.history||[];person.achievements=person.achievements||[];person.reflections=person.reflections||{};person.avatar=person.avatar||'❓';
-      const getB=person.role==='submissive'?getSubBreakdown:getDomBreakdown;const B=getB(person.style,person.traits||{});
-      let html=`<h2 class="modal-title">${person.avatar} ${this.escapeHTML(person.name)}’s Kingdom ${person.avatar}</h2>`;
-      html+=`<p class="modal-subtitle">${person.role.charAt(0).toUpperCase()+person.role.slice(1)} - ${person.style?this.escapeHTML(person.style):'N/A'}</p>`;
-      // Safely call getIntroForStyle
-      let intro = "Explore unique expression!"; try { if (typeof this.getIntroForStyle === 'function') { intro = this.getIntroForStyle(person.style); } else { console.error("getIntroForStyle not function!"); } } catch(e) { console.error("Error calling getIntro:",e); } if (intro) html += `<p class="modal-intro">${intro}</p>`;
+      const getB = person.role === 'submissive' ? getSubBreakdown : getDomBreakdown; const B = getB(person.style, person.traits || {});
+      let html = `<h2 class="modal-title">${person.avatar} ${this.escapeHTML(person.name)}’s Kingdom ${person.avatar}</h2>`;
+      html += `<p class="modal-subtitle">${person.role.charAt(0).toUpperCase()+person.role.slice(1)} - ${person.style?this.escapeHTML(person.style):'N/A'}</p>`;
+      let intro = "Explore unique expression!"; try { if (typeof this.getIntroForStyle === 'function') { intro = this.getIntroForStyle(person.style); } else { console.error("getIntroForStyle not function!"); } } catch(e) { console.error("Error calling getIntro:", e); } if (intro) html += `<p class="modal-intro">${intro}</p>`;
       // Goals
-      html+=`<section class="goals-section"><h3>🎯 Goals</h3><ul id="goal-list-${person.id}"></ul><div class="add-goal-form"><input type="text" id="new-goal-text-${person.id}" placeholder="Add goal..."><button class="add-goal-btn save-btn small-btn" data-person-id="${person.id}">+ Add</button></div></section>`;
+      html += `<section class="goals-section"><h3>🎯 Goals</h3><ul id="goal-list-${person.id}"></ul><div class="add-goal-form"><input type="text" id="new-goal-text-${person.id}" placeholder="Add goal..."><button class="add-goal-btn save-btn small-btn" data-person-id="${person.id}">+ Add</button></div></section>`;
       // Breakdown
-      html+=`<h3>🌈 Strengths & Growth</h3><div class="style-breakdown modal-breakdown">`;if(B.strengths)html+=`<div class="strengths"><h4>✨ Powers</h4><div>${B.strengths}</div></div>`;if(B.improvements)html+=`<div class="improvements"><h4>🌟 Quests</h4><div>${B.improvements}</div></div>`;html+=`</div>`;
+      html += `<h3>🌈 Strengths & Growth</h3><div class="style-breakdown modal-breakdown">`; if(B.strengths)html+=`<div class="strengths"><h4>✨ Powers</h4><div>${B.strengths}</div></div>`; if(B.improvements)html+=`<div class="improvements"><h4>🌟 Quests</h4><div>${B.improvements}</div></div>`; html+=`</div>`;
       // Traits
-      html+=`<h3>🎨 Trait Tales</h3>`;const defs=[...(bdsmData[person.role]?.coreTraits||[]),...(bdsmData[person.role]?.styles.find(s=>s.name===person.style)?.traits||[])];const uDefs=Array.from(new Map(defs.map(t=>[t.name,t])).values());
-      html+='<div class="trait-details-grid">';if(person.traits&&Object.keys(person.traits).length>0){Object.entries(person.traits).forEach(([n,sc])=>{const tO=uDefs.find(t=>t.name===n);const dN=n.charAt(0).toUpperCase()+n.slice(1);if(!tO){html+=`<div><h4>${this.escapeHTML(dN)} - Lvl ${sc}❓</h4><p><em>Def missing.</em></p></div>`;return;}const dT=tO.desc?.[sc]||"N/A";const fl=this.getFlairForScore(sc);html+=`<div><h4>${this.escapeHTML(dN)} - Lvl ${sc} ${this.getEmojiForScore(sc)}</h4><p><strong>Vibe:</strong> ${this.escapeHTML(dT)}</p><p><em>${fl}</em></p></div>`;});}else{html+=`<p>No scores.</p>`;}html+='</div>';
+      html += `<h3>🎨 Trait Tales</h3>`; const defs=[...(bdsmData[person.role]?.coreTraits||[]),...(bdsmData[person.role]?.styles.find(s=>s.name===person.style)?.traits||[])]; const uDefs=Array.from(new Map(defs.map(t=>[t.name,t])).values());
+      html += '<div class="trait-details-grid">'; if(person.traits&&Object.keys(person.traits).length>0){Object.entries(person.traits).forEach(([n,sc])=>{const tO=uDefs.find(t=>t.name===n);const dN=n.charAt(0).toUpperCase()+n.slice(1);if(!tO){html+=`<div><h4>${this.escapeHTML(dN)} - Lvl ${sc}❓</h4><p><em>Def missing.</em></p></div>`;return;}const dT=tO.desc?.[sc]||"N/A";const fl=this.getFlairForScore(sc);html+=`<div><h4>${this.escapeHTML(dN)} - Lvl ${sc} ${this.getEmojiForScore(sc)}</h4><p><strong>Vibe:</strong> ${this.escapeHTML(dT)}</p><p><em>${fl}</em></p></div>`;});}else{html+=`<p>No scores.</p>`;}html+='</div>';
       // History
-      html+=`<section class="history-section"><h3>⏳ History<button class="snapshot-info-btn" aria-label="Info">ℹ️</button></h3><p class="snapshot-info muted-text" style="display:none;">Snapshot saves current traits.</p><div class="history-chart-container"><canvas id="history-chart"></canvas></div><button id="snapshot-btn" class="small-btn" data-person-id="${person.id}">📸 Snapshot</button></section>`;
+      html += `<section class="history-section"><h3>⏳ History<button class="snapshot-info-btn" aria-label="Info">ℹ️</button></h3><p class="snapshot-info muted-text" style="display:none;">Snapshot saves current traits.</p><div class="history-chart-container"><canvas id="history-chart"></canvas></div><button id="snapshot-btn" class="small-btn" data-person-id="${person.id}">📸 Snapshot</button></section>`;
       // Achievements
-      html+=`<section class="achievements-section"><h3>🏆 Achievements</h3><div id="achievements-list-${person.id}"></div></section>`;
+      html += `<section class="achievements-section"><h3>🏆 Achievements</h3><div id="achievements-list-${person.id}"></div></section>`;
       // Reading
-      html+=`<section class="kink-reading-section"><h3>🔮 Reading</h3><button id="reading-btn" class="small-btn" data-person-id="${person.id}">Get Reading!</button><div id="kink-reading-output" style="display:none;"></div></section>`;
+      html += `<section class="kink-reading-section"><h3>🔮 Reading</h3><button id="reading-btn" class="small-btn" data-person-id="${person.id}">Get Reading!</button><div id="kink-reading-output" style="display:none;"></div></section>`;
       // Reflections
-      html+=`<section class="reflections-section"><h3>📝 Reflections</h3><div id="journal-prompt-area" style="display:none;"></div><div class="modal-actions"><button id="prompt-btn" class="small-btn">💡 Prompt</button></div><textarea id="reflections-text" data-person-id="${person.id}" rows="6" placeholder="Thoughts?">${this.escapeHTML(person.reflections?.text||'')}</textarea><button id="save-reflections-btn" data-person-id="${person.id}">Save 💭</button></section>`;
+      html += `<section class="reflections-section"><h3>📝 Reflections</h3><div id="journal-prompt-area" style="display:none;"></div><div class="modal-actions"><button id="prompt-btn" class="small-btn">💡 Prompt</button></div><textarea id="reflections-text" data-person-id="${person.id}" rows="6" placeholder="Thoughts?">${this.escapeHTML(person.reflections?.text||'')}</textarea><button id="save-reflections-btn" data-person-id="${person.id}">Save 💭</button></section>`;
       this.elements.modalBody.innerHTML=html; this.renderGoalList(person); this.renderAchievements(person); this.openModal(this.elements.modal); this.renderHistoryChart(person);
   }
 
@@ -181,11 +197,8 @@ class TrackerApp {
 
   // *** getIntroForStyle Definition ***
   getIntroForStyle(styleName) {
-    console.log(`getIntroForStyle called with: ${styleName}`);
     const key = styleName?.toLowerCase().replace(/\(.*?\)/g, '').replace(/ \/ /g, '/').trim() || '';
-    const intros = {
-        "submissive":"Welcome, lovely Submissive! ✨","brat":"Hehe, ready for trouble, Brat? 😉","slave":"Step into devotion, noble Slave. 🙏","switch":"Master of moods, versatile Switch! ↔️","pet":"Time for head pats, adorable Pet! 💖","little":"Land of crayons & cuddles, sweet Little! 🧸","puppy":"Woof woof! Ready for zoomies, playful Puppy? 🦴","kitten":"Curious Kitten, ready to pounce? 🧶","princess":"Your Highness! Ready to be adored? 👑","rope bunny":"Ready for knots of fun, lovely Rope Bunny? 🎀","masochist":"Welcome, sensation seeker! 🔥","prey":"The chase is on, little Prey! 🦊","toy":"Wind up & play, delightful Toy! 🎁","doll":"Poised & perfect Doll, strike a pose! 💖","bunny":"Soft steps, gentle heart, sweet Bunny! 🐇","servant":"Dedicated Servant, at your service! 🧹","playmate":"Game on, enthusiastic Playmate! 🎉","babygirl":"Sweet & sassy Babygirl! 😉","captive":"Caught again, daring Captive? ⛓️","thrall":"Deep focus, devoted Thrall. 🌀","puppet":"Dance to their tune, perfect Puppet? 🎭","maid":"Impeccable Maid, ready to sparkle? ✨","painslut":"Eager & ready, devoted Painslut? 🔥","bottom":"Open heart, yielding power, beautiful Bottom. 💖","dominant":"Step into your power, noble Dominant! 🔥","assertive":"Clear voice, strong boundaries, Assertive! 💪","nurturer":"Warm heart, steady hand, Nurturer! 🌸","strict":"Order & structure, firm Strict! ⚖️","master":"Commanding presence, Master! 🏰","mistress":"Elegant authority, Mistress! 👑","daddy":"Protective arms, loving Daddy! 🧸","mommy":"Nurturing embrace, caring Mommy! 💖","owner":"Claiming your prize, Owner! 🐾","rigger":"Artist with rope, Rigger! 🎨","sadist":"Conductor of sensation, Sadist! 🔥","hunter":"Primal instincts, Hunter! 🐺","trainer":"Patient teacher, Trainer! 🏆","puppeteer":"Pulling strings, Puppeteer! 🎭","protector":"Steadfast shield, Protector! 🛡️","disciplinarian":"Fair judgment, Disciplinarian! 👨‍⚖️","caretaker":"Attentive eye, Caretaker! ❤️‍🩹","sir":"Dignified command, Sir! 🎩","goddess":"Radiant power, Goddess! ✨","commander":"Strategic mind, Commander! 🎖️"
-    };
+    const intros = {"submissive":"Welcome, lovely Submissive! ✨","brat":"Hehe, ready for trouble, Brat? 😉","slave":"Step into devotion, noble Slave. 🙏","switch":"Master of moods, versatile Switch! ↔️","pet":"Time for head pats, adorable Pet! 💖","little":"Land of crayons & cuddles, sweet Little! 🧸","puppy":"Woof woof! Ready for zoomies, playful Puppy? 🦴","kitten":"Curious Kitten, ready to pounce? 🧶","princess":"Your Highness! Ready to be adored? 👑","rope bunny":"Ready for knots of fun, lovely Rope Bunny? 🎀","masochist":"Welcome, sensation seeker! 🔥","prey":"The chase is on, little Prey! 🦊","toy":"Wind up & play, delightful Toy! 🎁","doll":"Poised & perfect Doll, strike a pose! 💖","bunny":"Soft steps, gentle heart, sweet Bunny! 🐇","servant":"Dedicated Servant, at your service! 🧹","playmate":"Game on, enthusiastic Playmate! 🎉","babygirl":"Sweet & sassy Babygirl! 😉","captive":"Caught again, daring Captive? ⛓️","thrall":"Deep focus, devoted Thrall. 🌀","puppet":"Dance to their tune, perfect Puppet? 🎭","maid":"Impeccable Maid, ready to sparkle? ✨","painslut":"Eager & ready, devoted Painslut? 🔥","bottom":"Open heart, yielding power, beautiful Bottom. 💖","dominant":"Step into your power, noble Dominant! 🔥","assertive":"Clear voice, strong boundaries, Assertive! 💪","nurturer":"Warm heart, steady hand, Nurturer! 🌸","strict":"Order & structure, firm Strict! ⚖️","master":"Commanding presence, Master! 🏰","mistress":"Elegant authority, Mistress! 👑","daddy":"Protective arms, loving Daddy! 🧸","mommy":"Nurturing embrace, caring Mommy! 💖","owner":"Claiming your prize, Owner! 🐾","rigger":"Artist with rope, Rigger! 🎨","sadist":"Conductor of sensation, Sadist! 🔥","hunter":"Primal instincts, Hunter! 🐺","trainer":"Patient teacher, Trainer! 🏆","puppeteer":"Pulling strings, Puppeteer! 🎭","protector":"Steadfast shield, Protector! 🛡️","disciplinarian":"Fair judgment, Disciplinarian! 👨‍⚖️","caretaker":"Attentive eye, Caretaker! ❤️‍🩹","sir":"Dignified command, Sir! 🎩","goddess":"Radiant power, Goddess! ✨","commander":"Strategic mind, Commander! 🎖️"};
     return intros[key] || "Explore your unique and wonderful expression!";
   } // <<<< Method is correctly placed inside the class
 
