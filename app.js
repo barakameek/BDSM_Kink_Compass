@@ -18,35 +18,18 @@ class TrackerApp {
     this.chartInstance = null;
 
     // --- Style Finder State (Initialized but not active) ---
-    this.sfActive = false;
-    this.sfStep = 0;
-    this.sfRole = null;
-    this.sfAnswers = { traits: {} };
-    this.sfScores = {};
-    this.sfPreviousScores = {};
-    this.sfHasRenderedDashboard = false;
-    this.sfTraitSet = [];
-    this.sfSteps = [];
+    this.sfActive = false; this.sfStep = 0; this.sfRole = null; this.sfAnswers = { traits: {} }; this.sfScores = {}; this.sfPreviousScores = {}; this.sfHasRenderedDashboard = false; this.sfTraitSet = []; this.sfSteps = [];
 
     // --- Element Mapping ---
     this.elements = {
-      // KinkCompass elements
       formSection: document.getElementById('form-section'), name: document.getElementById('name'), avatarDisplay: document.getElementById('avatar-display'), avatarInput: document.getElementById('avatar-input'), avatarPicker: document.querySelector('.avatar-picker'), role: document.getElementById('role'), style: document.getElementById('style'), traitsContainer: document.getElementById('traits-container'), traitInfoPopup: document.getElementById('trait-info-popup'), traitInfoClose: document.getElementById('trait-info-close'), traitInfoTitle: document.getElementById('trait-info-title'), traitInfoBody: document.getElementById('trait-info-body'), save: document.getElementById('save'), clearForm: document.getElementById('clear-form'), peopleList: document.getElementById('people-list'), livePreview: document.getElementById('live-preview'),
-      // KinkCompass Modals & Controls
       modal: document.getElementById('detail-modal'), modalBody: document.getElementById('modal-body'), modalClose: document.getElementById('modal-close'), resourcesBtn: document.getElementById('resources-btn'), resourcesModal: document.getElementById('resources-modal'), resourcesClose: document.getElementById('resources-close'), glossaryBtn: document.getElementById('glossary-btn'), glossaryModal: document.getElementById('glossary-modal'), glossaryClose: document.getElementById('glossary-close'), glossaryBody: document.getElementById('glossary-body'), styleDiscoveryBtn: document.getElementById('style-discovery-btn'), styleDiscoveryModal: document.getElementById('style-discovery-modal'), styleDiscoveryClose: document.getElementById('style-discovery-close'), styleDiscoveryRoleFilter: document.getElementById('style-discovery-role'), styleDiscoveryBody: document.getElementById('style-discovery-body'), themesBtn: document.getElementById('themes-btn'), themesModal: document.getElementById('themes-modal'), themesClose: document.getElementById('themes-close'), themesBody: document.getElementById('themes-body'), exportBtn: document.getElementById('export-btn'), importBtn: document.getElementById('import-btn'), importFileInput: document.getElementById('import-file-input'), themeToggle: document.getElementById('theme-toggle'),
-      // Style Finder elements
       styleFinderTriggerBtn: document.getElementById('style-finder-trigger-btn'), sfModal: document.getElementById('style-finder-modal'), sfCloseBtn: document.getElementById('sf-close-style-finder'), sfProgressTracker: document.getElementById('sf-progress-tracker'), sfStepContent: document.getElementById('sf-step-content'), sfFeedback: document.getElementById('sf-feedback'), sfDashboard: document.getElementById('sf-dashboard')
     };
-
     // Critical element check
     const criticalElements = ['name', 'role', 'style', 'save', 'peopleList', 'modal', 'sfModal', 'sfStepContent', 'styleFinderTriggerBtn'];
     let missingElement = false;
-    for (const key of criticalElements) {
-        if (!this.elements[key]) {
-             console.error(`Missing critical HTML element: ID '${key}'`);
-             missingElement = true;
-        }
-    }
+    for (const key of criticalElements) { if (!this.elements[key]) { console.error(`Missing critical: ID '${key}'`); missingElement = true; } }
     if (missingElement) { throw new Error("Missing critical HTML elements"); }
 
     console.log("CONSTRUCTOR: Elements found.");
@@ -58,9 +41,9 @@ class TrackerApp {
     this.renderTraits(this.elements.role.value, '');
     this.renderList();
     this.updateLivePreview();
-    // --- DO NOT START STYLE FINDER HERE ---
+    // --- CORRECTED LINE - NO EXTRA BRACE ---
     console.log("CONSTRUCTOR: Initial render complete.");
-  }
+  } // --- End of constructor ---
 
   // --- Local Storage ---
   loadFromLocalStorage(){try{const d=localStorage.getItem('kinkProfiles');const p=d?JSON.parse(d):[];this.people=p.map(p=>({...p,goals:Array.isArray(p.goals)?p.goals:[],history:Array.isArray(p.history)?p.history:[],avatar:p.avatar||'❓',achievements:Array.isArray(p.achievements)?p.achievements:[],reflections:typeof p.reflections==='object'?p.reflections:{}}));console.log(`Loaded ${this.people.length}`);}catch(e){console.error("Load Error:",e);this.people=[];}}
@@ -69,11 +52,10 @@ class TrackerApp {
   // --- Event Listeners Setup ---
   addEventListeners() {
     console.log("Attaching event listeners...");
-    // KinkCompass Form & UI
     this.elements.role?.addEventListener('change',() => { const r=this.elements.role.value;this.renderStyles(r);this.elements.style.value='';this.renderTraits(r,'');this.updateLivePreview(); });
     this.elements.style?.addEventListener('change',() => { this.renderTraits(this.elements.role.value,this.elements.style.value);this.updateLivePreview(); });
     this.elements.name?.addEventListener('input',() => this.updateLivePreview());
-    this.elements.avatarPicker?.addEventListener('click',(e) => { if(e.target.classList.contains('avatar-btn')){const em=e.target.dataset.emoji;if(em){this.elements.avatarInput.value=em;this.elements.avatarDisplay.textContent=em;this.elements.avatarPicker.querySelectorAll('.avatar-btn').forEach(b=>b.classList.toggle('selected',b===e.target));this.updateLivePreview();}}}});
+    this.elements.avatarPicker?.addEventListener('click',(e) => { if(e.target.classList.contains('avatar-btn')){const em=e.target.dataset.emoji;if(em){this.elements.avatarInput.value=em;this.elements.avatarDisplay.textContent=em;this.elements.avatarPicker.querySelectorAll('.avatar-btn').forEach(b=>b.classList.toggle('selected',b===e.target));this.updateLivePreview();}} });
     this.elements.save?.addEventListener('click',() => this.savePerson());
     this.elements.clearForm?.addEventListener('click',() => this.resetForm(true));
     this.elements.themeToggle?.addEventListener('click',() => this.toggleTheme());
@@ -82,11 +64,6 @@ class TrackerApp {
     this.elements.importFileInput?.addEventListener('change',(e) => this.importData(e));
     this.elements.peopleList?.addEventListener('click',(e) => this.handleListClick(e));
     this.elements.peopleList?.addEventListener('keydown',(e) => this.handleListKeydown(e));
-    this.elements.traitsContainer?.addEventListener('input',(e) => this.handleTraitSliderInput(e));
-    this.elements.traitsContainer?.addEventListener('click',(e) => this.handleTraitInfoClick(e));
-    this.elements.traitInfoClose?.addEventListener('click',() => this.hideTraitInfo());
-
-    // Modals (KinkCompass)
     this.elements.modalClose?.addEventListener('click',() => this.closeModal(this.elements.modal));
     this.elements.resourcesBtn?.addEventListener('click',() => this.openModal(this.elements.resourcesModal));
     this.elements.resourcesClose?.addEventListener('click',() => this.closeModal(this.elements.resourcesModal));
@@ -98,23 +75,18 @@ class TrackerApp {
     this.elements.themesBtn?.addEventListener('click',() => this.openModal(this.elements.themesModal));
     this.elements.themesClose?.addEventListener('click',() => this.closeModal(this.elements.themesModal));
     this.elements.themesBody?.addEventListener('click',(e) => this.handleThemeSelection(e));
-    this.elements.modalBody?.addEventListener('click',(e) => this.handleModalBodyClick(e)); // Detail Modal buttons
-
-    // Style Finder Trigger & Modal
     this.elements.styleFinderTriggerBtn?.addEventListener('click', () => this.startStyleFinder()); // Trigger start
     this.elements.sfCloseBtn?.addEventListener('click', () => this.closeStyleFinder());
-    this.elements.sfStepContent?.addEventListener('click', (e) => this.handleStyleFinderAction(e)); // Button clicks inside finder
-    this.elements.sfStepContent?.addEventListener('input', (e) => this.handleStyleFinderSliderInput(e)); // Slider input inside finder
-    this.elements.sfStepContent?.addEventListener('click', (e) => { // Info icon clicks inside finder
-         if (e.target.classList.contains('sf-info-icon')) { const tN=e.target.dataset.trait; this.showStyleFinderTraitInfo(tN); }
-    });
-    // Close popups created by finder
+    this.elements.sfStepContent?.addEventListener('click', (e) => this.handleStyleFinderAction(e));
+    this.elements.sfStepContent?.addEventListener('input', (e) => this.handleStyleFinderSliderInput(e));
+    this.elements.sfStepContent?.addEventListener('click', (e) => { if (e.target.classList.contains('sf-info-icon')) { const tN=e.target.dataset.trait; this.showStyleFinderTraitInfo(tN); }});
     document.body.addEventListener('click', (e) => { if (e.target.classList.contains('sf-close-btn')) { e.target.closest('.sf-style-info-popup')?.remove(); }});
-
-    // Global
     window.addEventListener('click',(e) => this.handleWindowClick(e));
     window.addEventListener('keydown',(e) => this.handleWindowKeydown(e));
-
+    this.elements.traitsContainer?.addEventListener('input',(e) => this.handleTraitSliderInput(e));
+    this.elements.traitsContainer?.addEventListener('click',(e) => this.handleTraitInfoClick(e));
+    this.elements.traitInfoClose?.addEventListener('click',() => this.hideTraitInfo());
+    this.elements.modalBody?.addEventListener('click',(e) => this.handleModalBodyClick(e));
     console.log("Event listeners setup complete.");
   }
 
@@ -132,7 +104,7 @@ class TrackerApp {
 
   // --- Core Rendering ---
   renderStyles(r){this.elements.style.innerHTML='<option value="">Pick flavor!</option>';if(!bdsmData[r]?.styles)return;bdsmData[r].styles.forEach(s=>{this.elements.style.innerHTML+=`<option value="${this.escapeHTML(s.name)}">${this.escapeHTML(s.name)}</option>`;});}
-  renderTraits(r,sN){this.elements.traitsContainer.innerHTML='';if(!bdsmData[r])return;const core=bdsmData[r].coreTraits||[];let styleT=[];let styleO=null;if(sN){styleO=bdsmData[r].styles.find(s=>s.name===sN);styleT=styleO?.traits||[];}const toRender=[];const uN=new Set();[...core,...styleT].forEach(t=>{if(t&&t.name&&!uN.has(t.name)){toRender.push(t);uN.add(t.name);}});if(toRender.length===0){this.elements.traitsContainer.innerHTML=`<p>No traits.</p>`;}else{toRender.forEach(t=>{this.elements.traitsContainer.innerHTML+=this.createTraitHTML(t);});this.elements.traitsContainer.querySelectorAll('.trait-slider').forEach(s=>this.updateTraitDescription(s));}if(sN&&styleO&&styleT.length===0&&core.length>0){const m=document.createElement('p');m.className='muted-text trait-info-message';m.textContent=`Style '${this.escapeHTML(sN)}' uses core traits.`;this.elements.traitsContainer.prepend(m);}else if(!sN&&core.length===0){this.elements.traitsContainer.innerHTML=`<p>Select style or define traits.</p>`;}this.hideTraitInfo();}
+  renderTraits(r,sN){this.elements.traitsContainer.innerHTML='';if(!bdsmData[r])return;const core=bdsmData[r].coreTraits||[];let styleT=[];let styleO=null;if(sN){styleO=bdsmData[r].styles.find(s=>s.name===sN);styleT=styleO?.traits||[];}const toRender=[];const uN=new Set();[...core,...styleT].forEach(t=>{if(t&&t.name&&!uN.has(t.name)){toRender.push(t);uN.add(t.name);}});if(toRender.length===0){this.elements.traitsContainer.innerHTML=`<p class="muted-text">No traits.</p>`;}else{toRender.forEach(t=>{this.elements.traitsContainer.innerHTML+=this.createTraitHTML(t);});this.elements.traitsContainer.querySelectorAll('.trait-slider').forEach(s=>this.updateTraitDescription(s));}if(sN&&styleO&&styleT.length===0&&core.length>0){const m=document.createElement('p');m.className='muted-text trait-info-message';m.textContent=`Style '${this.escapeHTML(sN)}' uses core traits.`;this.elements.traitsContainer.prepend(m);}else if(!sN&&core.length===0){this.elements.traitsContainer.innerHTML=`<p>Select style or define traits.</p>`;}this.hideTraitInfo();}
   createTraitHTML(t){const dN=t.name.charAt(0).toUpperCase()+t.name.slice(1);const id=`trait-${t.name.replace(/[^a-zA-Z0-9-_]/g,'-')}`;return`<div class="trait"><label for="${id}">${this.escapeHTML(dN)}</label><button class="trait-info-btn" data-trait="${t.name}" aria-label="Info: ${this.escapeHTML(dN)}">ℹ️</button><input type="range" id="${id}" min="1" max="5" value="3" class="trait-slider" data-trait="${t.name}" aria-label="${this.escapeHTML(dN)}" autocomplete="off"/><span class="trait-value">3</span><div class="trait-desc muted-text"></div></div>`;}
   updateTraitDescription(sl){const tN=sl.getAttribute('data-trait');const v=sl.value;const dD=sl.parentElement?.querySelector('.trait-desc');const vS=sl.parentElement?.querySelector('.trait-value');if(!dD||!vS)return;const r=this.elements.role.value;const sN=this.elements.style.value;let tD=bdsmData[r]?.styles.find(s=>s.name===sN)?.traits?.find(t=>t.name===tN)||bdsmData[r]?.coreTraits?.find(t=>t.name===tN);vS.textContent=v;if(tD?.desc?.[v]){dD.textContent=this.escapeHTML(tD.desc[v]);}else{dD.textContent=tD?'Desc unavailable.':'Trait unavailable.';}}
   renderList(){if(!this.elements.peopleList)return;this.elements.peopleList.innerHTML=this.people.length===0?`<li>No pals yet! ✨</li>`:this.people.map(p=>this.createPersonListItemHTML(p)).join('');}
@@ -148,13 +120,13 @@ class TrackerApp {
   updateLivePreview(){const name=this.elements.name.value.trim()||"Unnamed";const av=this.elements.avatarInput.value||'❓';const r=this.elements.role.value;const s=this.elements.style.value;const tr={};this.elements.traitsContainer.querySelectorAll('.trait-slider').forEach(sl=>{const n=sl.getAttribute('data-trait');if(n)tr[n]=sl.value;});let html='';if(!s&&r&&Object.keys(tr).length>0){html=`<h3 class="preview-title">${av} ${this.escapeHTML(name)}’s Core Vibe ${av}</h3><p><strong>Role:</strong> ${r.charAt(0).toUpperCase()+r.slice(1)}</p><p><i>Core traits active. Pick Style!</i></p><div class="core-trait-preview"><strong>Core Traits:</strong><ul>`;bdsmData[r]?.coreTraits?.forEach(ct=>{const score=tr[ct.name];if(score){const tD=bdsmData[r]?.coreTraits?.find(t=>t.name===ct.name);const d=tD?.desc?.[score]||"N/A";html+=`<li><strong>${this.escapeHTML(ct.name)} (${score}):</strong> ${this.escapeHTML(d)}</li>`;}});html+=`</ul></div>`;}else if(s){const getB=r==='submissive'?getSubBreakdown:getDomBreakdown;const B=getB(s,tr);let topStyleInfo=null;const sO=bdsmData[r]?.styles.find(st=>st.name===s);if(sO?.traits?.length>0){let topSc=-1;let topN='';sO.traits.forEach(tDef=>{const sc=parseInt(tr[tDef.name]||0);if(sc>topSc){topSc=sc;topN=tDef.name;}});if(topN&&topSc>0){const tD=sO.traits.find(t=>t.name===topN);const d=tD?.desc?.[topSc]||"N/A";topStyleInfo=`<strong>Top Style Vibe (${this.escapeHTML(topN)} Lvl ${topSc}):</strong> ${this.escapeHTML(d)}`;}}html=`<h3 class="preview-title">${av} ${this.escapeHTML(name)}’s Live Vibe ${av}</h3><p><strong>Role:</strong> ${r.charAt(0).toUpperCase()+r.slice(1)}</p><p><strong>Style:</strong> ${this.escapeHTML(s)}</p><div class="style-breakdown preview-breakdown">`;if(B.strengths)html+=`<div class="strengths"><h4>✨ Powers</h4><div>${B.strengths}</div></div>`;if(B.improvements)html+=`<div class="improvements"><h4>🌟 Quests</h4><div>${B.improvements}</div></div>`;html+=`</div>`;if(topStyleInfo){html+=`<div class="top-trait-preview"><hr><p>${topStyleInfo}</p></div>`;}}else{html=`<p>Pick role & style! 🌈</p>`;}this.elements.livePreview.innerHTML=html;}
 
   // --- Modal Display ---
-  showPersonDetails(personId){const p=this.people.find(p=>p.id===personId);if(!p)return;console.log("Showing details:",p);p.goals=p.goals||[];p.history=p.history||[];p.achievements=p.achievements||[];p.reflections=p.reflections||{};p.avatar=p.avatar||'❓';const getB=p.role==='submissive'?getSubBreakdown:getDomBreakdown;const B=getB(p.style,p.traits||{});let html=`<h2 class="modal-title">${p.avatar} ${this.escapeHTML(p.name)}’s Kingdom ${p.avatar}</h2>`;html+=`<p>${p.role.charAt(0).toUpperCase()+p.role.slice(1)} - ${p.style?this.escapeHTML(p.style):'N/A'}</p>`;let intro="Explore!";try{if(typeof this.getIntroForStyle==='function'){intro=this.getIntroForStyle(p.style);}else{console.error("getIntro missing!");}}catch(e){console.error("Intro error:",e);}if(intro)html+=`<p class="modal-intro">${intro}</p>`;html+=`<section><h3>🎯 Goals</h3><ul id="goal-list-${p.id}"></ul><div><input type="text" id="new-goal-text-${p.id}" placeholder="Add goal..."><button class="add-goal-btn" data-person-id="${p.id}">+ Add</button></div></section>`;html+=`<section><h3>🌈 Strengths & Growth</h3><div>`;if(B.strengths)html+=`<div><h4>✨ Powers</h4><div>${B.strengths}</div></div>`;if(B.improvements)html+=`<div><h4>🌟 Quests</h4><div>${B.improvements}</div></div>`;html+=`</div></section>`;html+=`<section><h3>🎨 Trait Tales</h3>`;const defs=[...(bdsmData[p.role]?.coreTraits||[]),...(bdsmData[p.role]?.styles.find(s=>s.name===p.style)?.traits||[])];const uDefs=Array.from(new Map(defs.map(t=>[t.name,t])).values());html+='<div>';if(p.traits&&Object.keys(p.traits).length>0){Object.entries(p.traits).forEach(([n,sc])=>{const tO=uDefs.find(t=>t.name===n);const dN=n.charAt(0).toUpperCase()+n.slice(1);if(!tO){html+=`<div><h4>${this.escapeHTML(dN)} - Lvl ${sc}❓</h4><p><em>Def missing.</em></p></div>`;return;}const dT=tO.desc?.[sc]||"N/A";const fl=this.getFlairForScore(sc);html+=`<div><h4>${this.escapeHTML(dN)} - Lvl ${sc} ${this.getEmojiForScore(sc)}</h4><p><strong>Vibe:</strong> ${this.escapeHTML(dT)}</p><p><em>${fl}</em></p></div>`;});}else{html+=`<p>No scores.</p>`;}html+='</div></section>';html+=`<section><h3>⏳ History<button class="snapshot-info-btn">ℹ️</button></h3><p class="snapshot-info muted-text" style="display:none;">Snapshot saves current traits.</p><div><canvas id="history-chart"></canvas></div><button id="snapshot-btn" data-person-id="${p.id}">📸 Snapshot</button></section>`;html+=`<section><h3>🏆 Achievements</h3><div id="achievements-list-${p.id}"></div></section>`;html+=`<section><h3>🔮 Reading</h3><button id="reading-btn" data-person-id="${p.id}">Get Reading!</button><div id="kink-reading-output" style="display:none;"></div></section>`;html+=`<section><h3>📝 Reflections</h3><div id="journal-prompt-area" style="display:none;"></div><div><button id="prompt-btn">💡 Prompt</button></div><textarea id="reflections-text" data-person-id="${p.id}" rows="6" placeholder="Thoughts?">${this.escapeHTML(p.reflections?.text||'')}</textarea><button id="save-reflections-btn" data-person-id="${p.id}">Save 💭</button></section>`;this.elements.modalBody.innerHTML=html;this.renderGoalList(p);this.renderAchievements(p);this.openModal(this.elements.modal);this.renderHistoryChart(p);}
+  showPersonDetails(personId){const p=this.people.find(p=>p.id===personId);if(!p)return;console.log("Showing details:",p);p.goals=p.goals||[];p.history=p.history||[];p.achievements=p.achievements||[];p.reflections=p.reflections||{};p.avatar=p.avatar||'❓';const getB=p.role==='submissive'?getSubBreakdown:getDomBreakdown;const B=getB(p.style,p.traits||{});let html=`<h2 class="modal-title">${p.avatar} ${this.escapeHTML(p.name)}’s Kingdom ${p.avatar}</h2>`;html+=`<p>${p.role.charAt(0).toUpperCase()+p.role.slice(1)} - ${p.style?this.escapeHTML(p.style):'N/A'}</p>`;let intro="Explore!";try{if(typeof this.getIntroForStyle==='function'){intro=this.getIntroForStyle(p.style);}else{console.error("getIntro missing!");}}catch(e){console.error("Intro error:",e);}if(intro)html+=`<p class="modal-intro">${intro}</p>`;html+=`<section><h3>🎯 Goals</h3><ul id="goal-list-${p.id}"></ul><div><input type="text" id="new-goal-text-${p.id}" placeholder="Add goal..."><button class="add-goal-btn" data-person-id="${p.id}">+ Add</button></div></section>`;html+=`<section><h3>🌈 Strengths & Growth</h3><div>`;if(B.strengths)html+=`<div><h4>✨ Powers</h4><div>${B.strengths}</div></div>`;if(B.improvements)html+=`<div><h4>🌟 Quests</h4><div>${B.improvements}</div></div>`;html+=`</div></section>`;html+=`<section><h3>🎨 Trait Tales</h3>`;const defs=[...(bdsmData[p.role]?.coreTraits||[]),...(bdsmData[p.role]?.styles.find(s=>s.name===p.style)?.traits||[])];const uDefs=Array.from(new Map(defs.map(t=>[t.name,t])).values());html+='<div>';if(p.traits&&Object.keys(p.traits).length>0){Object.entries(p.traits).forEach(([n,sc])=>{const tO=uDefs.find(t=>t.name===n);const dN=n.charAt(0).toUpperCase()+n.slice(1);if(!tO){html+=`<div><h4>${this.escapeHTML(dN)} - Lvl ${sc}❓</h4><p><em>Def missing.</em></p></div>`;return;}const dT=tO.desc?.[sc]||"N/A";const fl=this.getFlairForScore(sc);html+=`<div><h4>${this.escapeHTML(dN)} - Lvl ${sc} ${this.getEmojiForScore(sc)}</h4><p><strong>Vibe:</strong> ${this.escapeHTML(dT)}</p><p><em>${fl}</em></p></div>`;});}else{html+=`<p>No scores.</p>`;}html+='</div></section>';html+=`<section><h3>⏳ History<button class="snapshot-info-btn">ℹ️</button></h3><p class="snapshot-info muted-text" style="display:none;">Snapshot saves traits.</p><div><canvas id="history-chart"></canvas></div><button id="snapshot-btn" data-person-id="${p.id}">📸 Snapshot</button></section>`;html+=`<section><h3>🏆 Achievements</h3><div id="achievements-list-${p.id}"></div></section>`;html+=`<section><h3>🔮 Reading</h3><button id="reading-btn" data-person-id="${p.id}">Get Reading!</button><div id="kink-reading-output" style="display:none;"></div></section>`;html+=`<section><h3>📝 Reflections</h3><div id="journal-prompt-area" style="display:none;"></div><div><button id="prompt-btn">💡 Prompt</button></div><textarea id="reflections-text" data-person-id="${p.id}" rows="6" placeholder="Thoughts?">${this.escapeHTML(p.reflections?.text||'')}</textarea><button id="save-reflections-btn" data-person-id="${p.id}">Save 💭</button></section>`;this.elements.modalBody.innerHTML=html;this.renderGoalList(p);this.renderAchievements(p);this.openModal(this.elements.modal);this.renderHistoryChart(p);}
 
   // --- New Feature Logic ---
   addGoal(pId){const p=this.people.find(p=>p.id===pId);const i=this.elements.modalBody.querySelector(`#new-goal-text-${pId}`);if(!p||!i)return;const t=i.value.trim();if(!t)return;const nG={id:Date.now(),text:t,status:'todo'};p.goals.push(nG);grantAchievement(p,'goal_added');this.saveToLocalStorage();this.renderGoalList(p);i.value='';}
   toggleGoalStatus(pId,gId){const p=this.people.find(p=>p.id===pId);const g=p?.goals.find(g=>g.id===gId);if(!g)return;g.status=(g.status==='done'?'todo':'done');this.saveToLocalStorage();this.renderGoalList(p);}
   deleteGoal(pId,gId){const p=this.people.find(p=>p.id===pId);if(!p)return;if(confirm('Delete goal?')){p.goals=p.goals.filter(g=>g.id!==gId);this.saveToLocalStorage();this.renderGoalList(p);}}
-  renderGoalList(p){const l=this.elements.modalBody?.querySelector(`#goal-list-${p.id}`);if(!l)return;let h='';if(p.goals.length>0){p.goals.forEach(g=>{h+=`<li class="${g.status==='done'?'done':''}" data-goal-id="${g.id}"><span>${this.escapeHTML(g.text)}</span><span><button class="toggle-goal-btn" data-person-id="${p.id}" data-goal-id="${g.id}">${g.status==='done'?'🔄':'✅'}</button><button class="delete-goal-btn" data-person-id="${p.id}" data-goal-id="${g.id}">🗑️</button></span></li>`;});}else{h=`<li>No goals!</li>`;}l.innerHTML=h;}
+  renderGoalList(p){const l=this.elements.modalBody?.querySelector(`#goal-list-${p.id}`);if(!l)return;let h='';if(p.goals.length>0){p.goals.forEach(g=>{h+=`<li class="${g.status==='done'?'done':''}" data-goal-id="${g.id}"><span>${this.escapeHTML(g.text)}</span><span><button class="toggle-goal-btn small-btn" data-person-id="${p.id}" data-goal-id="${g.id}">${g.status==='done'?'🔄':'✅'}</button><button class="delete-goal-btn small-btn" data-person-id="${p.id}" data-goal-id="${g.id}">🗑️</button></span></li>`;});}else{h=`<li>No goals!</li>`;}l.innerHTML=h;}
   showJournalPrompt(){const a=this.elements.modalBody?.querySelector('#journal-prompt-area');if(a){a.textContent=getRandomPrompt();a.style.display='block';this.elements.modalBody?.querySelector('#reflections-text')?.focus();}}
   saveReflections(pId){const p=this.people.find(p=>p.id===pId);const el=this.elements.modalBody?.querySelector('#reflections-text');if(!p||!el){alert("Error.");return;}const txt=el.value;if(!p.reflections)p.reflections={};p.reflections.text=txt;p.reflections.lastUpdated=Date.now();let first=false;if(txt.trim().length>0)first=grantAchievement(p,'reflection_saved');const count=Object.values(this.people.reduce((a,p)=>{if(p.reflections?.text?.trim().length>0)a[p.id]=true;return a;},{})).length;if(count>=5)grantAchievement(p,'five_reflections');this.saveToLocalStorage();const btn=this.elements.modalBody.querySelector('#save-reflections-btn');if(btn){btn.textContent='Saved ✓';btn.disabled=true;setTimeout(()=>{btn.textContent='Save 💭';btn.disabled=false;},2000);}else{alert("Saved! ✨");}}
   addSnapshotToHistory(pId){const p=this.people.find(p=>p.id===pId);if(!p||!p.traits){alert("Cannot snapshot.");return;}const snap={date:Date.now(),traits:{...p.traits}};p.history.push(snap);grantAchievement(p,'history_snapshot');this.saveToLocalStorage();alert("Snapshot saved! 📸");this.renderHistoryChart(p);this.renderAchievements(p);}
@@ -194,4 +166,5 @@ try {
     console.error("Fatal error during App initialization:", error);
     document.body.innerHTML = `<div style="padding: 2em; margin: 2em; border: 2px solid red; background: #fff0f0; color: #333;"> <h1 style="color: red;">Oops! Failed to Start</h1> <p>Error: ${error.message}. Check console (F12).</p> </div>`;
 }
+
 // --- END OF FILE app.js ---
