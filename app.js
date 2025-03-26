@@ -12,6 +12,7 @@ class TrackerApp {
     this.currentEditId = null;
     this.elements = {
       // Form Elements
+      formSection: document.getElementById('form-section'), // Add this
       name: document.getElementById('name'),
       role: document.getElementById('role'),
       style: document.getElementById('style'),
