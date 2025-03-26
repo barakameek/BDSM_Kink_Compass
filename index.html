@@ -31,21 +31,25 @@
         <label for="name">Name (or Alias)</label>
         <input type="text" id="name" placeholder="Who are you, cutie?" autocomplete="name" />
         {/* Simple Avatar Picker */}
-        <div class="avatar-picker">
-            <label>Avatar:</label>
-            <span id="avatar-display">❓</span> {/* Display selected avatar */}
-            <input type="hidden" id="avatar-input" value="❓"> {/* Store value */}
-            <button class="avatar-btn" data-emoji="🎀">🎀</button>
-            <button class="avatar-btn" data-emoji="✨">✨</button>
-            <button class="avatar-btn" data-emoji="💖">💖</button>
-            <button class="avatar-btn" data-emoji="🔥">🔥</button>
-            <button class="avatar-btn" data-emoji="😈">😈</button>
-            <button class="avatar-btn" data-emoji="😇">😇</button>
-            <button class="avatar-btn" data-emoji="🐶">🐶</button>
-            <button class="avatar-btn" data-emoji="🦊">🦊</button>
-            <button class="avatar-btn" data-emoji="👑">👑</button>
-            {/* Add more or use a proper picker library later */}
-        </div>
+            {/* Simple Avatar Picker using fieldset/legend */}
+        <fieldset class="avatar-picker-fieldset">
+            <legend>Avatar:</legend> {/* Use legend for the group label */}
+            <div class="avatar-picker">
+                <span id="avatar-display" aria-hidden="true">❓</span> {/* Display selected avatar, hide from screen reader if redundant */}
+                {/* Hidden input still stores the value, no label needed for it */}
+                <input type="hidden" id="avatar-input" value="❓">
+                {/* Add aria-label to each button for better screen reader support */}
+                <button class="avatar-btn" data-emoji="🎀" aria-label="Select Ribbon Avatar">🎀</button>
+                <button class="avatar-btn" data-emoji="✨" aria-label="Select Sparkles Avatar">✨</button>
+                <button class="avatar-btn" data-emoji="💖" aria-label="Select Sparkling Heart Avatar">💖</button>
+                <button class="avatar-btn" data-emoji="🔥" aria-label="Select Fire Avatar">🔥</button>
+                <button class="avatar-btn" data-emoji="😈" aria-label="Select Smiling Devil Avatar">😈</button>
+                <button class="avatar-btn" data-emoji="😇" aria-label="Select Smiling Angel Avatar">😇</button>
+                <button class="avatar-btn" data-emoji="🐶" aria-label="Select Dog Face Avatar">🐶</button>
+                <button class="avatar-btn" data-emoji="🦊" aria-label="Select Fox Face Avatar">🦊</button>
+                <button class="avatar-btn" data-emoji="👑" aria-label="Select Crown Avatar">👑</button>
+            </div>
+        </fieldset>
       </div>
       {/* Role and Style remain the same */}
       <div class="field-group">
