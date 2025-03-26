@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KinkCompass</title>
   <link rel="stylesheet" href="styles.css" />
-  <!-- Consider adding a fun favicon -->
   <!-- <link rel="icon" href="favicon.ico" type="image/x-icon"> -->
 </head>
 <body>
@@ -18,29 +17,34 @@
   </header>
 
   <main class="container">
+    <!-- Ensure this ID matches the one used in app.js -->
     <section id="form-section" class="form-section card">
       <h2>✨ Craft Your Kinky Persona ✨</h2>
       <div class="field-group">
         <label for="name">Name (or Alias)</label>
-        <input type="text" id="name" placeholder="Who are you, cutie?" />
+        <!-- Added autocomplete="name" and ensured 'for' matches 'id' -->
+        <input type="text" id="name" placeholder="Who are you, cutie?" autocomplete="name" />
       </div>
       <div class="field-group">
         <label for="role">Role</label>
-        <select id="role">
+        <!-- Added autocomplete="off" and ensured 'for' matches 'id' -->
+        <select id="role" autocomplete="off">
           <option value="dominant">Dominant</option>
           <option value="submissive" selected>Submissive</option>
         </select>
       </div>
       <div class="field-group">
         <label for="style">Style</label>
-        <select id="style">
+        <!-- Added autocomplete="off" and ensured 'for' matches 'id' -->
+        <select id="style" autocomplete="off">
           <option value="">Pick your flavor!</option>
           <!-- Options populated by JS -->
         </select>
       </div>
        <div class="field-group">
         <label for="goals">Current Goals</label>
-        <textarea id="goals" rows="3" placeholder="What are you working towards? (e.g., 'Improve communication', 'Explore rope more')"></textarea>
+        <!-- Added autocomplete="off" and ensured 'for' matches 'id' -->
+        <textarea id="goals" rows="3" placeholder="What are you working towards? (e.g., 'Improve communication', 'Explore rope more')" autocomplete="off"></textarea>
       </div>
       <div id="traits-container">
           <!-- Traits populated by JS -->
@@ -70,9 +74,8 @@
   <div class="modal" id="detail-modal" style="display:none;" role="dialog" aria-labelledby="detail-modal-title" aria-modal="true">
     <div class="modal-content card">
       <button class="modal-close" id="modal-close" aria-label="Close details modal">×</button>
-      {/* Content Added Dynamically */}
       <div id="modal-body">
-            {/* Title, breakdown, traits, goals, reflections added by JS */}
+            {/* Content Added Dynamically */}
       </div>
     </div>
   </div>
