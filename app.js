@@ -19,8 +19,48 @@ class TrackerApp {
 
     // Find elements
     this.elements = {
-      formSection: document.getElementById('form-section'), name: document.getElementById('name'), avatarDisplay: document.getElementById('avatar-display'), avatarInput: document.getElementById('avatar-input'), avatarPicker: document.querySelector('.avatar-picker'), role: document.getElementById('role'), style: document.getElementById('style'), traitsContainer: document.getElementById('traits-container'), traitInfoPopup: document.getElementById('trait-info-popup'), traitInfoClose: document.getElementById('trait-info-close'), traitInfoTitle: document.getElementById('trait-info-title'), traitInfoBody: document.getElementById('trait-info-body'), save: document.getElementById('save'), clearForm: document.getElementById('clear-form'), peopleList: document.getElementById('people-list'), livePreview: document.getElementById('live-preview'), modal: document.getElementById('detail-modal'), modalBody: document.getElementById('modal-body'), modalClose: document.getElementById('modal-close'), resourcesBtn: document.getElementById('resources-btn'), resourcesModal: document.getElementById('resources-modal'), resourcesClose: document.getElementById('resources-close'), glossaryBtn: document.getElementById('glossary-btn'), glossaryModal: document.getElementById('glossary-modal'), glossaryClose: document.getElementById('glossary-close'), glossaryBody: document.getElementById('glossary-body'), styleDiscoveryBtn: document.getElementById('style-discovery-btn'), styleDiscoveryModal: document.getElementById('style-discovery-modal'), styleDiscoveryClose: document.getElementById('style-discovery-close'), styleDiscoveryRoleFilter: document.getElementById('style-discovery-role'), styleDiscoveryBody: document.getElementById('style-discovery-body'), themesBtn: document.getElementById('themes-btn'), themesModal: document.getElementById('themes-modal'), themesClose: document.getElementById('themes-close'), themesBody: document.getElementById('themes-body'), exportBtn: document.getElementById('export-btn'), importBtn: document.getElementById('import-btn'), importFileInput: document.getElementById('import-file-input'), themeToggle: document.getElementById('theme-toggle')
+      formSection: document.getElementById('form-section'),
+      name: document.getElementById('name'),
+      avatarDisplay: document.getElementById('avatar-display'),
+      avatarInput: document.getElementById('avatar-input'),
+      avatarPicker: document.querySelector('.avatar-picker'),
+      role: document.getElementById('role'),
+      style: document.getElementById('style'),
+      // goals element removed from here
+      traitsContainer: document.getElementById('traits-container'),
+      traitInfoPopup: document.getElementById('trait-info-popup'),
+      traitInfoClose: document.getElementById('trait-info-close'),
+      traitInfoTitle: document.getElementById('trait-info-title'),
+      traitInfoBody: document.getElementById('trait-info-body'),
+      save: document.getElementById('save'),
+      clearForm: document.getElementById('clear-form'),
+      peopleList: document.getElementById('people-list'),
+      livePreview: document.getElementById('live-preview'),
+      modal: document.getElementById('detail-modal'),
+      modalBody: document.getElementById('modal-body'),
+      modalClose: document.getElementById('modal-close'),
+      resourcesBtn: document.getElementById('resources-btn'),
+      resourcesModal: document.getElementById('resources-modal'),
+      resourcesClose: document.getElementById('resources-close'),
+      glossaryBtn: document.getElementById('glossary-btn'),
+      glossaryModal: document.getElementById('glossary-modal'),
+      glossaryClose: document.getElementById('glossary-close'),
+      glossaryBody: document.getElementById('glossary-body'),
+      styleDiscoveryBtn: document.getElementById('style-discovery-btn'),
+      styleDiscoveryModal: document.getElementById('style-discovery-modal'),
+      styleDiscoveryClose: document.getElementById('style-discovery-close'),
+      styleDiscoveryRoleFilter: document.getElementById('style-discovery-role'),
+      styleDiscoveryBody: document.getElementById('style-discovery-body'),
+      themesBtn: document.getElementById('themes-btn'),
+      themesModal: document.getElementById('themes-modal'),
+      themesClose: document.getElementById('themes-close'),
+      themesBody: document.getElementById('themes-body'),
+      exportBtn: document.getElementById('export-btn'),
+      importBtn: document.getElementById('import-btn'),
+      importFileInput: document.getElementById('import-file-input'),
+      themeToggle: document.getElementById('theme-toggle')
     };
+    // Check critical elements
     if (!this.elements.name || !this.elements.role || !this.elements.style || !this.elements.save || !this.elements.peopleList || !this.elements.modal) {
          console.error("Missing critical HTML elements."); throw new Error("Missing critical elements");
     }
@@ -45,40 +85,40 @@ class TrackerApp {
   addEventListeners() {
     console.log("Attaching event listeners...");
     // Form
-    this.elements.role?.addEventListener('change',()=>{const r=this.elements.role.value;this.renderStyles(r);this.elements.style.value='';this.renderTraits(r,'');this.updateLivePreview();});
-    this.elements.style?.addEventListener('change',()=>{this.renderTraits(this.elements.role.value,this.elements.style.value);this.updateLivePreview();});
-    this.elements.name?.addEventListener('input',()=>this.updateLivePreview());
-    this.elements.avatarPicker?.addEventListener('click',(e)=>{if(e.target.classList.contains('avatar-btn')){const em=e.target.dataset.emoji;if(em){this.elements.avatarInput.value=em;this.elements.avatarDisplay.textContent=em;this.elements.avatarPicker.querySelectorAll('.avatar-btn').forEach(b=>b.classList.toggle('selected',b===e.target));this.updateLivePreview();}}}});
+    this.elements.role?.addEventListener('change',() => { const r=this.elements.role.value;this.renderStyles(r);this.elements.style.value='';this.renderTraits(r,'');this.updateLivePreview(); });
+    this.elements.style?.addEventListener('change',() => { this.renderTraits(this.elements.role.value,this.elements.style.value);this.updateLivePreview(); });
+    this.elements.name?.addEventListener('input',() => this.updateLivePreview());
+    this.elements.avatarPicker?.addEventListener('click',(e) => { if(e.target.classList.contains('avatar-btn')){const em=e.target.dataset.emoji;if(em){this.elements.avatarInput.value=em;this.elements.avatarDisplay.textContent=em;this.elements.avatarPicker.querySelectorAll('.avatar-btn').forEach(b=>b.classList.toggle('selected',b===e.target));this.updateLivePreview();}} });
     // Buttons
-    this.elements.save?.addEventListener('click',()=>this.savePerson());
-    this.elements.clearForm?.addEventListener('click',()=>this.resetForm(true));
-    this.elements.themeToggle?.addEventListener('click',()=>this.toggleTheme());
-    this.elements.exportBtn?.addEventListener('click',()=>this.exportData());
-    this.elements.importBtn?.addEventListener('click',()=>this.elements.importFileInput?.click());
-    this.elements.importFileInput?.addEventListener('change',(e)=>this.importData(e));
+    this.elements.save?.addEventListener('click',() => this.savePerson());
+    this.elements.clearForm?.addEventListener('click',() => this.resetForm(true));
+    this.elements.themeToggle?.addEventListener('click',() => this.toggleTheme());
+    this.elements.exportBtn?.addEventListener('click',() => this.exportData());
+    this.elements.importBtn?.addEventListener('click',() => this.elements.importFileInput?.click());
+    this.elements.importFileInput?.addEventListener('change',(e) => this.importData(e));
     // People List
-    this.elements.peopleList?.addEventListener('click',(e)=>this.handleListClick(e));
-    this.elements.peopleList?.addEventListener('keydown',(e)=>this.handleListKeydown(e));
+    this.elements.peopleList?.addEventListener('click',(e) => this.handleListClick(e));
+    this.elements.peopleList?.addEventListener('keydown',(e) => this.handleListKeydown(e));
     // Modals
-    this.elements.modalClose?.addEventListener('click',()=>this.closeModal(this.elements.modal));
-    this.elements.resourcesBtn?.addEventListener('click',()=>this.openModal(this.elements.resourcesModal));
-    this.elements.resourcesClose?.addEventListener('click',()=>this.closeModal(this.elements.resourcesModal));
-    this.elements.glossaryBtn?.addEventListener('click',()=>this.showGlossary());
-    this.elements.glossaryClose?.addEventListener('click',()=>this.closeModal(this.elements.glossaryModal));
-    this.elements.styleDiscoveryBtn?.addEventListener('click',()=>this.showStyleDiscovery());
-    this.elements.styleDiscoveryClose?.addEventListener('click',()=>this.closeModal(this.elements.styleDiscoveryModal));
-    this.elements.styleDiscoveryRoleFilter?.addEventListener('change',()=>this.renderStyleDiscoveryContent());
-    this.elements.themesBtn?.addEventListener('click',()=>this.openModal(this.elements.themesModal));
-    this.elements.themesClose?.addEventListener('click',()=>this.closeModal(this.elements.themesModal));
-    this.elements.themesBody?.addEventListener('click',(e)=>this.handleThemeSelection(e));
+    this.elements.modalClose?.addEventListener('click',() => this.closeModal(this.elements.modal));
+    this.elements.resourcesBtn?.addEventListener('click',() => this.openModal(this.elements.resourcesModal));
+    this.elements.resourcesClose?.addEventListener('click',() => this.closeModal(this.elements.resourcesModal));
+    this.elements.glossaryBtn?.addEventListener('click',() => this.showGlossary());
+    this.elements.glossaryClose?.addEventListener('click',() => this.closeModal(this.elements.glossaryModal));
+    this.elements.styleDiscoveryBtn?.addEventListener('click',() => this.showStyleDiscovery());
+    this.elements.styleDiscoveryClose?.addEventListener('click',() => this.closeModal(this.elements.styleDiscoveryModal));
+    this.elements.styleDiscoveryRoleFilter?.addEventListener('change',() => this.renderStyleDiscoveryContent());
+    this.elements.themesBtn?.addEventListener('click',() => this.openModal(this.elements.themesModal));
+    this.elements.themesClose?.addEventListener('click',() => this.closeModal(this.elements.themesModal));
+    this.elements.themesBody?.addEventListener('click',(e) => this.handleThemeSelection(e));
     // Global
-    window.addEventListener('click',(e)=>this.handleWindowClick(e));
-    window.addEventListener('keydown',(e)=>this.handleWindowKeydown(e));
+    window.addEventListener('click',(e) => this.handleWindowClick(e));
+    window.addEventListener('keydown',(e) => this.handleWindowKeydown(e));
     // Dynamic
-    this.elements.traitsContainer?.addEventListener('input',(e)=>this.handleTraitSliderInput(e));
-    this.elements.traitsContainer?.addEventListener('click',(e)=>this.handleTraitInfoClick(e));
-    this.elements.traitInfoClose?.addEventListener('click',()=>this.hideTraitInfo());
-    this.elements.modalBody?.addEventListener('click',(e)=>this.handleModalBodyClick(e));
+    this.elements.traitsContainer?.addEventListener('input',(e) => this.handleTraitSliderInput(e));
+    this.elements.traitsContainer?.addEventListener('click',(e) => this.handleTraitInfoClick(e));
+    this.elements.traitInfoClose?.addEventListener('click',() => this.hideTraitInfo());
+    this.elements.modalBody?.addEventListener('click',(e) => this.handleModalBodyClick(e));
     console.log("Event listeners setup complete.");
   }
 
@@ -108,7 +148,7 @@ class TrackerApp {
 
   // --- Core Rendering ---
   renderStyles(r){this.elements.style.innerHTML='<option value="">Pick flavor!</option>';if(!bdsmData[r]?.styles)return;bdsmData[r].styles.forEach(s=>{this.elements.style.innerHTML+=`<option value="${this.escapeHTML(s.name)}">${this.escapeHTML(s.name)}</option>`;});}
-  renderTraits(r,sN){this.elements.traitsContainer.innerHTML='';if(!bdsmData[r])return;const core=bdsmData[r].coreTraits||[];let styleT=[];let styleO=null;if(sN){styleO=bdsmData[r].styles.find(s=>s.name===sN);styleT=styleO?.traits||[];}const toRender=[];const uN=new Set();[...core,...styleT].forEach(t=>{if(t&&t.name&&!uN.has(t.name)){toRender.push(t);uN.add(t.name);}});if(toRender.length===0){this.elements.traitsContainer.innerHTML=`<p class="muted-text">No traits defined.</p>`;}else{toRender.forEach(t=>{this.elements.traitsContainer.innerHTML+=this.createTraitHTML(t);});this.elements.traitsContainer.querySelectorAll('.trait-slider').forEach(s=>this.updateTraitDescription(s));}if(sN&&styleO&&styleT.length===0&&core.length>0){const m=document.createElement('p');m.className='muted-text trait-info-message';m.textContent=`Style '${this.escapeHTML(sN)}' uses core traits.`;this.elements.traitsContainer.prepend(m);}else if(!sN&&core.length===0){this.elements.traitsContainer.innerHTML=`<p class="muted-text">Select style or define core traits.</p>`;}this.hideTraitInfo();}
+  renderTraits(r,sN){this.elements.traitsContainer.innerHTML='';if(!bdsmData[r])return;const core=bdsmData[r].coreTraits||[];let styleT=[];let styleO=null;if(sN){styleO=bdsmData[r].styles.find(s=>s.name===sN);styleT=styleO?.traits||[];}const toRender=[];const uN=new Set();[...core,...styleT].forEach(t=>{if(t&&t.name&&!uN.has(t.name)){toRender.push(t);uN.add(t.name);}});if(toRender.length===0){this.elements.traitsContainer.innerHTML=`<p class="muted-text">No traits.</p>`;}else{toRender.forEach(t=>{this.elements.traitsContainer.innerHTML+=this.createTraitHTML(t);});this.elements.traitsContainer.querySelectorAll('.trait-slider').forEach(s=>this.updateTraitDescription(s));}if(sN&&styleO&&styleT.length===0&&core.length>0){const m=document.createElement('p');m.className='muted-text trait-info-message';m.textContent=`Style '${this.escapeHTML(sN)}' uses core traits.`;this.elements.traitsContainer.prepend(m);}else if(!sN&&core.length===0){this.elements.traitsContainer.innerHTML=`<p>Select style or define traits.</p>`;}this.hideTraitInfo();}
   createTraitHTML(t){const dN=t.name.charAt(0).toUpperCase()+t.name.slice(1);const id=`trait-${t.name.replace(/[^a-zA-Z0-9-_]/g,'-')}`;return`<div class="trait"><label for="${id}">${this.escapeHTML(dN)}</label><button class="trait-info-btn" data-trait="${t.name}" aria-label="Info: ${this.escapeHTML(dN)}">ℹ️</button><input type="range" id="${id}" min="1" max="5" value="3" class="trait-slider" data-trait="${t.name}" aria-label="${this.escapeHTML(dN)}" autocomplete="off"/><span class="trait-value">3</span><div class="trait-desc muted-text"></div></div>`;}
   updateTraitDescription(sl){const tN=sl.getAttribute('data-trait');const v=sl.value;const dD=sl.parentElement?.querySelector('.trait-desc');const vS=sl.parentElement?.querySelector('.trait-value');if(!dD||!vS)return;const r=this.elements.role.value;const sN=this.elements.style.value;let tD=bdsmData[r]?.styles.find(s=>s.name===sN)?.traits?.find(t=>t.name===tN)||bdsmData[r]?.coreTraits?.find(t=>t.name===tN);vS.textContent=v;if(tD?.desc?.[v]){dD.textContent=this.escapeHTML(tD.desc[v]);}else{dD.textContent=tD?'Desc unavailable.':'Trait unavailable.';}}
   renderList(){if(!this.elements.peopleList)return;this.elements.peopleList.innerHTML=this.people.length===0?`<li>No pals yet! ✨</li>`:this.people.map(p=>this.createPersonListItemHTML(p)).join('');}
@@ -121,29 +161,7 @@ class TrackerApp {
   resetForm(clear=false){this.elements.name.value='';this.elements.avatarDisplay.textContent='❓';this.elements.avatarInput.value='❓';this.elements.avatarPicker?.querySelectorAll('.selected').forEach(b=>b.classList.remove('selected'));this.elements.role.value='submissive';this.renderStyles('submissive');this.elements.style.value='';this.renderTraits('submissive','');this.currentEditId=null;this.elements.save.textContent='Save Sparkle! 💖';if(clear)this.updateLivePreview();this.elements.name.focus();console.log("Form reset.");this.hideTraitInfo();}
 
   // --- Live Preview ---
-  updateLivePreview(){
-      const name=this.elements.name.value.trim()||"Unnamed";const av=this.elements.avatarInput.value||'❓';
-      const r=this.elements.role.value;const s=this.elements.style.value;
-      const tr={};this.elements.traitsContainer.querySelectorAll('.trait-slider').forEach(sl=>{const n=sl.getAttribute('data-trait');if(n)tr[n]=sl.value;});
-      let html='';
-      if(!s&&r&&Object.keys(tr).length>0){
-          html=`<h3 class="preview-title">${av} ${this.escapeHTML(name)}’s Core Vibe ${av}</h3>`;
-          html+=`<p><strong>Role:</strong> ${r.charAt(0).toUpperCase()+r.slice(1)}</p>`;
-          html+=`<p class="muted-text"><i>Core traits active. Pick a Style!</i></p>`;
-          html+=`<div class="core-trait-preview"><strong>Core Traits Now:</strong><ul>`;
-          bdsmData[r]?.coreTraits?.forEach(ct=>{const score=tr[ct.name];if(score){const tD=bdsmData[r]?.coreTraits?.find(t=>t.name===ct.name);const d=tD?.desc?.[score]||"N/A";html+=`<li><strong>${this.escapeHTML(ct.name)} (${score}):</strong> ${this.escapeHTML(d)}</li>`;}});
-          html+=`</ul></div>`;
-      }else if(s){
-          const getB=r==='submissive'?getSubBreakdown:getDomBreakdown;const B=getB(s,tr);
-          let topStyleInfo=null;const sO=bdsmData[r]?.styles.find(st=>st.name===s);
-          if(sO?.traits?.length>0){let topSc=-1;let topN='';sO.traits.forEach(tDef=>{const sc=parseInt(tr[tDef.name]||0);if(sc>topSc){topSc=sc;topN=tDef.name;}});if(topN&&topSc>0){const tD=sO.traits.find(t=>t.name===topN);const d=tD?.desc?.[topSc]||"N/A";topStyleInfo=`<strong>Top Style Vibe (${this.escapeHTML(topN)} Lvl ${topSc}):</strong> ${this.escapeHTML(d)}`;}}
-          html=`<h3 class="preview-title">${av} ${this.escapeHTML(name)}’s Live Vibe ${av}</h3>`;
-          html+=`<p><strong>Role:</strong> ${r.charAt(0).toUpperCase()+r.slice(1)}</p><p><strong>Style:</strong> ${this.escapeHTML(s)}</p>`;
-          html+=`<div class="style-breakdown preview-breakdown">`;if(B.strengths)html+=`<div class="strengths"><h4>✨ Powers</h4><div>${B.strengths}</div></div>`;if(B.improvements)html+=`<div class="improvements"><h4>🌟 Quests</h4><div>${B.improvements}</div></div>`;html+=`</div>`;
-          if(topStyleInfo){html+=`<div class="top-trait-preview"><hr><p>${topStyleInfo}</p></div>`;}
-      }else{html=`<p class="muted-text">Pick role & style! 🌈</p>`;}
-      this.elements.livePreview.innerHTML=html;
-  }
+  updateLivePreview(){const name=this.elements.name.value.trim()||"Unnamed";const av=this.elements.avatarInput.value||'❓';const r=this.elements.role.value;const s=this.elements.style.value;const tr={};this.elements.traitsContainer.querySelectorAll('.trait-slider').forEach(sl=>{const n=sl.getAttribute('data-trait');if(n)tr[n]=sl.value;});let html='';if(!s&&r&&Object.keys(tr).length>0){html=`<h3 class="preview-title">${av} ${this.escapeHTML(name)}’s Core Vibe ${av}</h3><p><strong>Role:</strong> ${r.charAt(0).toUpperCase()+r.slice(1)}</p><p><i>Core traits active. Pick Style!</i></p><div class="core-trait-preview"><strong>Core Traits:</strong><ul>`;bdsmData[r]?.coreTraits?.forEach(ct=>{const score=tr[ct.name];if(score){const tD=bdsmData[r]?.coreTraits?.find(t=>t.name===ct.name);const d=tD?.desc?.[score]||"N/A";html+=`<li><strong>${this.escapeHTML(ct.name)} (${score}):</strong> ${this.escapeHTML(d)}</li>`;}});html+=`</ul></div>`;}else if(s){const getB=r==='submissive'?getSubBreakdown:getDomBreakdown;const B=getB(s,tr);let topStyleInfo=null;const sO=bdsmData[r]?.styles.find(st=>st.name===s);if(sO?.traits?.length>0){let topSc=-1;let topN='';sO.traits.forEach(tDef=>{const sc=parseInt(tr[tDef.name]||0);if(sc>topSc){topSc=sc;topN=tDef.name;}});if(topN&&topSc>0){const tD=sO.traits.find(t=>t.name===topN);const d=tD?.desc?.[topSc]||"N/A";topStyleInfo=`<strong>Top Style Vibe (${this.escapeHTML(topN)} Lvl ${topSc}):</strong> ${this.escapeHTML(d)}`;}}html=`<h3 class="preview-title">${av} ${this.escapeHTML(name)}’s Live Vibe ${av}</h3><p><strong>Role:</strong> ${r.charAt(0).toUpperCase()+r.slice(1)}</p><p><strong>Style:</strong> ${this.escapeHTML(s)}</p><div class="style-breakdown preview-breakdown">`;if(B.strengths)html+=`<div class="strengths"><h4>✨ Powers</h4><div>${B.strengths}</div></div>`;if(B.improvements)html+=`<div class="improvements"><h4>🌟 Quests</h4><div>${B.improvements}</div></div>`;html+=`</div>`;if(topStyleInfo){html+=`<div class="top-trait-preview"><hr><p>${topStyleInfo}</p></div>`;}}else{html=`<p>Pick role & style! 🌈</p>`;}this.elements.livePreview.innerHTML=html;}
 
   // --- Modal Display ---
   showPersonDetails(personId) {
@@ -158,8 +176,7 @@ class TrackerApp {
       html+=`<h3>🌈 Strengths & Growth</h3><div class="style-breakdown modal-breakdown">`;if(B.strengths)html+=`<div class="strengths"><h4>✨ Powers</h4><div>${B.strengths}</div></div>`;if(B.improvements)html+=`<div class="improvements"><h4>🌟 Quests</h4><div>${B.improvements}</div></div>`;html+=`</div>`;
       html+=`<h3>🎨 Trait Tales</h3>`;const defs=[...(bdsmData[person.role]?.coreTraits||[]),...(bdsmData[person.role]?.styles.find(s=>s.name===person.style)?.traits||[])];const uDefs=Array.from(new Map(defs.map(t=>[t.name,t])).values());
       html+='<div class="trait-details-grid">';if(person.traits&&Object.keys(person.traits).length>0){Object.entries(person.traits).forEach(([n,sc])=>{const tO=uDefs.find(t=>t.name===n);const dN=n.charAt(0).toUpperCase()+n.slice(1);if(!tO){html+=`<div><h4>${this.escapeHTML(dN)} - Lvl ${sc}❓</h4><p><em>Def missing.</em></p></div>`;return;}const dT=tO.desc?.[sc]||"N/A";const fl=this.getFlairForScore(sc);html+=`<div><h4>${this.escapeHTML(dN)} - Lvl ${sc} ${this.getEmojiForScore(sc)}</h4><p><strong>Vibe:</strong> ${this.escapeHTML(dT)}</p><p><em>${fl}</em></p></div>`;});}else{html+=`<p>No scores.</p>`;}html+='</div>';
-      // Use class for info button
-      html+=`<section class="history-section"><h3>⏳ History<button class="snapshot-info-btn" aria-label="Info">ℹ️</button></h3><p class="snapshot-info muted-text" style="display:none;">Curious how your vibes change? ✨ Click 'Snapshot' to save current trait scores to the chart. Track your growth! 📈</p><div class="history-chart-container"><canvas id="history-chart"></canvas></div><button id="snapshot-btn" class="small-btn" data-person-id="${person.id}">📸 Snapshot</button></section>`;
+      html+=`<section class="history-section"><h3>⏳ History<button class="snapshot-info-btn" aria-label="Info">ℹ️</button></h3><p class="snapshot-info muted-text" style="display:none;">Snapshot saves current traits to track growth!</p><div class="history-chart-container"><canvas id="history-chart"></canvas></div><button id="snapshot-btn" class="small-btn" data-person-id="${person.id}">📸 Snapshot</button></section>`;
       html+=`<section class="achievements-section"><h3>🏆 Achievements</h3><div id="achievements-list-${person.id}"></div></section>`;
       html+=`<section class="kink-reading-section"><h3>🔮 Reading</h3><button id="reading-btn" class="small-btn" data-person-id="${person.id}">Get Reading!</button><div id="kink-reading-output" style="display:none;"></div></section>`;
       html+=`<section class="reflections-section"><h3>📝 Reflections</h3><div id="journal-prompt-area" style="display:none;"></div><div class="modal-actions"><button id="prompt-btn" class="small-btn">💡 Prompt</button></div><textarea id="reflections-text" data-person-id="${person.id}" rows="6" placeholder="Thoughts?">${this.escapeHTML(person.reflections?.text||'')}</textarea><button id="save-reflections-btn" data-person-id="${person.id}">Save 💭</button></section>`;
