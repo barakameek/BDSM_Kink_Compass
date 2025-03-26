@@ -259,3 +259,28 @@ footer { text-align: center; padding: 1.5em; margin-top: 2em; color: var(--muted
     .header-nav { margin-left: 0; width: 100%; justify-content: space-around; } /* Spread nav buttons */
     .container { grid-template-columns: 1fr; }
 }
+
+.avatar-picker-fieldset {
+    border: none; /* Remove default fieldset border */
+    padding: 0; /* Remove default padding */
+    margin: 0; /* Remove default margin */
+    margin-top: 0.5em; /* Add some space above */
+}
+
+.avatar-picker-fieldset legend {
+    /* Style the legend like your other labels */
+    font-weight: 600;
+    margin-bottom: 0.5em;
+    color: var(--accent-color);
+    padding: 0; /* Remove browser default legend padding */
+}
+
+/* Keep existing .avatar-picker styles */
+.avatar-picker {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    /* Removed margin-top as it's handled by fieldset now */
+}
+
