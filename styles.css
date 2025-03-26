@@ -185,4 +185,126 @@ footer { text-align: center; padding: 1.5em; margin-top: 2em; color: var(--muted
     color: var(--muted-text-color);
     margin-bottom: 0.8em;
 }
-/* ... */
+/* --- START OF FILE styles.css --- */
+
+/* ... (Keep all existing CSS rules from the previous version: Base, Themes, General, Layout, Header, Form, Avatar, Traits, Form Buttons, List, Preview, Modals General) ... */
+
+/* --- Detail Modal Specific Styles (Updates & Additions) --- */
+#modal-body h2, .modal-content h2 { margin-top: 0; text-align: center; }
+.modal-subtitle { text-align: center; margin-top: -0.8em; margin-bottom: 1em; color: var(--muted-text-color); font-weight: bold; }
+.modal-intro { font-style: italic; color: var(--accent-color); text-align: center; margin-bottom: 1.5em; font-size: 1.1em; }
+
+/* Add borders and padding to modal sections */
+#modal-body section {
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
+    padding: 1em 1.5em; /* Add padding inside sections */
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-small);
+    background-color: color-mix(in srgb, var(--card-bg-color) 95%, var(--bg-color)); /* Slightly different background */
+}
+#modal-body section h3 {
+    margin-top: 0; /* Remove extra top margin for section headings */
+    padding-bottom: 0.5em;
+    border-bottom: 1px dashed var(--accent-color);
+    display: flex; /* Align icon and text */
+    align-items: center;
+    gap: 0.5em;
+}
+
+
+/* Style Breakdown (Already has some styles, ensure consistency) */
+.style-breakdown { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5em; margin-top: 1em; margin-bottom: 0; /* Remove bottom margin if section has padding */ padding: 1em 0; border: none; /* Remove internal border if section has one */ background: none; /* Remove internal background */ box-shadow: none; }
+.style-breakdown .strengths, .style-breakdown .improvements { padding: 1em; background: var(--bg-color); /* Use base bg for contrast */ border-radius: var(--border-radius-small); border: 1px solid var(--border-color); }
+.style-breakdown h4 { color: var(--accent-color); margin-bottom: 0.5em;}
+
+/* Trait Grid (Already styled, ensure consistency) */
+.trait-details-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1em; margin-top: 1em; /* Add space below heading */ margin-bottom: 0; }
+.trait-detail-item { border: 1px solid var(--border-color); padding: 1em; border-radius: var(--border-radius-small); background: var(--bg-color); }
+.trait-detail-item h4 { color: var(--accent-color); font-size: 1.1em; margin-top: 0;}
+.trait-detail-item p { margin-bottom: 0.5em; } .trait-detail-item p:last-child { margin-bottom: 0; }
+
+/* Goals Section */
+.goals-section ul { padding-left: 0; list-style: none; /* Remove default list style */ margin-top: 0.5em; }
+.goals-section li {
+    margin-bottom: 0.8em;
+    padding: 0.5em 0.8em;
+    background-color: var(--bg-color);
+    border-radius: var(--border-radius-small);
+    border: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5em;
+}
+.goals-section li.done { text-decoration: line-through; color: var(--muted-text-color); background-color: color-mix(in srgb, var(--bg-color) 90%, gray); border-color: color-mix(in srgb, var(--border-color) 80%, gray); }
+.goals-section li > span:first-child { /* Goal text */ flex-grow: 1; }
+.goal-actions button { margin-left: 0.3em; font-size: 0.8em; padding: 0.2em 0.5em; flex-shrink: 0; /* Prevent buttons shrinking */ }
+.add-goal-form { display: flex; gap: 0.5em; margin-top: 1em; }
+.add-goal-form input { flex-grow: 1; padding: 0.5em; /* Adjust padding */ }
+.add-goal-form button { flex-shrink: 0; }
+
+/* History Section */
+.history-section h3 { display: flex; align-items: center; justify-content: space-between; } /* Space out button */
+.snapshot-info-btn { background: none; border: none; color: var(--muted-text-color); cursor: pointer; font-size: 1.1em; padding: 0 0.3em; }
+.snapshot-info-btn:hover { color: var(--accent-color); }
+.snapshot-info { font-size: 0.85em; background-color: var(--bg-color); padding: 0.8em; border: 1px dashed var(--border-color); border-radius: var(--border-radius-small); margin-top: 0.5em; margin-bottom: 1em; }
+.history-chart-container{ max-width: 600px; margin: 1.5em auto 1em auto; /* More space around chart */ position: relative; height: 300px; }
+#history-chart{display:block;width:100%!important;height:100%!important}
+#snapshot-btn { display: block; margin: 1em auto 0 auto; /* Center snapshot button */ }
+
+/* Achievements Section */
+.achievements-section ul { display: flex; flex-wrap: wrap; gap: 0.8em; margin-top: 0.5em; padding-left: 0; }
+.achievements-section li { background: var(--bg-color); border: 1px solid var(--border-color); padding: 0.5em 1em; border-radius: var(--border-radius-medium); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0.2em;}
+.achievement-icon { font-size: 1.5em; line-height: 1; }
+.achievement-name { font-weight: bold; font-size: 0.85em; }
+
+/* Kink Reading Section */
+.kink-reading-section h3 { display: flex; align-items: center; justify-content: space-between;}
+#reading-btn { margin-left: auto; /* Push button to right if needed */ }
+.kink-reading-output{background:linear-gradient(135deg,var(--bg-color),color-mix(in srgb,var(--bg-color) 80%,var(--accent-color)));border:2px dashed var(--accent-color);border-radius:var(--border-radius-small);padding:1.5em;margin-top:1em;text-align:center;font-style:italic;white-space:pre-wrap;font-size: 0.95em; line-height: 1.7;}
+
+/* Reflections Section */
+.reflections-section .modal-actions { margin-bottom: 1em; text-align: center; /* Center prompt button */ }
+.reflections-textarea {
+    width: 100%; /* Takes full width of its container */
+    box-sizing: border-box; /* Include padding and border in width */
+    padding: 1em;
+    font-size: 1em;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-small);
+    background: var(--bg-color);
+    color: var(--text-color);
+    margin-top: 0.5em;
+    margin-bottom: 1em;
+    resize: vertical;
+    min-height: 150px; /* Make it taller */
+    line-height: 1.6; /* Improve readability */
+    box-shadow: inset 0 1px 3px rgba(74, 44, 61, 0.1);
+}
+body[data-theme="dark"] .reflections-textarea {
+     box-shadow: inset 0 1px 3px rgba(0,0,0, 0.3);
+}
+#save-reflections-btn { display: block; margin: 0 auto; /* Center save button */ }
+.journal-prompt{background-color:color-mix(in srgb,var(--bg-color) 90%,var(--accent-color));padding:.8em;border-radius:var(--border-radius-small);margin-bottom:1em;font-style:italic; text-align: center;}
+
+
+/* --- Other Modals (Glossary, Style Discovery, Themes) --- */
+/* ... (Keep existing styles as before) ... */
+#glossary-body dl dt{font-weight:700;color:var(--accent-color);margin-top:1em}#glossary-body dl dd{margin-left:1.5em;margin-bottom:.5em}#glossary-body .related-terms{font-size:.85em;color:var(--muted-text-color)}#glossary-body .related-terms a{color:var(--muted-text-color);text-decoration:underline}.style-discovery-controls{margin-bottom:1em;display:flex;gap:1em;align-items:center}#style-discovery-body{max-height:60vh;overflow-y:auto;padding-right:.5em}.style-discovery-item{margin-bottom:1.5em;padding:1em;border:1px solid var(--border-color);border-radius:var(--border-radius-small);background:var(--bg-color)}.style-discovery-item h4{margin-top:0;color:var(--accent-color)}.style-discovery-item p{font-style:italic;color:var(--muted-text-color);margin-bottom:.8em}.style-discovery-item ul{list-style:disc;padding-left:1.5em;margin-top:.5em}.style-discovery-item li{font-size:.9em;color:var(--muted-text-color)}.theme-options{display:flex;flex-wrap:wrap;gap:1em;justify-content:center;padding:1em 0}.theme-option-btn{padding:.8em 1.5em;border-radius:var(--border-radius-small);border:2px solid var(--border-color);cursor:pointer;font-weight:700;background-color:var(--bg-color);color:var(--text-color)}.theme-option-btn:hover{border-color:var(--accent-color)}.theme-option-btn[data-theme=light]{background:#fff0f5;border-color:#f4d4e4;color:#4a2c3d}.theme-option-btn[data-theme=dark]{background:#3c2f3c;border-color:#5a3f5a;color:#f4d4e4}.theme-option-btn[data-theme=pastel]{background:#fdf6f9;border-color:#e8ddee;color:#6d5a6d}.theme-option-btn[data-theme=velvet]{background:#2c1f3e;border-color:#4a3f5f;color:#e8ddee}
+
+
+/* --- Footer --- */
+/* ... (Keep as before) ... */
+footer { text-align: center; padding: 1.5em; margin-top: 2em; color: var(--muted-text-color); font-size: 0.9em; border-top: 1px solid var(--border-color); }
+
+/* --- Utility Classes --- */
+/* ... (Keep as before) ... */
+.muted-text { color: var(--muted-text-color); font-size: 0.9em; }
+
+/* --- Responsiveness --- */
+/* ... (Keep as before) ... */
+@media (max-width: 768px) { .container { padding: 1em; gap: 1em; } .card { padding: 1em; } header { padding: 0.8em 1em; } header h1 { font-size: 1.4em; margin-right: 0.5em; margin-bottom: 0; } .header-nav { gap: 0.3em; } .header-btn { padding: 0.2em 0.5em; font-size: 0.75em;} .theme-btn { font-size: 1em;} .modal-content { padding: 1.5em; max-width: 95%; width: auto; } .modal-content.wide-modal { width: 95%; } .form-actions { flex-direction: column; } }
+@media (max-width: 480px) { body { font-size: 15px; } header { flex-direction: column; align-items: flex-start; } header h1 { margin-bottom: 0.5em; } .header-nav { margin-left: 0; width: 100%; justify-content: space-around; } .container { grid-template-columns: 1fr; } }
+
+/* --- END OF FILE styles.css --- */
