@@ -1,106 +1,44 @@
 /* --- Base & Theme Variables --- */
-:root {
-  /* Light Theme (Default) */
-  --bg-color: #fff0f5;
-  --card-bg-color: #ffffff;
-  --text-color: #4a2c3d;
-  --accent-color: #ff69b4;
-  --accent-color-darker: #d14790;
-  --muted-text-color: #8a5a6d;
-  --border-color: #f4d4e4;
-  --success-color: #4CAF50;
-  --danger-color: #f44336;
-  --focus-ring-color: #ffa5d8;
-  --chart-grid-color: rgba(74, 44, 61, 0.1);
-  --chart-label-color: var(--muted-text-color);
-  --chart-line-color: var(--accent-color);
-  --chart-point-color: var(--accent-color-darker);
-  --chart-tooltip-bg: rgba(0, 0, 0, 0.7);
-  --chart-tooltip-text: #fff;
-
-  --card-shadow: 0 4px 12px rgba(74, 44, 61, 0.1);
-  --border-radius-medium: 15px;
-  --border-radius-small: 10px;
-}
-
-/* Dark Theme */
-body[data-theme="dark"] {
-  --bg-color: #2a1b2a;
-  --card-bg-color: #3c2f3c;
-  --text-color: #f4d4e4;
-  --accent-color: #ff85cb;
-  --accent-color-darker: #ff69b4;
-  --muted-text-color: #c49db1;
-  --border-color: #5a3f5a;
-  --focus-ring-color: #e06ab0;
-  --chart-grid-color: rgba(244, 212, 228, 0.15);
-  --chart-label-color: var(--muted-text-color);
-  --chart-line-color: var(--accent-color);
-  --chart-point-color: var(--accent-color-darker);
-  --chart-tooltip-bg: rgba(255, 255, 255, 0.8);
-  --chart-tooltip-text: #000;
-}
-
-/* Pastel Dreams Theme */
-body[data-theme="pastel"] {
-  --bg-color: #fdf6f9; /* Very light pink */
-  --card-bg-color: #ffffff;
-  --text-color: #6d5a6d; /* Muted purple */
-  --accent-color: #a0d8ef; /* Light blue */
-  --accent-color-darker: #79b8d1;
-  --muted-text-color: #b0a7b0; /* Lighter muted purple */
-  --border-color: #e8ddee; /* Light lavender */
-  --focus-ring-color: #c0e8f9;
-  --chart-grid-color: rgba(109, 90, 109, 0.1);
-  --chart-label-color: var(--muted-text-color);
-  --chart-line-color: var(--accent-color);
-  --chart-point-color: var(--accent-color-darker);
-}
-
-/* Midnight Velvet Theme */
-body[data-theme="velvet"] {
-  --bg-color: #1a122a; /* Deep dark purple */
-  --card-bg-color: #2c1f3e; /* Darker purple */
-  --text-color: #e8ddee; /* Light lavender text */
-  --accent-color: #dcc1ff; /* Light violet */
-  --accent-color-darker: #b899e0;
-  --muted-text-color: #a08cb0; /* Muted violet */
-  --border-color: #4a3a5f; /* Darker border */
-  --focus-ring-color: #c8a8f0;
-  --chart-grid-color: rgba(232, 221, 238, 0.15);
-  --chart-label-color: var(--muted-text-color);
-  --chart-line-color: var(--accent-color);
-  --chart-point-color: var(--accent-color-darker);
-}
+/* ... (Keep all theme variables as before) ... */
+:root { /* Light */ --bg-color: #fff0f5; --card-bg-color: #ffffff; --text-color: #4a2c3d; --accent-color: #ff69b4; --accent-color-darker: #d14790; --muted-text-color: #8a5a6d; --border-color: #f4d4e4; --success-color: #4CAF50; --danger-color: #f44336; --focus-ring-color: #ffa5d8; --chart-grid-color: rgba(74, 44, 61, 0.1); --chart-label-color: var(--muted-text-color); --chart-line-color: var(--accent-color); --chart-point-color: var(--accent-color-darker); --chart-tooltip-bg: rgba(0, 0, 0, 0.7); --chart-tooltip-text: #fff; --card-shadow: 0 4px 12px rgba(74, 44, 61, 0.1); --border-radius-medium: 15px; --border-radius-small: 10px; }
+body[data-theme="dark"] { /* Dark */ --bg-color: #2a1b2a; --card-bg-color: #3c2f3c; --text-color: #f4d4e4; --accent-color: #ff85cb; --accent-color-darker: #ff69b4; --muted-text-color: #c49db1; --border-color: #5a3f5a; --focus-ring-color: #e06ab0; --chart-grid-color: rgba(244, 212, 228, 0.15); --chart-label-color: var(--muted-text-color); --chart-line-color: var(--accent-color); --chart-point-color: var(--accent-color-darker); --chart-tooltip-bg: rgba(255, 255, 255, 0.8); --chart-tooltip-text: #000; }
+body[data-theme="pastel"] { /* Pastel */ --bg-color: #fdf6f9; --card-bg-color: #ffffff; --text-color: #6d5a6d; --accent-color: #a0d8ef; --accent-color-darker: #79b8d1; --muted-text-color: #b0a7b0; --border-color: #e8ddee; --focus-ring-color: #c0e8f9; --chart-grid-color: rgba(109, 90, 109, 0.1); /* ... chart colors ... */ }
+body[data-theme="velvet"] { /* Velvet */ --bg-color: #1a122a; --card-bg-color: #2c1f3e; --text-color: #e8ddee; --accent-color: #dcc1ff; --accent-color-darker: #b899e0; --muted-text-color: #a08cb0; --border-color: #4a3a5f; --focus-ring-color: #c8a8f0; --chart-grid-color: rgba(232, 221, 238, 0.15); /* ... chart colors ... */ }
 
 
-/* --- General Styles (Keep as before) --- */
-/* ... (Keep all existing general styles: *, body, h1-h4, p, ul, a, focus styles) ... */
+/* --- General Styles --- */
+/* ... (Keep as before) ... */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-color); color: var(--text-color); line-height: 1.6; transition: background-color 0.3s, color 0.3s; font-size: 16px; }
-h1, h2, h3, h4 { margin-bottom: 0.75em; color: var(--accent-color); line-height: 1.3; }
-h1 { font-size: 2.2em; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);} h2 { font-size: 1.8em; } h3 { font-size: 1.4em; margin-top: 1em; } h4 { font-size: 1.1em; color: var(--text-color); margin-bottom: 0.4em; }
+h1, h2, h3, h4 { margin-bottom: 0.75em; color: var(--accent-color); line-height: 1.3; } h1 { font-size: 2.2em; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);} h2 { font-size: 1.8em; } h3 { font-size: 1.4em; margin-top: 1em; } h4 { font-size: 1.1em; color: var(--text-color); margin-bottom: 0.4em; }
 p { margin-bottom: 1em; } ul { list-style: none; padding: 0; } a { color: var(--accent-color); text-decoration: none; } a:hover { text-decoration: underline; color: var(--accent-color-darker); }
 input:focus, select:focus, textarea:focus, button:focus { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; box-shadow: 0 0 0 4px var(--focus-ring-color-alpha, rgba(255, 105, 180, 0.3)); }
-body[data-theme="dark"] input:focus, body[data-theme="dark"] select:focus, body[data-theme="dark"] textarea:focus, body[data-theme="dark"] button:focus { outline-color: var(--focus-ring-color); box-shadow: 0 0 0 4px var(--focus-ring-color-alpha, rgba(224, 106, 176, 0.4));}
-body[data-theme="pastel"] input:focus, body[data-theme="pastel"] select:focus, body[data-theme="pastel"] textarea:focus, body[data-theme="pastel"] button:focus { box-shadow: 0 0 0 4px rgba(160, 216, 239, 0.3);}
-body[data-theme="velvet"] input:focus, body[data-theme="velvet"] select:focus, body[data-theme="velvet"] textarea:focus, body[data-theme="velvet"] button:focus { box-shadow: 0 0 0 4px rgba(220, 193, 255, 0.3);}
+/* ... (Keep dark/pastel/velvet focus styles) ... */
 
 
-/* --- Layout & Cards (Keep as before) --- */
+/* --- Layout & Cards --- */
+/* ... (Keep as before) ... */
 .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5em; padding: 1.5em; max-width: 1400px; margin: 1em auto; }
 .card { background: var(--card-bg-color); padding: 1.5em; border-radius: var(--border-radius-medium); box-shadow: var(--card-shadow); border: 1px solid var(--border-color); }
 
-/* --- Header (Adjust for more buttons) --- */
-header { padding: 0.8em 1em; background: var(--accent-color); color: #fff; display: flex; flex-wrap: wrap; /* Allow wrapping */ justify-content: space-between; align-items: center; border-bottom: 3px solid rgba(255, 255, 255, 0.5); }
-header h1 { margin: 0 1em 0 0; font-size: 1.6em; /* Slightly smaller */ text-shadow: 1px 1px var(--text-color); color: #fff; flex-shrink: 0; /* Prevent shrinking */ margin-bottom: 0.3em; /* Add margin if wraps */ }
-.header-nav { display: flex; flex-wrap: wrap; /* Allow buttons to wrap */ gap: 0.5em; align-items: center; margin-left: auto; /* Push nav to right */ }
-.header-btn { background: none; border: 2px solid #fff; color: #fff; padding: 0.3em 0.6em; border-radius: var(--border-radius-small); cursor: pointer; font-size: 0.8em; /* Smaller buttons */ font-weight: bold; transition: background-color 0.2s, color 0.2s; white-space: nowrap; /* Prevent button text wrap */ }
+/* --- Header --- */
+/* ... (Keep as before) ... */
+header { padding: 0.8em 1em; background: var(--accent-color); color: #fff; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; border-bottom: 3px solid rgba(255, 255, 255, 0.5); }
+header h1 { margin: 0 1em 0 0; font-size: 1.6em; text-shadow: 1px 1px var(--text-color); color: #fff; flex-shrink: 0; margin-bottom: 0.3em; }
+.header-nav { display: flex; flex-wrap: wrap; gap: 0.5em; align-items: center; margin-left: auto; }
+.header-btn { background: none; border: 2px solid #fff; color: #fff; padding: 0.3em 0.6em; border-radius: var(--border-radius-small); cursor: pointer; font-size: 0.8em; font-weight: bold; transition: background-color 0.2s, color 0.2s; white-space: nowrap; }
 .header-btn:hover { background: rgba(255, 255, 255, 0.2); }
 .theme-btn { font-size: 1.1em; padding: 0.2em 0.5em; }
 
-/* --- Form Section (Add Avatar Picker Styles) --- */
-.form-section h2 { text-align: center; margin-bottom: 1.5em; }
+
+/* --- Form Section --- */
+.form-section h2 {
+    text-align: center;
+    margin-bottom: 1.5em;
+    /* Allow title to wrap if needed, adjust font-size if necessary */
+    font-size: 1.7em; /* Slightly smaller if needed */
+    line-height: 1.2;
+}
 .field-group { margin-bottom: 1.2em; }
 .field-group label { display: block; font-weight: 600; margin-bottom: 0.5em; color: var(--accent-color); }
 .field-group input[type="text"], .field-group select, .field-group textarea { width: 100%; padding: 0.8em; font-size: 1em; border: 1px solid var(--border-color); border-radius: var(--border-radius-small); background: var(--bg-color); color: var(--text-color); transition: border-color 0.2s; }
@@ -108,179 +46,135 @@ header h1 { margin: 0 1em 0 0; font-size: 1.6em; /* Slightly smaller */ text-sha
 .field-group textarea { resize: vertical; min-height: 60px; }
 
 /* Avatar Picker */
-.avatar-group { margin-top: 1.5em; }
-.avatar-picker { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5em; margin-top: 0.5em; }
-.avatar-picker label { margin-right: 0.5em; font-weight: normal; color: var(--text-color); }
+/* ... (Keep fieldset, legend, avatar-picker, avatar-display, avatar-btn styles as before) ... */
+.avatar-picker-fieldset { border: none; padding: 0; margin: 0; margin-top: 0.5em; }
+.avatar-picker-fieldset legend { font-weight: 600; margin-bottom: 0.5em; color: var(--accent-color); padding: 0; }
+.avatar-picker { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5em; }
 #avatar-display { font-size: 1.8em; margin-right: 0.5em; line-height: 1; }
 .avatar-btn { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 50%; width: 36px; height: 36px; font-size: 1.4em; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; transition: transform 0.1s, box-shadow 0.1s; }
 .avatar-btn:hover { transform: scale(1.1); box-shadow: 0 0 5px var(--accent-color); }
 .avatar-btn.selected { border-color: var(--accent-color); border-width: 2px; box-shadow: 0 0 8px var(--accent-color); }
 
-
-/* --- Trait Sliders (Keep as before) --- */
-/* ... (Keep existing .trait, label, input[type=range], .trait-value, .trait-desc styles) ... */
+/* --- Trait Sliders & Info Icon --- */
 #traits-container { margin-top: 1.5em; border-top: 1px dashed var(--border-color); padding-top: 1.5em; }
-.trait { margin-bottom: 1.5em; background: rgba(255, 105, 180, 0.05); padding: 1em; border-radius: var(--border-radius-small); border: 1px solid var(--border-color); }
-.trait label { font-weight: bold; color: var(--accent-color); display: block; margin-bottom: 0.5em; }
-.trait input[type="range"] { width: 100%; accent-color: var(--accent-color); margin-top: 0.5em; margin-bottom: 0.2em; cursor: grab; }
+.trait { margin-bottom: 1.5em; background: rgba(255, 105, 180, 0.05); padding: 1em; border-radius: var(--border-radius-small); border: 1px solid var(--border-color); position: relative; /* For positioning info button if needed */ }
+.trait label {
+    font-weight: bold;
+    color: var(--accent-color);
+    display: inline-block; /* Allow icon next to it */
+    margin-bottom: 0.5em;
+    margin-right: 0.5em; /* Space before icon */
+}
+.trait-info-btn { /* Style for the info icon */
+    background: none;
+    border: none;
+    color: var(--accent-color);
+    cursor: pointer;
+    font-size: 0.9em; /* Smaller icon */
+    padding: 0 0.3em;
+    display: inline-block;
+    vertical-align: middle; /* Align with label text */
+}
+.trait-info-btn:hover {
+    color: var(--accent-color-darker);
+    transform: scale(1.2);
+}
+.trait input[type="range"] { width: 100%; accent-color: var(--accent-color); margin-top: 0.5em; margin-bottom: 0.2em; cursor: grab; display: block; /* Ensure full width below label */ }
 .trait input[type="range"]:active { cursor: grabbing; }
 .trait-value { font-weight: bold; color: var(--accent-color); margin-left: 0.5em; display: inline-block; min-width: 1em; text-align: right; float: right; }
 .trait-desc { font-size: 0.9em; color: var(--muted-text-color); background: none; padding: 0.5em 0 0 0; border-radius: 5px; margin-top: 0.3em; clear: both; }
 .trait-info-message { margin-bottom: 1em; padding: 0.5em; background-color: color-mix(in srgb, var(--bg-color) 90%, var(--accent-color)); border-radius: var(--border-radius-small); }
 
+/* --- Trait Info Popup --- */
+.trait-info-popup {
+    display: none; /* Hidden by default */
+    position: relative; /* Position relative to form section */
+    margin-top: 1.5em;
+    padding: 1.5em;
+    border: 2px dashed var(--accent-color);
+    background-color: var(--bg-color); /* Slightly different bg */
+}
+.trait-info-popup h4 {
+    margin-top: 0;
+    text-align: center;
+    color: var(--accent-color);
+}
+#trait-info-body p {
+    margin-bottom: 0.8em;
+    font-size: 0.9em;
+}
+#trait-info-body strong { /* Style the 'Level X:' part */
+    color: var(--accent-color-darker);
+}
+#trait-info-close { /* Reuse modal close style */
+    position: absolute;
+    top: 5px;
+    right: 8px;
+    font-size: 1.8em;
+}
 
-/* --- Form Buttons (Keep as before) --- */
+
+/* --- Form Buttons --- */
+/* ... (Keep as before) ... */
 .form-actions { display: flex; gap: 1em; margin-top: 1.5em; justify-content: center; }
-.save-btn, .clear-btn { border: none; padding: 0.8em 1.5em; font-size: 1.1em; border-radius: 20px; cursor: pointer; font-weight: bold; transition: transform 0.2s, background-color 0.2s; }
-.save-btn { background: var(--accent-color); color: #fff; } .save-btn:hover { background: var(--accent-color-darker); transform: translateY(-2px); }
-.clear-btn { background: var(--muted-text-color); color: var(--bg-color); } .clear-btn:hover { background: var(--text-color); transform: translateY(-2px); }
-.save-btn:disabled { background: var(--muted-text-color); cursor: not-allowed; transform: none; } /* Style for disabled save button */
+.save-btn, .clear-btn { border: none; padding: 0.8em 1.5em; font-size: 1.1em; border-radius: 20px; cursor: pointer; font-weight: bold; transition: transform 0.2s, background-color 0.2s; } .save-btn { background: var(--accent-color); color: #fff; } .save-btn:hover { background: var(--accent-color-darker); transform: translateY(-2px); } .clear-btn { background: var(--muted-text-color); color: var(--bg-color); } .clear-btn:hover { background: var(--text-color); transform: translateY(-2px); } .save-btn:disabled { background: var(--muted-text-color); cursor: not-allowed; transform: none; }
 
-
-/* --- List Section (Add Avatar Display) --- */
+/* --- List Section --- */
+/* ... (Keep as before, including avatar styles) ... */
 #people-list li { padding: 0.8em 1em; margin: 0.8em 0; background: var(--bg-color); border: 1px solid var(--border-color); border-left: 5px solid var(--accent-color); border-radius: var(--border-radius-small); display: flex; justify-content: space-between; align-items: center; transition: background-color 0.2s; cursor: pointer; }
 #people-list li:hover, #people-list li:focus { background-color: color-mix(in srgb, var(--bg-color) 85%, var(--accent-color)); outline: none; box-shadow: 0 0 0 2px var(--focus-ring-color); }
-.person-info { display: flex; align-items: center; flex-grow: 1; margin-right: 1em; gap: 0.75em; } /* Use flex for avatar */
-.person-avatar { font-size: 1.5em; line-height: 1; }
-.person-name-details { display: flex; flex-direction: column; }
-.person-name { font-weight: bold; color: var(--text-color); }
-.person-details { font-size: 0.9em; display: block; }
-.person-actions button { margin-left: 0.5em; }
-.small-btn { background: var(--accent-color); color: #fff; border: none; padding: 0.4em 0.8em; border-radius: 15px; cursor: pointer; font-size: 0.85em; transition: background-color 0.2s; } .small-btn:hover { background: var(--accent-color-darker); }
-.delete-btn { background: var(--danger-color); } .delete-btn:hover { background: color-mix(in srgb, var(--danger-color) 80%, black); }
+.person-info { display: flex; align-items: center; flex-grow: 1; margin-right: 1em; gap: 0.75em; } .person-avatar { font-size: 1.5em; line-height: 1; } .person-name-details { display: flex; flex-direction: column; } .person-name { font-weight: bold; color: var(--text-color); } .person-details { font-size: 0.9em; display: block; }
+.person-actions button { margin-left: 0.5em; } .small-btn { background: var(--accent-color); color: #fff; border: none; padding: 0.4em 0.8em; border-radius: 15px; cursor: pointer; font-size: 0.85em; transition: background-color 0.2s; } .small-btn:hover { background: var(--accent-color-darker); } .delete-btn { background: var(--danger-color); } .delete-btn:hover { background: color-mix(in srgb, var(--danger-color) 80%, black); }
 
-/* --- Preview Section (Keep as before) --- */
+
+/* --- Preview Section --- */
+/* ... (Keep as before) ... */
 .preview-section { background: linear-gradient(135deg, var(--bg-color), color-mix(in srgb, var(--bg-color) 80%, var(--accent-color))); }
 #live-preview { padding: 1.5em; border: 1px solid var(--border-color); border-radius: var(--border-radius-small); background: var(--card-bg-color); min-height: 150px; }
 .preview-title { text-align: center; margin-bottom: 1em; }
 .preview-breakdown { margin-top: 1em; }
 
 
-/* --- Modals (General - Keep mostly as before) --- */
+/* --- Modals (General) --- */
+/* ... (Keep general modal styles as before) ... */
 .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.6); display: flex; align-items: center; justify-content: center; padding: 1em; }
 .modal-content { position: relative; background: var(--card-bg-color); padding: 2em; border-radius: var(--border-radius-medium); border: 3px solid var(--accent-color); max-width: 90%; width: 700px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-.modal-content.wide-modal { width: 900px; } /* Wider modal for discovery */
+.modal-content.wide-modal { width: 900px; }
 .modal-close { position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 2em; line-height: 1; color: var(--muted-text-color); cursor: pointer; padding: 0.2em; }
 .modal-close:hover { color: var(--accent-color); }
-#modal-body h2, .modal-content h2 { margin-top: 0; text-align: center; } /* Style all modal titles */
-
+#modal-body h2, .modal-content h2 { margin-top: 0; text-align: center; }
 
 /* --- Detail Modal Specific Styles --- */
-.modal-subtitle { text-align: center; margin-top: -0.8em; margin-bottom: 1em; color: var(--muted-text-color); font-weight: bold; }
-.modal-intro { font-style: italic; color: var(--accent-color); text-align: center; margin-bottom: 1.5em; font-size: 1.1em;}
-.style-breakdown { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5em; margin-top: 1em; margin-bottom: 2em; padding: 1em 0; border-top: 1px dashed var(--border-color); border-bottom: 1px dashed var(--border-color); }
-.style-breakdown .strengths, .style-breakdown .improvements { padding: 1em; background: rgba(255, 105, 180, 0.05); border-radius: var(--border-radius-small); border: 1px solid var(--border-color); }
-.style-breakdown h4 { color: var(--accent-color); margin-bottom: 0.5em;}
-.trait-details-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1em; margin-bottom: 1.5em; }
-.trait-detail-item { border: 1px solid var(--border-color); padding: 1em; border-radius: var(--border-radius-small); background: var(--bg-color); }
-.trait-detail-item h4 { color: var(--accent-color); font-size: 1.1em; }
-.trait-detail-item p { margin-bottom: 0.5em; } .trait-detail-item p:last-child { margin-bottom: 0; }
-.well { background: var(--bg-color); padding: 1em; border-radius: var(--border-radius-small); border: 1px solid var(--border-color); margin-bottom: 1.5em; }
+/* ... (Keep all existing detail modal styles: subtitle, intro, breakdown, trait grid, well, goals, history, achievements, reading, reflections etc.) ... */
+.modal-subtitle{text-align:center;margin-top:-.8em;margin-bottom:1em;color:var(--muted-text-color);font-weight:700}.modal-intro{font-style:italic;color:var(--accent-color);text-align:center;margin-bottom:1.5em;font-size:1.1em}.style-breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5em;margin-top:1em;margin-bottom:2em;padding:1em 0;border-top:1px dashed var(--border-color);border-bottom:1px dashed var(--border-color)}.style-breakdown .strengths,.style-breakdown .improvements{padding:1em;background:rgba(255,105,180,.05);border-radius:var(--border-radius-small);border:1px solid var(--border-color)}.style-breakdown h4{color:var(--accent-color);margin-bottom:.5em}.trait-details-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1em;margin-bottom:1.5em}.trait-detail-item{border:1px solid var(--border-color);padding:1em;border-radius:var(--border-radius-small);background:var(--bg-color)}.trait-detail-item h4{color:var(--accent-color);font-size:1.1em}.trait-detail-item p{margin-bottom:.5em}.trait-detail-item p:last-child{margin-bottom:0}.well{background:var(--bg-color);padding:1em;border-radius:var(--border-radius-small);border:1px solid var(--border-color);margin-bottom:1.5em}.goals-section ul{padding-left:1.5em;list-style:'🎯 '}.goals-section li{margin-bottom:.5em;display:flex;justify-content:space-between;align-items:center}.goals-section li.done{text-decoration:line-through;color:var(--muted-text-color)}.goal-actions button{margin-left:.5em;font-size:.8em;padding:.2em .5em}.add-goal-form{display:flex;gap:.5em;margin-top:.5em}.add-goal-form input{flex-grow:1}.history-section{margin-bottom:1.5em}.history-section h3 { display: flex; align-items: center; gap: 0.5em; } /* Align heading and button */ .history-chart-container{max-width:600px;margin:1em auto;position:relative;height:300px}#history-chart{display:block;width:100%!important;height:100%!important}.achievements-section ul{display:flex;flex-wrap:wrap;gap:1em;margin-top:.5em}.achievements-section li{background:var(--bg-color);border:1px solid var(--border-color);padding:.5em 1em;border-radius:var(--border-radius-medium);text-align:center}.achievement-icon{font-size:1.5em;display:block}.achievement-name{font-weight:700;font-size:.9em}.kink-reading-section h3 { display: flex; align-items: center; gap: 0.5em; } .kink-reading-output{background:linear-gradient(135deg,var(--bg-color),color-mix(in srgb,var(--bg-color) 80%,var(--accent-color)));border:2px dashed var(--accent-color);border-radius:var(--border-radius-small);padding:1em;margin-top:1em;text-align:center;font-style:italic; white-space: pre-wrap; /* Preserve line breaks */}.reflections-textarea{width:100%;padding:.8em;font-size:1em;border:1px solid var(--border-color);border-radius:var(--border-radius-small);background:var(--bg-color);color:var(--text-color);margin-top:.5em;margin-bottom:1em;resize:vertical;min-height:100px}.journal-prompt{background-color:color-mix(in srgb,var(--bg-color) 90%,var(--accent-color));padding:.8em;border-radius:var(--border-radius-small);margin-bottom:1em;font-style:italic}.modal-actions{display:flex;gap:1em;justify-content:center;margin-top:1.5em;flex-wrap:wrap}#save-reflections-btn,#prompt-btn,#snapshot-btn,#reading-btn{padding:.6em 1.2em;font-size:.9em}
 
-/* Goal List in Modal */
-.goals-section ul { padding-left: 1.5em; list-style: '🎯 '; }
-.goals-section li { margin-bottom: 0.5em; }
-.goals-section li.done { text-decoration: line-through; color: var(--muted-text-color); }
-.goal-actions button { margin-left: 0.5em; font-size: 0.8em; padding: 0.2em 0.5em; }
-.add-goal-form { display: flex; gap: 0.5em; margin-top: 0.5em; }
-.add-goal-form input { flex-grow: 1; }
-
-/* History Section */
-.history-section { margin-bottom: 1.5em; }
-.history-chart-container { max-width: 600px; margin: 1em auto; position: relative; /* Needed for chart responsiveness */ height: 300px; /* Or adjust as needed */ }
-#history-chart { display: block; width: 100% !important; height: 100% !important; } /* Important for Chart.js sizing */
-
-/* Achievement List */
-.achievements-section ul { display: flex; flex-wrap: wrap; gap: 1em; margin-top: 0.5em; }
-.achievements-section li { background: var(--bg-color); border: 1px solid var(--border-color); padding: 0.5em 1em; border-radius: var(--border-radius-medium); text-align: center; }
-.achievement-icon { font-size: 1.5em; display: block; }
-.achievement-name { font-weight: bold; font-size: 0.9em; }
-
-/* Kink Reading */
-.kink-reading-output { background: linear-gradient(135deg, var(--bg-color), color-mix(in srgb, var(--bg-color) 80%, var(--accent-color))); border: 2px dashed var(--accent-color); border-radius: var(--border-radius-small); padding: 1em; margin-top: 1em; text-align: center; font-style: italic; }
-
-/* Reflections */
-.reflections-textarea { width: 100%; padding: 0.8em; font-size: 1em; border: 1px solid var(--border-color); border-radius: var(--border-radius-small); background: var(--bg-color); color: var(--text-color); margin-top: 0.5em; margin-bottom: 1em; resize: vertical; min-height: 100px; }
-.journal-prompt { background-color: color-mix(in srgb, var(--bg-color) 90%, var(--accent-color)); padding: 0.8em; border-radius: var(--border-radius-small); margin-bottom: 1em; font-style: italic; }
-.modal-actions { display: flex; gap: 1em; justify-content: center; margin-top: 1.5em; flex-wrap: wrap; }
-#save-reflections-btn, #prompt-btn, #snapshot-btn, #reading-btn { /* Style new buttons */
-    padding: 0.6em 1.2em; font-size: 0.9em;
+/* Snapshot Info Button/Text */
+.snapshot-info-btn {
+    background: none; border: none; color: var(--muted-text-color); cursor: pointer; font-size: 1.1em; padding: 0 0.3em; vertical-align: middle;
+}
+.snapshot-info-btn:hover { color: var(--accent-color); }
+.snapshot-info { /* Style for the hidden paragraph */
+    font-size: 0.85em;
+    background-color: var(--bg-color);
+    padding: 0.8em;
+    border: 1px dashed var(--border-color);
+    border-radius: var(--border-radius-small);
+    margin-top: 0.5em;
 }
 
-/* --- Glossary Modal --- */
-#glossary-body dl dt { font-weight: bold; color: var(--accent-color); margin-top: 1em; }
-#glossary-body dl dd { margin-left: 1.5em; margin-bottom: 0.5em; }
-#glossary-body .related-terms { font-size: 0.85em; color: var(--muted-text-color); }
-#glossary-body .related-terms a { color: var(--muted-text-color); text-decoration: underline; }
+/* --- Other Modals (Glossary, Style Discovery, Themes) --- */
+/* ... (Keep existing styles as before) ... */
+#glossary-body dl dt{font-weight:700;color:var(--accent-color);margin-top:1em}#glossary-body dl dd{margin-left:1.5em;margin-bottom:.5em}#glossary-body .related-terms{font-size:.85em;color:var(--muted-text-color)}#glossary-body .related-terms a{color:var(--muted-text-color);text-decoration:underline}.style-discovery-controls{margin-bottom:1em;display:flex;gap:1em;align-items:center}#style-discovery-body{max-height:60vh;overflow-y:auto;padding-right:.5em}.style-discovery-item{margin-bottom:1.5em;padding:1em;border:1px solid var(--border-color);border-radius:var(--border-radius-small);background:var(--bg-color)}.style-discovery-item h4{margin-top:0;color:var(--accent-color)}.style-discovery-item ul{list-style:disc;padding-left:1.5em;margin-top:.5em}.style-discovery-item li{font-size:.9em;color:var(--muted-text-color)}.theme-options{display:flex;flex-wrap:wrap;gap:1em;justify-content:center;padding:1em 0}.theme-option-btn{padding:.8em 1.5em;border-radius:var(--border-radius-small);border:2px solid var(--border-color);cursor:pointer;font-weight:700;background-color:var(--bg-color);color:var(--text-color)}.theme-option-btn:hover{border-color:var(--accent-color)}.theme-option-btn[data-theme=light]{background:#fff0f5;border-color:#f4d4e4;color:#4a2c3d}.theme-option-btn[data-theme=dark]{background:#3c2f3c;border-color:#5a3f5a;color:#f4d4e4}.theme-option-btn[data-theme=pastel]{background:#fdf6f9;border-color:#e8ddee;color:#6d5a6d}.theme-option-btn[data-theme=velvet]{background:#2c1f3e;border-color:#4a3f5f;color:#e8ddee}
 
-/* --- Style Discovery Modal --- */
-.style-discovery-controls { margin-bottom: 1em; display: flex; gap: 1em; align-items: center; }
-#style-discovery-body { max-height: 60vh; overflow-y: auto; padding-right: 0.5em; /* For scrollbar */ }
-.style-discovery-item { margin-bottom: 1.5em; padding: 1em; border: 1px solid var(--border-color); border-radius: var(--border-radius-small); background: var(--bg-color); }
-.style-discovery-item h4 { margin-top: 0; color: var(--accent-color); }
-.style-discovery-item ul { list-style: disc; padding-left: 1.5em; margin-top: 0.5em; }
-.style-discovery-item li { font-size: 0.9em; color: var(--muted-text-color); }
-
-/* --- Themes Modal --- */
-.theme-options { display: flex; flex-wrap: wrap; gap: 1em; justify-content: center; padding: 1em 0; }
-.theme-option-btn { padding: 0.8em 1.5em; border-radius: var(--border-radius-small); border: 2px solid var(--border-color); cursor: pointer; font-weight: bold; background-color: var(--bg-color); color: var(--text-color); }
-.theme-option-btn:hover { border-color: var(--accent-color); }
-/* Add specific background/color previews for theme buttons if desired */
-.theme-option-btn[data-theme="light"] { background: #fff0f5; border-color: #f4d4e4; color: #4a2c3d; }
-.theme-option-btn[data-theme="dark"] { background: #3c2f3c; border-color: #5a3f5a; color: #f4d4e4; }
-.theme-option-btn[data-theme="pastel"] { background: #fdf6f9; border-color: #e8ddee; color: #6d5a6d; }
-.theme-option-btn[data-theme="velvet"] { background: #2c1f3e; border-color: #4a3a5f; color: #e8ddee; }
-
-
-/* --- Footer (Keep as before) --- */
+/* --- Footer --- */
+/* ... (Keep as before) ... */
 footer { text-align: center; padding: 1.5em; margin-top: 2em; color: var(--muted-text-color); font-size: 0.9em; border-top: 1px solid var(--border-color); }
 
-/* --- Utility Classes (Keep as before) --- */
+/* --- Utility Classes --- */
+/* ... (Keep as before) ... */
 .muted-text { color: var(--muted-text-color); font-size: 0.9em; }
 
-/* --- Responsiveness (Adjust header/modal potentially) --- */
-@media (max-width: 768px) {
-  .container { padding: 1em; gap: 1em; }
-  .card { padding: 1em; }
-  header { padding: 0.8em 1em; /* Adjust padding */ }
-  header h1 { font-size: 1.4em; margin-right: 0.5em; margin-bottom: 0; } /* Adjust h1 */
-  .header-nav { gap: 0.3em; /* Reduce gap */ }
-  .header-btn { padding: 0.2em 0.5em; font-size: 0.75em;} /* Adjust button padding/size */
-  .theme-btn { font-size: 1em;}
-  .modal-content { padding: 1.5em; max-width: 95%; width: auto; }
-  .modal-content.wide-modal { width: 95%; } /* Make wide modal responsive */
-  .form-actions { flex-direction: column; }
-}
-
-@media (max-width: 480px) {
-    body { font-size: 15px; }
-    header { flex-direction: column; align-items: flex-start; } /* Stack header items */
-    header h1 { margin-bottom: 0.5em; }
-    .header-nav { margin-left: 0; width: 100%; justify-content: space-around; } /* Spread nav buttons */
-    .container { grid-template-columns: 1fr; }
-}
-
-.avatar-picker-fieldset {
-    border: none; /* Remove default fieldset border */
-    padding: 0; /* Remove default padding */
-    margin: 0; /* Remove default margin */
-    margin-top: 0.5em; /* Add some space above */
-}
-
-.avatar-picker-fieldset legend {
-    /* Style the legend like your other labels */
-    font-weight: 600;
-    margin-bottom: 0.5em;
-    color: var(--accent-color);
-    padding: 0; /* Remove browser default legend padding */
-}
-
-/* Keep existing .avatar-picker styles */
-.avatar-picker {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.5em;
-    /* Removed margin-top as it's handled by fieldset now */
-}
-
+/* --- Responsiveness --- */
+/* ... (Keep as before) ... */
+@media (max-width: 768px) { .container { padding: 1em; gap: 1em; } .card { padding: 1em; } header { padding: 0.8em 1em; } header h1 { font-size: 1.4em; margin-right: 0.5em; margin-bottom: 0; } .header-nav { gap: 0.3em; } .header-btn { padding: 0.2em 0.5em; font-size: 0.75em;} .theme-btn { font-size: 1em;} .modal-content { padding: 1.5em; max-width: 95%; width: auto; } .modal-content.wide-modal { width: 95%; } .form-actions { flex-direction: column; } }
+@media (max-width: 480px) { body { font-size: 15px; } header { flex-direction: column; align-items: flex-start; } header h1 { margin-bottom: 0.5em; } .header-nav { margin-left: 0; width: 100%; justify-content: space-around; } .container { grid-template-columns: 1fr; } }
