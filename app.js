@@ -273,18 +273,16 @@ class TrackerApp {
 
   createTraitHTML(trait) {
     const displayName = trait.name.charAt(0).toUpperCase() + trait.name.slice(1);
-    // Create a unique ID for the input based on the trait name (ensure it's valid)
+    // Create a unique ID for the input based on the trait name
     const inputId = `trait-${trait.name.replace(/[^a-zA-Z0-9-_]/g, '-')}`; // Sanitize ID
     return `
       <div class="trait">
         <label for="${inputId}">${this.escapeHTML(displayName)}</label>
-        {/* Add autocomplete="off" to sliders */}
         <input type="range" id="${inputId}" min="1" max="5" value="3" class="trait-slider" data-trait="${trait.name}" aria-label="${this.escapeHTML(displayName)} slider" autocomplete="off"/>
         <span class="trait-value">3</span>
         <div class="trait-desc muted-text"></div>
       </div>`;
   }
-
   updateTraitDescription(slider) {
       const traitName = slider.getAttribute('data-trait');
       const value = slider.value;
