@@ -1,4 +1,3 @@
-// --- START OF FILE paraphrasing_sub.js ---
 
 import { bdsmData } from './data.js';
 
@@ -11,7 +10,97 @@ function normalizeStyleKey(name) {
 
 // Suggestions tailored to the NEW style list with a fun tone
 const subStyleSuggestions = {
-  // ... (Previous styles: Submissive, Brat, Slave, Switch, Pet, Little, Puppy, Kitten, Princess, Rope Bunny, Masochist, Prey, Toy) ...
+  submissive: {
+    1: { paraphrase: "🌱 Starting your Submissive sparkle?", suggestion: "Try one tiny act of service today & give yourself a gold star! ⭐" },
+    2: { paraphrase: "🌸 Blooming in Submission?", suggestion: "Practice anticipating one need or presenting yourself nicely! Discuss how it felt! 💬" },
+    3: { paraphrase: "✨ Shining with helpful grace?", suggestion: "Take initiative on a service task or dedicate extra effort to presentation! Feel the glow! 😊" },
+    4: { paraphrase: "💖 Mastering delightful deference!", suggestion: "Combine proactive service AND lovely presentation! You're radiant! 💅" },
+    5: { paraphrase: "👑 Submissive Royalty!", suggestion: "Reflect on how service and presentation intertwine for you. Deepen your unique expression! 💖" }
+  },
+  brat: {
+    1: { paraphrase: "😈 Testing the bratty waters?", suggestion: "Try one *tiny* playful poke! See how the push-pull feels! 😉" },
+    2: { paraphrase: "😜 Getting sassier?", suggestion: "Push a boundary *slightly* more, but be ready to giggle through consequences! 😏" },
+    3: { paraphrase: "🔥 Brat level increasing!", suggestion: "Combine witty defiance with resilience! Take a 'punishment' with a smirk! 🎤" },
+    4: { paraphrase: "💥 Unstoppable Brat Energy!", suggestion: "Initiate a creative challenge! Can you outsmart them (just a bit!)? High five! ✋" },
+    5: { paraphrase: "👑 Supreme Ruler of Sass!", suggestion: "Invent a new brat game! Revel in the delightful chaos you create! 🎊" }
+  },
+  slave: {
+    1: { paraphrase: "🕯️ Lighting the path of Slavery?", suggestion: "Focus on one moment of quiet devotion or intentional surrender today. Feel the connection. 🙏" },
+    2: { paraphrase: "🔗 Forging deeper bonds?", suggestion: "Practice yielding control in a new, small way. Share your feelings! 💬" },
+    3: { paraphrase: "🌹 Blooming in Surrender?", suggestion: "Explore a small ritual of devotion or embrace stillness for your Owner. 🎉" },
+    4: { paraphrase: "💎 Shining with Devotion!", suggestion: "Anticipate a need as an act of pure devotion. Find joy in fulfilling it. ✨" },
+    5: { paraphrase: "❤️ Embodying Dedicated Slavery!", suggestion: "Reflect on the profound peace surrender brings. How can this deepen your connection? 🌟" }
+  },
+  switch: {
+    1: { paraphrase: "↔️ Exploring the Switchy path?", suggestion: "Try consciously noticing the feelings of *one* role today. How does it differ? 🤔" },
+    2: { paraphrase: "🔄 Practicing the pivot?", suggestion: "Attempt a small shift in dynamic with clear communication. How did the transition feel? 💬" },
+    3: { paraphrase: "🎭 Getting comfy in dual roles?", suggestion: "Initiate a scene where you might switch mid-way (with discussion!). Enjoy the flow! 😊" },
+    4: { paraphrase: "✨ Shining as a versatile Switch!", suggestion: "Challenge yourself to switch smoothly based on subtle cues. Feel the energetic dance! 💃" },
+    5: { paraphrase: "💖 Master of the Dynamic Dance!", suggestion: "Reflect on the unique empathy switching brings. How does it enrich your connections? 💖" }
+  },
+  pet: {
+    1: { paraphrase: "🐾 Tiny paws exploring Petspace?", suggestion: "Try one non-verbal purr or nudge for attention! Feel the cute! 😊" },
+    2: { paraphrase: "💖 Learning the ways of a Pet?", suggestion: "Practice asking for cuddles more openly or use more happy sounds! Talk about it! ✨" },
+    3: { paraphrase: "🧸 Snuggling into Petspace?", suggestion: "Combine seeking affection with playful wiggles or nuzzles! Enjoy the warmth! 🎶" },
+    4: { paraphrase: "🌟 Shining as a loyal companion!", suggestion: "Anticipate your Owner's mood & offer comfort non-verbally. Earn those head pats! 🍪" },
+    5: { paraphrase: "👑 A cherished, expressive Pet!", suggestion: "Develop unique ways to 'talk' without words! Revel in the intuitive bond! 🎀" }
+  },
+  little: {
+    1: { paraphrase: "🧸 Discovering your inner Little?", suggestion: "Allow yourself one moment of pure play or accept one piece of guidance with a smile. Be kind to you! 😊" },
+    2: { paraphrase: "🖍️ Coloring your Little world?", suggestion: "Try expressing a 'little' feeling (like excitement or shyness) or follow one simple rule happily. ✨" },
+    3: { paraphrase: "🍭 Sweetly settling into Littlespace?", suggestion: "Engage in a favorite childhood game or embrace the comfort of rules. Find the joy! 🎉" },
+    4: { paraphrase: "🎀 Shining bright as a Little Star!", suggestion: "Express vulnerability trustingly or delight in pleasing your Caregiver. Feel the safety! 🌟" },
+    5: { paraphrase: "💖 Fully embracing your Little heart!", suggestion: "Co-create a special 'little' ritual (like story time!). Cherish the unique bond! 🦄" }
+  },
+  puppy: {
+    1: { paraphrase: "🐶 New puppy on the block?", suggestion: "Show eager tail wags (real or imagined!) for one command today! Good pup! 😊" },
+    2: { paraphrase: "🦴 Learning new tricks?", suggestion: "Practice one command with extra enthusiasm! Remember, treats help! 😉" },
+    3: { paraphrase: "🐕‍🦺 Eager and ready to play?", suggestion: "Initiate a game of fetch or show off a learned trick! Feel the zoomies! 🥎" },
+    4: { paraphrase: "🏆 Top Dog potential!", suggestion: "Combine boundless energy with focused trainability! Amaze your Owner! ✨" },
+    5: { paraphrase: "🌟 The Ultimate Good Pup!", suggestion: "Anticipate commands with joyful energy! Your enthusiasm is infectious! 💖" }
+  },
+  kitten: {
+    1: { paraphrase: "🐾 Tiny kitten, soft paws?", suggestion: "Explore one new object with cautious curiosity (a gentle bat-bat!). Purr when praised! 😸" },
+    2: { paraphrase: "🧶 Getting tangled in fun?", suggestion: "Try a playful pounce or practice moving with a bit more feline grace! ✨" },
+    3: { paraphrase: "🐈‍⬛ Sleek and curious?", suggestion: "Combine curiosity with poise in a playful scenario! Land on your feet! 🎉" },
+    4: { paraphrase: "✨ Shining with kitten charm!", suggestion: "Use your grace and curiosity to investigate something new! Celebrate with a happy mew! 🌟" },
+    5: { paraphrase: "👑 Purrfectly poised Kitten!", suggestion: "Embrace your inner cat fully! Move with elegance, play with abandon! 💖" }
+  },
+  princess: {
+    1: { paraphrase: "👑 Awaiting your crown?", suggestion: "Allow yourself to be pampered in one small way today! You deserve it! 😊" },
+    2: { paraphrase: "💅 Practicing your royal wave?", suggestion: "Try delegating one small, appropriate task with a charming smile! 😉" },
+    3: { paraphrase: "💎 Starting to sparkle?", suggestion: "Revel in being spoiled a bit more or practice your 'royal decree' voice! 🎉" },
+    4: { paraphrase: "✨ Shining like royalty!", suggestion: "Combine enjoying pampering with gracefully expecting help! Own your throne! 🌟" },
+    5: { paraphrase: "💖 Truly Regal!", suggestion: "Reflect on how being treated like royalty makes you feel. How can you enhance this majestic dynamic? 👑" }
+  },
+  'rope bunny': { // Key matches normalized name
+    1: { paraphrase: "🐇 Hopping towards the ropes?", suggestion: "Try one simple, comfy tie (like wrists). Focus on safety & communication! 😊" },
+    2: { paraphrase: "🥨 Getting tied up in fun?", suggestion: "Practice patience during a slightly longer tie or explore a new simple knot! 💬" },
+    3: { paraphrase: "🎀 Enjoying the decorative binds?", suggestion: "Experiment with a slightly more aesthetic tie! Admire the patterns! 🎉" },
+    4: { paraphrase: "✨ Shining in shibari!", suggestion: "Challenge yourself with a more complex tie or hold a pose patiently! You're art! 🌟" },
+    5: { paraphrase: "💖 Masterpiece in rope!", suggestion: "Collaborate on designing a complex tie or explore beginner suspension safely! Celebrate rope! 🎨" }
+  },
+  masochist: {
+    1: { paraphrase: "⚡️ Gently testing the waters?", suggestion: "Identify one sensation you're curious about. Try it *very* lightly with clear talk! 😊" },
+    2: { paraphrase: "🌡️ Exploring the ouch-to-ooh spectrum?", suggestion: "Experiment with slightly more intensity or duration. Listen to your body's story! 💬" },
+    3: { paraphrase: "🔥 Finding the fascinating edge?", suggestion: "Combine different sensations or work on riding a specific wave of intensity. Feel the release! 🎉" },
+    4: { paraphrase: "💥 Thriving on intensity!", suggestion: "Explore more complex scenes or push known limits (safely!). Analyze the 'why'! 🌟" },
+    5: { paraphrase: "🚀 Sensation Connoisseur!", suggestion: "Design a scene focused on achieving a specific mental/physical state through sensation. Own it! 🔥" }
+  },
+  prey: {
+    1: { paraphrase: "🐿️ Peeking out cautiously?", suggestion: "Try a *very* playful 'hide and seek' moment. Feel the anticipation! 😊" },
+    2: { paraphrase: "🐇 Darting from the 'hunter'?", suggestion: "Engage in a short, playful chase. Discuss comfort with the 'fear' edge! 💬" },
+    3: { paraphrase: "🦊 Enjoying the thrill of the hunt?", suggestion: "Make the chase a little longer or the 'capture' more dramatic! It's exciting! 🎉" },
+    4: { paraphrase: "✨ Reveling in the pursuit!", suggestion: "Fully embrace the role! Use your wits to 'escape' (or be caught!). Feel the adrenaline! 🌟" },
+    5: { paraphrase: "💖 Master of the Chase Dynamic!", suggestion: "Collaborate on a scene with high stakes (but ultimate safety!). Live for the thrill! 🎭" }
+  },
+  toy: {
+    1: { paraphrase: "🧸 New toy in the box?", suggestion: "Allow yourself to be gently positioned or 'used' for one simple task. How does it feel? 😊" },
+    2: { paraphrase: "🧩 Learning to be played with?", suggestion: "Practice relaxing while being posed or respond to one simple control command. 💬" },
+    3: { paraphrase: "🎁 Fun and ready to be used?", suggestion: "Enjoy being the center of attention as a pleasure object or respond readily to being moved! 🎉" },
+    4: { paraphrase: "✨ Shining as a prized possession!", suggestion: "Embrace being objectified (safely!) or show off your responsiveness to control! 🌟" },
+    5: { paraphrase: "💖 The Perfect Plaything!", suggestion: "Anticipate how your owner wants to 'play' and respond flawlessly! Revel in being their toy! 💖" }
+  },
   doll: {
     1: { paraphrase: "🎀 First steps as a Doll?", suggestion: "Try holding one pose gracefully for a minute or add one 'doll-like' detail to your look! 😊" },
     2: { paraphrase: "💄 Perfecting the porcelain look?", suggestion: "Practice stillness during posing or spend extra time on a doll-like aesthetic element! ✨" },
