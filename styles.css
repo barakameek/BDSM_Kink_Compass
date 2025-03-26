@@ -270,3 +270,327 @@ footer { text-align: center; padding: 1.5em; margin-top: 2em; color: var(--muted
 @media (max-width: 480px) { body { font-size: 15px; } header { flex-direction: column; align-items: flex-start; } header h1 { margin-bottom: 0.5em; } .header-nav { margin-left: 0; width: 100%; justify-content: space-around; } .container { grid-template-columns: 1fr; } }
 
 /* --- END OF FILE styles.css --- */
+/* --- START OF FILE styles.css --- */
+
+/* ... (Keep ALL existing KinkCompass styles: Base, Themes, General, Layout, Header, Form, Avatar, Traits, Info Popup, Form Buttons, List, Preview, All Modals etc.) ... */
+
+/* --- NEW: Style Finder Specific Styles (Integrated & Themed) --- */
+
+.sf-modal .sf-modal-content { /* Style Finder modal content */
+  background: var(--card-bg-color); /* Use theme variable */
+  padding: 20px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 550px; /* Slightly wider */
+  position: relative;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border: 2px solid var(--accent-color); /* Match other modals */
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Style Finder Title */
+.sf-modal-content h3 {
+  color: var(--accent-color);
+  margin-bottom: 15px;
+  font-size: 1.5em;
+}
+
+/* Close button reuse */
+/* #sf-close-style-finder uses .modal-close styles */
+
+/* Progress tracker */
+#sf-progress-tracker {
+  font-size: 0.9em;
+  color: var(--muted-text-color);
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+/* Step content */
+#sf-step-content h2 { /* Step Question Title */
+  color: var(--accent-color-darker); /* Slightly darker accent */
+  margin-bottom: 10px;
+  font-size: 1.25em;
+  line-height: 1.4;
+}
+#sf-step-content p {
+  margin-bottom: 15px;
+  color: var(--text-color);
+}
+#sf-step-content button { /* Buttons within steps */
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 1em;
+  margin: 5px;
+  transition: all 0.2s ease;
+}
+#sf-step-content button:hover {
+  background: var(--accent-color-darker);
+  transform: scale(1.05);
+}
+/* Style Finder Back Button */
+#sf-step-content button[data-action="prev"] {
+    background: var(--muted-text-color);
+}
+#sf-step-content button[data-action="prev"]:hover {
+    background: color-mix(in srgb, var(--muted-text-color) 80%, black);
+}
+
+
+/* Feedback */
+#sf-feedback {
+  font-size: 0.9em;
+  color: var(--accent-color);
+  margin: 10px 0;
+  font-weight: bold;
+  min-height: 1.2em; /* Prevent layout shift */
+}
+
+/* Dashboard */
+#sf-dashboard {
+  margin-top: 20px;
+  font-size: 0.85em; /* Slightly larger */
+  color: var(--text-color);
+  max-height: 250px; /* Limit height */
+  overflow-y: auto; /* Scroll if too many styles */
+  padding-right: 5px; /* Space for scrollbar */
+}
+
+.sf-dashboard-header { /* Renamed from .dashboard-header */
+  font-size: 1.2em;
+  color: var(--accent-color);
+  margin-bottom: 10px;
+  text-align: center;
+  font-weight: bold;
+  position: sticky; /* Keep header visible */
+  top: -1px; /* Adjust for padding */
+  background: var(--card-bg-color); /* Match modal bg */
+  padding-bottom: 5px;
+  z-index: 1;
+}
+
+.sf-dashboard-item { /* Renamed */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: color-mix(in srgb, var(--accent-color) 10%, transparent); /* Use theme accent */
+  border-radius: 10px; /* Match KinkCompass */
+  padding: 8px 12px;
+  margin: 5px 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.sf-style-name { /* Renamed */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Match KinkCompass */
+  font-size: 1em;
+  font-weight: 600; /* Make names stand out */
+  color: var(--text-color);
+}
+body[data-theme="dark"] .sf-style-name { color: var(--text-color); } /* Ensure readability */
+
+
+.sf-dashboard-score { /* Renamed */
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--accent-color-darker);
+}
+body[data-theme="dark"] .sf-dashboard-score { color: var(--accent-color); }
+
+/* Movement Indicators */
+.sf-move-up, .sf-move-down { /* Renamed */
+  color: var(--accent-color);
+  font-size: 1.2em;
+  opacity: 1;
+  animation: sfFadeOut 1s ease forwards; /* Prefixed animation */
+}
+body[data-theme="dark"] .sf-move-up, body[data-theme="dark"] .sf-move-down { color: var(--accent-color); }
+
+
+/* Score Delta */
+.sf-score-delta { /* Renamed */
+  font-size: 0.8em;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent-color) 30%, transparent);
+}
+
+.sf-score-delta.positive { color: var(--accent-color-darker); }
+.sf-score-delta.negative { color: var(--muted-text-color); background: color-mix(in srgb, var(--muted-text-color) 30%, transparent); }
+body[data-theme="dark"] .sf-score-delta.positive { color: var(--accent-color); }
+body[data-theme="dark"] .sf-score-delta.negative { color: var(--muted-text-color); }
+
+
+/* Style Finder Sliders */
+.sf-trait-slider { /* Renamed */
+  width: 100%;
+  max-width: 400px;
+  margin: 20px auto 5px auto; /* Center and adjust margin */
+  -webkit-appearance: none;
+  appearance: none;
+  height: 10px; /* Slightly thicker */
+  background: var(--border-color); /* Use theme border color */
+  border-radius: 5px;
+  outline: none;
+  transition: background 0.3s;
+  display: block; /* Ensure centering works */
+}
+
+.sf-trait-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px; /* Slightly larger thumb */
+  height: 22px;
+  background: var(--accent-color); /* Use theme accent */
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid var(--card-bg-color); /* Add border for contrast */
+}
+.sf-trait-slider::-moz-range-thumb { /* Firefox */
+  width: 20px;
+  height: 20px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid var(--card-bg-color);
+}
+
+.sf-trait-slider::-webkit-slider-thumb:hover { background: var(--accent-color-darker); transform: scale(1.1); }
+.sf-trait-slider::-moz-range-thumb:hover { background: var(--accent-color-darker); transform: scale(1.1); }
+
+
+.sf-slider-description { /* Renamed */
+  font-size: 1em;
+  color: var(--accent-color);
+  margin-top: 10px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  text-align: center;
+  padding: 8px 12px; /* More padding */
+  background: color-mix(in srgb, var(--accent-color) 10%, transparent);
+  border-radius: var(--border-radius-small);
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  min-height: 2.5em; /* Prevent jumping */
+  display: flex; /* Center text vertically */
+  align-items: center;
+  justify-content: center;
+}
+
+.sf-slider-footnote { /* Renamed */
+  font-size: 0.8em;
+  color: var(--muted-text-color);
+  margin-top: 5px;
+  text-align: center;
+}
+
+/* Style Finder Info icons */
+.sf-info-icon { /* Renamed */
+  cursor: pointer;
+  margin-left: 5px;
+  color: var(--accent-color);
+  font-size: 1em;
+  vertical-align: middle;
+  transition: transform 0.2s;
+}
+.sf-info-icon:hover { transform: scale(1.2); }
+
+/* Style Finder Popups */
+/* Reuse KinkCompass modal styles if possible, or keep separate */
+.sf-style-info-popup { /* Renamed */
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--card-bg-color); /* Use theme */
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 400px; width: 90%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  z-index: 1001; /* Above finder modal */
+  text-align: left;
+  border: 2px solid var(--accent-color);
+}
+.sf-style-info-popup h3 { color: var(--accent-color); margin-bottom: 10px; margin-top: 0;}
+.sf-style-info-popup p { margin-bottom: 10px; }
+/* Use .modal-close styles for the popup close button if desired */
+.sf-style-info-popup .sf-close-btn { /* Renamed */
+  position: absolute; top: 10px; right: 10px;
+  background: none; border: none;
+  font-size: 1.2em; color: var(--accent-color);
+  cursor: pointer; transition: color 0.2s;
+}
+.sf-style-info-popup .sf-close-btn:hover { color: var(--accent-color-darker); }
+
+/* Result section */
+.sf-result-section { /* Renamed */
+  margin: 20px 0;
+  animation: sfSlideIn 0.5s ease-out; /* Prefixed animation */
+}
+.sf-result-heading { /* Renamed */
+  color: var(--accent-color);
+  border-bottom: 2px solid var(--accent-color);
+  padding-bottom: 5px;
+  margin-bottom: 15px; /* More space */
+}
+.sf-result-section p {
+    margin-bottom: 0.8em; /* Tighter spacing in results */
+}
+.sf-result-section h3 { /* Match other h3 */
+    font-size: 1.4em;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    color: var(--accent-color-darker);
+}
+.sf-result-section ul {
+    list-style: '✨ '; /* Cute list style */
+    padding-left: 1.5em;
+    text-align: left;
+    max-width: 350px;
+    margin: 0.5em auto 1.5em auto;
+}
+.sf-result-buttons { /* Renamed */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+/* Style the Apply button */
+.sf-result-buttons button[data-action="apply"] {
+    background-color: var(--success-color);
+}
+.sf-result-buttons button[data-action="apply"]:hover {
+    background-color: color-mix(in srgb, var(--success-color) 80%, black);
+}
+
+
+/* --- Animations (Prefixed) --- */
+.sf-fade-in { animation: sfFadeIn 0.3s ease-in; }
+@keyframes sfFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.sf-feedback-animation { animation: sfBounce 0.5s ease; } /* Renamed */
+@keyframes sfBounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+
+@keyframes sfSlideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes sfFadeOut { 0% { opacity: 1; } 100% { opacity: 0; } }
+
+
+/* --- Responsiveness (Ensure finder modal works) --- */
+@media (max-width: 480px) {
+  .sf-modal-content { width: 95%; padding: 15px; }
+  #sf-step-content h2 { font-size: 1.2em; }
+  .sf-trait-slider { max-width: 300px; }
+  .sf-slider-description { font-size: 0.9em; }
+}
+
+/* --- END OF FILE styles.css --- */
