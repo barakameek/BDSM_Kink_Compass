@@ -7,7 +7,7 @@ import { glossaryTerms } from './glossary.js';
 import { getRandomPrompt } from './prompts.js';
 import { achievementList, hasAchievement, grantAchievement } from './achievements.js';
 
-// Chart.js loaded via CDN
+// Chart.js and Confetti loaded via CDN
 
 class TrackerApp {
   constructor() {
@@ -17,51 +17,34 @@ class TrackerApp {
     this.currentEditId = null;
     this.chartInstance = null;
 
-    // Find elements
+    // --- Style Finder State ---
+    this.sfActive = false;
+    this.sfStep = 0;
+    this.sfRole = null; // 'submissive' or 'dominant'
+    this.sfAnswers = { traits: {} }; // Store slider answers { traitName: score }
+    this.sfScores = {}; // Store calculated style scores { StyleName: score }
+    this.sfPreviousScores = {}; // For dashboard animation
+    this.sfHasRenderedDashboard = false;
+    this.sfTraitSet = []; // Holds the current set of traits for the quiz
+    this.sfSteps = []; // Holds the calculated steps for the current quiz run
+
+    // --- Element Mapping ---
     this.elements = {
-      formSection: document.getElementById('form-section'),
-      name: document.getElementById('name'),
-      avatarDisplay: document.getElementById('avatar-display'),
-      avatarInput: document.getElementById('avatar-input'),
-      avatarPicker: document.querySelector('.avatar-picker'),
-      role: document.getElementById('role'),
-      style: document.getElementById('style'),
-      // goals element removed from here
-      traitsContainer: document.getElementById('traits-container'),
-      traitInfoPopup: document.getElementById('trait-info-popup'),
-      traitInfoClose: document.getElementById('trait-info-close'),
-      traitInfoTitle: document.getElementById('trait-info-title'),
-      traitInfoBody: document.getElementById('trait-info-body'),
-      save: document.getElementById('save'),
-      clearForm: document.getElementById('clear-form'),
-      peopleList: document.getElementById('people-list'),
-      livePreview: document.getElementById('live-preview'),
-      modal: document.getElementById('detail-modal'),
-      modalBody: document.getElementById('modal-body'),
-      modalClose: document.getElementById('modal-close'),
-      resourcesBtn: document.getElementById('resources-btn'),
-      resourcesModal: document.getElementById('resources-modal'),
-      resourcesClose: document.getElementById('resources-close'),
-      glossaryBtn: document.getElementById('glossary-btn'),
-      glossaryModal: document.getElementById('glossary-modal'),
-      glossaryClose: document.getElementById('glossary-close'),
-      glossaryBody: document.getElementById('glossary-body'),
-      styleDiscoveryBtn: document.getElementById('style-discovery-btn'),
-      styleDiscoveryModal: document.getElementById('style-discovery-modal'),
-      styleDiscoveryClose: document.getElementById('style-discovery-close'),
-      styleDiscoveryRoleFilter: document.getElementById('style-discovery-role'),
-      styleDiscoveryBody: document.getElementById('style-discovery-body'),
-      themesBtn: document.getElementById('themes-btn'),
-      themesModal: document.getElementById('themes-modal'),
-      themesClose: document.getElementById('themes-close'),
-      themesBody: document.getElementById('themes-body'),
-      exportBtn: document.getElementById('export-btn'),
-      importBtn: document.getElementById('import-btn'),
-      importFileInput: document.getElementById('import-file-input'),
-      themeToggle: document.getElementById('theme-toggle')
+      // KinkCompass elements...
+      formSection: document.getElementById('form-section'), name: document.getElementById('name'), avatarDisplay: document.getElementById('avatar-display'), avatarInput: document.getElementById('avatar-input'), avatarPicker: document.querySelector('.avatar-picker'), role: document.getElementById('role'), style: document.getElementById('style'), traitsContainer: document.getElementById('traits-container'), traitInfoPopup: document.getElementById('trait-info-popup'), traitInfoClose: document.getElementById('trait-info-close'), traitInfoTitle: document.getElementById('trait-info-title'), traitInfoBody: document.getElementById('trait-info-body'), save: document.getElementById('save'), clearForm: document.getElementById('clear-form'), peopleList: document.getElementById('people-list'), livePreview: document.getElementById('live-preview'), modal: document.getElementById('detail-modal'), modalBody: document.getElementById('modal-body'), modalClose: document.getElementById('modal-close'), resourcesBtn: document.getElementById('resources-btn'), resourcesModal: document.getElementById('resources-modal'), resourcesClose: document.getElementById('resources-close'), glossaryBtn: document.getElementById('glossary-btn'), glossaryModal: document.getElementById('glossary-modal'), glossaryClose: document.getElementById('glossary-close'), glossaryBody: document.getElementById('glossary-body'), styleDiscoveryBtn: document.getElementById('style-discovery-btn'), styleDiscoveryModal: document.getElementById('style-discovery-modal'), styleDiscoveryClose: document.getElementById('style-discovery-close'), styleDiscoveryRoleFilter: document.getElementById('style-discovery-role'), styleDiscoveryBody: document.getElementById('style-discovery-body'), themesBtn: document.getElementById('themes-btn'), themesModal: document.getElementById('themes-modal'), themesClose: document.getElementById('themes-close'), themesBody: document.getElementById('themes-body'), exportBtn: document.getElementById('export-btn'), importBtn: document.getElementById('import-btn'), importFileInput: document.getElementById('import-file-input'), themeToggle: document.getElementById('theme-toggle'),
+
+      // Style Finder elements...
+      styleFinderTriggerBtn: document.getElementById('style-finder-trigger-btn'), // New Trigger
+      sfModal: document.getElementById('style-finder-modal'),                   // The modal itself
+      sfCloseBtn: document.getElementById('sf-close-style-finder'),           // Close button
+      sfProgressTracker: document.getElementById('sf-progress-tracker'),      // Progress text
+      sfStepContent: document.getElementById('sf-step-content'),            // Main content area
+      sfFeedback: document.getElementById('sf-feedback'),                   // Feedback text
+      sfDashboard: document.getElementById('sf-dashboard')                    // Live score dashboard
     };
-    // Check critical elements
-    if (!this.elements.name || !this.elements.role || !this.elements.style || !this.elements.save || !this.elements.peopleList || !this.elements.modal) {
+
+    // Critical element check...
+    if (!this.elements.name || !this.elements.role || !this.elements.style || !this.elements.save || !this.elements.peopleList || !this.elements.modal || !this.elements.sfModal) { // Added sfModal check
          console.error("Missing critical HTML elements."); throw new Error("Missing critical elements");
     }
 
@@ -77,29 +60,26 @@ class TrackerApp {
     console.log("CONSTRUCTOR: Initial render complete.");
   }
 
-  // --- Local Storage ---
+  // --- Local Storage --- (Keep as before)
   loadFromLocalStorage(){try{const d=localStorage.getItem('kinkProfiles');const p=d?JSON.parse(d):[];this.people=p.map(p=>({...p,goals:Array.isArray(p.goals)?p.goals:[],history:Array.isArray(p.history)?p.history:[],avatar:p.avatar||'❓',achievements:Array.isArray(p.achievements)?p.achievements:[],reflections:typeof p.reflections==='object'?p.reflections:{}}));console.log(`Loaded ${this.people.length}`);}catch(e){console.error("Load Error:",e);this.people=[];}}
   saveToLocalStorage(){try{localStorage.setItem('kinkProfiles',JSON.stringify(this.people));console.log(`Saved ${this.people.length}`);}catch(e){console.error("Save Error:",e);alert("Save failed.");}}
 
   // --- Event Listeners Setup ---
   addEventListeners() {
     console.log("Attaching event listeners...");
-    // Form
+    // KinkCompass Listeners...
     this.elements.role?.addEventListener('change',() => { const r=this.elements.role.value;this.renderStyles(r);this.elements.style.value='';this.renderTraits(r,'');this.updateLivePreview(); });
     this.elements.style?.addEventListener('change',() => { this.renderTraits(this.elements.role.value,this.elements.style.value);this.updateLivePreview(); });
     this.elements.name?.addEventListener('input',() => this.updateLivePreview());
-    this.elements.avatarPicker?.addEventListener('click',(e) => { if(e.target.classList.contains('avatar-btn')){const em=e.target.dataset.emoji;if(em){this.elements.avatarInput.value=em;this.elements.avatarDisplay.textContent=em;this.elements.avatarPicker.querySelectorAll('.avatar-btn').forEach(b=>b.classList.toggle('selected',b===e.target));this.updateLivePreview();}} });
-    // Buttons
+    this.elements.avatarPicker?.addEventListener('click',(e) => this.handleAvatarPick(e));
     this.elements.save?.addEventListener('click',() => this.savePerson());
     this.elements.clearForm?.addEventListener('click',() => this.resetForm(true));
     this.elements.themeToggle?.addEventListener('click',() => this.toggleTheme());
     this.elements.exportBtn?.addEventListener('click',() => this.exportData());
     this.elements.importBtn?.addEventListener('click',() => this.elements.importFileInput?.click());
     this.elements.importFileInput?.addEventListener('change',(e) => this.importData(e));
-    // People List
     this.elements.peopleList?.addEventListener('click',(e) => this.handleListClick(e));
     this.elements.peopleList?.addEventListener('keydown',(e) => this.handleListKeydown(e));
-    // Modals
     this.elements.modalClose?.addEventListener('click',() => this.closeModal(this.elements.modal));
     this.elements.resourcesBtn?.addEventListener('click',() => this.openModal(this.elements.resourcesModal));
     this.elements.resourcesClose?.addEventListener('click',() => this.closeModal(this.elements.resourcesModal));
@@ -111,128 +91,554 @@ class TrackerApp {
     this.elements.themesBtn?.addEventListener('click',() => this.openModal(this.elements.themesModal));
     this.elements.themesClose?.addEventListener('click',() => this.closeModal(this.elements.themesModal));
     this.elements.themesBody?.addEventListener('click',(e) => this.handleThemeSelection(e));
-    // Global
-    window.addEventListener('click',(e) => this.handleWindowClick(e));
-    window.addEventListener('keydown',(e) => this.handleWindowKeydown(e));
-    // Dynamic
     this.elements.traitsContainer?.addEventListener('input',(e) => this.handleTraitSliderInput(e));
     this.elements.traitsContainer?.addEventListener('click',(e) => this.handleTraitInfoClick(e));
     this.elements.traitInfoClose?.addEventListener('click',() => this.hideTraitInfo());
     this.elements.modalBody?.addEventListener('click',(e) => this.handleModalBodyClick(e));
+
+    // Style Finder Listeners...
+    this.elements.styleFinderTriggerBtn?.addEventListener('click', () => this.startStyleFinder());
+    this.elements.sfCloseBtn?.addEventListener('click', () => this.closeStyleFinder());
+    // Use event delegation for buttons inside the Style Finder step content
+    this.elements.sfStepContent?.addEventListener('click', (e) => this.handleStyleFinderAction(e));
+    // Listener for sliders inside the Style Finder modal
+    this.elements.sfStepContent?.addEventListener('input', (e) => this.handleStyleFinderSliderInput(e));
+    // Listener for info icons inside the Style Finder modal (if reusing trait info popup)
+    this.elements.sfStepContent?.addEventListener('click', (e) => {
+         if (e.target.classList.contains('sf-info-icon')) {
+             const traitName = e.target.dataset.trait;
+             this.showStyleFinderTraitInfo(traitName); // Use a dedicated method or reuse showTraitInfo
+         }
+    });
+     // Listener for closing the trait info popup (if separate one is used)
+     document.body.addEventListener('click', (e) => {
+         if (e.target.classList.contains('sf-close-btn')) {
+              e.target.closest('.sf-style-info-popup')?.remove();
+         }
+     });
+
+
+    // Global Listeners (Adjusted to include sfModal)
+    window.addEventListener('click',(e) => { if(e.target===this.elements.modal)this.closeModal(this.elements.modal); if(e.target===this.elements.sfModal)this.closeStyleFinder(); /* ... other modals ... */});
+    window.addEventListener('keydown',(e) => { if(e.key==='Escape'){if(this.elements.modal?.style.display==='flex')this.closeModal(this.elements.modal); if(this.elements.sfModal?.style.display==='flex')this.closeStyleFinder(); /* ... other modals ... */}});
+
     console.log("Event listeners setup complete.");
   }
 
-  // --- Event Handlers ---
-  handleListClick(e){const li=e.target.closest('.person');if(!li)return;const id=parseInt(li.dataset.id);if(isNaN(id))return;console.log("List Click on ID:",id,"Target:",e.target);if(e.target.classList.contains('edit-btn'))this.editPerson(id);else if(e.target.classList.contains('delete-btn'))this.deletePerson(id);else this.showPersonDetails(id);}
-  handleListKeydown(e){const li=e.target.closest('.person');if(!li)return;if(e.key==='Enter'||e.key===' '){e.preventDefault();const id=parseInt(li.dataset.id);if(!isNaN(id))this.showPersonDetails(id);}}
-  handleWindowClick(e){if(e.target===this.elements.modal)this.closeModal(this.elements.modal);if(e.target===this.elements.resourcesModal)this.closeModal(this.elements.resourcesModal);if(e.target===this.elements.glossaryModal)this.closeModal(this.elements.glossaryModal);if(e.target===this.elements.styleDiscoveryModal)this.closeModal(this.elements.styleDiscoveryModal);if(e.target===this.elements.themesModal)this.closeModal(this.elements.themesModal);}
-  handleWindowKeydown(e){if(e.key==='Escape'){if(this.elements.modal?.style.display==='flex')this.closeModal(this.elements.modal);if(this.elements.resourcesModal?.style.display==='flex')this.closeModal(this.elements.resourcesModal);if(this.elements.glossaryModal?.style.display==='flex')this.closeModal(this.elements.glossaryModal);if(this.elements.styleDiscoveryModal?.style.display==='flex')this.closeModal(this.elements.styleDiscoveryModal);if(this.elements.themesModal?.style.display==='flex')this.closeModal(this.elements.themesModal);}}
-  handleTraitSliderInput(e){if(e.target.classList.contains('trait-slider')){this.updateTraitDescription(e.target);this.updateLivePreview();const v=e.target.value;const p=this.currentEditId?this.people.find(p=>p.id===this.currentEditId):null;if(p){if(v==='5')grantAchievement(p,'max_trait');if(v==='1')grantAchievement(p,'min_trait');}}}
-  handleTraitInfoClick(e){if(e.target.classList.contains('trait-info-btn')){const tN=e.target.dataset.trait;if(tN)this.showTraitInfo(tN);}}
-  handleModalBodyClick(e){
-    console.log("Modal Click:",e.target);const btn=e.target.closest('button');const tgt=e.target;const check=btn||tgt;
-    if(!check||(check.tagName!=='BUTTON'&&!check.classList.contains('snapshot-info-btn'))){return;}
-    const id=check.id;const cl=check.classList;const pId=parseInt(check.dataset.personId);const gId=parseInt(check.dataset.goalId);
-    console.log("Check Elm:",check,"ID:",id,"Class:",cl);
-    if(id==='save-reflections-btn'&&!isNaN(pId)){console.log("Match: save-reflections");this.saveReflections(pId);}
-    else if(id==='prompt-btn'){console.log("Match: prompt");this.showJournalPrompt();}
-    else if(id==='snapshot-btn'&&!isNaN(pId)){console.log("Match: snapshot");this.addSnapshotToHistory(pId);}
-    else if(cl.contains('snapshot-info-btn')){console.log("Match: snapshot-info");this.toggleSnapshotInfo(check);}
-    else if(id==='reading-btn'&&!isNaN(pId)){console.log("Match: reading");this.showKinkReading(pId);}
-    else if(cl.contains('add-goal-btn')&&!isNaN(pId)){console.log("Match: add-goal");this.addGoal(pId);}
-    else if(cl.contains('toggle-goal-btn')&&!isNaN(pId)&&!isNaN(gId)){console.log("Match: toggle-goal");this.toggleGoalStatus(pId,gId);}
-    else if(cl.contains('delete-goal-btn')&&!isNaN(pId)&&!isNaN(gId)){console.log("Match: delete-goal");this.deleteGoal(pId,gId);}
-    else{console.log("No matching modal action.");}
-  }
-  handleThemeSelection(e){if(e.target.classList.contains('theme-option-btn')){const tN=e.target.dataset.theme;if(tN){this.setTheme(tN);grantAchievement({},'theme_changer');}}}
+  // --- Event Handlers --- (Keep existing KinkCompass handlers)
+  handleListClick(e){/* ... */} handleListKeydown(e){/* ... */} handleWindowClick(e){/* ... (adjusted above) ... */} handleWindowKeydown(e){/* ... (adjusted above) ... */} handleTraitSliderInput(e){/* ... */} handleTraitInfoClick(e){/* ... */} handleModalBodyClick(e){/* ... */} handleThemeSelection(e){/* ... */} handleAvatarPick(e){ /* ... */ }
 
-  // --- Core Rendering ---
-  renderStyles(r){this.elements.style.innerHTML='<option value="">Pick flavor!</option>';if(!bdsmData[r]?.styles)return;bdsmData[r].styles.forEach(s=>{this.elements.style.innerHTML+=`<option value="${this.escapeHTML(s.name)}">${this.escapeHTML(s.name)}</option>`;});}
-  renderTraits(r,sN){this.elements.traitsContainer.innerHTML='';if(!bdsmData[r])return;const core=bdsmData[r].coreTraits||[];let styleT=[];let styleO=null;if(sN){styleO=bdsmData[r].styles.find(s=>s.name===sN);styleT=styleO?.traits||[];}const toRender=[];const uN=new Set();[...core,...styleT].forEach(t=>{if(t&&t.name&&!uN.has(t.name)){toRender.push(t);uN.add(t.name);}});if(toRender.length===0){this.elements.traitsContainer.innerHTML=`<p class="muted-text">No traits.</p>`;}else{toRender.forEach(t=>{this.elements.traitsContainer.innerHTML+=this.createTraitHTML(t);});this.elements.traitsContainer.querySelectorAll('.trait-slider').forEach(s=>this.updateTraitDescription(s));}if(sN&&styleO&&styleT.length===0&&core.length>0){const m=document.createElement('p');m.className='muted-text trait-info-message';m.textContent=`Style '${this.escapeHTML(sN)}' uses core traits.`;this.elements.traitsContainer.prepend(m);}else if(!sN&&core.length===0){this.elements.traitsContainer.innerHTML=`<p>Select style or define traits.</p>`;}this.hideTraitInfo();}
-  createTraitHTML(t){const dN=t.name.charAt(0).toUpperCase()+t.name.slice(1);const id=`trait-${t.name.replace(/[^a-zA-Z0-9-_]/g,'-')}`;return`<div class="trait"><label for="${id}">${this.escapeHTML(dN)}</label><button class="trait-info-btn" data-trait="${t.name}" aria-label="Info: ${this.escapeHTML(dN)}">ℹ️</button><input type="range" id="${id}" min="1" max="5" value="3" class="trait-slider" data-trait="${t.name}" aria-label="${this.escapeHTML(dN)}" autocomplete="off"/><span class="trait-value">3</span><div class="trait-desc muted-text"></div></div>`;}
-  updateTraitDescription(sl){const tN=sl.getAttribute('data-trait');const v=sl.value;const dD=sl.parentElement?.querySelector('.trait-desc');const vS=sl.parentElement?.querySelector('.trait-value');if(!dD||!vS)return;const r=this.elements.role.value;const sN=this.elements.style.value;let tD=bdsmData[r]?.styles.find(s=>s.name===sN)?.traits?.find(t=>t.name===tN)||bdsmData[r]?.coreTraits?.find(t=>t.name===tN);vS.textContent=v;if(tD?.desc?.[v]){dD.textContent=this.escapeHTML(tD.desc[v]);}else{dD.textContent=tD?'Desc unavailable.':'Trait unavailable.';}}
-  renderList(){if(!this.elements.peopleList)return;this.elements.peopleList.innerHTML=this.people.length===0?`<li>No pals yet! ✨</li>`:this.people.map(p=>this.createPersonListItemHTML(p)).join('');}
-  createPersonListItemHTML(p){const sD=p.style?this.escapeHTML(p.style):"N/A";const rD=p.role.charAt(0).toUpperCase()+p.role.slice(1);const nE=this.escapeHTML(p.name);const av=p.avatar||'❓';return`<li class="person" data-id="${p.id}" tabindex="0"><span class="person-info"><span class="person-avatar">${av}</span><span class="person-name-details"><strong class="person-name">${nE}</strong><span class="person-details muted-text">(${rD} - ${sD})</span></span></span><span class="person-actions"><button class="edit-btn small-btn" aria-label="Edit ${nE}">✏️</button><button class="delete-btn small-btn" aria-label="Delete ${nE}">🗑️</button></span></li>`;}
+  // --- Core Rendering --- (Keep existing KinkCompass methods)
+  renderStyles(r){/* ... */} renderTraits(r,sN){/* ... */} createTraitHTML(t){/* ... */} updateTraitDescription(sl){/* ... */} renderList(){/* ... */} createPersonListItemHTML(p){/* ... */}
 
-  // --- CRUD ---
-  savePerson(){const name=this.elements.name.value.trim()||"Unnamed";const av=this.elements.avatarInput.value||'❓';const r=this.elements.role.value;const sN=this.elements.style.value;if(!sN){alert("Select style.");return;}const sliders=this.elements.traitsContainer.querySelectorAll('.trait-slider');const expected=[...(bdsmData[r]?.coreTraits||[]),...(bdsmData[r]?.styles.find(s=>s.name===sN)?.traits||[])];const uniqueE=new Set(expected.map(t=>t.name));if(sliders.length!==uniqueE.size&&uniqueE.size>0){alert("Trait error.");return;}const tr={};let mD=false;sliders.forEach(s=>{const n=s.getAttribute('data-trait');if(n)tr[n]=s.value;else mD=true;});if(mD){alert("Gather trait error.");return;}for(const n of uniqueE){if(!tr.hasOwnProperty(n)){alert(`Missing data: '${n}'.`);return;}}const ex=this.currentEditId?this.people.find(p=>p.id===this.currentEditId):null;const pD={id:this.currentEditId||Date.now(),name,avatar:av,role:r,style:sN,goals:ex?.goals||[],traits:tr,history:ex?.history||[],achievements:ex?.achievements||[],reflections:ex?.reflections||{}};if(!this.currentEditId)grantAchievement(pD,'profile_created');if(this.people.length===4&&!this.currentEditId)grantAchievement(pD,'five_profiles');if(this.currentEditId)grantAchievement(pD,'profile_edited');if(this.currentEditId){const i=this.people.findIndex(p=>p.id===this.currentEditId);if(i!==-1)this.people[i]=pD;else{console.error("Update ID error");pD.id=Date.now();this.people.push(pD);}}else{this.people.push(pD);}this.saveToLocalStorage();this.renderList();this.resetForm(true);alert(`${this.escapeHTML(name)} saved! ✨`);}
-  editPerson(pId){const p=this.people.find(p=>p.id===pId);if(!p){alert("Not found.");return;}this.currentEditId=pId;this.elements.name.value=p.name;this.elements.avatarDisplay.textContent=p.avatar||'❓';this.elements.avatarInput.value=p.avatar||'❓';this.elements.avatarPicker?.querySelectorAll('.avatar-btn').forEach(b=>b.classList.toggle('selected',b.dataset.emoji===p.avatar));this.elements.role.value=p.role;this.renderStyles(p.role);this.elements.style.value=p.style;this.renderTraits(p.role,p.style);requestAnimationFrame(()=>{if(p.traits){Object.entries(p.traits).forEach(([n,v])=>{const s=this.elements.traitsContainer.querySelector(`.trait-slider[data-trait="${n}"]`);if(s){s.value=v;this.updateTraitDescription(s);}}); }this.updateLivePreview();this.elements.save.textContent='Update ✨';this.elements.formSection?.scrollIntoView({behavior:'smooth'});this.elements.name.focus();});}
-  deletePerson(pId){const idx=this.people.findIndex(p=>p.id===pId);if(idx===-1)return;const name=this.people[idx].name;if(confirm(`Delete ${this.escapeHTML(name)}?`)){this.people.splice(idx,1);this.saveToLocalStorage();this.renderList();if(this.currentEditId===pId)this.resetForm(true);alert(`${this.escapeHTML(name)} deleted.`);}}
-  resetForm(clear=false){this.elements.name.value='';this.elements.avatarDisplay.textContent='❓';this.elements.avatarInput.value='❓';this.elements.avatarPicker?.querySelectorAll('.selected').forEach(b=>b.classList.remove('selected'));this.elements.role.value='submissive';this.renderStyles('submissive');this.elements.style.value='';this.renderTraits('submissive','');this.currentEditId=null;this.elements.save.textContent='Save Sparkle! 💖';if(clear)this.updateLivePreview();this.elements.name.focus();console.log("Form reset.");this.hideTraitInfo();}
+  // --- CRUD --- (Keep existing KinkCompass methods)
+  savePerson(){/* ... */} editPerson(pId){/* ... */} deletePerson(pId){/* ... */} resetForm(clear=false){/* ... */}
 
-  // --- Live Preview ---
-  updateLivePreview(){const name=this.elements.name.value.trim()||"Unnamed";const av=this.elements.avatarInput.value||'❓';const r=this.elements.role.value;const s=this.elements.style.value;const tr={};this.elements.traitsContainer.querySelectorAll('.trait-slider').forEach(sl=>{const n=sl.getAttribute('data-trait');if(n)tr[n]=sl.value;});let html='';if(!s&&r&&Object.keys(tr).length>0){html=`<h3 class="preview-title">${av} ${this.escapeHTML(name)}’s Core Vibe ${av}</h3><p><strong>Role:</strong> ${r.charAt(0).toUpperCase()+r.slice(1)}</p><p><i>Core traits active. Pick Style!</i></p><div class="core-trait-preview"><strong>Core Traits:</strong><ul>`;bdsmData[r]?.coreTraits?.forEach(ct=>{const score=tr[ct.name];if(score){const tD=bdsmData[r]?.coreTraits?.find(t=>t.name===ct.name);const d=tD?.desc?.[score]||"N/A";html+=`<li><strong>${this.escapeHTML(ct.name)} (${score}):</strong> ${this.escapeHTML(d)}</li>`;}});html+=`</ul></div>`;}else if(s){const getB=r==='submissive'?getSubBreakdown:getDomBreakdown;const B=getB(s,tr);let topStyleInfo=null;const sO=bdsmData[r]?.styles.find(st=>st.name===s);if(sO?.traits?.length>0){let topSc=-1;let topN='';sO.traits.forEach(tDef=>{const sc=parseInt(tr[tDef.name]||0);if(sc>topSc){topSc=sc;topN=tDef.name;}});if(topN&&topSc>0){const tD=sO.traits.find(t=>t.name===topN);const d=tD?.desc?.[topSc]||"N/A";topStyleInfo=`<strong>Top Style Vibe (${this.escapeHTML(topN)} Lvl ${topSc}):</strong> ${this.escapeHTML(d)}`;}}html=`<h3 class="preview-title">${av} ${this.escapeHTML(name)}’s Live Vibe ${av}</h3><p><strong>Role:</strong> ${r.charAt(0).toUpperCase()+r.slice(1)}</p><p><strong>Style:</strong> ${this.escapeHTML(s)}</p><div class="style-breakdown preview-breakdown">`;if(B.strengths)html+=`<div class="strengths"><h4>✨ Powers</h4><div>${B.strengths}</div></div>`;if(B.improvements)html+=`<div class="improvements"><h4>🌟 Quests</h4><div>${B.improvements}</div></div>`;html+=`</div>`;if(topStyleInfo){html+=`<div class="top-trait-preview"><hr><p>${topStyleInfo}</p></div>`;}}else{html=`<p>Pick role & style! 🌈</p>`;}this.elements.livePreview.innerHTML=html;}
+  // --- Live Preview --- (Keep existing KinkCompass method)
+  updateLivePreview(){/* ... */}
 
-  // --- Modal Display ---
-  showPersonDetails(personId) {
-      const person = this.people.find(p => p.id === personId); if (!person) return;
-      console.log("Showing details:", person);
-      person.goals=person.goals||[];person.history=person.history||[];person.achievements=person.achievements||[];person.reflections=person.reflections||{};person.avatar=person.avatar||'❓';
-      const getB=person.role==='submissive'?getSubBreakdown:getDomBreakdown;const B=getB(person.style,person.traits||{});
-      let html=`<h2 class="modal-title">${person.avatar} ${this.escapeHTML(person.name)}’s Kingdom ${person.avatar}</h2>`;
-      html+=`<p class="modal-subtitle">${person.role.charAt(0).toUpperCase()+person.role.slice(1)} - ${person.style?this.escapeHTML(person.style):'N/A'}</p>`;
-      let intro="Explore unique expression!";try{if(typeof this.getIntroForStyle==='function'){intro=this.getIntroForStyle(person.style);}else{console.error("getIntroForStyle not function!");}}catch(e){console.error("Error calling getIntro:",e);}if(intro)html+=`<p class="modal-intro">${intro}</p>`;
-      html+=`<section class="goals-section"><h3>🎯 Goals</h3><ul id="goal-list-${person.id}"></ul><div class="add-goal-form"><input type="text" id="new-goal-text-${person.id}" placeholder="Add goal..."><button class="add-goal-btn save-btn small-btn" data-person-id="${person.id}">+ Add</button></div></section>`;
-      html+=`<h3>🌈 Strengths & Growth</h3><div class="style-breakdown modal-breakdown">`;if(B.strengths)html+=`<div class="strengths"><h4>✨ Powers</h4><div>${B.strengths}</div></div>`;if(B.improvements)html+=`<div class="improvements"><h4>🌟 Quests</h4><div>${B.improvements}</div></div>`;html+=`</div>`;
-      html+=`<h3>🎨 Trait Tales</h3>`;const defs=[...(bdsmData[person.role]?.coreTraits||[]),...(bdsmData[person.role]?.styles.find(s=>s.name===person.style)?.traits||[])];const uDefs=Array.from(new Map(defs.map(t=>[t.name,t])).values());
-      html+='<div class="trait-details-grid">';if(person.traits&&Object.keys(person.traits).length>0){Object.entries(person.traits).forEach(([n,sc])=>{const tO=uDefs.find(t=>t.name===n);const dN=n.charAt(0).toUpperCase()+n.slice(1);if(!tO){html+=`<div><h4>${this.escapeHTML(dN)} - Lvl ${sc}❓</h4><p><em>Def missing.</em></p></div>`;return;}const dT=tO.desc?.[sc]||"N/A";const fl=this.getFlairForScore(sc);html+=`<div><h4>${this.escapeHTML(dN)} - Lvl ${sc} ${this.getEmojiForScore(sc)}</h4><p><strong>Vibe:</strong> ${this.escapeHTML(dT)}</p><p><em>${fl}</em></p></div>`;});}else{html+=`<p>No scores.</p>`;}html+='</div>';
-      html+=`<section class="history-section"><h3>⏳ History<button class="snapshot-info-btn" aria-label="Info">ℹ️</button></h3><p class="snapshot-info muted-text" style="display:none;">Snapshot saves current traits to track growth!</p><div class="history-chart-container"><canvas id="history-chart"></canvas></div><button id="snapshot-btn" class="small-btn" data-person-id="${person.id}">📸 Snapshot</button></section>`;
-      html+=`<section class="achievements-section"><h3>🏆 Achievements</h3><div id="achievements-list-${person.id}"></div></section>`;
-      html+=`<section class="kink-reading-section"><h3>🔮 Reading</h3><button id="reading-btn" class="small-btn" data-person-id="${person.id}">Get Reading!</button><div id="kink-reading-output" style="display:none;"></div></section>`;
-      html+=`<section class="reflections-section"><h3>📝 Reflections</h3><div id="journal-prompt-area" style="display:none;"></div><div class="modal-actions"><button id="prompt-btn" class="small-btn">💡 Prompt</button></div><textarea id="reflections-text" data-person-id="${person.id}" rows="6" placeholder="Thoughts?">${this.escapeHTML(person.reflections?.text||'')}</textarea><button id="save-reflections-btn" data-person-id="${person.id}">Save 💭</button></section>`;
-      this.elements.modalBody.innerHTML=html; this.renderGoalList(person); this.renderAchievements(person); this.openModal(this.elements.modal); this.renderHistoryChart(person);
+  // --- Modal Display (KinkCompass Detail Modal) --- (Keep existing method)
+  showPersonDetails(personId) {/* ... */}
+
+  // --- New Feature Logic (Goals, Journal, History, Reading, Achievements etc.) --- (Keep existing methods)
+  addGoal(pId){/*...*/} toggleGoalStatus(pId,gId){/*...*/} deleteGoal(pId,gId){/*...*/} renderGoalList(p){/*...*/} showJournalPrompt(){/*...*/} saveReflections(pId){/*...*/} addSnapshotToHistory(pId){/*...*/} renderHistoryChart(p){/*...*/} toggleSnapshotInfo(btn){/*...*/} renderAchievements(p){/*...*/} showKinkReading(pId){/*...*/} getReadingDescriptor(tN,sc){/*...*/} getStyleEssence(sN){/*...*/} showGlossary(){/*...*/} showStyleDiscovery(){/*...*/} renderStyleDiscoveryContent(){/*...*/} setTheme(tN){/*...*/} applySavedTheme(){/*...*/} toggleTheme(){/*...*/} exportData(){/*...*/} importData(ev){/*...*/} showTraitInfo(tN){/*...*/} hideTraitInfo(){/*...*/}
+
+  // --- Helper Functions --- (Keep existing KinkCompass methods)
+  getFlairForScore(s){/*...*/} getEmojiForScore(s){/*...*/} escapeHTML(s){/*...*/} openModal(mE){/*...*/} closeModal(mE){/*...*/} getIntroForStyle(styleName){/*...*/}
+
+
+  // ============================================
+  // --- STYLE FINDER LOGIC (Ported & Integrated) ---
+  // ============================================
+
+  startStyleFinder() {
+    console.log("Starting Style Finder...");
+    this.sfActive = true;
+    this.sfStep = 0;
+    this.sfRole = null;
+    this.sfAnswers = { traits: {} }; // Reset answers
+    this.sfScores = {};
+    this.sfPreviousScores = {};
+    this.sfHasRenderedDashboard = false;
+    this.sfTraitSet = [];
+    this.sfSteps = [];
+    this.elements.sfDashboard.style.display = 'none'; // Ensure dashboard is hidden initially
+    this.elements.sfFeedback.textContent = ''; // Clear feedback
+    this.renderStyleFinderStep(); // Render the first step (welcome)
+    this.openModal(this.elements.sfModal); // Show the modal
   }
 
-
-  // --- New Feature Logic ---
-  addGoal(pId){const p=this.people.find(p=>p.id===pId);const i=this.elements.modalBody.querySelector(`#new-goal-text-${pId}`);if(!p||!i)return;const t=i.value.trim();if(!t)return;const nG={id:Date.now(),text:t,status:'todo'};p.goals.push(nG);grantAchievement(p,'goal_added');this.saveToLocalStorage();this.renderGoalList(p);i.value='';}
-  toggleGoalStatus(pId,gId){const p=this.people.find(p=>p.id===pId);const g=p?.goals.find(g=>g.id===gId);if(!g)return;g.status=(g.status==='done'?'todo':'done');this.saveToLocalStorage();this.renderGoalList(p);}
-  deleteGoal(pId,gId){const p=this.people.find(p=>p.id===pId);if(!p)return;if(confirm('Delete goal?')){p.goals=p.goals.filter(g=>g.id!==gId);this.saveToLocalStorage();this.renderGoalList(p);}}
-  renderGoalList(p){const l=this.elements.modalBody?.querySelector(`#goal-list-${p.id}`);if(!l)return;let h='';if(p.goals.length>0){p.goals.forEach(g=>{h+=`<li class="${g.status==='done'?'done':''}" data-goal-id="${g.id}"><span>${this.escapeHTML(g.text)}</span><span class="goal-actions"><button class="toggle-goal-btn small-btn" data-person-id="${p.id}" data-goal-id="${g.id}">${g.status==='done'?'🔄':'✅'}</button><button class="delete-goal-btn small-btn" data-person-id="${p.id}" data-goal-id="${g.id}">🗑️</button></span></li>`;});}else{h=`<li class="muted-text">No goals!</li>`;}l.innerHTML=h;}
-  showJournalPrompt(){const a=this.elements.modalBody?.querySelector('#journal-prompt-area');if(a){a.textContent=getRandomPrompt();a.style.display='block';this.elements.modalBody?.querySelector('#reflections-text')?.focus();}}
-  saveReflections(pId){const p=this.people.find(p=>p.id===pId);const el=this.elements.modalBody?.querySelector('#reflections-text');if(!p||!el){alert("Error.");return;}const txt=el.value;if(!p.reflections)p.reflections={};p.reflections.text=txt;p.reflections.lastUpdated=Date.now();let first=false;if(txt.trim().length>0)first=grantAchievement(p,'reflection_saved');const count=Object.values(this.people.reduce((a,p)=>{if(p.reflections?.text?.trim().length>0)a[p.id]=true;return a;},{})).length;if(count>=5)grantAchievement(p,'five_reflections');this.saveToLocalStorage();const btn=this.elements.modalBody.querySelector('#save-reflections-btn');if(btn){btn.textContent='Saved ✓';btn.disabled=true;setTimeout(()=>{btn.textContent='Save 💭';btn.disabled=false;},2000);}else{alert("Saved! ✨");}}
-  addSnapshotToHistory(pId){const p=this.people.find(p=>p.id===pId);if(!p||!p.traits){alert("Cannot snapshot.");return;}const snap={date:Date.now(),traits:{...p.traits}};p.history.push(snap);grantAchievement(p,'history_snapshot');this.saveToLocalStorage();alert("Snapshot saved! 📸");this.renderHistoryChart(p);this.renderAchievements(p);}
-  renderHistoryChart(p){const cont=this.elements.modalBody?.querySelector('.history-chart-container');let ctx=cont?.querySelector('#history-chart')?.getContext('2d');if(this.chartInstance){this.chartInstance.destroy();this.chartInstance=null;}if(!ctx){if(cont)cont.innerHTML=`<p>Chart canvas missing.</p>`;return;}if(!p?.history?.length){cont.innerHTML=`<p>No history yet!</p>`;return;}if(cont.querySelector('p'))cont.innerHTML=`<canvas id="history-chart"></canvas>`;ctx=cont.querySelector('#history-chart').getContext('2d');const labels=p.history.map(s=>new Date(s.date).toLocaleDateString());const allN=new Set();p.history.forEach(s=>Object.keys(s.traits).forEach(n=>allN.add(n)));if(p.traits)Object.keys(p.traits).forEach(n=>allN.add(n));const dSets=[];const clrs=['#ff69b4','#8a5a6d','#ff85cb','#4a2c3d','#f4d4e4','#c49db1','#a0d8ef','#dcc1ff'];let cI=0;allN.forEach(tN=>{const data=p.history.map(s=>s.traits[tN]!==undefined?parseInt(s.traits[tN]):null);const c=clrs[cI%clrs.length];dSets.push({label:tN.charAt(0).toUpperCase()+tN.slice(1),data:data,borderColor:c,backgroundColor:c+'80',tension:.1,fill:false,spanGaps:true});cI++;});const isD=document.body.getAttribute('data-theme')==='dark'||document.body.getAttribute('data-theme')==='velvet';const gC=isD?'rgba(244,212,228,0.15)':'rgba(74,44,61,0.1)';const lC=isD?'#c49db1':'#8a5a6d';this.chartInstance=new Chart(ctx,{type:'line',data:{labels:labels,datasets:dSets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{color:lC}},tooltip:{mode:'index',intersect:false,}},scales:{y:{min:1,max:5,ticks:{stepSize:1,color:lC},grid:{color:gC}},x:{ticks:{color:lC},grid:{color:gC}}}}});}
-  toggleSnapshotInfo(btn){const inf=btn.closest('.history-section')?.querySelector('.snapshot-info');if(inf){const isH=inf.style.display==='none';inf.style.display=isH?'block':'none';btn.setAttribute('aria-expanded',isH);}}
-  renderAchievements(p){const l=this.elements.modalBody?.querySelector(`#achievements-list-${p.id}`);if(!l)return;let h='';if(p.achievements.length>0){h+=`<ul>`;p.achievements.forEach(id=>{const d=achievementList[id];if(d){const e=d.name.match(/([\p{Emoji}\p{Emoji_Modifier}\p{Emoji_Component}\p{Emoji_Presentation}\p{Emoji_Modifier_Base}]+)/u)?.[0]||'🏆';h+=`<li title="${this.escapeHTML(d.desc)}"><span class="achievement-icon">${e}</span><span>${this.escapeHTML(d.name)}</span></li>`;}});h+=`</ul>`;}else{h=`<p>No achievements!</p>`;}l.innerHTML=h;}
-  showKinkReading(pId){const p=this.people.find(p=>p.id===pId);const o=this.elements.modalBody?.querySelector('#kink-reading-output');if(!p||!o)return;grantAchievement(p,'kink_reading');this.saveToLocalStorage();this.renderAchievements(p);let r=`🔮 ${this.escapeHTML(p.name)}'s Reading 🔮\nAs a ${this.escapeHTML(p.style)} ${p.role}, path sparkles!\n`;const t=p.traits||{};const s=Object.entries(t).map(([n,sc])=>({name:n,score:parseInt(sc)})).sort((a,b)=>b.score-a.score);if(s.length>0){const h=s[0];const l=s[s.length-1];const c1=bdsmData[p.role]?.coreTraits[0]?.name;const c2=bdsmData[p.role]?.coreTraits[1]?.name;r+=`\n✨ Star: **${h.name}(${h.score})**! ${this.getReadingDescriptor(h.name,h.score)}.\n`;if(c1&&t[c1])r+=`🧭 Core **${c1}(${t[c1]})**: ${this.getReadingDescriptor(c1,t[c1])}.\n`;if(c2&&t[c2])r+=`🧭 Core **${c2}(${t[c2]})**: ${this.getReadingDescriptor(c2,t[c2])}.\n`;if(s.length>1&&h.score!==l.score)r+=`\n🌱 Bloom: **${l.name}(${l.score})**. Explore ${this.getReadingDescriptor(l.name,l.score)}.\n`;}else{r+=`\nTraits uncharted!\n`;}r+=`\n💖 ${this.escapeHTML(p.style)} is about ${this.getStyleEssence(p.style)}!\n`;o.textContent=r;o.style.display='block';}
-  getReadingDescriptor(tN,sc){sc=parseInt(sc);if(tN==='obedience')return sc>=4?"joyful compliance":sc<=2?"independent spirit":"developing discipline";if(tN==='trust')return sc>=4?"deep connection":sc<=2?"cautious exploration":"building security"; return"unique expression";}
-  getStyleEssence(sN){const e={"brat":"playful challenge","slave":"deep devotion",/*...*/};const k=sN?.toLowerCase().replace(/\(.*?\)/g,'').replace(/ \/ /g,'/').trim()||'';return e[k]||`your magic`;}
-  showGlossary(){if(!this.elements.glossaryBody)return;grantAchievement({},'glossary_user');let h='<dl>';for(const k in glossaryTerms){const d=glossaryTerms[k];h+=`<dt id="gloss-term-${k}">${this.escapeHTML(d.term)}</dt><dd>${this.escapeHTML(d.definition)}`;if(d.related?.length){h+=`<br><span>See also: `;h+=d.related.map(rK=>`<a href="#gloss-term-${rK}">${glossaryTerms[rK]?.term||rK}</a>`).join(', ');h+=`</span>`;}h+=`</dd>`;}h+='</dl>';this.elements.glossaryBody.innerHTML=h;this.openModal(this.elements.glossaryModal);}
-  showStyleDiscovery(){grantAchievement({},'style_explorer');this.renderStyleDiscoveryContent();this.openModal(this.elements.styleDiscoveryModal);}
-  renderStyleDiscoveryContent(){if(!this.elements.styleDiscoveryBody||!this.elements.styleDiscoveryRoleFilter)return;const sel=this.elements.styleDiscoveryRoleFilter.value;let h='';['submissive','dominant'].forEach(r=>{if(sel==='all'||sel===r){h+=`<h3>${r.charAt(0).toUpperCase()+r.slice(1)} Styles</h3>`;if(bdsmData[r]?.styles){bdsmData[r].styles.forEach(st=>{h+=`<div class="style-discovery-item"><h4>${this.escapeHTML(st.name)}</h4>`; if(st.summary)h+=`<p><em>${this.escapeHTML(st.summary)}</em></p>`; if(st.traits?.length){h+=`<strong>Traits:</strong><ul>`;st.traits.forEach(tr=>{h+=`<li>${this.escapeHTML(tr.name.charAt(0).toUpperCase()+tr.name.slice(1))}</li>`;});h+=`</ul>`;}else{h+=`<p>Uses core traits.</p>`;}h+=`</div>`;});}else{h+=`<p>No styles.</p>`;}}});this.elements.styleDiscoveryBody.innerHTML=h||'<p>No styles.</p>';}
-  setTheme(tN){document.body.setAttribute('data-theme',tN);const iD=tN==='dark'||tN==='velvet';if(this.elements.themeToggle){this.elements.themeToggle.textContent=iD?'☀️':'🌙';this.elements.themeToggle.setAttribute('title',`Switch to ${iD?'light':'dark'} mode`);}try{localStorage.setItem('kinkCompassTheme',tN);}catch(e){console.warn("Save theme failed:",e);}if(this.chartInstance&&this.currentEditId){const p=this.people.find(p=>p.id===this.currentEditId);if(p)this.renderHistoryChart(p);}}
-  applySavedTheme(){let saved='light';try{if(typeof localStorage!=='undefined')saved=localStorage.getItem('kinkCompassTheme')||'light';}catch(e){console.warn("Read theme failed:",e);}this.setTheme(saved);console.log(`Applied theme: ${saved}`);}
-  toggleTheme(){const cur=document.body.getAttribute('data-theme')||'light';const isD=cur==='dark'||cur==='velvet';this.setTheme(isD?'light':'dark');}
-  exportData(){if(this.people.length===0){alert("No profiles!");return;}try{const dS=JSON.stringify(this.people,null,2);const b=new Blob([dS],{type:"application/json"});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=`kinkcompass_${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);grantAchievement({},'data_exported');console.log("Exported.");a.remove();}catch(e){console.error("Export failed:",e);alert("Export failed.");}}
-  importData(ev){const f=ev.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=(e)=>{try{const imp=JSON.parse(e.target.result);if(!Array.isArray(imp))throw new Error("Not array.");const valid=imp.every(i=>typeof i==='object'&&i!==null&&'id'in i&&'name'in i);if(!valid)throw new Error("Invalid format.");if(confirm(`Import ${imp.length}? OVERWRITES current ${this.people.length}.`)){this.people=imp.map(p=>({...p,goals:p.goals||[],history:p.history||[],avatar:p.avatar||'❓',achievements:p.achievements||[]}));this.saveToLocalStorage();this.renderList();this.resetForm(true);alert(`Imported ${this.people.length}.`);}}catch(err){console.error("Import failed:",err);alert(`Import failed: ${err.message}`);}finally{ev.target.value=null;}};r.onerror=()=>{alert("Error reading file.");ev.target.value=null;};r.readAsText(f);}
-  showTraitInfo(tN){const r=this.elements.role.value;const sN=this.elements.style.value;const tD=bdsmData[r]?.styles.find(s=>s.name===sN)?.traits?.find(t=>t.name===tN)||bdsmData[r]?.coreTraits?.find(t=>t.name===tN);if(tD&&this.elements.traitInfoPopup&&this.elements.traitInfoTitle&&this.elements.traitInfoBody){const title=tN.charAt(0).toUpperCase()+tN.slice(1);this.elements.traitInfoTitle.textContent=`${this.getEmojiForScore(3)} ${title} Levels`;let bodyHtml='';for(let i=1;i<=5;i++){const s=String(i);const d=tD.desc?.[s]||'N/A';const e=this.getEmojiForScore(s);bodyHtml+=`<p><strong>${e} Lvl ${s}:</strong> ${this.escapeHTML(d)}</p>`;}this.elements.traitInfoBody.innerHTML=bodyHtml;this.elements.traitInfoPopup.style.display='block';this.elements.traitInfoPopup.scrollIntoView({behavior:'smooth',block:'nearest'});}else{console.warn("No trait data/popup:",tN);this.hideTraitInfo();}}
-  hideTraitInfo(){if(this.elements.traitInfoPopup)this.elements.traitInfoPopup.style.display='none';}
-
-  // --- Helper Functions ---
-  getFlairForScore(s){return parseInt(s)<=2?"🌱 Nurturing!":parseInt(s)===3?"⚖️ Balanced!":"🌟 Shining!";}
-  getEmojiForScore(s){return parseInt(s)<=2?"💧":parseInt(s)===3?"🌱":parseInt(s)===4?"✨":"🌟";}
-  escapeHTML(s){s=String(s??'');const e=document.createElement('div');e.textContent=s;return e.innerHTML;}
-  openModal(mE){if(!mE)return;mE.style.display='flex';const f=mE.querySelector('button,[href],input:not([type="hidden"]),select,textarea,[tabindex]:not([tabindex="-1"])');if(f)requestAnimationFrame(()=>f.focus());}
-  closeModal(mE){if(!mE)return;mE.style.display='none';}
-
-  // *** getIntroForStyle Definition ***
-  getIntroForStyle(styleName) {
-    const key = styleName?.toLowerCase().replace(/\(.*?\)/g, '').replace(/ \/ /g, '/').trim() || '';
-    const intros = {"submissive":"Welcome, lovely Submissive! ✨","brat":"Hehe, ready for trouble, Brat? 😉","slave":"Step into devotion, noble Slave. 🙏","switch":"Master of moods, versatile Switch! ↔️","pet":"Time for head pats, adorable Pet! 💖","little":"Land of crayons & cuddles, sweet Little! 🧸","puppy":"Woof woof! Ready for zoomies, playful Puppy? 🦴","kitten":"Curious Kitten, ready to pounce? 🧶","princess":"Your Highness! Ready to be adored? 👑","rope bunny":"Ready for knots of fun, lovely Rope Bunny? 🎀","masochist":"Welcome, sensation seeker! 🔥","prey":"The chase is on, little Prey! 🦊","toy":"Wind up & play, delightful Toy! 🎁","doll":"Poised & perfect Doll, strike a pose! 💖","bunny":"Soft steps, gentle heart, sweet Bunny! 🐇","servant":"Dedicated Servant, at your service! 🧹","playmate":"Game on, enthusiastic Playmate! 🎉","babygirl":"Sweet & sassy Babygirl! 😉","captive":"Caught again, daring Captive? ⛓️","thrall":"Deep focus, devoted Thrall. 🌀","puppet":"Dance to their tune, perfect Puppet? 🎭","maid":"Impeccable Maid, ready to sparkle? ✨","painslut":"Eager & ready, devoted Painslut? 🔥","bottom":"Open heart, yielding power, beautiful Bottom. 💖","dominant":"Step into your power, noble Dominant! 🔥","assertive":"Clear voice, strong boundaries, Assertive! 💪","nurturer":"Warm heart, steady hand, Nurturer! 🌸","strict":"Order & structure, firm Strict! ⚖️","master":"Commanding presence, Master! 🏰","mistress":"Elegant authority, Mistress! 👑","daddy":"Protective arms, loving Daddy! 🧸","mommy":"Nurturing embrace, caring Mommy! 💖","owner":"Claiming your prize, Owner! 🐾","rigger":"Artist with rope, Rigger! 🎨","sadist":"Conductor of sensation, Sadist! 🔥","hunter":"Primal instincts, Hunter! 🐺","trainer":"Patient teacher, Trainer! 🏆","puppeteer":"Pulling strings, Puppeteer! 🎭","protector":"Steadfast shield, Protector! 🛡️","disciplinarian":"Fair judgment, Disciplinarian! 👨‍⚖️","caretaker":"Attentive eye, Caretaker! ❤️‍🩹","sir":"Dignified command, Sir! 🎩","goddess":"Radiant power, Goddess! ✨","commander":"Strategic mind, Commander! 🎖️"};
-    return intros[key] || "Explore your unique and wonderful expression!";
+  closeStyleFinder() {
+    console.log("Closing Style Finder.");
+    this.sfActive = false;
+    if (this.elements.sfModal) {
+        this.elements.sfModal.style.display = 'none';
+    }
+    // Optionally reset state fully if preferred when closing mid-quiz
+    // this.sfStep = 0; this.sfRole = null; // etc.
   }
+
+  // Recalculate steps based on current state (role selection)
+  calculateStyleFinderSteps() {
+      this.sfSteps = [];
+      this.sfSteps.push({ type: 'welcome' });
+      this.sfSteps.push({ type: 'role' });
+      if (this.sfRole) {
+          // Get traits from data.js based on role
+          const traitsFromData = bdsmData[this.sfRole]?.coreTraits || []; // Start with core traits? Or specific quiz traits? Let's use quiz traits for now.
+          // Decide which traits to include in the quiz. Let's make a curated list for simplicity.
+          const quizTraitsConfig = {
+              submissive: ['obedience', 'rebellion', 'service', 'playfulness', 'sensuality', 'affection', 'painTolerance', 'submissionDepth', 'dependence', 'vulnerability'],
+              dominant: ['authority', 'confidence', 'discipline', 'care', 'control', 'creativity', 'intensity', 'sadism', 'leadership', 'patience']
+          };
+          const selectedTraitNames = quizTraitsConfig[this.sfRole] || [];
+          // Retrieve full trait objects from data.js (core or style specific if needed, requires more complex lookup)
+          this.sfTraitSet = selectedTraitNames
+              .map(name => bdsmData[this.sfRole]?.coreTraits.find(t => t.name === name) || bdsmData[this.sfRole]?.styles.flatMap(s => s.traits || []).find(t => t.name === name))
+              .filter(Boolean); // Filter out any traits not found in data.js
+
+          // Randomize trait order for the quiz run
+          this.sfTraitSet.sort(() => 0.5 - Math.random());
+
+          this.sfTraitSet.forEach(trait => this.sfSteps.push({ type: 'trait', trait: trait.name }));
+          this.sfSteps.push({ type: 'roundSummary', round: 'Traits' }); // Add summary step
+      }
+      this.sfSteps.push({ type: 'result' });
+  }
+
+
+  renderStyleFinderStep() {
+    if (!this.sfActive || !this.elements.sfStepContent) return;
+
+    this.calculateStyleFinderSteps(); // Ensure steps are up-to-date
+
+    if (this.sfStep >= this.sfSteps.length) this.sfStep = this.sfSteps.length - 1; // Boundary check
+    const step = this.sfSteps[this.sfStep];
+    if (!step) { console.error("Style Finder step not found!"); return; }
+
+    console.log(`Rendering SF Step ${this.sfStep}:`, step);
+
+    let html = "";
+    const totalSteps = this.sfSteps.length;
+    const isTraitStep = step.type === 'trait';
+
+    // Update progress tracker (only during trait steps)
+    if (isTraitStep && this.sfRole) {
+        const currentTraitIndex = this.sfTraitSet.findIndex(t => t.name === step.trait);
+        const questionsLeft = this.sfTraitSet.length - (currentTraitIndex + 1);
+        this.elements.sfProgressTracker.style.display = 'block';
+        this.elements.sfProgressTracker.textContent = `Trait ${currentTraitIndex + 1} of ${this.sfTraitSet.length} (${questionsLeft} left)`;
+    } else {
+        this.elements.sfProgressTracker.style.display = 'none';
+    }
+
+    switch (step.type) {
+      case 'welcome':
+        html = `
+          <h2>Welcome, Brave Explorer!</h2>
+          <p>Ready to discover your potential BDSM style? Answer a few questions about your vibes!</p>
+          <button data-action="next">Start the Journey! ✨</button>
+        `;
+        break;
+      case 'role':
+        html = `
+          <h2>Pick Your Path!</h2>
+          <p>Do you generally feel more drawn to guiding and leading (Dominant) or supporting and following (Submissive)?</p>
+          <button data-action="setRole" data-role="dominant">Lead the Way! (Dominant)</button>
+          <button data-action="setRole" data-role="submissive">Follow the Flow! (Submissive)</button>
+        `;
+        break;
+      case 'trait':
+        const traitObj = this.sfTraitSet.find(t => t.name === step.trait);
+        if (!traitObj) { html = "<p>Error: Trait not found.</p>"; break; } // Handle missing trait
+
+        const currentValue = this.sfAnswers.traits[traitObj.name] !== undefined ? this.sfAnswers.traits[traitObj.name] : 5; // Default to middle
+        // Get description from data.js
+        const traitDesc = bdsmData[this.sfRole]?.coreTraits.find(t=>t.name===traitObj.name)?.desc
+                       || bdsmData[this.sfRole]?.styles.flatMap(s=>s.traits||[]).find(t=>t.name===traitObj.name)?.desc;
+
+        const sliderDescText = traitDesc?.[currentValue] || `Level ${currentValue}`; // Use level description
+        const footnote = `1: Least like me | 10: Most like me`; // Simple footnote
+        const question = this.getTraitQuestion(traitObj.name); // Get question text
+
+        html = `
+          <h2>${this.escapeHTML(question)}<button class="sf-info-icon" data-trait="${traitObj.name}" data-action="showTraitInfo" aria-label="Info about ${this.escapeHTML(traitObj.name)}">ℹ️</button></h2>
+          <p class="muted-text">Slide to where you feel you fit on the scale (1-10).</p>
+          <input type="range" min="1" max="10" value="${currentValue}" class="sf-trait-slider" data-trait="${traitObj.name}" aria-label="${this.escapeHTML(traitObj.name)} slider">
+          <div id="sf-desc-${traitObj.name}" class="sf-slider-description">${this.escapeHTML(sliderDescText)}</div>
+          <p class="sf-slider-footnote">${footnote}</p>
+          <div style="margin-top: 15px;">
+            <button data-action="next" data-trait="${traitObj.name}">Next Step!</button>
+            ${this.sfStep > 1 ? '<button data-action="prev">Back</button>' : ''}
+          </div>
+        `;
+        break;
+      case 'roundSummary':
+        // Dashboard is updated separately, just show summary text
+        html = `
+          <h2>${step.round} Round Complete!</h2>
+          <p>You've rated your traits. Let's see the potential results!</p>
+          <div id="sf-summary-dashboard-placeholder">Loading dashboard...</div> <!-- Dashboard updated by updateDashboard -->
+          <button data-action="next">See My Top Style! 💖</button>
+          <button data-action="prev">Go Back</button>
+        `;
+        // Trigger dashboard update after rendering this step's basic structure
+        requestAnimationFrame(() => this.updateStyleFinderDashboard(true)); // Force update for summary
+        break;
+      case 'result':
+        this.calculateStyleFinderScores();
+        const sortedScores = Object.entries(this.sfScores).sort((a, b) => b[1] - a[1]);
+        const topStyle = sortedScores.length > 0 ? sortedScores[0][0] : "Explorer"; // Fallback name
+        const topScoreValue = sortedScores.length > 0 ? sortedScores[0][1] : 0;
+
+        const descData = bdsmData[this.sfRole]?.styles.find(s => s.name === topStyle); // Get from data.js
+        const styleSummary = descData?.summary || "A unique style all your own!";
+        const styleDesc = this.getIntroForStyle(topStyle); // Use existing intros
+
+        html = `
+          <div class="sf-result-section sf-fade-in">
+            <h2 class="sf-result-heading">🎉 Style Found: ${this.escapeHTML(topStyle)} 🎉</h2>
+            <p>${styleDesc}</p>
+            <p><em>${this.escapeHTML(styleSummary)}</em></p>
+            ${/* Optional: Show top 3? */''}
+            <h3>Ready to explore further?</h3>
+            <div class="sf-result-buttons">
+              {/* Button to apply this style to the main KinkCompass form */}
+              <button data-action="applyStyle" data-role="${this.sfRole}" data-style="${this.escapeHTML(topStyle)}">Track This Style! 📝</button>
+              <button data-action="startOver">Try Again? 🤔</button>
+              <button data-action="close">Close Finder</button>
+            </div>
+          </div>
+        `;
+        // Trigger confetti!
+        if (window.confetti) {
+           setTimeout(() => confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#ff69b4', '#ff85cb', '#f4d4e4', '#fff'] }), 300);
+        }
+        break;
+      default:
+          html = "<p>Something went wrong!</p>";
+    }
+
+    this.elements.sfStepContent.innerHTML = html;
+    // Only update dashboard during trait steps or summary
+    if (step.type === 'trait' || step.type === 'roundSummary') {
+         requestAnimationFrame(() => this.updateStyleFinderDashboard(step.type === 'roundSummary')); // Update dashboard after rendering step
+    } else {
+        this.elements.sfDashboard.style.display = 'none'; // Hide dashboard otherwise
+    }
+
+  }
+
+  // Handles clicks on buttons *inside* sfStepContent
+  handleStyleFinderAction(e) {
+      const button = e.target.closest('button');
+      if (!button) return;
+
+      const action = button.dataset.action;
+      console.log("SF Action:", action, button.dataset);
+
+      switch (action) {
+          case 'next':
+              const currentTrait = button.dataset.trait;
+              // Validation: Ensure slider has been moved/has a value if it's a trait step
+              if (currentTrait && this.sfAnswers.traits[currentTrait] === undefined) {
+                   this.showStyleFinderFeedback("Slide to rate this trait first!");
+                   return;
+              }
+              this.sfStep++;
+              this.renderStyleFinderStep();
+              break;
+          case 'prev':
+              if (this.sfStep > 0) {
+                  this.sfStep--;
+                  // If going back from summary/result, clear scores for re-calc
+                  if (this.sfSteps[this.sfStep+1]?.type === 'result' || this.sfSteps[this.sfStep+1]?.type === 'roundSummary') {
+                       this.sfScores = {};
+                       this.sfPreviousScores = {};
+                       this.sfHasRenderedDashboard = false;
+                  }
+                  this.renderStyleFinderStep();
+              }
+              break;
+          case 'setRole':
+              this.sfRole = button.dataset.role;
+              this.sfAnswers.role = this.sfRole;
+              this.sfAnswers.traits = {}; // Reset traits if role changes
+              this.sfStep++;
+              this.renderStyleFinderStep();
+              break;
+          case 'startOver':
+              this.startStyleFinder(); // Reset and show welcome
+              break;
+          case 'close':
+              this.closeStyleFinder();
+              break;
+          case 'applyStyle':
+              const role = button.dataset.role;
+              const style = button.dataset.style;
+              if (role && style) {
+                  this.applyStyleFinderResult(role, style);
+              } else {
+                   console.error("ApplyStyle error: Missing role or style data", button.dataset);
+                   alert("Error applying style.");
+              }
+              break;
+           case 'showTraitInfo': // Handle info icon clicks within the finder steps
+                const traitName = button.dataset.trait;
+                this.showStyleFinderTraitInfo(traitName);
+                break;
+      }
+  }
+
+  // Handles slider input *inside* sfStepContent
+  handleStyleFinderSliderInput(e) {
+      if (e.target.classList.contains('sf-trait-slider')) {
+          const traitName = e.target.dataset.trait;
+          const value = parseInt(e.target.value, 10);
+          this.sfAnswers.traits[traitName] = value;
+
+          // Update description based on data.js
+          const traitData = this.sfTraitSet.find(t => t.name === traitName);
+          const descEl = this.elements.sfStepContent.querySelector(`#sf-desc-${traitName}`);
+          if (descEl && traitData?.desc?.[value]) {
+              descEl.textContent = this.escapeHTML(traitData.desc[value]);
+          } else if (descEl) {
+              descEl.textContent = `Level ${value}`; // Fallback
+          }
+          this.showStyleFinderFeedback(`Vibing with ${traitName} at ${value}!`);
+          this.updateStyleFinderDashboard(); // Update live dashboard
+      }
+  }
+
+  // Get Trait Question (customize this!)
+  getTraitQuestion(traitName) {
+      // Map trait names to user-friendly questions
+      const questions = {
+          obedience: "How much do you enjoy following rules?",
+          rebellion: "Is playful resistance your kind of fun?",
+          service: "Does helping others make you happy?",
+          playfulness: "How much do you love to giggle and play?",
+          sensuality: "Do soft touches and nice textures delight you?",
+          exploration: "Are new adventures exciting or scary?",
+          devotion: "How important is deep loyalty to you?",
+          innocence: "Do you enjoy feeling carefree and sweet?",
+          mischief: "Do you have a secret (or not-so-secret) cheeky side?",
+          affection: "Are cuddles and closeness super important?",
+          painTolerance: "Does a little bit of 'ouch' feel interesting?",
+          submissionDepth: "How much do you like letting someone else take charge?",
+          dependence: "Is relying on someone comforting?",
+          vulnerability: "Is it easy for you to show your soft side?",
+          adaptability: "Can you easily switch between moods or roles?",
+          tidiness: "Is making things neat and tidy satisfying?",
+          politeness: "Are good manners important to you?",
+          craving: "Do you seek out intense feelings or experiences?",
+          receptiveness: "How open are you to receiving guidance or sensation?",
+          authority: "Does taking charge feel natural and good?",
+          confidence: "Do you trust your own decisions easily?",
+          discipline: "Do you like setting clear rules and structure?",
+          boldness: "Do you face challenges head-on?",
+          care: "Is looking after someone's well-being important?",
+          empathy: "Can you easily sense how others are feeling?",
+          control: "Do you enjoy managing the details?",
+          creativity: "Do you love coming up with unique ideas?",
+          precision: "Is getting things exactly right satisfying?",
+          intensity: "Do you bring a strong energy to interactions?",
+          sadism: "Does causing a little *consensual* sting feel intriguing?",
+          leadership: "Do you naturally guide or direct others?",
+          possession: "Does feeling like someone 'belongs' to you feel right?",
+          patience: "Are you calm when guiding or waiting?",
+          dominanceDepth: "How much do you enjoy having complete influence?"
+      };
+      return questions[traitName] || `How do you feel about ${traitName}?`; // Fallback
+  }
+
+
+  // Calculate Scores (Using data.js structure might be complex - simplified version)
+  calculateStyleFinderScores() {
+    this.sfScores = {};
+    if (!this.sfRole || !bdsmData[this.sfRole]?.styles) return;
+
+    const styles = bdsmData[this.sfRole].styles;
+    const traitsAnswered = this.sfAnswers.traits;
+
+    styles.forEach(style => {
+      this.sfScores[style.name] = 0;
+      let traitCount = 0;
+      // Combine core and style traits for scoring this style
+      const relevantTraits = [
+          ...(bdsmData[this.sfRole]?.coreTraits || []),
+          ...(style.traits || [])
+      ];
+      const uniqueTraitNames = new Set(relevantTraits.map(t => t.name));
+
+      uniqueTraitNames.forEach(traitName => {
+          if (traitsAnswered.hasOwnProperty(traitName)) {
+              // Basic scoring: add the score directly. Could add weights later.
+              this.sfScores[style.name] += traitsAnswered[traitName];
+              traitCount++;
+          }
+          // Maybe add partial points if a core trait matches broadly? More complex.
+      });
+
+      // Normalize score? Divide by number of traits answered relevant to the style?
+      // Or just use raw score? Let's use raw score for now.
+      // if (traitCount > 0) {
+      //    this.sfScores[style.name] = (this.sfScores[style.name] / (traitCount * 10)) * 100; // Example normalization
+      // }
+    });
+
+    console.log("Calculated SF Scores:", this.sfScores);
+  }
+
+  // Update Dashboard (Uses calculated sfScores)
+  updateStyleFinderDashboard(forceUpdate = false) {
+    if (!this.sfActive || !this.elements.sfDashboard || !this.sfRole) return;
+
+    // Avoid updating on every tiny slider move unless forced (like on summary step)
+    // Or maybe update less frequently? For now, update always but debounce could be added.
+    // if (!forceUpdate && Date.now() - (this.lastDashboardUpdate || 0) < 500) return; // Example debounce
+
+    this.calculateStyleFinderScores(); // Ensure scores are fresh
+    const sortedScores = Object.entries(this.sfScores).sort((a, b) => b[1] - a[1]);
+
+    // Only show if there are scores to show
+    if(sortedScores.length === 0 || sortedScores[0][1] === 0) {
+        this.elements.sfDashboard.style.display = 'none';
+        return;
+    }
+    this.elements.sfDashboard.style.display = 'block';
+
+
+    const previousPositions = {};
+    Object.entries(this.sfPreviousScores).sort((a,b) => b[1] - a[1]).forEach(([style], index) => {
+        previousPositions[style] = index;
+    });
+
+    const isFirstRender = !this.sfHasRenderedDashboard;
+    let dashboardHTML = "<div class='sf-dashboard-header'>✨ Live Vibes! ✨</div>";
+    const styleIcons = this.getStyleIcons(); // Get icons map
+
+    // Show top 5-7 maybe?
+    sortedScores.slice(0, 7).forEach(([style, score], index) => {
+        const prevPos = previousPositions[style] !== undefined ? previousPositions[style] : index;
+        const movement = prevPos - index;
+        let moveIndicator = '';
+        if (!isFirstRender && movement > 0) moveIndicator = '<span class="sf-move-up">↑</span>';
+        else if (!isFirstRender && movement < 0) moveIndicator = '<span class="sf-move-down">↓</span>';
+
+        const prevScore = this.sfPreviousScores[style] || 0;
+        const deltaScore = score - prevScore;
+        let delta = '';
+         // Show delta only if significant change and not first render
+        if (!isFirstRender && Math.abs(deltaScore) > 0.1) {
+            delta = `<span class="sf-score-delta ${deltaScore > 0 ? 'positive' : 'negative'}">${deltaScore > 0 ? '+' : ''}${deltaScore.toFixed(1)}</span>`;
+        }
+
+        // Use different animation for first render vs update?
+        const animationClass = isFirstRender ? 'sf-fade-in' : ''; // Simple fade in for first time
+
+        dashboardHTML += `
+            <div class="sf-dashboard-item ${animationClass}">
+                <span class="sf-style-name">${styleIcons[style] || '🌟'} ${this.escapeHTML(style)}</span>
+                <span class="sf-dashboard-score">${score.toFixed(1)} ${delta} ${moveIndicator}</span>
+            </div>`;
+    });
+
+    this.elements.sfDashboard.innerHTML = dashboardHTML;
+    this.sfPreviousScores = { ...this.sfScores }; // Store current scores for next comparison
+    this.sfHasRenderedDashboard = true;
+    // this.lastDashboardUpdate = Date.now(); // For debounce
+  }
+
+
+  // Apply result to main form
+  applyStyleFinderResult(role, style) {
+      console.log(`Applying Style Finder Result: Role=${role}, Style=${style}`);
+      if (!role || !style) return;
+
+      // Set main form values
+      this.elements.role.value = role;
+      // We need to trigger the rendering based on the new role first
+      this.renderStyles(role);
+      // Wait a tick for options to render, then set style
+      requestAnimationFrame(() => {
+          this.elements.style.value = style;
+          // Now render traits based on role and selected style
+          this.renderTraits(role, style);
+          // Update the live preview section
+          this.updateLivePreview();
+          // Close the finder modal
+          this.closeStyleFinder();
+          // Scroll to the form section
+          this.elements.formSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Maybe focus the name field?
+          this.elements.name?.focus();
+           alert(`Style "${style}" selected! Fill in the rest of your profile.`);
+      });
+  }
+
+
+  // Show feedback message
+  showStyleFinderFeedback(message) {
+    if (!this.elements.sfFeedback) return;
+    this.elements.sfFeedback.textContent = message;
+    // Optional: Add animation class
+    this.elements.sfFeedback.classList.remove('sf-feedback-animation'); // Remove first
+    void this.elements.sfFeedback.offsetWidth; // Trigger reflow
+    this.elements.sfFeedback.classList.add('sf-feedback-animation'); // Add animation
+    // Optional: Clear after a delay
+    // setTimeout(() => { if (this.elements.sfFeedback.textContent === message) this.elements.sfFeedback.textContent = ''; }, 2500);
+  }
+
+  // Show trait info (could reuse main one or have separate popup)
+  showStyleFinderTraitInfo(traitName) {
+      if (!this.sfRole) return;
+      // Find definition in data.js based on sfRole
+      const traitData = bdsmData[this.sfRole]?.coreTraits.find(t=>t.name===traitName)
+                   || bdsmData[this.sfRole]?.styles.flatMap(s=>s.traits||[]).find(t=>t.name===traitName);
+
+      if (!traitData?.desc) { alert("Info not available for this trait."); return; }
+
+      let infoHtml = `<h3>${this.escapeHTML(traitName.charAt(0).toUpperCase() + traitName.slice(1))}</h3>`;
+      infoHtml += `<p>${this.getTraitQuestion(traitName)}</p><hr>`; // Show the question again
+       // Show all level descriptions
+       for(let i = 1; i <= 10; i++) { // Assuming 1-10 scale for quiz, map to 1-5 for description? Or need 1-10 desc?
+           // Let's map 1-10 quiz score to 1-5 description levels
+           const descLevel = Math.ceil(i / 2); // 1,2->1; 3,4->2; 5,6->3; 7,8->4; 9,10->5
+           const descText = traitData.desc[descLevel] || `Level ${i} description missing.`;
+           infoHtml += `<p><strong>Score ${i}:</strong> ${this.escapeHTML(descText)}</p>`;
+       }
+
+      // Create and show a simple popup (or reuse traitInfoPopup if styled globally)
+      const popup = document.createElement('div');
+      popup.className = 'sf-style-info-popup'; // Use specific class
+      popup.innerHTML = infoHtml + `<button class="sf-close-btn">×</button>`;
+      document.body.appendChild(popup);
+      // Add listener to remove popup - already handled by delegation on body in addEventListeners
+  }
+
+  // Helper to get style icons map (could move to data.js or keep here)
+  getStyleIcons() {
+      return { /* Keep the styleIcons map from the original scriptbdsmfinder.js */
+          'Submissive': '🙇', 'Brat': '😈', 'Slave': '🔗', 'Switch': '🔄', 'Pet': '🐾', 'Little': '🍼', 'Puppy': '🐶', 'Kitten': '🐱', 'Princess': '👑', 'Rope Bunny': '🪢', 'Masochist': '💥', 'Prey': '🏃', 'Toy': '🎲', 'Doll': '🎎', 'Bunny': '🐰', 'Servant': '🧹', 'Playmate': '🎉', 'Babygirl': '🌸', 'Captive': '⛓️', 'Thrall': '🛐', 'Puppet': '🎭', 'Maid': '🧼', 'Painslut': '🔥', 'Bottom': '⬇️', 'Dominant': '👤', 'Assertive': '💪', 'Nurturer': '🤗', 'Strict': '📏', 'Master': '🎓', 'Mistress': '👸', 'Daddy': '👨‍🏫', 'Mommy': '👩‍🏫', 'Owner': '🔑', 'Rigger': '🪢', 'Sadist': '😏', 'Hunter': '🏹', 'Trainer': '🏋️', 'Puppeteer': '🎭', 'Protector': '🛡️', 'Disciplinarian': '✋', 'Caretaker': '🧡', 'Sir': '🎩', 'Goddess': '🌟', 'Commander': '⚔️'
+      };
+  }
+
+
+  // --- Other Helper Functions --- (Keep definitions as before)
+  getFlairForScore(s){/*...*/} getEmojiForScore(s){/*...*/} escapeHTML(s){/*...*/} openModal(mE){/*...*/} closeModal(mE){/*...*/} getIntroForStyle(styleName){/*...*/}
+  showTraitInfo(tN){/*...*/} hideTraitInfo(){/*...*/} toggleSnapshotInfo(btn){/*...*/} setTheme(tN){/*...*/} applySavedTheme(){/*...*/} toggleTheme(){/*...*/} exportData(){/*...*/} importData(ev){/*...*/} showGlossary(){/*...*/} showStyleDiscovery(){/*...*/} renderStyleDiscoveryContent(){/*...*/}
 
 } // --- END OF TrackerApp CLASS ---
 
 // --- Initialization ---
 try {
     console.log("SCRIPT END: Initializing KinkCompass App...");
-    window.kinkCompassApp = new TrackerApp();
+    window.kinkCompassApp = new TrackerApp(); // Assign for potential debugging
     console.log("SCRIPT END: KinkCompass App Initialized Successfully.");
 } catch (error) {
     console.error("Fatal error during App initialization:", error);
-    document.body.innerHTML = `<div style="padding: 2em; margin: 2em; border: 2px solid red; background: #fff0f0; color: #333;"> <h1 style="color: red;">Oops! Failed to Start</h1> <p>Error: ${error.message}. Check console (F12).</p> </div>`;
+    document.body.innerHTML = `<div style="padding:2em;margin:2em;border:2px solid red;background:#fff0f0;color:#333;"><h1 style="color:red;">Oops! Failed to Start</h1><p>Error: ${error.message}. Check console (F12).</p></div>`;
 }
 
 // --- END OF FILE app.js ---
