@@ -1,12 +1,12 @@
-// === paraphrasing_dom.js === (Ensure import path is correct)
 
-import { bdsmData } from './data.js'; // Path might need adjustment
+**`paraphrasing_dom.js`**
 
-// Helper to normalize style names for lookup
-function normalizeStyleKey(name) {
-    if (!name) return '';
-    return name.toLowerCase().replace(/\(.*?\)/g, '').replace(/ \/ /g, '/').trim();
-}
+```javascript
+// === paraphrasing_dom.js === (ADD ALL STYLES + Switch Handling Removed)
+
+import { bdsmData } from './data.js';
+
+function normalizeStyleKey(name) { /* ... (keep existing) ... */ }
 
 // Suggestions tailored to the NEW style list with a fun tone
 const domStyleSuggestions = {
@@ -149,62 +149,68 @@ const domStyleSuggestions = {
     3: { paraphrase: "🎖️ Leading the troops effectively?", suggestion: "Combine strategic direction with confident decisiveness! Mission accomplished! 🎉" },
     4: { paraphrase: "✨ Shining as a master strategist!", suggestion: "Direct a complex scene with flawless orders or make critical decisions instantly! Impressive! 🌟" },
     5: { paraphrase: "🔥 The Ultimate Commander!", suggestion: "Your command is absolute, your strategy impeccable! Reflect on the power of your decisive leadership! 🔥" }
-  }
+  // NO Switch styles here
 };
 
 
 export function getStyleBreakdown(styleName, traits) {
+  if (!styleName || !traits) {
+      console.warn("getStyleBreakdown (dom) called with invalid args:", styleName, traits);
+      return { strengths: "Select a style first!", improvements: "Choose your path to get tips!" };
+  }
+
   const styleKey = normalizeStyleKey(styleName);
   const styleData = domStyleSuggestions[styleKey];
 
   if (!styleData) {
+    console.warn(`No suggestions found for dominant style key: ${styleKey}`);
     return {
-      strengths: "You're forging your own unique dominant path! Keep exploring, Commander! 💪",
-      improvements: "Select a defined style to see personalized tips for glorious growth! 🔍"
+      strengths: `You're forging your own unique ${styleName} path! Keep exploring, Commander! 💪`,
+      improvements: "Continue defining what this style means to you! 🔍"
     };
   }
 
   const roleData = bdsmData.dominant;
+  if (!roleData || !roleData.styles) {
+       console.error("bdsmData.dominant or its styles are missing!");
+       return { strengths: "Error loading style data.", improvements: "Please check data.js." };
+  }
   const styleObj = roleData.styles.find(s => normalizeStyleKey(s.name) === styleKey);
 
   let traitScores = [];
-  if (styleObj && styleObj.traits) {
-      traitScores = styleObj.traits.map(t => parseInt(traits[t.name]) || 3);
+  if (styleObj?.traits) {
+      styleObj.traits.forEach(traitDef => {
+          const score = parseInt(traits[traitDef.name], 10);
+          if (!isNaN(score)) { traitScores.push(score); }
+      });
   }
-   // Add core traits to the average score calculation
-   if(traits.authority) traitScores.push(parseInt(traits.authority) || 3);
-   if(traits.care) traitScores.push(parseInt(traits.care) || 3);
+  if (roleData.coreTraits) {
+       roleData.coreTraits.forEach(coreTrait => {
+            const score = parseInt(traits[coreTrait.name], 10);
+            if (!isNaN(score)) { traitScores.push(score); }
+       });
+   }
 
   const avgScore = traitScores.length > 0
     ? Math.round(traitScores.reduce((a, b) => a + b, 0) / traitScores.length)
-    : 3; // Default if no traits to average
+    : 3;
 
-  const scoreIndex = Math.max(1, Math.min(5, avgScore)); // Ensure score is 1-5
+  const scoreIndex = Math.max(1, Math.min(5, avgScore));
   const levelData = styleData[scoreIndex];
 
-   if(!levelData) {
+  if(!levelData) {
       console.warn(`No paraphrase/suggestion found for style ${styleKey} at level ${scoreIndex}`);
-      return {
-          strengths: `Leading the way as a ${styleName}! 🔥`,
-          improvements: `Continue sharpening your unique ${styleName} command! 💪`
-      };
+       if (scoreIndex >= 4) { return { strengths: `You powerfully embody the ${styleName} style! 🔥 Keep leading!`, improvements: `Refine your command or mentor others! 🚀` }; }
+       else if (scoreIndex <= 2) { return { strengths: `Exploring the foundations of ${styleName} leadership! 🌱`, improvements: `Focus on clear communication and building confidence! 🎯` }; }
+       else { return { strengths: `Developing a balanced ${styleName} approach! 👍`, improvements: `Consider where you want to focus your authority! 🤔` }; }
   }
 
   const { paraphrase, suggestion } = levelData;
-
   const isStrength = scoreIndex >= 4;
 
-  const strengthsText = isStrength
-    ? `✨ **${paraphrase}** ${suggestion}`
-    : `🌱 You're cultivating powerful skills in ${styleName}! Keep honing your command, mighty one!`;
+  const strengthsText = isStrength ? `✨ **${paraphrase}** ${suggestion}` : `🌱 Cultivating powerful skills in ${styleName}! Keep honing command!`;
+  const improvementsText = isStrength ? `🚀 Expand the horizons of your ${styleName} style! Conquer new challenges!` : `🎯 **${paraphrase}** ${suggestion}`;
 
-  const improvementsText = isStrength
-    ? `🚀 Keep expanding the horizons of your ${styleName} style! What new challenges can you conquer? Charge! `
-    : `🎯 **${paraphrase}** ${suggestion}`;
-
-  return {
-    strengths: strengthsText,
-    improvements: improvementsText
-  };
+  return { strengths: strengthsText, improvements: improvementsText };
 }
 // --- END OF FILE paraphrasing_dom.js ---
