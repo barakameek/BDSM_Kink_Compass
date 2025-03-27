@@ -256,7 +256,7 @@ class TrackerApp {
         const errorMsg = `Init failed - Elements missing: ${missingKeys.join(', ')}`;
         console.error(errorMsg);
         throw new Error(errorMsg);
-    }nd Critical element check block
+    }
 
     
     // Log and throw error *after* the loop
