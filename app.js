@@ -237,24 +237,25 @@ class TrackerApp {
       formTitle: document.getElementById('form-title'),
     };
 
-       // Critical element check
+      // Critical element check
     const criticalElements = [
         'name', 'role', 'style', 'save', 'peopleList', 'modal', 'sfModal',
         'sfStepContent', 'styleFinderTriggerBtn', 'glossaryBody', 'resourcesBody',
-        'styleDiscoveryBody', 'themesBody', 'modalBody', 'livePreview', 'traitsContainer'
+        'styleDiscoveryBody', 'themesBody', 'modalBody', 'livePreview', 'traitsContainer',
+        'formTitle', // Added formTitle based on constructor needs
+        // Add any other crucial IDs from this.elements here
     ];
     const missingKeys = [];
     for (const key of criticalElements) {
         if (!this.elements[key]) {
             missingKeys.push(key);
         }
-    
-    }
+    } // <<< Closing brace for the loop
 
     if (missingKeys.length > 0) {
-        const errorMsg = `Cannot initialize: HTML element(s) not found (ID: ${missingKeys.join(', ')}). Check index.html.`;
-        console.error(errorMsg);
-        throw new Error(errorMsg);
+        const errorMsg = `Initialization failed: Required HTML element(s) not found (IDs: ${missingKeys.join(', ')}). Check index.html.`;
+        console.error(errorMsg); // Log the error
+        throw new Error(errorMsg); // Stop execution
     }
     // End Critical element check block
 
