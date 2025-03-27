@@ -327,11 +327,290 @@ class TrackerApp {
     };
 
     // --- Element Mapping ---
-    // (Rest of constructor continues...)
+    this.elements = {
+      formSection: document.getElementById('form-section'),
+      name: document.getElementById('name'),
+      avatarDisplay: document.getElementById('avatar-display'),
+      avatarInput: document.getElementById('avatar-input'),
+      avatarPicker: document.querySelector('.avatar-picker'),
+      role: document.getElementById('role'),
+      style: document.getElementById('style'),
+      traitsContainer: document.getElementById('traits-container'),
+      traitInfoPopup: document.getElementById('trait-info-popup'),
+      traitInfoClose: document.getElementById('trait-info-close'),
+      traitInfoTitle: document.getElementById('trait-info-title'),
+      traitInfoBody: document.getElementById('trait-info-body'),
+      save: document.getElementById('save'),
+      clearForm: document.getElementById('clear-form'),
+      peopleList: document.getElementById('people-list'),
+      livePreview: document.getElementById('live-preview'),
+      modal: document.getElementById('detail-modal'),
+      modalBody: document.getElementById('modal-body'),
+      modalClose: document.getElementById('modal-close'),
+      resourcesBtn: document.getElementById('resources-btn'),
+      resourcesModal: document.getElementById('resources-modal'),
+      resourcesClose: document.getElementById('resources-close'),
+      glossaryBtn: document.getElementById('glossary-btn'),
+      glossaryModal: document.getElementById('glossary-modal'),
+      glossaryClose: document.getElementById('glossary-close'),
+      glossaryBody: document.getElementById('glossary-body'),
+      styleDiscoveryBtn: document.getElementById('style-discovery-btn'),
+      styleDiscoveryModal: document.getElementById('style-discovery-modal'),
+      styleDiscoveryClose: document.getElementById('style-discovery-close'),
+      styleDiscoveryRoleFilter: document.getElementById('style-discovery-role'),
+      styleDiscoveryBody: document.getElementById('style-discovery-body'),
+      themesBtn: document.getElementById('themes-btn'),
+      themesModal: document.getElementById('themes-modal'),
+      themesClose: document.getElementById('themes-close'),
+      themesBody: document.getElementById('themes-body'),
+      exportBtn: document.getElementById('export-btn'),
+      importBtn: document.getElementById('import-btn'),
+      importFileInput: document.getElementById('import-file-input'),
+      themeToggle: document.getElementById('theme-toggle'),
+      // Style Finder elements
+      styleFinderTriggerBtn: document.getElementById('style-finder-trigger-btn'),
+      sfModal: document.getElementById('style-finder-modal'),
+      sfCloseBtn: document.getElementById('sf-close-style-finder'), // Corrected ID
+      sfProgressTracker: document.getElementById('sf-progress-tracker'),
+      sfStepContent: document.getElementById('sf-step-content'),
+      sfFeedback: document.getElementById('sf-feedback'),
+      sfDashboard: document.getElementById('sf-dashboard')
+    }; // <-- Correct closing brace for elements object
+
+    // Critical element check
+    const criticalElements = ['name', 'role', 'style', 'save', 'peopleList', 'modal', 'sfModal', 'sfStepContent', 'styleFinderTriggerBtn'];
+    let missingElement = false;
+    for (const key of criticalElements) { if (!this.elements[key]) { console.error(`Missing critical element: ID '${key}'`); missingElement = true; } }
+    if (missingElement) { throw new Error("Missing critical HTML elements needed for KinkCompass or Style Finder."); }
+
+    console.log("CONSTRUCTOR: Elements found.");
+    this.addEventListeners();
+    console.log("CONSTRUCTOR: Listeners added.");
+    this.loadFromLocalStorage();
+    this.applySavedTheme();
+    this.renderStyles(this.elements.role.value);
+    this.renderTraits(this.elements.role.value, '');
+    this.renderList();
+    this.updateLivePreview();
+    console.log("CONSTRUCTOR: Initial render complete.");
+  } // --- End of constructor ---
+
+  // --- Local Storage ---
+  loadFromLocalStorage(){try{const d=localStorage.getItem('kinkProfiles');const p=d?JSON.parse(d):[];this.people=p.map(p=>({...p,goals:Array.isArray(p.goals)?p.goals:[],history:Array.isArray(p.history)?p.history:[],avatar:p.avatar||'❓',achievements:Array.isArray(p.achievements)?p.achievements:[],reflections:typeof p.reflections==='object'?p.reflections:{}}));console.log(`Loaded ${this.people.length}`);}catch(e){console.error("Load Error:",e);this.people=[];}}
+  saveToLocalStorage(){try{localStorage.setItem('kinkProfiles',JSON.stringify(this.people));console.log(`Saved ${this.people.length}`);}catch(e){console.error("Save Error:",e);alert("Save failed.");}}
+
+  // --- Event Listeners Setup (Corrected) ---
+  addEventListeners() {
+    console.log("Attaching event listeners...");
+    // KinkCompass Core Listeners
+    this.elements.role?.addEventListener('change',() => { const r=this.elements.role.value;this.renderStyles(r);this.elements.style.value='';this.renderTraits(r,'');this.updateLivePreview(); });
+    this.elements.style?.addEventListener('change',() => { this.renderTraits(this.elements.role.value,this.elements.style.value);this.updateLivePreview(); });
+    this.elements.name?.addEventListener('input',() => this.updateLivePreview());
+    this.elements.avatarPicker?.addEventListener('click',(e) => { if(e.target.classList.contains('avatar-btn')){const em=e.target.dataset.emoji;if(em){this.elements.avatarInput.value=em;this.elements.avatarDisplay.textContent=em;this.elements.avatarPicker.querySelectorAll('.avatar-btn').forEach(b=>b.classList.toggle('selected',b===e.target));this.updateLivePreview();}} });
+    this.elements.save?.addEventListener('click',() => this.savePerson());
+    this.elements.clearForm?.addEventListener('click',() => this.resetForm(true));
+    this.elements.themeToggle?.addEventListener('click',() => this.toggleTheme());
+    this.elements.exportBtn?.addEventListener('click',() => this.exportData());
+    this.elements.importBtn?.addEventListener('click',() => this.elements.importFileInput?.click());
+    this.elements.importFileInput?.addEventListener('change',(e) => this.importData(e));
+    this.elements.peopleList?.addEventListener('click',(e) => this.handleListClick(e));
+    this.elements.peopleList?.addEventListener('keydown',(e) => this.handleListKeydown(e));
+    this.elements.modalClose?.addEventListener('click',() => this.closeModal(this.elements.modal));
+    this.elements.resourcesBtn?.addEventListener('click',() => this.openModal(this.elements.resourcesModal));
+    this.elements.resourcesClose?.addEventListener('click',() => this.closeModal(this.elements.resourcesModal));
+    this.elements.glossaryBtn?.addEventListener('click',() => this.showGlossary());
+    this.elements.glossaryClose?.addEventListener('click',() => this.closeModal(this.elements.glossaryModal));
+    this.elements.styleDiscoveryBtn?.addEventListener('click',() => this.showStyleDiscovery());
+    this.elements.styleDiscoveryClose?.addEventListener('click',() => this.closeModal(this.elements.styleDiscoveryModal));
+    this.elements.styleDiscoveryRoleFilter?.addEventListener('change',() => this.renderStyleDiscoveryContent());
+    this.elements.themesBtn?.addEventListener('click',() => this.openModal(this.elements.themesModal));
+    this.elements.themesClose?.addEventListener('click',() => this.closeModal(this.elements.themesModal));
+    this.elements.themesBody?.addEventListener('click',(e) => this.handleThemeSelection(e));
+    this.elements.traitsContainer?.addEventListener('input',(e) => this.handleTraitSliderInput(e));
+    this.elements.traitsContainer?.addEventListener('click',(e) => this.handleTraitInfoClick(e));
+    this.elements.traitInfoClose?.addEventListener('click',() => this.hideTraitInfo());
+    this.elements.modalBody?.addEventListener('click',(e) => this.handleModalBodyClick(e));
+
+    // --- Style Finder Event Listeners (Integrated) ---
+    this.elements.styleFinderTriggerBtn?.addEventListener('click', () => this.sfStart());
+    this.elements.sfCloseBtn?.addEventListener('click', () => this.sfClose());
+
+    // Delegated listener for actions within the SF modal content area
+    this.elements.sfStepContent?.addEventListener('click', (e) => {
+        // Prioritize buttons with data-action
+        const button = e.target.closest('button[data-action]');
+        if (button) {
+            this.handleStyleFinderAction(button.dataset.action, button.dataset);
+            return; // Action handled
+        }
+
+        // Check for info icon clicks (which might be buttons or spans)
+        const icon = e.target.closest('.sf-info-icon[data-trait]');
+        if (icon) {
+             // Use 'showTraitInfo' as the action identifier
+            this.handleStyleFinderAction('showTraitInfo', icon.dataset);
+            return; // Action handled
+        }
+    }); // End sfStepContent click listener
+
+    // Delegated listener for slider input
+    this.elements.sfStepContent?.addEventListener('input', (e) => {
+        if (e.target.classList.contains('sf-trait-slider') && e.target.dataset.trait) {
+            this.handleStyleFinderSliderInput(e.target);
+        }
+    }); // End sfStepContent input listener
+
+    // Listener for closing dynamically created popups (SF specific popups)
+    document.body.addEventListener('click', (e) => {
+      // Close SF popups specifically, avoid interfering with other potential popups
+      if (e.target.classList.contains('sf-close-btn')) {
+          const popup = e.target.closest('.sf-style-info-popup');
+          if (popup) {
+              popup.remove();
+          }
+      }
+    });
+
+    // General Window Listeners
+    window.addEventListener('click',(e) => this.handleWindowClick(e));
+    window.addEventListener('keydown',(e) => this.handleWindowKeydown(e));
+
+    console.log("Event listeners setup complete.");
+  } // --- End addEventListeners ---
 
 
- // --- START CONTINUATION from showGlossary ---
-        related?.length) { h += `<br><span class="related-terms">See also: `; h += d.related.map(rK => `<a href="#gloss-term-${rK}">${glossaryTerms[rK]?.term || rK}</a>`).join(', '); h += `</span>`; } h += `</dd>`; } h += '</dl>'; this.elements.glossaryBody.innerHTML = h; this.openModal(this.elements.glossaryModal); }
+  // --- Event Handlers (Keep existing handlers, add/modify SF handlers) ---
+  handleListClick(e){const li=e.target.closest('.person');if(!li)return;const id=parseInt(li.dataset.id);if(isNaN(id))return;console.log("List Click on ID:",id,"Target:",e.target);const actionTarget = e.target.closest('button'); const action = actionTarget ? actionTarget.dataset.action : null; if(action === 'edit') this.editPerson(id); else if(action === 'delete') this.deletePerson(id); else this.showPersonDetails(id);} // Added data-action check
+  handleListKeydown(e){const li=e.target.closest('.person');if(!li)return;if(e.key==='Enter'||e.key===' '){e.preventDefault();const id=parseInt(li.dataset.id);if(!isNaN(id))this.showPersonDetails(id);}}
+  handleWindowClick(e){if(e.target===this.elements.modal)this.closeModal(this.elements.modal);if(e.target===this.elements.sfModal)this.sfClose(); // Use sfClose
+      if(e.target===this.elements.resourcesModal)this.closeModal(this.elements.resourcesModal);if(e.target===this.elements.glossaryModal)this.closeModal(this.elements.glossaryModal);if(e.target===this.elements.styleDiscoveryModal)this.closeModal(this.elements.styleDiscoveryModal);if(e.target===this.elements.themesModal)this.closeModal(this.elements.themesModal);}
+  handleWindowKeydown(e){if(e.key==='Escape'){if(this.elements.modal?.style.display==='flex')this.closeModal(this.elements.modal);if(this.elements.sfModal?.style.display==='flex')this.sfClose(); // Use sfClose
+      if(this.elements.resourcesModal?.style.display==='flex')this.closeModal(this.elements.resourcesModal);if(this.elements.glossaryModal?.style.display==='flex')this.closeModal(this.elements.glossaryModal);if(this.elements.styleDiscoveryModal?.style.display==='flex')this.closeModal(this.elements.styleDiscoveryModal);if(this.elements.themesModal?.style.display==='flex')this.closeModal(this.elements.themesModal);}}
+  handleTraitSliderInput(e){if(e.target.classList.contains('trait-slider')){this.updateTraitDescription(e.target);this.updateLivePreview();const v=e.target.value;const p=this.currentEditId?this.people.find(p=>p.id===this.currentEditId):null;if(p){if(v==='5')grantAchievement(p,'max_trait');if(v==='1')grantAchievement(p,'min_trait');}}}
+  handleTraitInfoClick(e){if(e.target.classList.contains('trait-info-btn')){const tN=e.target.dataset.trait;if(tN)this.showTraitInfo(tN);}}
+  handleModalBodyClick(e){console.log("Modal Click:",e.target);const btn=e.target.closest('button');const tgt=e.target;const check=btn||tgt;if(!check||(check.tagName!=='BUTTON'&&!check.classList.contains('snapshot-info-btn'))){return;}const id=check.id;const cl=check.classList;const pId=parseInt(check.dataset.personId);const gId=parseInt(check.dataset.goalId);console.log("Check Elm:",check,"ID:",id,"Class:",cl);if(id==='save-reflections-btn'&&!isNaN(pId))this.saveReflections(pId);else if(id==='prompt-btn')this.showJournalPrompt();else if(id==='snapshot-btn'&&!isNaN(pId))this.addSnapshotToHistory(pId);else if(cl.contains('snapshot-info-btn'))this.toggleSnapshotInfo(check);else if(id==='reading-btn'&&!isNaN(pId))this.showKinkReading(pId);else if(cl.contains('add-goal-btn')&&!isNaN(pId))this.addGoal(pId);else if(cl.contains('toggle-goal-btn')&&!isNaN(pId)&&!isNaN(gId))this.toggleGoalStatus(pId,gId);else if(cl.contains('delete-goal-btn')&&!isNaN(pId)&&!isNaN(gId))this.deleteGoal(pId,gId);else console.log("No matching modal action.");}
+  handleThemeSelection(e){if(e.target.classList.contains('theme-option-btn')){const tN=e.target.dataset.theme;if(tN){this.setTheme(tN);grantAchievement({},'theme_changer');}}}
+
+  // --- Style Finder Action Handler (Corrected & Integrated) ---
+  handleStyleFinderAction(action, dataset = {}) {
+      console.log("SF Action:", action, dataset);
+      switch (action) {
+          case 'next':
+              const currentTrait = dataset.trait;
+              // Check if trait answer exists *before* proceeding (only for trait steps)
+              const currentStepType = this.sfSteps[this.sfStep]?.type;
+              if (currentStepType === 'trait' && currentTrait && this.sfAnswers.traits[currentTrait] === undefined) {
+                   this.sfShowFeedback("Please slide to pick a vibe first!");
+                   return;
+              }
+              this.sfNextStep(); // No need to pass trait here
+              break;
+          case 'prev':
+              this.sfPrevStep();
+              break;
+          case 'setRole':
+              if (dataset.role) {
+                  this.sfSetRole(dataset.role);
+              } else {
+                 console.error("Set role action triggered without role data.");
+              }
+              break;
+          case 'startOver':
+              this.sfStartOver();
+              break;
+          case 'close': // Added for consistency if needed, though close button has direct listener
+              this.sfClose();
+              break;
+           case 'applyStyle':
+                const r= dataset.role;
+                const s= dataset.style;
+                if(r && s){
+                    this.applyStyleFinderResult(r, s);
+                } else {
+                    alert("Error applying style. Role or Style missing.");
+                     console.error("Apply Style Error: Missing role or style in dataset", dataset);
+                }
+                break;
+           case 'showFullDetails': // From old finder
+               if (dataset.style) {
+                   this.sfShowFullDetails(dataset.style);
+               } else {
+                  console.error("Show Full Details action triggered without style data.");
+               }
+               break;
+          case 'showTraitInfo': // From old finder & merged logic
+              if (dataset.trait) {
+                   this.sfShowTraitInfo(dataset.trait);
+              } else {
+                   console.error("Show Trait Info action triggered without trait data.");
+              }
+              break;
+          default:
+              console.warn("Unknown Style Finder action:", action);
+      }
+  }
+
+  // --- Style Finder Slider Input Handler (Corrected) ---
+  handleStyleFinderSliderInput(sliderElement) {
+      const traitName = sliderElement.dataset.trait;
+      const value = parseInt(sliderElement.value, 10);
+      if (traitName) {
+          this.sfSetTrait(traitName, value); // Use sfSetTrait
+          // Update the description dynamically
+          const descElement = this.elements.sfStepContent?.querySelector(`#sf-desc-${traitName}`); // Use optional chaining
+          // Ensure sfSliderDescriptions and the specific trait array exist
+          const descriptions = this.sfSliderDescriptions?.[traitName] ?? [];
+          if (descElement) { // Check if element exists
+              if (descriptions.length > 0 && value >= 1 && value <= descriptions.length) {
+                   descElement.textContent = this.escapeHTML(descriptions[value - 1]);
+              } else {
+                   // Fallback if descriptions are missing or index is out of bounds
+                   descElement.textContent = `Level ${value}`;
+                   console.warn(`Slider description missing or invalid for trait '${traitName}' at value ${value}`);
+              }
+          }
+          this.sfUpdateDashboard(); // Update the dashboard on slider change
+      } else {
+          console.error("Slider input event fired without data-trait attribute.");
+      }
+  }
+
+
+  // --- Core Rendering (Keep existing methods) ---
+  renderStyles(r){this.elements.style.innerHTML='<option value="">Pick flavor!</option>';if(!bdsmData[r]?.styles)return;bdsmData[r].styles.forEach(s=>{this.elements.style.innerHTML+=`<option value="${this.escapeHTML(s.name)}">${this.escapeHTML(s.name)}</option>`;});}
+  renderTraits(r,sN){this.elements.traitsContainer.innerHTML='';if(!bdsmData[r])return;const core=bdsmData[r].coreTraits||[];let styleT=[];let styleO=null;if(sN){styleO=bdsmData[r].styles.find(s=>s.name===sN);styleT=styleO?.traits||[];}const toRender=[];const uN=new Set();[...core,...styleT].forEach(t=>{if(t&&t.name&&!uN.has(t.name)){toRender.push(t);uN.add(t.name);}});if(toRender.length===0){this.elements.traitsContainer.innerHTML=`<p class="muted-text">No traits.</p>`;}else{toRender.forEach(t=>{this.elements.traitsContainer.innerHTML+=this.createTraitHTML(t);});this.elements.traitsContainer.querySelectorAll('.trait-slider').forEach(s=>this.updateTraitDescription(s));}if(sN&&styleO&&styleT.length===0&&core.length>0){const m=document.createElement('p');m.className='muted-text trait-info-message';m.textContent=`Style '${this.escapeHTML(sN)}' uses core traits.`;this.elements.traitsContainer.prepend(m);}else if(!sN&&core.length===0){this.elements.traitsContainer.innerHTML=`<p>Select style or define traits.</p>`;}this.hideTraitInfo();}
+  createTraitHTML(t){const dN=t.name.charAt(0).toUpperCase()+t.name.slice(1);const id=`trait-${t.name.replace(/[^a-zA-Z0-9-_]/g,'-')}`;return`<div class="trait"><label for="${id}">${this.escapeHTML(dN)}</label><button class="trait-info-btn" data-trait="${t.name}" aria-label="Info: ${this.escapeHTML(dN)}">ℹ️</button><input type="range" id="${id}" min="1" max="5" value="3" class="trait-slider" data-trait="${t.name}" aria-label="${this.escapeHTML(dN)}" autocomplete="off"/><span class="trait-value">3</span><div class="trait-desc muted-text"></div></div>`;}
+  updateTraitDescription(sl){const tN=sl.getAttribute('data-trait');const v=sl.value;const dD=sl.parentElement?.querySelector('.trait-desc');const vS=sl.parentElement?.querySelector('.trait-value');if(!dD||!vS)return;const r=this.elements.role.value;const sN=this.elements.style.value;let tD=bdsmData[r]?.styles.find(s=>s.name===sN)?.traits?.find(t=>t.name===tN)||bdsmData[r]?.coreTraits?.find(t=>t.name===tN);vS.textContent=v;if(tD?.desc?.[v]){dD.textContent=this.escapeHTML(tD.desc[v]);}else{dD.textContent=tD?'Desc unavailable.':'Trait unavailable.';}}
+  renderList(){if(!this.elements.peopleList)return;this.elements.peopleList.innerHTML=this.people.length===0?`<li>No pals yet! ✨</li>`:this.people.map(p=>this.createPersonListItemHTML(p)).join('');}
+  createPersonListItemHTML(p){const sD=p.style?this.escapeHTML(p.style):"N/A";const rD=p.role.charAt(0).toUpperCase()+p.role.slice(1);const nE=this.escapeHTML(p.name);const av=p.avatar||'❓';return`<li class="person" data-id="${p.id}" tabindex="0"><span class="person-info"><span class="person-avatar">${av}</span><span class="person-name-details"><strong class="person-name">${nE}</strong><span class="person-details muted-text">(${rD} - ${sD})</span></span></span><span class="person-actions"><button class="edit-btn small-btn" data-action="edit" data-id="${p.id}" aria-label="Edit ${nE}">✏️</button><button class="delete-btn small-btn" data-action="delete" data-id="${p.id}" aria-label="Delete ${nE}">🗑️</button></span></li>`;}
+
+  // --- CRUD (Keep existing methods) ---
+  savePerson(){const name=this.elements.name.value.trim()||"Unnamed";const av=this.elements.avatarInput.value||'❓';const r=this.elements.role.value;const sN=this.elements.style.value;if(!sN){alert("Select style.");return;}const sliders=this.elements.traitsContainer.querySelectorAll('.trait-slider');const expected=[...(bdsmData[r]?.coreTraits||[]),...(bdsmData[r]?.styles.find(s=>s.name===sN)?.traits||[])];const uniqueE=new Set(expected.map(t=>t.name));if(sliders.length!==uniqueE.size&&uniqueE.size>0){alert("Trait error.");return;}const tr={};let mD=false;sliders.forEach(s=>{const n=s.getAttribute('data-trait');if(n)tr[n]=s.value;else mD=true;});if(mD){alert("Gather trait error.");return;}for(const n of uniqueE){if(!tr.hasOwnProperty(n)){alert(`Missing data: '${n}'.`);return;}}const ex=this.currentEditId?this.people.find(p=>p.id===this.currentEditId):null;const pD={id:this.currentEditId||Date.now(),name,avatar:av,role:r,style:sN,goals:ex?.goals||[],traits:tr,history:ex?.history||[],achievements:ex?.achievements||[],reflections:ex?.reflections||{}};if(!this.currentEditId)grantAchievement(pD,'profile_created');if(this.people.length===4&&!this.currentEditId)grantAchievement(pD,'five_profiles');if(this.currentEditId)grantAchievement(pD,'profile_edited');if(this.currentEditId){const i=this.people.findIndex(p=>p.id===this.currentEditId);if(i!==-1)this.people[i]=pD;else{console.error("Update ID error");pD.id=Date.now();this.people.push(pD);}}else{this.people.push(pD);}this.saveToLocalStorage();this.renderList();this.resetForm(true);alert(`${this.escapeHTML(name)} saved! ✨`);}
+  editPerson(pId){const p=this.people.find(p=>p.id===pId);if(!p){alert("Not found.");return;}this.currentEditId=pId;this.elements.name.value=p.name;this.elements.avatarDisplay.textContent=p.avatar||'❓';this.elements.avatarInput.value=p.avatar||'❓';this.elements.avatarPicker?.querySelectorAll('.avatar-btn').forEach(b=>b.classList.toggle('selected',b.dataset.emoji===p.avatar));this.elements.role.value=p.role;this.renderStyles(p.role);this.elements.style.value=p.style;this.renderTraits(p.role,p.style);requestAnimationFrame(()=>{if(p.traits){Object.entries(p.traits).forEach(([n,v])=>{const s=this.elements.traitsContainer.querySelector(`.trait-slider[data-trait="${n}"]`);if(s){s.value=v;this.updateTraitDescription(s);}}); }this.updateLivePreview();this.elements.save.textContent='Update ✨';this.elements.formSection?.scrollIntoView({behavior:'smooth'});this.elements.name.focus();});}
+  deletePerson(pId){const idx=this.people.findIndex(p=>p.id===pId);if(idx===-1)return;const name=this.people[idx].name;if(confirm(`Delete ${this.escapeHTML(name)}?`)){this.people.splice(idx,1);this.saveToLocalStorage();this.renderList();if(this.currentEditId===pId)this.resetForm(true);alert(`${this.escapeHTML(name)} deleted.`);}}
+  resetForm(clear=false){this.elements.name.value='';this.elements.avatarDisplay.textContent='❓';this.elements.avatarInput.value='❓';this.elements.avatarPicker?.querySelectorAll('.selected').forEach(b=>b.classList.remove('selected'));this.elements.role.value='submissive';this.renderStyles('submissive');this.elements.style.value='';this.renderTraits('submissive','');this.currentEditId=null;this.elements.save.textContent='Save Sparkle! 💖';if(clear)this.updateLivePreview();this.elements.name.focus();console.log("Form reset.");this.hideTraitInfo();}
+
+  // --- Live Preview (Keep existing method) ---
+  updateLivePreview(){const name=this.elements.name.value.trim()||"Unnamed";const av=this.elements.avatarInput.value||'❓';const r=this.elements.role.value;const s=this.elements.style.value;const tr={};this.elements.traitsContainer.querySelectorAll('.trait-slider').forEach(sl=>{const n=sl.getAttribute('data-trait');if(n)tr[n]=sl.value;});let html='';if(!s&&r&&Object.keys(tr).length>0){html=`<h3 class="preview-title">${av} ${this.escapeHTML(name)}’s Core Vibe ${av}</h3><p><strong>Role:</strong> ${r.charAt(0).toUpperCase()+r.slice(1)}</p><p class="muted-text"><i>Core traits active. Pick Style!</i></p><div class="core-trait-preview"><strong>Core Traits:</strong><ul>`;bdsmData[r]?.coreTraits?.forEach(ct=>{const score=tr[ct.name];if(score){const tD=bdsmData[r]?.coreTraits?.find(t=>t.name===ct.name);const d=tD?.desc?.[score]||"N/A";html+=`<li><strong>${this.escapeHTML(ct.name)} (${score}):</strong> ${this.escapeHTML(d)}</li>`;}});html+=`</ul></div>`;}else if(s){const getB=r==='submissive'?getSubBreakdown:getDomBreakdown;const B=getB(s,tr);let topStyleInfo=null;const sO=bdsmData[r]?.styles.find(st=>st.name===s);if(sO?.traits?.length>0){let topSc=-1;let topN='';sO.traits.forEach(tDef=>{const sc=parseInt(tr[tDef.name]||0);if(sc>topSc){topSc=sc;topN=tDef.name;}});if(topN&&topSc>0){const tD=sO.traits.find(t=>t.name===topN);const d=tD?.desc?.[topSc]||"N/A";topStyleInfo=`<strong>Top Style Vibe (${this.escapeHTML(topN)} Lvl ${topSc}):</strong> ${this.escapeHTML(d)}`;}}html=`<h3 class="preview-title">${av} ${this.escapeHTML(name)}’s Live Vibe ${av}</h3><p><strong>Role:</strong> ${r.charAt(0).toUpperCase()+r.slice(1)}</p><p><strong>Style:</strong> ${this.escapeHTML(s)}</p><div class="style-breakdown preview-breakdown">`;if(B.strengths)html+=`<div class="strengths"><h4>✨ Powers</h4><div>${B.strengths}</div></div>`;if(B.improvements)html+=`<div class="improvements"><h4>🌟 Quests</h4><div>${B.improvements}</div></div>`;html+=`</div>`;if(topStyleInfo){html+=`<div class="top-trait-preview"><hr><p>${topStyleInfo}</p></div>`;}}else{html=`<p class="muted-text">Pick role & style! 🌈</p>`;}this.elements.livePreview.innerHTML=html;}
+
+  // --- Modal Display (Keep existing method) ---
+  showPersonDetails(pId){const p=this.people.find(p=>p.id===pId);if(!p)return;console.log("Showing details:",p);p.goals=p.goals||[];p.history=p.history||[];p.achievements=p.achievements||[];p.reflections=p.reflections||{};p.avatar=p.avatar||'❓';const getB=p.role==='submissive'?getSubBreakdown:getDomBreakdown;const B=getB(p.style,p.traits||{});let html=`<h2 class="modal-title">${p.avatar} ${this.escapeHTML(p.name)}’s Kingdom ${p.avatar}</h2>`;html+=`<p class="modal-subtitle">${p.role.charAt(0).toUpperCase()+p.role.slice(1)} - ${p.style?this.escapeHTML(p.style):'N/A'}</p>`; let intro="Explore!";try{if(typeof this.getIntroForStyle==='function'){intro=this.getIntroForStyle(p.style);}else{console.warn("getIntroForStyle missing!");}}catch(e){console.error("Intro error:",e);}if(intro)html+=`<p class="modal-intro">${intro}</p>`;html+=`<section class="goals-section"><h3>🎯 Goals</h3><ul id="goal-list-${p.id}"></ul><div class="add-goal-form"><input type="text" id="new-goal-text-${p.id}" placeholder="Add goal..."><button class="add-goal-btn save-btn small-btn" data-person-id="${p.id}">+ Add</button></div></section>`;html+=`<section class="breakdown-section"><h3>🌈 Strengths & Growth</h3><div class="style-breakdown modal-breakdown">`;if(B.strengths)html+=`<div class="strengths"><h4>✨ Powers</h4><div>${B.strengths}</div></div>`;if(B.improvements)html+=`<div class="improvements"><h4>🌟 Quests</h4><div>${B.improvements}</div></div>`;html+=`</div></section>`;html+=`<section class="traits-section"><h3>🎨 Trait Tales</h3>`;const defs=[...(bdsmData[p.role]?.coreTraits||[]),...(bdsmData[p.role]?.styles.find(s=>s.name===p.style)?.traits||[])];const uDefs=Array.from(new Map(defs.map(t=>[t.name,t])).values());html+='<div class="trait-details-grid">';if(p.traits&&Object.keys(p.traits).length>0){Object.entries(p.traits).forEach(([n,sc])=>{const tO=uDefs.find(t=>t.name===n);const dN=n.charAt(0).toUpperCase()+n.slice(1);if(!tO){html+=`<div class="trait-detail-item"><h4>${this.escapeHTML(dN)} - Lvl ${sc}❓</h4><p><em>Def missing.</em></p></div>`;return;} const dT=tO.desc?.[sc]||"N/A";const fl=this.getFlairForScore(sc);html+=`<div class="trait-detail-item"><h4>${this.escapeHTML(dN)} - Lvl ${sc} ${this.getEmojiForScore(sc)}</h4><p><strong>Vibe:</strong> ${this.escapeHTML(dT)}</p><p><em>${fl}</em></p></div>`;});}else{html+=`<p>No scores.</p>`;}html+='</div></section>';html+=`<section class="history-section"><h3>⏳ History<button class="snapshot-info-btn" aria-label="Info">ℹ️</button></h3><p class="snapshot-info muted-text" style="display:none;">Snapshot saves current traits to track growth!</p><div class="history-chart-container"><canvas id="history-chart"></canvas></div><button id="snapshot-btn" class="small-btn" data-person-id="${p.id}">📸 Snapshot</button></section>`;html+=`<section class="achievements-section"><h3>🏆 Achievements</h3><div id="achievements-list-${p.id}"></div></section>`;html+=`<section class="kink-reading-section"><h3>🔮 Reading</h3><button id="reading-btn" class="small-btn" data-person-id="${p.id}">Get Reading!</button><div id="kink-reading-output" class="kink-reading-output" style="display:none;"></div></section>`;html+=`<section class="reflections-section"><h3>📝 Reflections</h3><div id="journal-prompt-area" style="display:none;"></div><div class="modal-actions"><button id="prompt-btn" class="small-btn">💡 Prompt</button></div><textarea id="reflections-text" class="reflections-textarea" data-person-id="${p.id}" rows="6" placeholder="Thoughts?">${this.escapeHTML(p.reflections?.text||'')}</textarea><button id="save-reflections-btn" class="save-btn" data-person-id="${p.id}">Save 💭</button></section>`;this.elements.modalBody.innerHTML=html;this.renderGoalList(p);this.renderAchievements(p);this.openModal(this.elements.modal);this.renderHistoryChart(p);}
+
+  // --- New Feature Logic (Keep existing methods) ---
+  addGoal(pId){const p=this.people.find(p=>p.id===pId);const i=this.elements.modalBody?.querySelector(`#new-goal-text-${pId}`);if(!p||!i)return;const t=i.value.trim();if(!t)return;const nG={id:Date.now(),text:t,status:'todo'};p.goals.push(nG);grantAchievement(p,'goal_added');this.saveToLocalStorage();this.renderGoalList(p);i.value='';}
+  toggleGoalStatus(pId,gId){const p=this.people.find(p=>p.id===pId);const g=p?.goals.find(g=>g.id===gId);if(!g)return;g.status=(g.status==='done'?'todo':'done');this.saveToLocalStorage();this.renderGoalList(p);}
+  deleteGoal(pId,gId){const p=this.people.find(p=>p.id===pId);if(!p)return;if(confirm('Delete goal?')){p.goals=p.goals.filter(g=>g.id!==gId);this.saveToLocalStorage();this.renderGoalList(p);}}
+  renderGoalList(p){const l=this.elements.modalBody?.querySelector(`#goal-list-${p.id}`);if(!l)return;let h='';if(p.goals.length>0){p.goals.forEach(g=>{h+=`<li class="${g.status==='done'?'done':''}" data-goal-id="${g.id}"><span>${this.escapeHTML(g.text)}</span><span class="goal-actions"><button class="toggle-goal-btn small-btn" data-person-id="${p.id}" data-goal-id="${g.id}">${g.status==='done'?'🔄':'✅'}</button><button class="delete-goal-btn small-btn delete-btn" data-person-id="${p.id}" data-goal-id="${g.id}">🗑️</button></span></li>`;});}else{h=`<li>No goals!</li>`;}l.innerHTML=h;} // Added delete-btn class
+  showJournalPrompt(){const a=this.elements.modalBody?.querySelector('#journal-prompt-area');if(a){a.innerHTML = `<p class="journal-prompt">${getRandomPrompt()}</p>`;a.style.display='block';this.elements.modalBody?.querySelector('#reflections-text')?.focus();}}
+  saveReflections(pId){const p=this.people.find(p=>p.id===pId);const el=this.elements.modalBody?.querySelector('#reflections-text');if(!p||!el){alert("Error.");return;}const txt=el.value;if(!p.reflections)p.reflections={};p.reflections.text=txt;p.reflections.lastUpdated=Date.now();let first=false;if(txt.trim().length>0)first=grantAchievement(p,'reflection_saved');const count=Object.values(this.people.reduce((a,p)=>{if(p.reflections?.text?.trim().length>0)a[p.id]=true;return a;},{})).length;if(count>=5)grantAchievement(p,'five_reflections');this.saveToLocalStorage();const btn=this.elements.modalBody.querySelector('#save-reflections-btn');if(btn){btn.textContent='Saved ✓';btn.disabled=true;setTimeout(()=>{btn.textContent='Save 💭';btn.disabled=false;},2000);}else{alert("Saved! ✨");}}
+  addSnapshotToHistory(pId){const p=this.people.find(p=>p.id===pId);if(!p||!p.traits){alert("Cannot snapshot.");return;}const snap={date:Date.now(),traits:{...p.traits}};p.history.push(snap);grantAchievement(p,'history_snapshot');this.saveToLocalStorage();alert("Snapshot saved! 📸");this.renderHistoryChart(p);this.renderAchievements(p);}
+  renderHistoryChart(p){const cont=this.elements.modalBody?.querySelector('.history-chart-container');let ctx=cont?.querySelector('#history-chart')?.getContext('2d');if(this.chartInstance){this.chartInstance.destroy();this.chartInstance=null;}if(!ctx){if(cont)cont.innerHTML=`<p>Chart canvas missing.</p>`;return;}if(!p?.history?.length){cont.innerHTML=`<p>No history yet!</p>`;return;}if(cont.querySelector('p'))cont.innerHTML=`<canvas id="history-chart"></canvas>`;ctx=cont.querySelector('#history-chart').getContext('2d');const labels=p.history.map(s=>new Date(s.date).toLocaleDateString());const allN=new Set();p.history.forEach(s=>Object.keys(s.traits).forEach(n=>allN.add(n)));if(p.traits)Object.keys(p.traits).forEach(n=>allN.add(n));const dSets=[];const clrs=['#ff69b4','#8a5a6d','#ff85cb','#4a2c3d','#f4d4e4','#c49db1','#a0d8ef','#dcc1ff'];let cI=0;allN.forEach(tN=>{const data=p.history.map(s=>s.traits[tN]!==undefined?parseInt(s.traits[tN]):null);const c=clrs[cI%clrs.length];dSets.push({label:tN.charAt(0).toUpperCase()+tN.slice(1),data:data,borderColor:c,backgroundColor:c+'80',tension:.1,fill:false,spanGaps:true});cI++;});const isD=document.body.getAttribute('data-theme')==='dark'||document.body.getAttribute('data-theme')==='velvet';const gC=isD?'rgba(244,212,228,0.15)':'rgba(74,44,61,0.1)';const lC=isD?'#c49db1':'#8a5a6d';this.chartInstance=new Chart(ctx,{type:'line',data:{labels:labels,datasets:dSets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{color:lC}},tooltip:{mode:'index',intersect:false,}},scales:{y:{min:1,max:5,ticks:{stepSize:1,color:lC},grid:{color:gC}},x:{ticks:{color:lC},grid:{color:gC}}}}});}
+  toggleSnapshotInfo(btn){const inf=btn.closest('.history-section')?.querySelector('.snapshot-info');if(inf){const isH=inf.style.display==='none';inf.style.display=isH?'block':'none';btn.setAttribute('aria-expanded',isH);}}
+  renderAchievements(p){const l=this.elements.modalBody?.querySelector(`#achievements-list-${p.id}`);if(!l)return;let h='';if(p.achievements.length>0){h+=`<ul>`;p.achievements.forEach(id=>{const d=achievementList[id];if(d){const e=d.name.match(/([\p{Emoji}\p{Emoji_Modifier}\p{Emoji_Component}\p{Emoji_Presentation}\p{Emoji_Modifier_Base}]+)/u)?.[0]||'🏆';h+=`<li title="${this.escapeHTML(d.desc)}"><span class="achievement-icon">${e}</span><span class="achievement-name">${this.escapeHTML(d.name)}</span></li>`;}});h+=`</ul>`;}else{h=`<p class="muted-text">No achievements yet!</p>`;}l.innerHTML=h;} // Used muted-text class
+  showKinkReading(pId){const p=this.people.find(p=>p.id===pId);const o=this.elements.modalBody?.querySelector('#kink-reading-output');if(!p||!o)return;grantAchievement(p,'kink_reading');this.saveToLocalStorage();this.renderAchievements(p);let r=`🔮 ${this.escapeHTML(p.name)}'s Reading 🔮\nAs a ${this.escapeHTML(p.style)} ${p.role}, path sparkles!\n`;const t=p.traits||{};const s=Object.entries(t).map(([n,sc])=>({name:n,score:parseInt(sc)})).sort((a,b)=>b.score-a.score);if(s.length>0){const h=s[0];const l=s[s.length-1];const c1=bdsmData[p.role]?.coreTraits[0]?.name;const c2=bdsmData[p.role]?.coreTraits[1]?.name;r+=`\n✨ Star: **${h.name}(${h.score})**! ${this.getReadingDescriptor(h.name,h.score)}.\n`;if(c1&&t[c1])r+=`🧭 Core **${c1}(${t[c1]})**: ${this.getReadingDescriptor(c1,t[c1])}.\n`;if(c2&&t[c2])r+=`🧭 Core **${c2}(${t[c2]})**: ${this.getReadingDescriptor(c2,t[c2])}.\n`;if(s.length>1&&h.score!==l.score)r+=`\n🌱 Bloom: **${l.name}(${l.score})**. Explore ${this.getReadingDescriptor(l.name,l.score)}.\n`;}else{r+=`\nTraits uncharted!\n`;}r+=`\n💖 ${this.escapeHTML(p.style)} is about ${this.getStyleEssence(p.style)}!\n`;o.textContent=r;o.style.display='block';}
+  getReadingDescriptor(tN,sc){sc=parseInt(sc);if(tN==='obedience')return sc>=4?"joyful compliance":sc<=2?"independent spirit":"developing discipline";if(tN==='trust')return sc>=4?"deep connection":sc<=2?"cautious exploration":"building security"; return"unique expression";}
+  getStyleEssence(sN){const e={"brat":"playful challenge","slave":"deep devotion",/*...*/};const k=sN?.toLowerCase().replace(/\(.*?\)/g,'').replace(/ \/ /g,'/').trim()||'';return e[k]||`your magic`;}
+  showGlossary(){if(!this.elements.glossaryBody)return;grantAchievement({},'glossary_user');let h='<dl>';for(const k in glossaryTerms){const d=glossaryTerms[k];h+=`<dt id="gloss-term-${k}">${this.escapeHTML(d.term)}</dt><dd>${this.escapeHTML(d.definition)}`;if(d.related?.length){h+=`<br><span class="related-terms">See also: `;h+=d.related.map(rK=>`<a href="#gloss-term-${rK}">${glossaryTerms[rK]?.term||rK}</a>`).join(', ');h+=`</span>`;}h+=`</dd>`;}h+='</dl>';this.elements.glossaryBody.innerHTML=h;this.openModal(this.elements.glossaryModal);}
   showStyleDiscovery(){grantAchievement({},'style_explorer');this.renderStyleDiscoveryContent();this.openModal(this.elements.styleDiscoveryModal);}
   renderStyleDiscoveryContent(){if(!this.elements.styleDiscoveryBody||!this.elements.styleDiscoveryRoleFilter)return;const sel=this.elements.styleDiscoveryRoleFilter.value;let h='';['submissive','dominant'].forEach(r=>{if(sel==='all'||sel===r){h+=`<h3>${r.charAt(0).toUpperCase()+r.slice(1)} Styles</h3>`;if(bdsmData[r]?.styles){bdsmData[r].styles.forEach(st=>{h+=`<div class="style-discovery-item"><h4>${this.escapeHTML(st.name)}</h4>`; if(st.summary)h+=`<p><em>${this.escapeHTML(st.summary)}</em></p>`; if(st.traits?.length){h+=`<strong>Traits:</strong><ul>`;st.traits.forEach(tr=>{h+=`<li>${this.escapeHTML(tr.name.charAt(0).toUpperCase()+tr.name.slice(1))}</li>`;});h+=`</ul>`;}else{h+=`<p>Uses core traits.</p>`;}h+=`</div>`;});}else{h+=`<p>No styles.</p>`;}}});this.elements.styleDiscoveryBody.innerHTML=h||'<p>No styles.</p>';}
   setTheme(tN){document.body.setAttribute('data-theme',tN);const iD=tN==='dark'||tN==='velvet';if(this.elements.themeToggle){this.elements.themeToggle.textContent=iD?'☀️':'🌙';this.elements.themeToggle.setAttribute('title',`Switch to ${iD?'light':'dark'} mode`);}try{localStorage.setItem('kinkCompassTheme',tN);}catch(e){console.warn("Save theme failed:",e);}if(this.chartInstance&&this.currentEditId){const p=this.people.find(p=>p.id===this.currentEditId);if(p)this.renderHistoryChart(p);}}
@@ -429,6 +708,7 @@ class TrackerApp {
              this.elements.sfProgressTracker.textContent = `Trait ${currentTraitIndex + 1} / ${this.sfTraitSet.length} (${questionsLeft} more!)`;
           } else {
              this.elements.sfProgressTracker.style.display = 'none'; // Hide if trait index is weird
+             console.warn(`Could not find trait '${step.trait}' in sfTraitSet for progress.`);
           }
 
       } else {
@@ -464,15 +744,15 @@ class TrackerApp {
               const currentValue = this.sfAnswers.traits[traitObj.name] !== undefined ? this.sfAnswers.traits[traitObj.name] : 5;
               const footnoteSet = (this.sfRole === 'dominant' ? this.sfDomTraitFootnotes : this.sfSubTraitFootnotes);
               const footnote = footnoteSet[traitObj.name] || "1: Least / 10: Most";
-              const isFirstTrait = this.sfSteps.findIndex(s => s.type === 'trait') === this.sfStep; // Check if it's the first trait step
+              const isFirstTraitStep = this.sfSteps.findIndex(s => s.type === 'trait') === this.sfStep; // Check if it's the first trait step
 
               // Get slider description, ensuring fallback
-              const sliderDescArray = this.sfSliderDescriptions[traitObj.name] || ["Not much", "", "", "Getting there", "", "Quite a bit", "", "Strongly!", "", "Totally me!"]; // Default array
-              const sliderDescText = sliderDescArray[currentValue - 1] || `Level ${currentValue}`;
+              const sliderDescArray = this.sfSliderDescriptions?.[traitObj.name] ?? []; // Default array
+              const sliderDescText = (value >= 1 && value <= sliderDescArray.length) ? sliderDescArray[currentValue - 1] : `Level ${currentValue}`; // Check bounds
 
               html = `
                   <h2>${this.escapeHTML(traitObj.desc)}<button class="sf-info-icon" data-trait="${traitObj.name}" data-action="showTraitInfo" aria-label="More info about ${traitObj.name}">ℹ️</button></h2>
-                  ${isFirstTrait ? '<p>Slide to find your vibe! (1 = Not Me, 10 = Totally Me)</p>' : ''}
+                  ${isFirstTraitStep ? '<p>Slide to find your vibe! (1 = Not Me, 10 = Totally Me)</p>' : ''}
                   <input type="range" min="1" max="10" value="${currentValue}" class="sf-trait-slider" data-trait="${traitObj.name}" aria-label="${traitObj.name} rating">
                   <div id="sf-desc-${traitObj.name}" class="sf-slider-description">${this.escapeHTML(sliderDescText)}</div>
                   <p class="sf-slider-footnote">${this.escapeHTML(footnote)}</p>
@@ -484,7 +764,6 @@ class TrackerApp {
               break;
 
           case 'roundSummary':
-               // In the old logic, this re-rendered the dashboard. Let's make it clearer.
                html = `
                    <h2>${step.round} Check-In!</h2>
                    <p>Here’s how your choices are shaping up based on the traits:</p>
@@ -500,11 +779,11 @@ class TrackerApp {
               this.sfCalculateResult(); // Calculate final scores
               const sortedScores = Object.entries(this.sfScores).sort((a, b) => b[1] - a[1]);
 
-              if (sortedScores.length === 0 || !sortedScores[0]) {
+              if (sortedScores.length === 0 || !sortedScores[0] || sortedScores[0][1] <= 0) { // Check score > 0
                  html = `
                      <div class="sf-result-section sf-fade-in">
                          <h2 class="sf-result-heading">Hmm... 🤔</h2>
-                         <p>Not enough data to determine a top style yet. Maybe try answering more traits?</p>
+                         <p>Not enough data or unique responses to determine a top style yet. Your vibe is uniquely you!</p>
                          <div class="sf-result-buttons">
                              <button data-action="startOver">Try Again?</button>
                               <button data-action="close">Close</button>
@@ -551,19 +830,23 @@ class TrackerApp {
               html = "<p>Oops! Something went wrong.</p> <button data-action='prev'>Back</button>";
       }
 
-      // Render the HTML and update dashboard if needed
+      // Render the HTML and manage dashboard visibility
       try {
+           if (!this.elements.sfStepContent) throw new Error("sfStepContent element missing");
            this.elements.sfStepContent.innerHTML = html;
-           // Update dashboard in trait steps, but not on welcome/role/result
+
+           // Update dashboard visibility based on step type
            if (step.type === 'trait') {
-               this.sfUpdateDashboard();
+               this.sfUpdateDashboard(); // Show/update dashboard for trait steps
            } else if (step.type !== 'roundSummary') { // Dashboard handled separately for summary
                if (this.elements.sfDashboard) this.elements.sfDashboard.style.display = 'none';
            }
-            console.log(`SF Step ${this.sfStep} rendered.`);
+            console.log(`SF Step ${this.sfStep} rendered successfully.`);
        } catch (e) {
            console.error(`Render SF Step ${this.sfStep} Error:`, e);
-           this.elements.sfStepContent.innerHTML = `<p>Error rendering step.</p> <button data-action="prev">Back</button>`;
+           if (this.elements.sfStepContent) {
+               this.elements.sfStepContent.innerHTML = `<p>Error rendering step.</p> <button data-action="prev">Back</button>`;
+           }
        }
   }
 
@@ -574,7 +857,9 @@ class TrackerApp {
       this.sfScores = {}; // Reset scores
       this.sfPreviousScores = {}; // Reset previous scores
       this.sfHasRenderedDashboard = false; // Reset dashboard flag
-      this.sfNextStep(); // Move to the first trait question
+      this.sfTraitSet = []; // Clear current trait set
+      this.sfSteps = []; // Clear current steps
+      this.sfNextStep(); // Move to the first trait question (will recalculate steps)
   }
 
   sfSetTrait(trait, value) { // Renamed from setStyleFinderTrait
@@ -583,7 +868,7 @@ class TrackerApp {
       // Dashboard updated via slider input handler
   }
 
-  sfNextStep(currentTrait = null) { // Renamed from nextStyleFinderStep
+  sfNextStep() { // Renamed from nextStyleFinderStep
       // Validation moved to handleStyleFinderAction
       this.sfStep++;
       this.sfRenderStep();
@@ -591,16 +876,20 @@ class TrackerApp {
 
   sfPrevStep() { // Renamed from prevStyleFinderStep
       if (this.sfStep > 0) {
-          this.sfStep--;
-           // If moving back from results/summary, reset scores to allow recalculation
-           const steps = this.sfSteps; // Use calculated steps
-            if(steps[this.sfStep + 1]?.type === 'result' || steps[this.sfStep + 1]?.type === 'roundSummary'){
+          // Determine the type of the step we are moving *back from*
+          const nextStepIndex = this.sfStep; // Index of the step we were on
+          const stepWeAreLeaving = this.sfSteps[nextStepIndex];
+
+          this.sfStep--; // Actually move back
+
+           // If moving back *from* results/summary, reset scores
+           if(stepWeAreLeaving?.type === 'result' || stepWeAreLeaving?.type === 'roundSummary'){
                 console.log("Moving back from result/summary, resetting scores.")
                 this.sfScores = {};
                 this.sfPreviousScores = {};
                 this.sfHasRenderedDashboard = false;
-            }
-          this.sfRenderStep();
+           }
+          this.sfRenderStep(); // Render the previous step
       }
   }
 
@@ -621,12 +910,16 @@ class TrackerApp {
 
   sfComputeScores() { // Renamed from computeCurrentScores, uses scoring map
       let scores = {};
-      if (!this.sfRole) return scores;
+      if (!this.sfRole || !this.sfStyles[this.sfRole]) {
+           console.warn("Cannot compute scores: Role not set or invalid.");
+           return scores;
+      }
       const roleStyles = this.sfStyles[this.sfRole];
-      roleStyles.forEach(style => { scores[style] = 0; });
+      roleStyles.forEach(style => { scores[style] = 0; }); // Initialize all styles for the role
 
       Object.keys(this.sfAnswers.traits).forEach(trait => {
-          const rating = this.sfAnswers.traits[trait] || 0; // Default to 0 if undefined
+          const rating = this.sfAnswers.traits[trait] ?? 0; // Default to 0 if undefined
+
           // Iterate through all styles for the current role
           roleStyles.forEach(style => {
               const keyTraits = this.sfStyleKeyTraits[style] || [];
@@ -637,99 +930,111 @@ class TrackerApp {
               }
           });
       });
-      console.log("Computed Scores:", scores);
+      // console.log("Computed Scores:", scores); // Log can be noisy, keep commented unless debugging
       return scores;
   }
 
    sfUpdateDashboard(forceVisible = false) { // Renamed from updateDashboard
-        // Determine if dashboard should be shown
-       const shouldShowDashboard = forceVisible || (this.sfRole && this.sfStep > 1 && this.sfSteps[this.sfStep]?.type === 'trait');
-
-       if (!shouldShowDashboard) {
-           if (this.elements.sfDashboard) this.elements.sfDashboard.style.display = 'none';
-           return;
-       }
+       // Determine if dashboard should be shown based on current step type
+       const currentStepType = this.sfSteps[this.sfStep]?.type;
+       const shouldShowDashboard = forceVisible || (this.sfRole && currentStepType === 'trait');
 
        if (!this.elements.sfDashboard) {
            console.error("Dashboard element not found!");
            return;
        }
+
+       if (!shouldShowDashboard) {
+           this.elements.sfDashboard.style.display = 'none';
+           return;
+       }
+
        this.elements.sfDashboard.style.display = 'block'; // Ensure visible
 
        const scores = this.sfComputeScores();
        const sortedScores = Object.entries(scores)
-           .filter(([style, score]) => score > 0) // Only show styles with score > 0
+           .filter(([style, score]) => score > 0.1) // Only show styles with score > 0.1 (allow for float precision)
            .sort((a, b) => b[1] - a[1])
            .slice(0, 7); // Show top 7
 
-       if (sortedScores.length === 0) {
-            this.elements.sfDashboard.innerHTML = "<div class='sf-dashboard-header'>✨ Your Live Vibes! ✨</div><p class='muted-text'>Keep rating traits!</p>";
-            return; // Don't proceed if no scores > 0
-       }
-
-       // Prepare previous positions for move indicators
-       const previousPositions = {};
-       if (this.sfPreviousScores) {
-            Object.entries(this.sfPreviousScores)
-               .sort((a, b) => b[1] - a[1])
-               .forEach(([style, score], index) => {
-                   previousPositions[style] = index;
-               });
-       }
-
-       const isFirstRender = !this.sfHasRenderedDashboard;
        let dashboardHTML = "<div class='sf-dashboard-header'>✨ Your Live Vibes! ✨</div>";
-       const styleIcons = this.getStyleIcons(); // Use helper method
 
-       sortedScores.forEach(([style, score], index) => {
-           const prevPos = previousPositions[style] !== undefined ? previousPositions[style] : index;
-           const movement = prevPos - index;
-           let moveIndicator = '';
-           // Add move indicator only if not the first render and there was movement
-           if (!isFirstRender && movement > 0) moveIndicator = '<span class="sf-move-up">↑</span>';
-           else if (!isFirstRender && movement < 0) moveIndicator = '<span class="sf-move-down">↓</span>';
+       if (sortedScores.length === 0) {
+            dashboardHTML += "<p class='muted-text' style='padding: 10px;'>Keep rating traits!</p>";
+       } else {
+            // Prepare previous positions for move indicators
+            const previousPositions = {};
+            if (this.sfPreviousScores) {
+                 Object.entries(this.sfPreviousScores)
+                    .filter(([style, score]) => score > 0.1) // Consider only previously shown styles
+                    .sort((a, b) => b[1] - a[1])
+                    .forEach(([style, score], index) => {
+                        previousPositions[style] = index;
+                    });
+            }
 
-           const prevScore = this.sfPreviousScores ? (this.sfPreviousScores[style] || 0) : 0;
-           const delta = score - prevScore;
-           let deltaDisplay = '';
-           // Add delta display only if not the first render and delta is significant
-           if (!isFirstRender && Math.abs(delta) > 0.1) {
-               deltaDisplay = `<span class="sf-score-delta ${delta > 0 ? 'positive' : 'negative'}">${delta > 0 ? '+' : ''}${delta.toFixed(1)}</span>`;
-           }
+            const isFirstRender = !this.sfHasRenderedDashboard;
+            const styleIcons = this.getStyleIcons(); // Use helper method
 
-           const animationClass = isFirstRender ? 'sf-fade-in' : ''; // Use class for animation
-           dashboardHTML += `
-               <div class="sf-dashboard-item ${animationClass}">
-                   <span class="sf-style-name">${styleIcons[style] || '🌟'} ${this.escapeHTML(style)}</span>
-                   <span class="sf-dashboard-score">${score.toFixed(1)} ${deltaDisplay} ${moveIndicator}</span>
-               </div>
-           `;
-       });
+            sortedScores.forEach(([style, score], index) => {
+                const prevPos = previousPositions[style] !== undefined ? previousPositions[style] : index; // If new, assume current pos
+                const movement = prevPos - index;
+                let moveIndicator = '';
+                // Add move indicator only if not the first render and there was movement
+                if (!isFirstRender && movement > 0) moveIndicator = '<span class="sf-move-up">↑</span>';
+                else if (!isFirstRender && movement < 0) moveIndicator = '<span class="sf-move-down">↓</span>';
+
+                const prevScore = this.sfPreviousScores ? (this.sfPreviousScores[style] || 0) : 0;
+                const delta = score - prevScore;
+                let deltaDisplay = '';
+                // Add delta display only if not the first render and delta is significant
+                if (!isFirstRender && Math.abs(delta) > 0.1) {
+                    deltaDisplay = `<span class="sf-score-delta ${delta > 0 ? 'positive' : 'negative'}">${delta > 0 ? '+' : ''}${delta.toFixed(1)}</span>`;
+                }
+
+                const animationClass = isFirstRender ? 'sf-fade-in' : ''; // Use class for animation
+                dashboardHTML += `
+                    <div class="sf-dashboard-item ${animationClass}">
+                        <span class="sf-style-name">${styleIcons[style] || '🌟'} ${this.escapeHTML(style)}</span>
+                        <span class="sf-dashboard-score">${score.toFixed(1)} ${deltaDisplay} ${moveIndicator}</span>
+                    </div>
+                `;
+            });
+       }
 
        this.elements.sfDashboard.innerHTML = dashboardHTML;
-       this.sfPreviousScores = { ...scores }; // Store current scores for next update
-       this.sfHasRenderedDashboard = true;
+       this.sfPreviousScores = { ...scores }; // Store current scores for next update's comparison
+       this.sfHasRenderedDashboard = true; // Mark that dashboard has rendered at least once
    }
 
 
   sfCalculateResult() { // Renamed from calculateStyleFinderResult
       this.sfScores = this.sfComputeScores(); // Use the consistent scoring method
       const totalAnswers = Object.keys(this.sfAnswers.traits).length;
-      if (totalAnswers === 0) return; // Avoid division by zero
+      if (totalAnswers === 0) return; // Avoid issues if no answers
 
-      // Optional: Normalize scores to a percentage or other scale if desired
-      // Example normalization (0-100):
-      // Find max possible score for normalization (e.g., total traits * max rating * weight)
-      // const maxPossibleScore = totalAnswers * 10 * 1.5;
-      // if (maxPossibleScore > 0) {
-      //     Object.keys(this.sfScores).forEach(style => {
-      //         this.sfScores[style] = (this.sfScores[style] / maxPossibleScore) * 100;
-      //     });
-      // }
+       // Optional Normalization: Convert raw scores to percentage if desired
+       // let maxPossibleScore = 0;
+       // this.sfTraitSet.forEach(trait => {
+       //     this.sfStyles[this.sfRole].forEach(style => {
+       //         const keyTraits = this.sfStyleKeyTraits[style] || [];
+       //         if (keyTraits.includes(trait.name)) {
+       //              // Calculate max contribution for this trait to any style
+       //              // Assuming max rating is 10 and weight is 1.5
+       //              maxPossibleScore += 10 * 1.5;
+       //              // Note: This simplistic max score might overestimate if traits overlap heavily
+       //              // A more accurate max would consider the highest score one style *could* get
+       //         }
+       //     });
+       // });
+       // if (maxPossibleScore > 0) {
+       //     Object.keys(this.sfScores).forEach(style => {
+       //         this.sfScores[style] = Math.min(100, (this.sfScores[style] / maxPossibleScore) * 100); // Cap at 100%
+       //     });
+       // }
+
        console.log("Final Scores Calculated:", this.sfScores);
   }
-
-   // Note: sfGenerateSummaryDashboard removed as sfUpdateDashboard now handles the display logic during steps.
 
   sfShowFeedback(message) { // Renamed from showFeedback
       if (!this.elements.sfFeedback) return;
@@ -740,6 +1045,10 @@ class TrackerApp {
   }
 
   sfShowTraitInfo(traitName) { // Renamed from showTraitInfo
+      if (!traitName) {
+           console.error("Cannot show trait info: traitName is missing.");
+           return;
+      }
       const explanation = this.sfTraitExplanations[traitName] || "No extra info available for this trait!";
       // Create a popup dynamically
       const popup = document.createElement('div');
@@ -756,6 +1065,10 @@ class TrackerApp {
   }
 
   sfShowFullDetails(styleName) { // Renamed from showFullDetails
+      if (!styleName) {
+          console.error("Cannot show full details: styleName is missing.");
+          return;
+      }
       const descData = this.sfStyleDescriptions[styleName];
       const matchData = this.sfDynamicMatches[styleName];
 
@@ -765,7 +1078,7 @@ class TrackerApp {
       }
 
       const popup = document.createElement('div');
-      popup.className = 'sf-style-info-popup wide-popup'; // wide-popup might be needed
+      popup.className = 'sf-style-info-popup wide-popup'; // Use wider popup class if defined
       popup.innerHTML = `
           <h3>${this.escapeHTML(styleName)}</h3>
           <p><strong>${this.escapeHTML(descData.short)}</strong></p>
@@ -798,7 +1111,7 @@ class TrackerApp {
         };
     }
 
-   applyStyleFinderResult(r, s) { // Kept from newer code, adjusted slightly
+   applyStyleFinderResult(r, s) {
         console.log(`Applying SF Result: Role=${r}, Style=${s}`);
         if (!r || !s || !this.elements.role || !this.elements.style) {
              console.error("Cannot apply style - role/style element missing or invalid arguments.");
@@ -818,8 +1131,7 @@ class TrackerApp {
                 console.log(`Style dropdown set to: ${this.elements.style.value}`);
             } else {
                 console.warn(`Style "${s}" not found in dropdown for role "${r}". Style not set automatically.`);
-                // Optionally clear the style dropdown or leave it as is
-                 this.elements.style.value = ''; // Clear style if not found
+                this.elements.style.value = ''; // Clear style if not found
             }
 
             this.renderTraits(r, this.elements.style.value); // Render traits based on potentially cleared style
@@ -839,7 +1151,6 @@ class TrackerApp {
   openModal(mE){if(!mE)return;mE.style.display='flex';const f=mE.querySelector('button,[href],input:not([type="hidden"]),select,textarea,[tabindex]:not([tabindex="-1"])');if(f)requestAnimationFrame(()=>f.focus());}
   closeModal(mE){if(!mE)return;mE.style.display='none';}
   getIntroForStyle(sN){const k=sN?.toLowerCase().replace(/\(.*?\)/g,'').replace(/ \/ /g,'/').trim()||'';const i={"submissive":"Welcome! ✨","brat":"Hehe! 😉","slave":"Devotion awaits. 🙏","switch":"Dance between! ↔️","pet":"Head pats! 💖","little":"Playtime! 🧸","puppy":"Woof! 🦴","kitten":"Meow? 🧶","princess":"Adore me! 👑","rope bunny":"Tangled fun! 🎀","masochist":"Sensation seeker! 🔥","prey":"Chase me! 🦊","toy":"Play time! 🎁","doll":"Strike a pose! 💖","bunny":"Gentle heart! 🐇","servant":"At your service! 🧹","playmate":"Adventure time! 🎉","babygirl":"Cherish me! 😉","captive":"Caught again? ⛓️","thrall":"Connect deeply. 🌀","puppet":"Dance! 🎭","maid":"Sparkle & shine! ✨","painslut":"Revel in intensity! 🔥","bottom":"Receive & connect. 💖","dominant":"Lead & inspire! 🔥","assertive":"Speak truth! 💪","nurturer":"Support & uplift! 🌸","strict":"Order & structure! ⚖️","master":"Shape your domain! 🏰","mistress":"Rule with grace! 👑","daddy":"Protect & guide! 🧸","mommy":"Nurture & love! 💖","owner":"Claim & cherish! 🐾","rigger":"Bind beauty! 🎨","sadist":"Explore sensation! 🔥","hunter":"Thrill of pursuit! 🐺","trainer":"Cultivate potential! 🏆","puppeteer":"Direct performance! 🎭","protector":"Defend & ensure safety! 🛡️","disciplinarian":"Maintain order! 👨‍⚖️","caretaker":"Ensure well-being! ❤️‍🩹","sir":"Lead with honor! 🎩","goddess":"Inspire worship! ✨","commander":"Lead the charge! 🎖️"};return i[k]||"Explore expression!";}
-   // showTraitInfo already exists for the main form, sfShowTraitInfo is used for style finder
 
 } // --- END OF TrackerApp CLASS ---
 
@@ -852,5 +1163,5 @@ try {
     console.log("SCRIPT END: KinkCompass App Initialized Successfully.");
 } catch (error) {
     console.error("Fatal error during App initialization:", error);
-    document.body.innerHTML = `<div style="padding: 2em; margin: 2em; border: 2px solid red; background: #fff0f0; color: #333;"> <h1 style="color: red;">Oops! Failed to Start</h1> <p>Error: ${error.message}. Check console (F12).</p> </div>`;
+    document.body.innerHTML = `<div style="padding: 2em; margin: 2em; border: 2px solid red; background: #fff0f0; color: #333;"> <h1 style="color: red;">Oops! Failed to Start</h1> <p>Error: ${error.message}. Check console (F12).</p> <pre>${error.stack}</pre> </div>`; // Added stack trace
 }
