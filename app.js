@@ -1,4 +1,373 @@
-  // --- Event Handlers ---
+
+// === app.js === (REGENERATED - COMPLETE)
+
+import { bdsmData } from './data.js';
+import { getStyleBreakdown as getSubBreakdown } from './paraphrasing_sub.js';
+import { getStyleBreakdown as getDomBreakdown } from './paraphrasing_dom.js';
+import { glossaryTerms } from './glossary.js';
+import { getRandomPrompt } from './prompts.js';
+import { achievementList, hasAchievement, grantAchievement } from './achievements.js';
+
+// Chart.js and Confetti loaded via CDN
+
+class TrackerApp {
+  constructor() {
+    console.log("CONSTRUCTOR: Starting KinkCompass App...");
+    this.people = [];
+    this.previewPerson = null;
+    this.currentEditId = null;
+    this.chartInstance = null;
+    this.notificationTimer = null; // Timer for notifications
+
+    // --- Style Finder State ---
+    this.sfActive = false;
+    this.sfStep = 0;
+    this.sfRole = null;
+    this.sfAnswers = { traits: {} };
+    this.sfScores = {};
+    this.sfPreviousScores = {};
+    this.sfHasRenderedDashboard = false;
+    this.sfTraitSet = [];
+    this.sfSteps = [];
+
+    // --- Style Finder Data Structures ---
+    this.sfStyles = {
+      submissive: [ 'Classic Submissive', 'Brat', 'Slave', 'Pet', 'Little', 'Puppy', 'Kitten', 'Princess', 'Rope Bunny', 'Masochist', 'Prey', 'Toy', 'Doll', 'Bunny', 'Servant', 'Playmate', 'Babygirl', 'Captive', 'Thrall', 'Puppet', 'Maid', 'Painslut', 'Bottom' ],
+      dominant: [ 'Classic Dominant', 'Assertive', 'Nurturer', 'Strict', 'Master', 'Mistress', 'Daddy', 'Mommy', 'Owner', 'Rigger', 'Sadist', 'Hunter', 'Trainer', 'Puppeteer', 'Protector', 'Disciplinarian', 'Caretaker', 'Sir', 'Goddess', 'Commander' ]
+    };
+    this.sfSubFinderTraits = [
+      { name: 'obedience', desc: 'How much do you enjoy following instructions or rules given by someone you trust?' }, { name: 'rebellion', desc: 'Do you find it fun to playfully resist or tease when someone tries to guide you?' }, { name: 'service', desc: 'Does it feel rewarding to assist or do tasks that make someone else happy?' }, { name: 'playfulness', desc: 'How much do you love engaging in silly games or lighthearted mischief?' }, { name: 'sensuality', desc: 'Do soft touches, textures, or physical sensations light up your senses?' }, { name: 'exploration', desc: 'Are you excited by the idea of trying new experiences or stepping into the unknown?' }, { name: 'devotion', desc: 'Does being deeply loyal and committed to someone bring you a sense of fulfillment?' }, { name: 'innocence', desc: 'Do you enjoy feeling carefree, pure, or even a bit childlike in your interactions?' }, { name: 'mischief', desc: 'How much do you like stirring things up with a cheeky prank or playful trouble?' }, { name: 'affection', desc: 'Do you crave physical closeness, like hugs or cuddles, to feel connected?' }, { name: 'painTolerance', desc: 'Does a little sting or discomfort excite you, or do you prefer to avoid it?' }, { name: 'submissionDepth', desc: 'How much do you enjoy letting go completely and giving someone full control?' }, { name: 'dependence', desc: 'Do you feel comforted and secure when you can rely on someone else to guide you?' }, { name: 'vulnerability', desc: 'Does opening up emotionally and being exposed feel natural and right to you?' }, { name: 'adaptability', desc: 'How easily can you switch between different roles or adjust to new expectations?' }, { name: 'tidiness', desc: 'Do you take pride in keeping things neat, clean, and perfectly organized for someone?' }, { name: 'politeness', desc: 'Does being courteous and respectful in your actions come naturally to you?' }, { name: 'craving', desc: 'Do you actively seek out intense sensations or experiences that push your limits?' }, { name: 'receptiveness', desc: 'How open are you to receiving direction, sensations, or guidance from someone else?' }
+    ];
+    this.sfSubTraitFootnotes = { obedience: "1: Rarely follows / 10: Always obeys", rebellion: "1: Very compliant / 10: Loves to resist", service: "1: Self-focused / 10: Service-driven", playfulness: "1: Serious / 10: Super playful", sensuality: "1: Not sensory / 10: Highly sensual", exploration: "1: Stays safe / 10: Seeks adventure", devotion: "1: Independent / 10: Deeply devoted", innocence: "1: Mature / 10: Very innocent", mischief: "1: Calm / 10: Mischievous", affection: "1: Distant / 10: Super affectionate", painTolerance: "1: Avoids pain / 10: Loves pain", submissionDepth: "1: Light submission / 10: Total surrender", dependence: "1: Self-reliant / 10: Loves guidance", vulnerability: "1: Guarded / 10: Fully open", adaptability: "1: Fixed role / 10: Very versatile", tidiness: "1: Messy and carefree / 10: Obsessed with order", politeness: "1: Casual and blunt / 10: Always courteous", craving: "1: Avoids intensity / 10: Seeks extreme thrills", receptiveness: "1: Closed off / 10: Fully open to input" };
+    this.sfDomFinderTraits = [
+      { name: 'authority', desc: 'Do you feel strong when you take charge?' }, { name: 'confidence', desc: 'Are you sure of your decisions?' }, { name: 'discipline', desc: 'Do you enjoy setting firm rules?' }, { name: 'boldness', desc: 'Do you dive into challenges fearlessly?' }, { name: 'care', desc: 'Do you love supporting and protecting others?' }, { name: 'empathy', desc: 'Do you tune into others’ feelings easily?' }, { name: 'control', desc: 'Do you thrive on directing every detail?' }, { name: 'creativity', desc: 'Do you enjoy crafting unique scenes?' }, { name: 'precision', desc: 'Are you careful with every step you take?' }, { name: 'intensity', desc: 'Do you bring fierce energy to what you do?' }, { name: 'sadism', desc: 'Does giving a little pain excite you?' }, { name: 'leadership', desc: 'Do you naturally guide others forward?' }, { name: 'possession', desc: 'Do you feel pride in owning what’s yours?' }, { name: 'patience', desc: 'Are you calm while teaching or training?' }, { name: 'dominanceDepth', desc: 'Do you crave total power in a scene?' }
+    ];
+    this.sfDomTraitFootnotes = { authority: "1: Gentle / 10: Very commanding", confidence: "1: Hesitant / 10: Rock-solid", discipline: "1: Relaxed / 10: Strict", boldness: "1: Cautious / 10: Fearless", care: "1: Detached / 10: Deeply caring", empathy: "1: Distant / 10: Highly intuitive", control: "1: Hands-off / 10: Total control", creativity: "1: Routine / 10: Very creative", precision: "1: Casual / 10: Meticulous", intensity: "1: Soft / 10: Intense", sadism: "1: Avoids pain / 10: Enjoys giving pain", leadership: "1: Follower / 10: Natural leader", possession: "1: Shares / 10: Very possessive", patience: "1: Impatient / 10: Very patient", dominanceDepth: "1: Light control / 10: Full dominance" };
+    this.sfSliderDescriptions = {
+      obedience: [ "You dodge orders like a breeze!", "Rules? You’re too free for that!", "You’ll follow if it’s fun!", "A little “yes” slips out sometimes!", "You’re cool with gentle guidance!", "Following feels kinda nice!", "You like pleasing when asked!", "Obeying’s your quiet joy!", "You love a sweet “please”!", "You glow when you say “yes”!" ],
+      rebellion: [ "You’re too sweet to say no!", "A tiny “nah” sneaks out!", "You nudge rules with a smile!", "Teasing’s your little game!", "Half yes, half no—cute!", "You push back with charm!", "Defiance is your sparkle!", "You love a playful “no”!", "Rebel vibes all the way!", "You’re a cheeky star!" ],
+      service: [ "Helping? You’re too chill!", "A quick favor’s enough!", "You help if they’re sweet!", "You pitch in when it’s easy!", "Serving’s okay sometimes!", "You like making them smile!", "Helping’s your happy place!", "You love a kind task!", "You’re a service sweetie!", "Caring’s your superpower!" ],
+      playfulness: [ "Serious is your vibe!", "A giggle slips out!", "You play if it’s light!", "Half serious, half silly!", "You’re warming up to fun!", "Playtime’s your joy!", "You bounce with glee!", "Silly’s your middle name!", "You’re a playful whirlwind!", "Games are your world!" ],
+      sensuality: [ "Touch? Not your thing!", "A soft pat’s okay!", "You like a little feel!", "Textures are kinda neat!", "You’re into soft vibes!", "Silk makes you happy!", "You love a sensory tickle!", "Touch is your bliss!", "You’re all about feels!", "Sensory queen!" ],
+      exploration: [ "Safe is your spot!", "A tiny step out—shy!", "You peek at new stuff!", "You’ll try if it’s safe!", "Half cozy, half curious!", "New things excite you!", "You chase the unknown!", "Adventure’s your jam!", "You’re a bold explorer!", "Nothing stops you!" ],
+      devotion: [ "Free and solo!", "A bit of heart shows!", "You care if they’re near!", "Half free, half true!", "You’re warming up!", "Devotion’s your glow!", "You’re all in soft!", "Loyalty’s your core!", "You’re a devotion gem!", "Total soulmate!" ],
+      innocence: [ "Wise beyond your years!", "A bit of wonder peeks out!", "You’re half grown, half kid!", "Silly feels nice sometimes!", "You’re dipping into cute!", "Innocence is your vibe!", "You’re a sweet dreamer!", "Giggles are your song!", "You’re pure sunshine!", "Total kid at heart!" ],
+      mischief: [ "Too good for tricks!", "A tiny prank slips!", "You stir if it’s safe!", "Half calm, half cheeky!", "You’re a sneaky spark!", "Mischief’s your game!", "You love a little chaos!", "Trouble’s your friend!", "You’re a mischief pro!", "Chaos queen!" ],
+      affection: [ "Hugs? Not really!", "A quick cuddle’s fine!", "You like a soft touch!", "Half aloof, half warm!", "You’re into snuggles!", "Cuddles are your joy!", "You love closeness!", "Affection’s your glow!", "You’re a hug star!", "Total love bug!" ],
+      painTolerance: [ "You tire out quick!", "A little push is enough!", "You last if it’s fun!", "You’re steady for a bit!", "Halfway there—nice!", "You keep going strong!", "Endurance is your thing!", "You’re tough and ready!", "You never stop—wow!", "Marathon champ!" ],
+      submissionDepth: [ "You’re free as a bird!", "A little give peeks out!", "You bend if it’s chill!", "Half you, half them!", "You’re easing in!", "Surrender’s kinda fun!", "You dive in soft!", "Control’s theirs—yay!", "You’re all theirs!", "Total trust star!" ],
+      dependence: [ "Solo’s your jam!", "A lean slips in!", "You lean if they’re nice!", "Half free, half clingy!", "You’re okay with help!", "Relying feels good!", "You love their lead!", "They’re your rock!", "You’re a lean-in pro!", "Total trust buddy!" ],
+      vulnerability: [ "Walls up high!", "A peek slips out!", "You share if safe!", "Half guarded, half open!", "You’re softening up!", "Open’s your vibe!", "You bare it soft!", "Heart’s wide open!", "You’re a trust gem!", "Total soul sharer!" ],
+      adaptability: [ "One way—you’re set!", "A tiny switch is fine!", "You bend a little!", "Half fixed, half fluid!", "You’re okay with change!", "Switching’s easy!", "You roll with it!", "Flex is your strength!", "You flip like a pro!", "Total chameleon!" ],
+      tidiness: [ "Chaos is your friend!", "A little mess is fine!", "You tidy if asked nicely!", "Order’s okay sometimes!", "You like things neat-ish!", "Cleanliness feels good!", "You love a tidy space!", "Order is your joy!", "Spotless is your vibe!", "Perfection in every corner!" ],
+      politeness: [ "You’re blunt and bold!", "A bit gruff but sweet!", "Polite if it’s easy!", "You’re nice when needed!", "Courtesy’s your thing!", "You’re a polite gem!", "Manners shine bright!", "Respect is your core!", "You’re super courteous!", "Politeness queen!" ],
+      craving: [ "Calm is your zone!", "A tiny thrill is enough!", "You dip into intensity!", "Half chill, half wild!", "You like a strong spark!", "Intensity calls you!", "You chase the edge!", "Thrills are your fuel!", "You crave the extreme!", "Limitless seeker!" ],
+      receptiveness: [ "You’re your own guide!", "A bit open if safe!", "You listen if it’s clear!", "Half closed, half open!", "You’re warming up!", "Openness feels right!", "You take it all in!", "Guidance is welcome!", "You’re a receiver pro!", "Totally in tune!" ],
+      authority: [ "Soft and shy!", "A little lead peeks!", "You guide if asked!", "Half gentle, half firm!", "You’re stepping up!", "Authority’s your vibe!", "You lead with ease!", "You’re a strong guide!", "Boss mode on!", "Total commander!" ],
+      confidence: [ "Quiet and unsure!", "A bit of bold shows!", "You’re sure if it’s easy!", "Half shy, half steady!", "You’re growing bold!", "Confidence shines!", "You trust your gut!", "You’re rock solid!", "Bold and bright!", "Total powerhouse!" ],
+      discipline: [ "Free and wild!", "A rule slips in!", "You set soft lines!", "Half loose, half tight!", "You’re liking order!", "Discipline’s your jam!", "You keep it firm!", "Rules are your strength!", "You’re super strict!", "Total control!" ],
+      boldness: [ "Careful and calm!", "A risk peeks out!", "You leap if safe!", "Half shy, half daring!", "You’re getting brave!", "Boldness is you!", "You dive right in!", "Fearless vibes!", "You’re a bold star!", "Total daredevil!" ],
+      care: [ "Cool and aloof!", "A care slips out!", "You help if asked!", "Half chill, half warm!", "You’re a soft guide!", "Nurturing’s your glow!", "You protect with love!", "Care is your core!", "You’re a warm star!", "Total nurturer!" ],
+      empathy: [ "Distant and chill!", "A feel peeks out!", "You get it if clear!", "Half aloof, half tuned!", "You’re sensing more!", "Empathy’s your gift!", "You feel it all!", "You’re in sync!", "You’re a heart reader!", "Total intuitive!" ],
+      control: [ "Free and open!", "A claim slips out!", "You hold if sweet!", "Half share, half mine!", "You’re liking it!", "Control’s your vibe!", "You claim with pride!", "Yours is yours!", "You’re a keeper!", "Total owner!" ],
+      creativity: [ "Simple’s your way!", "A spark pops up!", "You craft if quick!", "Half plain, half wild!", "You’re sparking up!", "Creativity flows!", "You make magic!", "Ideas are your joy!", "You’re a vision star!", "Total creator!" ],
+      precision: [ "Loose and free!", "A bit neat’s fine!", "You care if fast!", "Half sloppy, half sharp!", "You’re getting exact!", "Precision’s your thing!", "You nail it all!", "Every step’s perfect!", "You’re a detail whiz!", "Total master!" ],
+      intensity: [ "Soft and mellow!", "A flare sneaks out!", "You heat if safe!", "Half calm, half fierce!", "You’re turning up!", "Intensity’s your spark!", "You bring the blaze!", "Fierce is your vibe!", "You’re a fire star!", "Total storm!" ],
+      sadism: [ "Soft and sweet!", "A tease slips in!", "You push a little!", "Half gentle, half wild!", "You’re testing it!", "Pain’s your play!", "You love the sting!", "Thrill’s your game!", "You’re a spicy star!", "Total edge master!" ],
+      leadership: [ "Soft and shy!", "A lead peeks out!", "You guide if asked!", "Half gentle, half firm!", "You’re stepping up!", "Leading’s your vibe!", "You steer with ease!", "You’re a bold guide!", "Leader mode on!", "Total captain!" ],
+      possession: [ "Free and open!", "A claim slips out!", "You hold if sweet!", "Half share, half mine!", "You’re liking it!", "Possession’s your vibe!", "You claim with pride!", "Yours is yours!", "You’re a keeper!", "Total owner!" ],
+      patience: [ "Fast and now!", "A wait slips in!", "You chill if quick!", "Half rush, half calm!", "You’re cooling down!", "Patience is you!", "You wait with grace!", "Calm’s your strength!", "You’re a zen star!", "Total peace!" ],
+      dominanceDepth: [ "Light and free!", "A hold peeks out!", "You lead if easy!", "Half soft, half firm!", "You’re taking charge!", "Power’s your glow!", "You rule with ease!", "Control’s your core!", "You’re a power gem!", "Total ruler!" ]
+    };
+    this.sfTraitExplanations = {
+      obedience: "How much you enjoy following instructions or rules. High = loves obeying; Low = prefers independence.", rebellion: "How much you like playfully resisting or teasing. High = loves defiance; Low = compliant.", service: "Joy derived from helping or performing tasks for others. High = service-driven; Low = self-focused.", playfulness: "Love for silly games, humor, and lightheartedness. High = very playful; Low = serious.", sensuality: "Appreciation for physical sensations, textures, touch. High = very sensory; Low = less focused on touch.", exploration: "Eagerness to try new experiences or push boundaries. High = adventurous; Low = prefers familiarity.", devotion: "Depth of loyalty and commitment to a partner. High = deeply devoted; Low = more independent.", innocence: "Enjoyment of feeling carefree, childlike, or pure. High = embraces innocence; Low = more mature.", mischief: "Enjoyment of stirring things up, pranks, or playful trouble. High = loves mischief; Low = calm.", affection: "Need for physical closeness, cuddles, and reassurance. High = very affectionate; Low = prefers space.", painTolerance: "How you perceive and react to physical discomfort or pain. High = finds interest/pleasure; Low = avoids pain.", submissionDepth: "Willingness to yield control to a partner. High = enjoys total surrender; Low = prefers light guidance.", dependence: "Comfort level in relying on a partner for guidance or decisions. High = enjoys dependence; Low = self-reliant.", vulnerability: "Ease and willingness to show emotional softness or weakness. High = very open; Low = guarded.", adaptability: "Ability to switch between roles or adjust to changing dynamics. High = very flexible; Low = prefers consistency.", tidiness: "Satisfaction derived from neatness and order. High = very tidy; Low = comfortable with mess.", politeness: "Natural inclination towards courteous and respectful behavior. High = very polite; Low = more direct/casual.", craving: "Desire for intense, extreme, or peak sensations/experiences. High = seeks intensity; Low = prefers calm.", receptiveness: "Openness to receiving direction, input, or sensation. High = very receptive; Low = more closed off.", authority: "Natural inclination and comfort in taking charge or leading. High = commanding; Low = prefers following.", confidence: "Self-assuredness in decisions and actions within a dynamic. High = very confident; Low = hesitant.", discipline: "Enjoyment in setting and enforcing rules or structure. High = strict; Low = relaxed.", boldness: "Willingness to take risks or face challenges head-on. High = fearless; Low = cautious.", care: "Focus on supporting, protecting, and nurturing a partner. High = deeply caring; Low = more detached.", empathy: "Ability to understand and connect with a partner's feelings. High = very empathetic; Low = more analytical.", control: "Desire to manage details, actions, or the environment. High = loves control; Low = prefers flow.", creativity: "Enjoyment in crafting unique scenarios, tasks, or experiences. High = very inventive; Low = prefers routine.", precision: "Focus on executing actions or commands meticulously. High = very precise; Low = more casual.", intensity: "The level of emotional or physical energy brought to the dynamic. High = very intense; Low = gentle.", sadism: "Deriving pleasure from consensually inflicting pain or discomfort. High = enjoys inflicting; Low = avoids inflicting.", leadership: "Natural ability to guide, direct, and inspire others. High = strong leader; Low = follower.", possession: "Feeling of ownership or strong connection ('mine') towards a partner. High = very possessive; Low = less possessive.", patience: "Ability to remain calm while guiding, teaching, or waiting. High = very patient; Low = impatient.", dominanceDepth: "Desire for the level of influence or control over a partner. High = seeks total influence; Low = prefers light control."
+    };
+    this.sfStyleDescriptions = {
+      'Classic Submissive': { short: "Thrives on guidance and trust.", long: "Finds joy in yielding to a partner's direction, embracing vulnerability and structure.", tips: ["Communicate limits clearly.", "Find a respectful partner.", "Explore submission levels."] },
+      Brat: { short: "Cheeky, loves playful resistance.", long: "Delights in witty defiance and earning 'consequences' through charm.", tips: ["Keep it fun.", "Partner needs humor.", "Define hard limits."] },
+      Slave: { short: "Fulfilled by devotion and service.", long: "Deeply committed, often embracing high control and structure with immense trust.", tips: ["Negotiate everything.", "Partner must value devotion.", "Prioritize self-care."] },
+      Pet: { short: "Loves care like a cherished companion.", long: "Revels in affection, play, often adopting animal traits in a caring dynamic.", tips: ["Choose a persona.", "Seek a caring Owner.", "Enjoy the play."] },
+      Little: { short: "Embraces a carefree, childlike spirit.", long: "Finds joy in innocence, dependence, seeking nurturing and playful protection.", tips: ["Set age boundaries.", "Find a caring partner.", "Explore playfully."] },
+      Puppy: { short: "Playful, loyal, eager to please.", long: "Brings boundless energy and affection, thriving on play and devoted training.", tips: ["Embrace enthusiasm.", "Seek a Trainer/Owner.", "Keep it safe."] },
+      Kitten: { short: "Sensual, curious, mischievous.", long: "Blends sensuality with playful mischief, enjoying affection and tender teasing.", tips: ["Use your charm.", "Find a patient partner.", "Explore senses."] },
+      Princess: { short: "Adores being pampered and centre stage.", long: "Revels in attention, care, embracing a regal yet dependent role.", tips: ["State needs clearly.", "Seek a doting partner.", "Enjoy the spotlight."] },
+      'Rope Bunny': { short: "Loves the art and sensation of rope.", long: "Finds excitement in bondage aesthetics and surrender, requiring trust.", tips: ["Learn safety!", "Pair with skilled Rigger.", "Explore ties."] },
+      Masochist: { short: "Finds pleasure/release through pain.", long: "Embraces discomfort within trust, often paired with submission.", tips: ["Use safewords!", "Find caring Sadist.", "Know your limits."] },
+      Prey: { short: "Enjoys the thrill of the chase.", long: "Thrives on pursuit dynamics, finding excitement in vulnerability and capture.", tips: ["Clear consent is vital.", "Pair with Hunter.", "Enjoy the adrenaline."] },
+      Toy: { short: "Loves being used and played with.", long: "Delights in being an object of pleasure, offering adaptability and submission.", tips: ["Communicate preferences.", "Find creative partner.", "Embrace the role."] },
+      Doll: { short: "Enjoys being perfectly posed and admired.", long: "Finds fulfillment in being molded, blending vulnerability with aesthetic focus.", tips: ["Set comfort limits.", "Seek a Puppeteer/Owner.", "Enjoy transformation."] },
+      Bunny: { short: "Gentle, shy, and easily startled.", long: "Brings innocence and quiet energy, thriving on soft affection.", tips: ["Communicate needs gently.", "Find patient partner.", "Embrace softness."] },
+      Servant: { short: "Finds joy in dutiful service.", long: "Dedicated to partner’s needs, finding satisfaction in obedience and tasks.", tips: ["Define duties clearly.", "Seek respectful Dom.", "Balance service/self."] },
+      Playmate: { short: "Loves shared fun and adventure.", long: "Brings camaraderie, enjoying dynamics filled with games and exploration.", tips: ["Keep communication open.", "Find playful partner.", "Explore together."] },
+      Babygirl: { short: "Craves nurturing, affection, guidance.", long: "Blends innocence with dependence, seeking a caring, protective dynamic.", tips: ["Express needs.", "Find a Daddy/Mommy.", "Embrace vulnerability."] },
+      Captive: { short: "Relishes the thrill of capture/restraint.", long: "Enjoys intensity of surrender, requiring high trust and negotiation.", tips: ["Negotiate scenarios.", "Pair with ethical Hunter/Dom.", "Focus on safety."] },
+      Thrall: { short: "Bound by deep devotion/mental connection.", long: "Offers profound loyalty and submission, often with a focused mental state.", tips: ["Build trust deeply.", "Seek mindful Dom/Goddess.", "Explore connection."] },
+      Puppet: { short: "Loves being precisely directed.", long: "Thrives on responsiveness, moving to cues with adaptable surrender.", tips: ["Practice responsiveness.", "Find clear Puppeteer.", "Enjoy the flow."] },
+      Maid: { short: "Delights in order and polite service.", long: "Finds joy in creating a perfect environment with respectful duty.", tips: ["Focus on details.", "Seek appreciative Dom/Mistress.", "Enjoy the presentation."] },
+      Painslut: { short: "Craves intense sensation, pushes limits.", long: "Actively seeks strong sensations, finding exhilaration in intensity.", tips: ["Know your hard limits.", "Pair with skilled Sadist.", "Prioritize aftercare."] },
+      Bottom: { short: "Open to receiving sensation/direction.", long: "Excels at taking input, often with resilience for longer scenes.", tips: ["Communicate capacity.", "Find attentive Top.", "Pace yourself."] },
+      'Classic Dominant': { short: "Leads with confidence and care.", long: "Revels in control and responsibility, guiding partner's surrender with trust.", tips: ["Listen actively.", "Balance firmness/kindness.", "Learn safety."] },
+      Assertive: { short: "Leads with bold, clear direction.", long: "Takes charge confidently, thriving where clear authority shapes the scene.", tips: ["Be direct.", "Pair with receptive sub.", "Temper boldness."] },
+      Nurturer: { short: "Guides with warmth and empathy.", long: "Blends control with care, creating a supportive dynamic for growth.", tips: ["Be patient.", "Pair with Little/Pet.", "Foster safety."] },
+      Strict: { short: "Enforces rules with precision.", long: "Maintains order, finding satisfaction in structure and obedience.", tips: ["Set clear expectations.", "Pair with Slave/Servant.", "Reward compliance."] },
+      Master: { short: "Leads with deep authority/responsibility.", long: "Guides partner with control, care, and commitment in structured dynamics.", tips: ["Build trust.", "Understand partner.", "Negotiate terms."] },
+      Mistress: { short: "Commands with grace and power.", long: "Leads confidently, often blending sensuality with elegant, intense control.", tips: ["Embrace your power.", "Pair with Slave/Toy.", "Explore creativity."] },
+      Daddy: { short: "Protects and guides with firm love.", long: "Blends care with authority, offering structure in a loving, firm dynamic.", tips: ["Be consistent.", "Pair with Little/Babygirl.", "Balance discipline/affection."] },
+      Mommy: { short: "Nurtures and guides with warmth.", long: "Offers care and control, creating a safe space for partner's growth.", tips: ["Be patient.", "Pair with Little/Pet.", "Encourage growth."] },
+      Owner: { short: "Takes pride in possession and care.", long: "Finds fulfillment in control and responsibility, often in pet play or TPE.", tips: ["Set clear rules.", "Pair with Pet/Slave.", "Provide structure."] },
+      Rigger: { short: "Artist of restraint and sensation.", long: "Excels in bondage art, blending creativity with control and trust.", tips: ["Prioritize safety!", "Pair with Rope Bunny.", "Explore aesthetics."] },
+      Sadist: { short: "Finds joy in giving sensation with care.", long: "Enjoys inflicting discomfort consensually, focusing on intensity and connection.", tips: ["Negotiate limits!", "Pair with Masochist.", "Mandatory aftercare!"] },
+      Hunter: { short: "Thrives on the chase and capture.", long: "Enjoys pursuit dynamics, finding excitement in the thrill and surrender.", tips: ["Ensure enthusiastic consent.", "Pair with Prey.", "Enjoy the game safely."] },
+      Trainer: { short: "Guides with patience and structure.", long: "Focuses on teaching/molding partner, often involving behavior/skills.", tips: ["Be clear/consistent.", "Pair with Pet/Slave.", "Celebrate progress."] },
+      Puppeteer: { short: "Controls with creative precision.", long: "Enjoys directing every move, partner becomes extension of their will.", tips: ["Communicate vision.", "Pair with Doll/Toy.", "Explore artistry."] },
+      Protector: { short: "Leads with vigilance and strength.", long: "Blends authority with deep responsibility, ensuring partner feels safe.", tips: ["Be observant.", "Pair with Little/Pet.", "Foster trust."] },
+      Disciplinarian: { short: "Enforces rules with firm fairness.", long: "Excels at boundaries/order, enjoys guiding resistant or compliant partners.", tips: ["Be clear on rules/consequences.", "Stay patient/fair.", "Reward effort."] },
+      Caretaker: { short: "Nurtures and supports holistically.", long: "Provides safe space, often in age/pet play, ensuring well-being.", tips: ["Be attentive.", "Pair with Little/Pet.", "Encourage exploration."] },
+      Sir: { short: "Leads with honor and respect.", long: "Commands with authority and integrity, valuing tradition and structure.", tips: ["Uphold values.", "Pair with Submissive/Slave.", "Lead by example."] },
+      Goddess: { short: "Inspires worship and adoration.", long: "Embodies power/grace, partner offers devotion/service.", tips: ["Embrace your power.", "Pair with Thrall/Servant.", "Set high standards."] },
+      Commander: { short: "Leads with strategic control.", long: "Takes charge with precision/vision, often in complex scenes/dynamics.", tips: ["Plan scenarios.", "Pair with Switch/Submissive.", "Execute confidently."] }
+    };
+    this.sfDynamicMatches = {
+      'Classic Submissive': { dynamic: "Power Exchange", match: "Classic Dominant", desc: "Classic trust/guidance.", longDesc: "Mutual respect, clear roles." },
+      Brat: { dynamic: "Taming Play", match: "Disciplinarian/Strict", desc: "Fun push-pull.", longDesc: "Resistance meets control playfully." },
+      Slave: { dynamic: "Master/Slave", match: "Master/Mistress", desc: "Deep trust/devotion.", longDesc: "High power exchange, structure." },
+      Pet: { dynamic: "Pet Play", match: "Owner/Caretaker", desc: "Playful bond of care.", longDesc: "Affection and guidance define it." },
+      Little: { dynamic: "Age Play", match: "Caretaker/Daddy/Mommy", desc: "Nurturing innocence.", longDesc: "Care, trust, playful protection." },
+      Puppy: { dynamic: "Pup Play", match: "Trainer/Owner", desc: "Lively play/training.", longDesc: "Energy meets discipline playfully." },
+      Kitten: { dynamic: "Kitten Play", match: "Owner/Nurturer", desc: "Sensual, charming.", longDesc: "Charm meets gentle control." },
+      Princess: { dynamic: "Pampering Play", match: "Daddy/Sir/Caretaker", desc: "Regal care.", longDesc: "Spoiling meets structure/service." },
+      'Rope Bunny': { dynamic: "Bondage Play", match: "Rigger", desc: "Artistic restraint.", longDesc: "Trust, creativity, sensation focus." },
+      Masochist: { dynamic: "Sadomasochism", match: "Sadist", desc: "Thrilling sensation exchange.", longDesc: "Pain/pleasure balanced with trust." },
+      Prey: { dynamic: "Primal Play", match: "Hunter", desc: "Exhilarating chase.", longDesc: "Pursuit and surrender drive it." },
+      Toy: { dynamic: "Objectification Play", match: "Owner/Puppeteer", desc: "Playful usage.", longDesc: "Control and adaptability shine." },
+      Doll: { dynamic: "Transformation Play", match: "Puppeteer/Master", desc: "Creative shaping.", longDesc: "Aesthetic control and trust." },
+      Bunny: { dynamic: "Gentle Play", match: "Caretaker/Protector", desc: "Sweet, soft bond.", longDesc: "Innocence meets gentle care." },
+      Servant: { dynamic: "Service Play", match: "Master/Mistress/Sir", desc: "Structured duty.", longDesc: "Guidance meets respectful service." },
+      Playmate: { dynamic: "Adventure Play", match: "Playmate/Switch", desc: "Shared fun.", longDesc: "Equal footing in exploration." },
+      Babygirl: { dynamic: "Age Play", match: "Daddy/Mommy", desc: "Nurturing affection.", longDesc: "Guidance, love, protection." },
+      Captive: { dynamic: "Captivity Play", match: "Hunter/Master", desc: "Intense scenario.", longDesc: "Control/surrender with safety." },
+      Thrall: { dynamic: "Devotion/Worship", match: "Goddess/Master", desc: "Deep mental bond.", longDesc: "Loyalty meets command." },
+      Puppet: { dynamic: "Puppet Play", match: "Puppeteer", desc: "Precise control.", longDesc: "Adaptability meets direction." },
+      Maid: { dynamic: "Service Play", match: "Mistress/Sir/Master", desc: "Refined duty.", longDesc: "Order meets elegant command." },
+      Painslut: { dynamic: "Intense S/M", match: "Sadist", desc: "Fiery intensity.", longDesc: "Craving meets skillful delivery." },
+      Bottom: { dynamic: "Sensation/Power Play", match: "Classic Dominant/Sadist", desc: "Receptive endurance.", longDesc: "Openness meets various topping." },
+      'Classic Dominant': { dynamic: "Power Exchange", match: "Classic Submissive/Bottom", desc: "Balanced guidance.", longDesc: "Authority meets trust/receptivity." },
+      Assertive: { dynamic: "Assertive Control", match: "Classic Submissive/Servant", desc: "Clear direction.", longDesc: "Boldness meets willing follow." },
+      Nurturer: { dynamic: "Nurturing Care", match: "Little/Pet/Kitten", desc: "Warm support.", longDesc: "Care fosters comfort/growth." },
+      Strict: { dynamic: "Discipline Play", match: "Slave/Servant/Brat", desc: "Ordered structure.", longDesc: "Rules meet obedience/challenge." },
+      Master: { dynamic: "Master/Slave", match: "Slave/Servant", desc: "Deep authority.", longDesc: "Responsibility meets devotion." },
+      Mistress: { dynamic: "Mistress/Servant", match: "Servant/Slave/Toy", desc: "Elegant command.", longDesc: "Grace meets service/play." },
+      Daddy: { dynamic: "Daddy/Little", match: "Little/Babygirl/Princess", desc: "Protective guidance.", longDesc: "Firm care meets innocence." },
+      Mommy: { dynamic: "Mommy/Little", match: "Little/Pet", desc: "Loving structure.", longDesc: "Warmth meets playful dependence." },
+      Owner: { dynamic: "Owner/Pet", match: "Pet/Puppy/Kitten/Toy/Slave", desc: "Possessive care.", longDesc: "Control meets loyalty/utility." },
+      Rigger: { dynamic: "Bondage Play", match: "Rope Bunny", desc: "Artistic restraint.", longDesc: "Skill meets willing canvas." },
+      Sadist: { dynamic: "Sadomasochism", match: "Masochist/Painslut", desc: "Controlled intensity.", longDesc: "Infliction meets reception safely." },
+      Hunter: { dynamic: "Primal Play", match: "Prey/Captive", desc: "Thrilling pursuit.", longDesc: "Instinct meets playful fear." },
+      Trainer: { dynamic: "Training Play", match: "Puppy/Slave/Pet", desc: "Skill development.", longDesc: "Patience meets eagerness." },
+      Puppeteer: { dynamic: "Control Play", match: "Doll/Puppet/Toy", desc: "Creative direction.", longDesc: "Precision meets responsiveness." },
+      Protector: { dynamic: "Protection Play", match: "Little/Pet/Bunny", desc: "Steadfast safety.", longDesc: "Vigilance meets vulnerability." },
+      Disciplinarian: { dynamic: "Discipline Play", match: "Brat/Slave", desc: "Fair correction.", longDesc: "Structure meets challenge/compliance." },
+      Caretaker: { dynamic: "Caretaking Play", match: "Little/Pet/Bunny", desc: "Holistic support.", longDesc: "Nurturing meets dependence." },
+      Sir: { dynamic: "Sir/Submissive", match: "Classic Submissive/Servant", desc: "Respectful authority.", longDesc: "Honor meets duty/obedience." },
+      Goddess: { dynamic: "Worship Play", match: "Thrall/Slave", desc: "Reverent power.", longDesc: "Adoration meets command." },
+      Commander: { dynamic: "Command Play", match: "Classic Submissive/Servant/Switch", desc: "Strategic leadership.", longDesc: "Decisiveness meets execution." }
+    };
+    this.sfStyleKeyTraits = { // Ensure keys match Style Descriptions/Matches
+      'Classic Submissive': ['obedience', 'service', 'presentation', 'trust'], 'Brat': ['playful defiance', 'mischief', 'trust'], 'Slave': ['devotion', 'surrender', 'obedience', 'service'], 'Pet': ['affection seeking', 'playfulness', 'non-verbal expression', 'trust'], 'Little': ['age regression comfort', 'need for guidance', 'trust'], 'Puppy': ['boundless energy', 'trainability', 'obedience'], 'Kitten': ['curiosity', 'gracefulness', 'affection seeking'], 'Princess': ['desire for pampering', 'delegation tendency', 'innocence'], 'Rope Bunny': ['rope enthusiasm', 'patience during tying', 'sensuality'], 'Masochist': ['pain interpretation', 'sensation seeking', 'trust'], 'Prey': ['enjoyment of chase', 'fear play comfort', 'vulnerability'], 'Toy': ['objectification comfort', 'responsiveness to control', 'adaptability'], 'Doll': ['aesthetic focus', 'stillness / passivity', 'objectification comfort'], 'Bunny': ['shyness / skittishness', 'gentle affection need', 'innocence'], 'Servant': ['task focus', 'anticipating needs', 'obedience', 'politeness'], 'Playmate': ['enthusiasm for games', 'good sport', 'playfulness'], 'Babygirl': ['vulnerability expression', 'coquettishness', 'need for guidance'], 'Captive': ['struggle performance', 'acceptance of fate', 'vulnerability'], 'Thrall': ['mental focus', 'suggestibility', 'devotion'], 'Puppet': ['responsiveness to direction', 'passivity in control', 'adaptability'], 'Maid': ['attention to detail', 'uniformity', 'service'], 'Painslut': ['pain seeking', 'endurance display', 'craving'], 'Bottom': ['receptivity', 'power exchange focus', 'painTolerance'],
+      'Classic Dominant': ['leadership', 'control', 'authority', 'care'], 'Assertive': ['direct communication', 'boundary setting', 'authority'], 'Nurturer': ['emotional support', 'patience', 'care', 'empathy'], 'Strict': ['rule enforcement', 'discipline focus', 'authority'], 'Master': ['expectation setting', 'presence', 'authority', 'control'], 'Mistress': ['expectation setting', 'presence', 'authority', 'creativity'], 'Daddy': ['protective guidance', 'affectionate authority', 'care'], 'Mommy': ['nurturing comfort', 'gentle discipline', 'care'], 'Owner': ['possessiveness', 'behavioral training', 'control'], 'Rigger': ['rope technique', 'aesthetic vision', 'precision', 'care'], 'Sadist': ['sensation control', 'psychological focus', 'intensity', 'care'], 'Hunter': ['pursuit drive', 'instinct reliance', 'boldness'], 'Trainer': ['skill development focus', 'structured methodology', 'patience', 'discipline focus'], 'Puppeteer': ['fine motor control', 'objectification gaze', 'control', 'creativity'], 'Protector': ['vigilance', 'defensive instinct', 'care', 'authority'], 'Disciplinarian': ['consequence delivery', 'detachment during discipline', 'rule enforcement'], 'Caretaker': ['holistic well-being focus', 'rule implementation for safety', 'care'], 'Sir': ['formal demeanor', 'service expectation', 'authority'], 'Goddess': ['worship seeking', 'effortless command', 'presence'], 'Commander': ['strategic direction', 'decisiveness', 'leadership', 'authority']
+    };
+
+    // --- Element Mapping ---
+    this.elements = {
+      formSection: document.getElementById('form-section'),
+      name: document.getElementById('name'),
+      avatarDisplay: document.getElementById('avatar-display'),
+      avatarInput: document.getElementById('avatar-input'),
+      avatarPicker: document.querySelector('.avatar-picker'),
+      role: document.getElementById('role'),
+      style: document.getElementById('style'),
+      formStyleFinderLink: document.getElementById('form-style-finder-link'),
+      traitsContainer: document.getElementById('traits-container'),
+      traitInfoPopup: document.getElementById('trait-info-popup'),
+      traitInfoClose: document.getElementById('trait-info-close'),
+      traitInfoTitle: document.getElementById('trait-info-title'),
+      traitInfoBody: document.getElementById('trait-info-body'),
+      save: document.getElementById('save'),
+      clearForm: document.getElementById('clear-form'),
+      peopleList: document.getElementById('people-list'),
+      livePreview: document.getElementById('live-preview'),
+      modal: document.getElementById('detail-modal'),
+      modalBody: document.getElementById('modal-body'),
+      modalClose: document.getElementById('modal-close'),
+      resourcesBtn: document.getElementById('resources-btn'),
+      resourcesModal: document.getElementById('resources-modal'),
+      resourcesClose: document.getElementById('resources-close'),
+      resourcesBody: document.getElementById('resources-body'),
+      glossaryBtn: document.getElementById('glossary-btn'),
+      glossaryModal: document.getElementById('glossary-modal'),
+      glossaryClose: document.getElementById('glossary-close'),
+      glossaryBody: document.getElementById('glossary-body'),
+      styleDiscoveryBtn: document.getElementById('style-discovery-btn'),
+      styleDiscoveryModal: document.getElementById('style-discovery-modal'),
+      styleDiscoveryClose: document.getElementById('style-discovery-close'),
+      styleDiscoveryRoleFilter: document.getElementById('style-discovery-role'),
+      styleDiscoveryBody: document.getElementById('style-discovery-body'),
+      themesBtn: document.getElementById('themes-btn'),
+      themesModal: document.getElementById('themes-modal'),
+      themesClose: document.getElementById('themes-close'),
+      themesBody: document.getElementById('themes-body'),
+      exportBtn: document.getElementById('export-btn'),
+      importBtn: document.getElementById('import-btn'),
+      importFileInput: document.getElementById('import-file-input'),
+      themeToggle: document.getElementById('theme-toggle'),
+      styleFinderTriggerBtn: document.getElementById('style-finder-trigger-btn'),
+      sfModal: document.getElementById('style-finder-modal'),
+      sfCloseBtn: document.getElementById('sf-close-style-finder'),
+      sfProgressTracker: document.getElementById('sf-progress-tracker'),
+      sfStepContent: document.getElementById('sf-step-content'),
+      sfFeedback: document.getElementById('sf-feedback'),
+      sfDashboard: document.getElementById('sf-dashboard'),
+      detailModalTitle: document.getElementById('detail-modal-title'),
+      resourcesModalTitle: document.getElementById('resources-modal-title'),
+      glossaryModalTitle: document.getElementById('glossary-modal-title'),
+      styleDiscoveryTitle: document.getElementById('style-discovery-title'),
+      themesModalTitle: document.getElementById('themes-modal-title'),
+      sfModalTitle: document.getElementById('sf-modal-title'),
+      formTitle: document.getElementById('form-title'),
+    };
+
+    const criticalElements = ['name', 'role', 'style', 'save', 'peopleList', 'modal', 'sfModal', 'sfStepContent', 'styleFinderTriggerBtn', 'glossaryBody', 'resourcesBody', 'styleDiscoveryBody', 'themesBody', 'modalBody', 'livePreview', 'traitsContainer'];
+    let missingElement = false;
+    for (const key of criticalElements) { if (!this.elements[key]) { console.error(`Missing critical element: ID '${key}'`); missingElement = true; } }
+    if (missingElement) { throw new Error("Missing critical HTML elements. Cannot initialize KinkCompass."); }
+
+    console.log("CONSTRUCTOR: Elements found.");
+    this.addEventListeners();
+    console.log("CONSTRUCTOR: Listeners added.");
+    this.loadFromLocalStorage();
+    this.applySavedTheme();
+    this.renderStyles(this.elements.role.value);
+    this.renderTraits(this.elements.role.value, this.elements.style.value);
+    this.renderList();
+    this.updateLivePreview();
+    console.log("CONSTRUCTOR: Initial render complete.");
+  } // --- End of constructor ---
+
+  // --- Local Storage ---
+  loadFromLocalStorage(){try{const data=localStorage.getItem('kinkProfiles');const profiles=data?JSON.parse(data):[];this.people=profiles.map(p=>({...p,id:p.id??Date.now(),name:p.name??"Unnamed",role:p.role??"submissive",style:p.style??"",avatar:p.avatar||'❓',goals:Array.isArray(p.goals)?p.goals:[],history:Array.isArray(p.history)?p.history:[],achievements:Array.isArray(p.achievements)?p.achievements:[],reflections:typeof p.reflections==='object'&&p.reflections!==null?p.reflections:{text:p.reflections||''},traits:typeof p.traits==='object'&&p.traits!==null?p.traits:{}}));console.log(`Loaded ${this.people.length} profiles.`);}catch(e){console.error("Failed to load profiles:",e);this.people=[];this.showNotification("Error loading profiles. Starting fresh.", "error");}} // Show notification on load error
+  saveToLocalStorage(){try{localStorage.setItem('kinkProfiles',JSON.stringify(this.people));console.log(`Saved ${this.people.length} profiles.`);}catch(e){console.error("Failed to save profiles:",e);this.showNotification("Error saving data. Storage might be full or corrupted.", "error");}}
+
+
+  // --- Event Listeners Setup ---
+   // --- Event Listeners Setup ---
+  addEventListeners() {
+    console.log("Attaching event listeners...");
+    // KinkCompass Core Listeners
+    this.elements.role?.addEventListener('change', (e) => {
+        const selectedRole = e.target.value;
+        this.renderStyles(selectedRole);
+        this.elements.style.value = '';
+        this.renderTraits(selectedRole, '');
+        this.updateLivePreview();
+    });
+    this.elements.style?.addEventListener('change', (e) => {
+        this.renderTraits(this.elements.role.value, e.target.value);
+        this.updateLivePreview();
+    });
+    this.elements.name?.addEventListener('input', () => this.updateLivePreview());
+    this.elements.avatarPicker?.addEventListener('click', (e) => {
+        if (e.target.classList.contains('avatar-btn')) {
+            const emoji = e.target.dataset.emoji;
+            if (emoji) {
+                this.elements.avatarInput.value = emoji;
+                this.elements.avatarDisplay.textContent = emoji;
+                this.elements.avatarPicker.querySelectorAll('.avatar-btn').forEach(btn => {
+                    btn.classList.toggle('selected', btn === e.target);
+                });
+                this.updateLivePreview();
+            }
+        }
+    });
+    this.elements.save?.addEventListener('click', () => this.savePerson());
+    this.elements.clearForm?.addEventListener('click', () => this.resetForm(true));
+    this.elements.formStyleFinderLink?.addEventListener('click', () => this.sfStart());
+
+    // Trait interaction
+    this.elements.traitsContainer?.addEventListener('input', (e) => {
+        if (e.target.classList.contains('trait-slider')) {
+            this.handleTraitSliderInput(e);
+        }
+    });
+    this.elements.traitsContainer?.addEventListener('click', (e) => {
+        if (e.target.classList.contains('trait-info-btn')) {
+            this.handleTraitInfoClick(e);
+        }
+    });
+    this.elements.traitInfoClose?.addEventListener('click', () => this.hideTraitInfo());
+
+    // Profile List interaction
+    this.elements.peopleList?.addEventListener('click', (e) => this.handleListClick(e));
+    this.elements.peopleList?.addEventListener('keydown', (e) => this.handleListKeydown(e));
+
+    // Header Buttons & Modals
+    this.elements.styleFinderTriggerBtn?.addEventListener('click', () => this.sfStart());
+    this.elements.sfCloseBtn?.addEventListener('click', () => this.sfClose());
+
+    this.elements.styleDiscoveryBtn?.addEventListener('click', () => this.showStyleDiscovery());
+    this.elements.styleDiscoveryClose?.addEventListener('click', () => this.closeModal(this.elements.styleDiscoveryModal));
+    this.elements.styleDiscoveryRoleFilter?.addEventListener('change', () => this.renderStyleDiscoveryContent());
+
+    this.elements.glossaryBtn?.addEventListener('click', () => this.showGlossary());
+    this.elements.glossaryClose?.addEventListener('click', () => this.closeModal(this.elements.glossaryModal));
+
+    this.elements.resourcesBtn?.addEventListener('click', () => this.openModal(this.elements.resourcesModal));
+    this.elements.resourcesClose?.addEventListener('click', () => this.closeModal(this.elements.resourcesModal));
+
+    this.elements.themesBtn?.addEventListener('click', () => this.openModal(this.elements.themesModal));
+    this.elements.themesClose?.addEventListener('click', () => this.closeModal(this.elements.themesModal));
+    this.elements.themesBody?.addEventListener('click', (e) => this.handleThemeSelection(e));
+
+    this.elements.exportBtn?.addEventListener('click', () => this.exportData());
+    this.elements.importBtn?.addEventListener('click', () => this.elements.importFileInput?.click());
+    this.elements.importFileInput?.addEventListener('change', (e) => this.importData(e));
+
+    this.elements.themeToggle?.addEventListener('click', () => this.toggleTheme());
+
+    // Detail Modal Interaction (Delegated)
+    this.elements.modalBody?.addEventListener('click', (e) => this.handleModalBodyClick(e));
+    this.elements.modalClose?.addEventListener('click', () => this.closeModal(this.elements.modal));
+
+    // Style Finder Modal Interaction (Delegated)
+    this.elements.sfStepContent?.addEventListener('click', (e) => {
+        const button = e.target.closest('button[data-action]');
+        if (button) {
+            this.handleStyleFinderAction(button.dataset.action, button.dataset);
+            return;
+        }
+        const icon = e.target.closest('.sf-info-icon[data-trait]');
+        if (icon) {
+            this.handleStyleFinderAction('showTraitInfo', icon.dataset);
+            return;
+        }
+    });
+    this.elements.sfStepContent?.addEventListener('input', (e) => {
+        if (e.target.classList.contains('sf-trait-slider') && e.target.dataset.trait) {
+            this.handleStyleFinderSliderInput(e.target);
+        }
+    });
+    document.body.addEventListener('click', (e) => { // For dynamic SF popups
+        if (e.target.classList.contains('sf-close-btn')) {
+            e.target.closest('.sf-style-info-popup')?.remove();
+        }
+    });
+
+    // General Window Listeners (Modal closing)
+    window.addEventListener('click', (e) => this.handleWindowClick(e));
+    window.addEventListener('keydown', (e) => this.handleWindowKeydown(e));
+
+    console.log("Event listeners setup complete.");
+  } // --- End addEventListeners ---
+   // --- Event Handlers ---
   // [Keep all existing Event Handlers: handleListClick, handleListKeydown, handleWindowClick, handleWindowKeydown, handleTraitSliderInput, handleTraitInfoClick, handleModalBodyClick, handleThemeSelection, handleStyleFinderAction, handleStyleFinderSliderInput]
   // (Assume handlers from previous correct version are here)
   handleListClick(e){const li=e.target.closest('.person');if(!li)return;const id=parseInt(li.dataset.id,10);if(isNaN(id))return;console.log("List Click on ID:",id,"Target:",e.target);const actionTarget=e.target.closest('button');const action=actionTarget?actionTarget.dataset.action:null;if(action==='edit'){this.editPerson(id);}else if(action==='delete'){this.deletePerson(id);}else{this.showPersonDetails(id);}}
@@ -116,3 +485,5 @@ try {
         </div>`;
 }
 // --- END OF FILE app.js ---
+// --- END OF FILE app.js ---
+```
