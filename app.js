@@ -237,7 +237,7 @@ class TrackerApp {
       formTitle: document.getElementById('form-title'),
     };
 
-         // Critical element check
+       // Critical element check
     const criticalElements = [
         'name', 'role', 'style', 'save', 'peopleList', 'modal', 'sfModal',
         'sfStepContent', 'styleFinderTriggerBtn', 'glossaryBody', 'resourcesBody',
@@ -248,6 +248,15 @@ class TrackerApp {
         if (!this.elements[key]) {
             missingKeys.push(key);
         }
+    }
+
+    if (missingKeys.length > 0) {
+        const errorMsg = `Cannot initialize: HTML element(s) not found (ID: ${missingKeys.join(', ')}). Check index.html.`;
+        console.error(errorMsg);
+        throw new Error(errorMsg);
+    }
+    // End Critical element check block
+    // End Critical element check block
     }
 
     if (missingKeys.length > 0) {
