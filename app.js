@@ -1,219 +1,4 @@
-
-import { bdsmData } from './data.js';
-import { getStyleBreakdown as getSubBreakdown } from './paraphrasing_sub.js';
-import { getStyleBreakdown as getDomBreakdown } from './paraphrasing_dom.js';
-import { glossaryTerms } from './glossary.js';
-import { getRandomPrompt } from './prompts.js';
-import { achievementList, hasAchievement, grantAchievement } from './achievements.js';
-
-// Chart.js and Confetti loaded via CDN
-
-class TrackerApp {
-  constructor() {
-    console.log("CONSTRUCTOR: Starting KinkCompass App...");
-    this.people = [];
-    this.previewPerson = null;
-    this.currentEditId = null;
-    this.chartInstance = null;
-
-    // --- Style Finder State (Initialized for the detailed version) ---
-    this.sfActive = false;
-    this.sfStep = 0;
-    this.sfRole = null;
-    this.sfAnswers = { traits: {} };
-    this.sfScores = {};
-    this.sfPreviousScores = {}; // Renamed from previousScores
-    this.sfHasRenderedDashboard = false;
-    this.sfTraitSet = []; // Populated dynamically based on role in sfCalculateStyleFinderSteps
-    this.sfSteps = []; // Populated dynamically
-
-    // --- Style Finder Data Structures (Restored from scriptbdsmfinder.js) ---
-    this.sfStyles = { // Renamed from styles
-      submissive: [
-        'Submissive', 'Brat', 'Slave', 'Switch', 'Pet', 'Little', 'Puppy', 'Kitten', 'Princess', 'Rope Bunny',
-        'Masochist', 'Prey', 'Toy', 'Doll', 'Bunny', 'Servant', 'Playmate', 'Babygirl', 'Captive', 'Thrall',
-        'Puppet', 'Maid', 'Painslut', 'Bottom'
-      ],
-      dominant: [
-        'Dominant', 'Assertive', 'Nurturer', 'Strict', 'Master', 'Mistress', 'Daddy', 'Mommy', 'Owner', 'Rigger',
-        'Sadist', 'Hunter', 'Trainer', 'Puppeteer', 'Protector', 'Disciplinarian', 'Caretaker', 'Sir', 'Goddess', 'Commander'
-      ]
-    };
-    this.sfSubFinderTraits = [ // Renamed from subFinderTraits
-      { name: 'obedience', desc: 'How much do you enjoy following instructions or rules given by someone you trust?' },
-      { name: 'rebellion', desc: 'Do you find it fun to playfully resist or tease when someone tries to guide you?' },
-      { name: 'service', desc: 'Does it feel rewarding to assist or do tasks that make someone else happy?' },
-      { name: 'playfulness', desc: 'How much do you love engaging in silly games or lighthearted mischief?' },
-      { name: 'sensuality', desc: 'Do soft touches, textures, or physical sensations light up your senses?' },
-      { name: 'exploration', desc: 'Are you excited by the idea of trying new experiences or stepping into the unknown?' },
-      { name: 'devotion', desc: 'Does being deeply loyal and committed to someone bring you a sense of fulfillment?' },
-      { name: 'innocence', desc: 'Do you enjoy feeling carefree, pure, or even a bit childlike in your interactions?' },
-      { name: 'mischief', desc: 'How much do you like stirring things up with a cheeky prank or playful trouble?' },
-      { name: 'affection', desc: 'Do you crave physical closeness, like hugs or cuddles, to feel connected?' },
-      { name: 'painTolerance', desc: 'Does a little sting or discomfort excite you, or do you prefer to avoid it?' },
-      { name: 'submissionDepth', desc: 'How much do you enjoy letting go completely and giving someone full control?' },
-      { name: 'dependence', desc: 'Do you feel comforted and secure when you can rely on someone else to guide you?' },
-      { name: 'vulnerability', desc: 'Does opening up emotionally and being exposed feel natural and right to you?' },
-      { name: 'adaptability', desc: 'How easily can you switch between different roles or adjust to new expectations?' },
-      { name: 'tidiness', desc: 'Do you take pride in keeping things neat, clean, and perfectly organized for someone?' },
-      { name: 'politeness', desc: 'Does being courteous and respectful in your actions come naturally to you?' },
-      { name: 'craving', desc: 'Do you actively seek out intense sensations or experiences that push your limits?' },
-      { name: 'receptiveness', desc: 'How open are you to receiving direction, sensations, or guidance from someone else?' }
-    ].sort(() => 0.5 - Math.random());
-    this.sfSubTraitFootnotes = { // Renamed from subTraitFootnotes
-      obedience: "1: Rarely follows / 10: Always obeys",
-      rebellion: "1: Very compliant / 10: Loves to resist",
-      service: "1: Self-focused / 10: Service-driven",
-      playfulness: "1: Serious / 10: Super playful",
-      sensuality: "1: Not sensory / 10: Highly sensual",
-      exploration: "1: Stays safe / 10: Seeks adventure",
-      devotion: "1: Independent / 10: Deeply devoted",
-      innocence: "1: Mature / 10: Very innocent",
-      mischief: "1: Calm / 10: Mischievous",
-      affection: "1: Distant / 10: Super affectionate",
-      painTolerance: "1: Avoids pain / 10: Loves pain",
-      submissionDepth: "1: Light submission / 10: Total surrender",
-      dependence: "1: Self-reliant / 10: Loves guidance",
-      vulnerability: "1: Guarded / 10: Fully open",
-      adaptability: "1: Fixed role / 10: Very versatile",
-      tidiness: "1: Messy and carefree / 10: Obsessed with order",
-      politeness: "1: Casual and blunt / 10: Always courteous",
-      craving: "1: Avoids intensity / 10: Seeks extreme thrills",
-      receptiveness: "1: Closed off / 10: Fully open to input"
-    };
-    this.sfDomFinderTraits = [ // Renamed from domFinderTraits
-      { name: 'authority', desc: 'Do you feel strong when you take charge?' },
-      { name: 'confidence', desc: 'Are you sure of your decisions?' },
-      { name: 'discipline', desc: 'Do you enjoy setting firm rules?' },
-      { name: 'boldness', desc: 'Do you dive into challenges fearlessly?' },
-      { name: 'care', desc: 'Do you love supporting and protecting others?' },
-      { name: 'empathy', desc: 'Do you tune into others’ feelings easily?' },
-      { name: 'control', desc: 'Do you thrive on directing every detail?' },
-      { name: 'creativity', desc: 'Do you enjoy crafting unique scenes?' },
-      { name: 'precision', desc: 'Are you careful with every step you take?' },
-      { name: 'intensity', desc: 'Do you bring fierce energy to what you do?' },
-      { name: 'sadism', desc: 'Does giving a little pain excite you?' },
-      { name: 'leadership', desc: 'Do you naturally guide others forward?' },
-      { name: 'possession', desc: 'Do you feel pride in owning what’s yours?' },
-      { name: 'patience', desc: 'Are you calm while teaching or training?' },
-      { name: 'dominanceDepth', desc: 'Do you crave total power in a scene?' }
-    ].sort(() => 0.5 - Math.random());
-    this.sfDomTraitFootnotes = { // Renamed from domTraitFootnotes
-      authority: "1: Gentle / 10: Very commanding",
-      confidence: "1: Hesitant / 10: Rock-solid",
-      discipline: "1: Relaxed / 10: Strict",
-      boldness: "1: Cautious / 10: Fearless",
-      care: "1: Detached / 10: Deeply caring",
-      empathy: "1: Distant / 10: Highly intuitive",
-      control: "1: Hands-off / 10: Total control",
-      creativity: "1: Routine / 10: Very creative",
-      precision: "1: Casual / 10: Meticulous",
-      intensity: "1: Soft / 10: Intense",
-      sadism: "1: Avoids pain / 10: Enjoys giving pain",
-      leadership: "1: Follower / 10: Natural leader",
-      possession: "1: Shares / 10: Very possessive",
-      patience: "1: Impatient / 10: Very patient",
-      dominanceDepth: "1: Light control / 10: Full dominance"
-    };
-    this.sfSliderDescriptions = { // Renamed from sliderDescriptions
-      obedience: [ "You dodge orders like a breeze!", "Rules? You’re too free for that!", "You’ll follow if it’s fun!", "A little “yes” slips out sometimes!", "You’re cool with gentle guidance!", "Following feels kinda nice!", "You like pleasing when asked!", "Obeying’s your quiet joy!", "You love a sweet “please”!", "You glow when you say “yes”!" ],
-      rebellion: [ "You’re too sweet to say no!", "A tiny “nah” sneaks out!", "You nudge rules with a smile!", "Teasing’s your little game!", "Half yes, half no—cute!", "You push back with charm!", "Defiance is your sparkle!", "You love a playful “no”!", "Rebel vibes all the way!", "You’re a cheeky star!" ],
-      service: [ "Helping? You’re too chill!", "A quick favor’s enough!", "You help if they’re sweet!", "You pitch in when it’s easy!", "Serving’s okay sometimes!", "You like making them smile!", "Helping’s your happy place!", "You love a kind task!", "You’re a service sweetie!", "Caring’s your superpower!" ],
-      playfulness: [ "Serious is your vibe!", "A giggle slips out!", "You play if it’s light!", "Half serious, half silly!", "You’re warming up to fun!", "Playtime’s your joy!", "You bounce with glee!", "Silly’s your middle name!", "You’re a playful whirlwind!", "Games are your world!" ],
-      sensuality: [ "Touch? Not your thing!", "A soft pat’s okay!", "You like a little feel!", "Textures are kinda neat!", "You’re into soft vibes!", "Silk makes you happy!", "You love a sensory tickle!", "Touch is your bliss!", "You’re all about feels!", "Sensory queen!" ],
-      exploration: [ "Safe is your spot!", "A tiny step out—shy!", "You peek at new stuff!", "You’ll try if it’s safe!", "Half cozy, half curious!", "New things excite you!", "You chase the unknown!", "Adventure’s your jam!", "You’re a bold explorer!", "Nothing stops you!" ],
-      devotion: [ "Free and solo!", "A bit of heart shows!", "You care if they’re near!", "Half free, half true!", "You’re warming up!", "Devotion’s your glow!", "You’re all in soft!", "Loyalty’s your core!", "You’re a devotion gem!", "Total soulmate!" ],
-      innocence: [ "Wise beyond your years!", "A bit of wonder peeks out!", "You’re half grown, half kid!", "Silly feels nice sometimes!", "You’re dipping into cute!", "Innocence is your vibe!", "You’re a sweet dreamer!", "Giggles are your song!", "You’re pure sunshine!", "Total kid at heart!" ],
-      mischief: [ "Too good for tricks!", "A tiny prank slips!", "You stir if it’s safe!", "Half calm, half cheeky!", "You’re a sneaky spark!", "Mischief’s your game!", "You love a little chaos!", "Trouble’s your friend!", "You’re a mischief pro!", "Chaos queen!" ],
-      affection: [ "Hugs? Not really!", "A quick cuddle’s fine!", "You like a soft touch!", "Half aloof, half warm!", "You’re into snuggles!", "Cuddles are your joy!", "You love closeness!", "Affection’s your glow!", "You’re a hug star!", "Total love bug!" ],
-      painTolerance: [ "You tire out quick!", "A little push is enough!", "You last if it’s fun!", "You’re steady for a bit!", "Halfway there—nice!", "You keep going strong!", "Endurance is your thing!", "You’re tough and ready!", "You never stop—wow!", "Marathon champ!" ],
-      submissionDepth: [ "You’re free as a bird!", "A little give peeks out!", "You bend if it’s chill!", "Half you, half them!", "You’re easing in!", "Surrender’s kinda fun!", "You dive in soft!", "Control’s theirs—yay!", "You’re all theirs!", "Total trust star!" ],
-      dependence: [ "Solo’s your jam!", "A lean slips in!", "You lean if they’re nice!", "Half free, half clingy!", "You’re okay with help!", "Relying feels good!", "You love their lead!", "They’re your rock!", "You’re a lean-in pro!", "Total trust buddy!" ],
-      vulnerability: [ "Walls up high!", "A peek slips out!", "You share if safe!", "Half guarded, half open!", "You’re softening up!", "Open’s your vibe!", "You bare it soft!", "Heart’s wide open!", "You’re a trust gem!", "Total soul sharer!" ],
-      adaptability: [ "One way—you’re set!", "A tiny switch is fine!", "You bend a little!", "Half fixed, half fluid!", "You’re okay with change!", "Switching’s easy!", "You roll with it!", "Flex is your strength!", "You flip like a pro!", "Total chameleon!" ],
-      tidiness: [ "Chaos is your friend!", "A little mess is fine!", "You tidy if asked nicely!", "Order’s okay sometimes!", "You like things neat-ish!", "Cleanliness feels good!", "You love a tidy space!", "Order is your joy!", "Spotless is your vibe!", "Perfection in every corner!" ],
-      politeness: [ "You’re blunt and bold!", "A bit gruff but sweet!", "Polite if it’s easy!", "You’re nice when needed!", "Courtesy’s your thing!", "You’re a polite gem!", "Manners shine bright!", "Respect is your core!", "You’re super courteous!", "Politeness queen!" ],
-      craving: [ "Calm is your zone!", "A tiny thrill is enough!", "You dip into intensity!", "Half chill, half wild!", "You like a strong spark!", "Intensity calls you!", "You chase the edge!", "Thrills are your fuel!", "You crave the extreme!", "Limitless seeker!" ],
-      receptiveness: [ "You’re your own guide!", "A bit open if safe!", "You listen if it’s clear!", "Half closed, half open!", "You’re warming up!", "Openness feels right!", "You take it all in!", "Guidance is welcome!", "You’re a receiver pro!", "Totally in tune!" ],
-      authority: [ "Soft and shy!", "A little lead peeks!", "You guide if asked!", "Half gentle, half firm!", "You’re stepping up!", "Authority’s your vibe!", "You lead with ease!", "You’re a strong guide!", "Boss mode on!", "Total commander!" ],
-      confidence: [ "Quiet and unsure!", "A bit of bold shows!", "You’re sure if it’s easy!", "Half shy, half steady!", "You’re growing bold!", "Confidence shines!", "You trust your gut!", "You’re rock solid!", "Bold and bright!", "Total powerhouse!" ],
-      discipline: [ "Free and wild!", "A rule slips in!", "You set soft lines!", "Half loose, half tight!", "You’re liking order!", "Discipline’s your jam!", "You keep it firm!", "Rules are your strength!", "You’re super strict!", "Total control!" ],
-      boldness: [ "Careful and calm!", "A risk peeks out!", "You leap if safe!", "Half shy, half daring!", "You’re getting brave!", "Boldness is you!", "You dive right in!", "Fearless vibes!", "You’re a bold star!", "Total daredevil!" ],
-      care: [ "Cool and aloof!", "A care slips out!", "You help if asked!", "Half chill, half warm!", "You’re a soft guide!", "Nurturing’s your glow!", "You protect with love!", "Care is your core!", "You’re a warm star!", "Total nurturer!" ],
-      empathy: [ "Distant and chill!", "A feel peeks out!", "You get it if clear!", "Half aloof, half tuned!", "You’re sensing more!", "Empathy’s your gift!", "You feel it all!", "You’re in sync!", "You’re a heart reader!", "Total intuitive!" ],
-      control: [ "Free and open!", "A claim slips out!", "You hold if sweet!", "Half share, half mine!", "You’re liking it!", "Control’s your vibe!", "You claim with pride!", "Yours is yours!", "You’re a keeper!", "Total owner!" ], // Note: 'control' was used for dominant possession, reused description
-      creativity: [ "Simple’s your way!", "A spark pops up!", "You craft if quick!", "Half plain, half wild!", "You’re sparking up!", "Creativity flows!", "You make magic!", "Ideas are your joy!", "You’re a vision star!", "Total creator!" ],
-      precision: [ "Loose and free!", "A bit neat’s fine!", "You care if fast!", "Half sloppy, half sharp!", "You’re getting exact!", "Precision’s your thing!", "You nail it all!", "Every step’s perfect!", "You’re a detail whiz!", "Total master!" ],
-      intensity: [ "Soft and mellow!", "A flare sneaks out!", "You heat if safe!", "Half calm, half fierce!", "You’re turning up!", "Intensity’s your spark!", "You bring the blaze!", "Fierce is your vibe!", "You’re a fire star!", "Total storm!" ],
-      sadism: [ "Soft and sweet!", "A tease slips in!", "You push a little!", "Half gentle, half wild!", "You’re testing it!", "Pain’s your play!", "You love the sting!", "Thrill’s your game!", "You’re a spicy star!", "Total edge master!" ],
-      leadership: [ "Soft and shy!", "A lead peeks out!", "You guide if asked!", "Half gentle, half firm!", "You’re stepping up!", "Leading’s your vibe!", "You steer with ease!", "You’re a bold guide!", "Leader mode on!", "Total captain!" ],
-      possession: [ "Free and open!", "A claim slips out!", "You hold if sweet!", "Half share, half mine!", "You’re liking it!", "Possession’s your vibe!", "You claim with pride!", "Yours is yours!", "You’re a keeper!", "Total owner!" ],
-      patience: [ "Fast and now!", "A wait slips in!", "You chill if quick!", "Half rush, half calm!", "You’re cooling down!", "Patience is you!", "You wait with grace!", "Calm’s your strength!", "You’re a zen star!", "Total peace!" ],
-      dominanceDepth: [ "Light and free!", "A hold peeks out!", "You lead if easy!", "Half soft, half firm!", "You’re taking charge!", "Power’s your glow!", "You rule with ease!", "Control’s your core!", "You’re a power gem!", "Total ruler!" ]
-    };
-    this.sfTraitExplanations = { // Renamed from traitExplanations
-      obedience: "This question explores how much you enjoy following instructions or rules given by someone else. Do you feel calm and happy when you’re told what to do, or do you prefer doing your own thing?",
-      rebellion: "Here, we’re checking how much you like to playfully resist or tease when given orders. Are you someone who follows easily, or do you enjoy a little back-and-forth?",
-      service: "This is about how much joy you get from helping or doing things for others. Do tasks like fetching something or assisting feel rewarding to you?",
-      playfulness: "We’re asking how much you love silly, lighthearted fun. Are you serious most of the time, or do games and giggles light you up?",
-      sensuality: "This looks at how much physical sensations—like soft touches or textures—excite you. Do you crave sensory experiences, or are they just okay?",
-      exploration: "This checks your eagerness to try new things. Are you comfy sticking to what you know, or do you jump at the chance to experiment?",
-      devotion: "We’re seeing how deeply loyal you feel toward someone. Do you stick by them no matter what, or do you like your independence?",
-      innocence: "This is about enjoying a carefree, childlike vibe. Do you feel mature and serious, or do you love feeling sweet and playful?",
-      mischief: "Here, we’re asking if you enjoy stirring things up a bit. Are you calm and good, or do you love a cheeky prank?",
-      affection: "This explores how much you crave closeness and cuddles. Are hugs your thing, or do you prefer a bit of space?",
-      painTolerance: "We’re checking how you feel about discomfort or a little sting. Does it excite you, or do you shy away from it?",
-      submissionDepth: "This digs into how much control you’re happy giving up. Do you like light guidance, or do you enjoy totally letting go?",
-      dependence: "This asks if you feel safe relying on someone else. Are you super independent, or do you love leaning on others?",
-      vulnerability: "We’re seeing how comfy you are opening up emotionally. Do you keep your guard up, or do you share your heart easily?",
-      adaptability: "This checks how easily you switch between roles or moods. Are you set in one way, or do you flow with changes?",
-      tidiness: "This question explores how much you enjoy keeping things neat and orderly for someone else. Do you find satisfaction in a spotless space, or are you happier letting things stay a bit wild?",
-      politeness: "We’re checking how naturally you lean toward being courteous and respectful. Are manners a big part of how you interact, or do you prefer a more casual, direct approach?",
-      craving: "This is about how much you seek out intense or extreme experiences. Do you feel a pull toward pushing your boundaries, or do you prefer keeping things gentle and calm?",
-      receptiveness: "Here, we’re asking how open you are to taking in direction or sensations from someone else. Do you welcome guidance and input, or do you like steering your own course?",
-      authority: "This is about how natural it feels to take charge. Do you love leading, or do you prefer a softer approach?",
-      confidence: "We’re asking how sure you feel in your choices. Are you bold and steady, or do you hesitate sometimes?",
-      discipline: "This explores how much you enjoy setting rules. Do you like structure, or are you more relaxed?",
-      boldness: "Here, we’re checking how fearless you are. Do you dive into challenges, or take it slow?",
-      care: "This looks at how much you love supporting others. Are you a nurturing type, or more hands-off?",
-      empathy: "We’re seeing how well you tune into others’ feelings. Do you feel what they feel, or keep a bit of distance?",
-      control: "This asks how much you thrive on directing things. Do you love being in charge, or let things flow?",
-      creativity: "This checks how much you enjoy crafting unique ideas. Are you imaginative, or do you stick to the basics?",
-      precision: "We’re asking how careful you are with details. Do you plan every step, or go with the vibe?",
-      intensity: "This explores how much fierce energy you bring. Are you calm, or do you burn bright?",
-      sadism: "Here, we’re seeing if giving a little pain excites you. Is it fun for you, or not your thing?",
-      leadership: "This is about guiding others naturally. Do you lead the way, or step back a bit?",
-      possession: "We’re checking how much you feel pride in ‘owning’ what’s yours. Are you possessive, or easygoing?",
-      patience: "This asks how calm you are when teaching or waiting. Are you chill, or do you push fast?",
-      dominanceDepth: "This digs into how much power you crave. Do you like light control, or total command?"
-    };
-    this.sfStyleDescriptions = { // Renamed from styleDescriptions
-      Submissive: { short: "You thrive on guidance and love letting someone else lead the way.", long: "A Submissive finds joy in yielding to another’s direction, savoring the peace that comes with trust and structure. This role is about embracing vulnerability and finding strength in surrender.", tips: ["Communicate your limits clearly.", "Find a partner who respects your surrender.", "Explore different levels of submission."] },
-      Brat: { short: "You’re cheeky and love pushing buttons for fun!", long: "Brats delight in playful resistance, turning every rule into a game of wit and charm. This style is all about the thrill of the chase and the joy of being 'tamed'.", tips: ["Keep it light and fun.", "Pair with someone who enjoys the chase.", "Set clear boundaries for your defiance."] },
-      Slave: { short: "You find fulfillment in total devotion and service.", long: "Slaves are deeply committed to serving their partner, often embracing a high level of control and structure. This role requires immense trust and clear communication.", tips: ["Negotiate limits thoroughly.", "Ensure your partner values your devotion.", "Prioritize self-care."] },
-      Switch: { short: "You flow effortlessly between leading and following.", long: "Switches enjoy the best of both worlds, adapting to the moment’s needs with ease. This style is versatile, playful, and thrives on exploration.", tips: ["Communicate your mood clearly.", "Experiment with both roles.", "Find partners who enjoy flexibility."] },
-      Pet: { short: "You love being cared for like a cherished companion.", long: "Pets revel in affection and play, often adopting animal-like traits in a dynamic of trust and care. It’s about loyalty and fun.", tips: ["Choose a playful persona.", "Seek a caring Owner.", "Enjoy the freedom of your role."] },
-      Little: { short: "You embrace a carefree, childlike spirit.", long: "Littles find joy in innocence and dependence, often seeking nurturing and protection in a playful, trusting dynamic.", tips: ["Set clear boundaries.", "Find a caring partner.", "Explore your playful side."] },
-      Puppy: { short: "You’re playful and loyal like a devoted pup.", long: "Puppies bring boundless energy and affection to their dynamic, thriving on play and devotion in a lighthearted bond.", tips: ["Embrace your enthusiasm.", "Seek a Trainer or Owner.", "Keep it fun and safe."] },
-      Kitten: { short: "You’re sensual and mischievous like a curious cat.", long: "Kittens blend sensuality with a touch of mischief, enjoying affection and play in a dynamic that’s both tender and teasing.", tips: ["Play with your charm.", "Find a patient partner.", "Explore sensory delights."] },
-      Princess: { short: "You adore being pampered and adored.", long: "Princesses revel in attention and care, embracing a regal yet dependent role that blends innocence with sensuality.", tips: ["Set expectations early.", "Seek a doting partner.", "Enjoy your spotlight."] },
-      'Rope Bunny': { short: "You love the art and feel of being bound.", long: "Rope Bunnies find excitement in the sensations and trust of bondage, enjoying the creativity and surrender of being tied.", tips: ["Learn safety basics.", "Pair with a skilled Rigger.", "Explore different ties."] },
-      Masochist: { short: "You find pleasure in the thrill of pain.", long: "Masochists embrace discomfort as a source of joy, often pairing it with submission in a dynamic of trust and intensity.", tips: ["Set safe words.", "Find a caring Sadist.", "Know your limits."] },
-      Prey: { short: "You enjoy the thrill of being hunted.", long: "Prey thrive on the chase, finding excitement in vulnerability and the dynamic tension of pursuit and capture.", tips: ["Establish consent clearly.", "Pair with a Hunter.", "Enjoy the adrenaline."] },
-      Toy: { short: "You love being used and played with.", long: "Toys delight in being an object of pleasure, offering adaptability and submission in a dynamic of control and fun.", tips: ["Communicate preferences.", "Find a creative partner.", "Embrace your role."] },
-      Doll: { short: "You enjoy being shaped and admired.", long: "Dolls find fulfillment in being molded and displayed, blending vulnerability with a desire to please and be perfect.", tips: ["Set clear boundaries.", "Seek a Puppeteer.", "Enjoy your transformation."] },
-      Bunny: { short: "You’re playful and sweet like a hopping rabbit.", long: "Bunnies bring innocence and energy to their dynamic, thriving on affection and lighthearted play.", tips: ["Keep it fun.", "Find a gentle partner.", "Hop into your role."] },
-      Servant: { short: "You find joy in serving and pleasing.", long: "Servants dedicate themselves to their partner’s needs, finding satisfaction in obedience and structured tasks.", tips: ["Define your duties.", "Seek a Master or Mistress.", "Balance service with self-care."] },
-      Playmate: { short: "You love sharing fun and mischief.", long: "Playmates bring a spirit of camaraderie and adventure, enjoying a dynamic filled with games and exploration.", tips: ["Keep it light.", "Find a playful partner.", "Explore together."] },
-      Babygirl: { short: "You crave nurturing and affection.", long: "Babygirls blend innocence with dependence, seeking a caring dynamic filled with love and protection.", tips: ["Set emotional boundaries.", "Find a Daddy or Mommy.", "Embrace your softness."] },
-      Captive: { short: "You relish the thrill of being held.", long: "Captives enjoy the intensity of surrender and restraint, finding excitement in a dynamic of control and trust.", tips: ["Negotiate scenes carefully.", "Pair with a Hunter.", "Enjoy the intensity."] },
-      Thrall: { short: "You’re bound by deep devotion.", long: "Thralls offer complete loyalty and submission, thriving in a dynamic of profound trust and surrender.", tips: ["Build trust slowly.", "Seek a Master.", "Honor your commitment."] },
-      Puppet: { short: "You love being directed and shaped like a marionette.", long: "Puppets thrive on responsiveness, moving to their partner’s cues with ease and adaptability. This style is about fluidity and trust in being guided.", tips: ["Stay attuned to your partner’s signals.", "Find a Puppeteer who values your flexibility.", "Practice quick responses."] },
-      Maid: { short: "You delight in keeping things tidy and serving politely.", long: "Maids find joy in order and courtesy, creating a pristine environment with a respectful demeanor. This style blends service with refinement.", tips: ["Focus on small, perfect details.", "Seek a Master or Mistress who appreciates polish.", "Balance duty with grace."] },
-      Painslut: { short: "You crave intense pain and thrive on pushing limits.", long: "Painsluts seek out strong sensations, finding exhilaration in discomfort and intensity. This style is bold and boundary-testing.", tips: ["Set clear pain thresholds.", "Pair with a Sadist who respects limits.", "Embrace aftercare."] },
-      Bottom: { short: "You’re open to receiving and enduring sensations.", long: "Bottoms excel at taking in direction and experiences, with stamina to handle prolonged scenes. This style is receptive and resilient.", tips: ["Communicate your capacity.", "Find a Dominant who values your endurance.", "Pace yourself."] },
-      Dominant: { short: "You shine when you’re in charge, guiding with confidence.", long: "Dominants revel in control, leading with strength and care to create harmony. This role is about responsibility, trust, and the art of guiding another’s surrender.", tips: ["Listen to your partner’s needs.", "Balance firmness with kindness.", "Learn safe practices."] },
-      Assertive: { short: "You lead with bold, decisive energy.", long: "Assertives take charge with confidence and intensity, thriving in dynamics where their authority shapes the scene.", tips: ["Stay clear and direct.", "Pair with a Submissive.", "Temper boldness with care."] },
+: { short: "You lead with bold, decisive energy.", long: "Assertives take charge with confidence and intensity, thriving in dynamics where their authority shapes the scene.", tips: ["Stay clear and direct.", "Pair with a Submissive.", "Temper boldness with care."] },
       Nurturer: { short: "You guide with warmth and care.", long: "Nurturers blend control with empathy, creating a dynamic where guidance feels like a warm embrace. It’s about support and growth.", tips: ["Be patient and attentive.", "Pair with a Little or Pet.", "Foster trust and safety."] },
       Strict: { short: "You enforce rules with unwavering precision.", long: "Stricts maintain order and discipline, finding satisfaction in structure and obedience. This style is firm but fair.", tips: ["Set clear expectations.", "Pair with a Slave or Servant.", "Reward compliance."] },
       Master: { short: "You lead with authority and deep responsibility.", long: "Masters take on a profound role, guiding their partner with a blend of control, care, and commitment. This style often involves a structured, trusting dynamic.", tips: ["Build trust gradually.", "Understand your partner’s needs.", "Negotiate all terms clearly."] },
@@ -233,97 +18,54 @@ class TrackerApp {
       Goddess: { short: "You’re worshipped and adored.", long: "Goddesses embody power and grace, often in dynamics where their partner offers devotion and service.", tips: ["Embrace your divinity.", "Pair with a Thrall or Servant.", "Set high standards."] },
       Commander: { short: "You lead with strategic control.", long: "Commanders take charge with precision and vision, often in dynamics that involve complex scenes or power exchange.", tips: ["Plan carefully.", "Pair with a Switch or Submissive.", "Execute with confidence."] }
     };
-    this.sfDynamicMatches = { // Renamed from dynamicMatches
-      Submissive: { dynamic: "Power Exchange", match: "Dominant", desc: "A classic duo where trust flows freely.", longDesc: "This dynamic thrives on mutual respect and clear roles." },
+    this.sfDynamicMatches = {
+      'Classic Submissive': { dynamic: "Power Exchange", match: "Classic Dominant", desc: "A classic duo where trust flows freely.", longDesc: "This dynamic thrives on mutual respect and clear roles." },
       Brat: { dynamic: "Taming Play", match: "Disciplinarian", desc: "A fun push-and-pull full of sparks!", longDesc: "The Brat’s resistance meets the Disciplinarian’s control." },
       Slave: { dynamic: "Master/Slave", match: "Master", desc: "A bond built on deep trust.", longDesc: "High power exchange with devotion and structure." },
-      Switch: { dynamic: "Versatile Play", match: "Switch", desc: "A fluid exchange of power.", longDesc: "Both partners explore leading and following." },
       Pet: { dynamic: "Pet Play", match: "Owner", desc: "A playful bond of care.", longDesc: "Affection and playfulness define this dynamic." },
-      Little: { dynamic: "Age Play", match: "Caretaker", desc: "A nurturing space for innocence.", longDesc: "Care and trust create a loving bond." },
-      Puppy: { dynamic: "Pup Play", match: "Trainer", desc: "A lively bond of play.", longDesc: "Energy and discipline in a playful dynamic." },
-      Kitten: { dynamic: "Kitten Play", match: "Owner", desc: "A sensual connection.", longDesc: "Charm and control blend beautifully." },
-      Princess: { dynamic: "Pampering Play", match: "Daddy", desc: "A regal bond of care.", longDesc: "Spoiling meets nurturing structure." },
+      Little: { dynamic: "Age Play", match: "Caretaker/Daddy/Mommy", desc: "A nurturing space for innocence.", longDesc: "Care and trust create a loving bond." },
+      Puppy: { dynamic: "Pup Play", match: "Trainer/Owner", desc: "A lively bond of play.", longDesc: "Energy and discipline in a playful dynamic." },
+      Kitten: { dynamic: "Kitten Play", match: "Owner/Nurturer", desc: "A sensual connection.", longDesc: "Charm and control blend beautifully." },
+      Princess: { dynamic: "Pampering Play", match: "Daddy/Sir", desc: "A regal bond of care.", longDesc: "Spoiling meets nurturing structure or respectful service." },
       'Rope Bunny': { dynamic: "Bondage Play", match: "Rigger", desc: "An artistic exchange.", longDesc: "Trust and creativity in bondage." },
       Masochist: { dynamic: "Sadomasochism", match: "Sadist", desc: "A thrilling exchange.", longDesc: "Pain and pleasure in a trusting dynamic." },
       Prey: { dynamic: "Primal Play", match: "Hunter", desc: "A wild chase.", longDesc: "Pursuit and surrender fuel this bond." },
-      Toy: { dynamic: "Objectification Play", match: "Owner", desc: "A playful exchange.", longDesc: "Control and adaptability shine here." },
-      Doll: { dynamic: "Transformation Play", match: "Puppeteer", desc: "A creative bond.", longDesc: "Shaping and trust define this dynamic." },
-      Bunny: { dynamic: "Bunny Play", match: "Caretaker", desc: "A sweet bond.", longDesc: "Innocence and care in play." },
-      Servant: { dynamic: "Service Play", match: "Master", desc: "A structured bond.", longDesc: "Duty and guidance create harmony." },
-      Playmate: { dynamic: "Adventure Play", match: "Playmate", desc: "A shared journey.", longDesc: "Fun and exploration together." },
-      Babygirl: { dynamic: "Age Play", match: "Daddy", desc: "A nurturing space.", longDesc: "Love and protection in trust." },
-      Captive: { dynamic: "Captivity Play", match: "Hunter", desc: "An intense bond.", longDesc: "Control and surrender thrill here." },
-      Thrall: { dynamic: "Devotion Play", match: "Goddess", desc: "A deep bond.", longDesc: "Loyalty and worship in power." },
+      Toy: { dynamic: "Objectification Play", match: "Owner/Puppeteer", desc: "A playful exchange.", longDesc: "Control and adaptability shine here." },
+      Doll: { dynamic: "Transformation Play", match: "Puppeteer/Master", desc: "A creative bond.", longDesc: "Shaping and trust define this dynamic." },
+      Bunny: { dynamic: "Bunny Play", match: "Caretaker/Protector", desc: "A sweet, gentle bond.", longDesc: "Innocence and care in play." },
+      Servant: { dynamic: "Service Play", match: "Master/Mistress/Sir", desc: "A structured bond of duty.", longDesc: "Duty and guidance create harmony." },
+      Playmate: { dynamic: "Adventure Play", match: "Playmate/Switch", desc: "A shared journey of fun.", longDesc: "Fun and exploration define this partnership." },
+      Babygirl: { dynamic: "Age Play", match: "Daddy/Mommy", desc: "A nurturing, affectionate space.", longDesc: "Love, guidance, and protection in trust." },
+      Captive: { dynamic: "Captivity Play", match: "Hunter/Master", desc: "An intense struggle/surrender bond.", longDesc: "Control and surrender thrill here." },
+      Thrall: { dynamic: "Devotion/Worship Play", match: "Goddess/Master", desc: "A deep bond of loyalty.", longDesc: "Loyalty and worship meet commanding presence." },
       Puppet: { dynamic: "Puppet Play", match: "Puppeteer", desc: "A dance of control and response.", longDesc: "The Puppet’s adaptability meets the Puppeteer’s precise direction." },
-      Maid: { dynamic: "Service Play", match: "Mistress", desc: "A refined exchange of duty.", longDesc: "Tidiness and politeness shine under a Mistress’s elegant command." },
+      Maid: { dynamic: "Service Play", match: "Mistress/Sir/Master", desc: "A refined exchange of duty.", longDesc: "Tidiness and politeness shine under elegant or formal command." },
       Painslut: { dynamic: "Sadomasochism", match: "Sadist", desc: "A fiery bond of intensity.", longDesc: "Craving meets skillful delivery in a thrilling exchange." },
-      Bottom: { dynamic: "Sensation Play", match: "Dominant", desc: "A steady flow of give and take.", longDesc: "Receptiveness pairs with authority for a balanced dynamic." },
-      Dominant: { dynamic: "Power Exchange", match: "Submissive", desc: "A balanced duo.", longDesc: "Guidance meets trust perfectly." },
-      Assertive: { dynamic: "Assertive Control", match: "Submissive", desc: "A bold exchange.", longDesc: "Authority shapes this bond." },
-      Nurturer: { dynamic: "Nurturing Care", match: "Little", desc: "A warm bond.", longDesc: "Care fosters growth here." },
-      Strict: { dynamic: "Discipline Play", match: "Slave", desc: "A firm bond.", longDesc: "Order meets obedience." },
-      Master: { dynamic: "Master/Slave", match: "Slave", desc: "A deep relationship.", longDesc: "Authority and devotion blend." },
-      Mistress: { dynamic: "Mistress/Servant", match: "Servant", desc: "An elegant bond.", longDesc: "Grace and service shine." },
-      Daddy: { dynamic: "Daddy/Little", match: "Little", desc: "A nurturing bond.", longDesc: "Care and play in trust." },
-      Mommy: { dynamic: "Mommy/Little", match: "Little", desc: "A loving bond.", longDesc: "Warmth and growth here." },
-      Owner: { dynamic: "Owner/Pet", match: "Pet", desc: "A playful bond.", longDesc: "Control and care in play." },
-      Rigger: { dynamic: "Bondage Play", match: "Rope Bunny", desc: "An artistic exchange.", longDesc: "Creativity and trust in ties." },
-      Sadist: { dynamic: "Sadomasochism", match: "Masochist", desc: "A thrilling exchange.", longDesc: "Pain meets pleasure safely." },
-      Hunter: { dynamic: "Primal Play", match: "Prey", desc: "A wild chase.", longDesc: "Pursuit fuels this bond." },
-      Trainer: { dynamic: "Training Play", match: "Puppy", desc: "A structured bond.", longDesc: "Discipline and growth." },
-      Puppeteer: { dynamic: "Control Play", match: "Doll", desc: "A creative bond.", longDesc: "Precision shapes this." },
-      Protector: { dynamic: "Protection Play", match: "Little", desc: "A strong bond.", longDesc: "Care and safety here." },
-      Disciplinarian: { dynamic: "Discipline Play", match: "Brat", desc: "A lively challenge.", longDesc: "Control meets defiance." },
-      Caretaker: { dynamic: "Caretaking Play", match: "Little", desc: "A nurturing bond.", longDesc: "Love and exploration." },
-      Sir: { dynamic: "Sir/Submissive", match: "Submissive", desc: "A respectful bond.", longDesc: "Honor and obedience." },
-      Goddess: { dynamic: "Worship Play", match: "Thrall", desc: "A divine bond.", longDesc: "Adoration and service." },
-      Commander: { dynamic: "Command Play", match: "Switch", desc: "A strategic bond.", longDesc: "Control and flexibility." }
+      Bottom: { dynamic: "Sensation/Power Play", match: "Classic Dominant/Sadist/Rigger", desc: "A steady flow of give and take.", longDesc: "Receptiveness pairs well with various forms of topping." },
+      'Classic Dominant': { dynamic: "Power Exchange", match: "Classic Submissive", desc: "A balanced duo.", longDesc: "Guidance meets trust perfectly." },
+      Assertive: { dynamic: "Assertive Control", match: "Classic Submissive/Bottom", desc: "A bold exchange.", longDesc: "Authority shapes this bond, requiring clear reception." },
+      Nurturer: { dynamic: "Nurturing Care", match: "Little/Pet/Kitten", desc: "A warm bond.", longDesc: "Care fosters growth and comfort here." },
+      Strict: { dynamic: "Discipline Play", match: "Slave/Servant/Brat", desc: "A firm bond.", longDesc: "Order meets obedience or playful challenge." },
+      Master: { dynamic: "Master/Slave", match: "Slave/Servant", desc: "A deep relationship.", longDesc: "Authority and devotion blend seamlessly." },
+      Mistress: { dynamic: "Mistress/Servant", match: "Servant/Slave/Toy", desc: "An elegant bond.", longDesc: "Grace and service or playful objectification shine." },
+      Daddy: { dynamic: "Daddy/Little", match: "Little/Babygirl/Princess", desc: "A nurturing bond.", longDesc: "Care and play meet innocence and need." },
+      Mommy: { dynamic: "Mommy/Little", match: "Little/Pet", desc: "A loving bond.", longDesc: "Warmth, guidance, and growth here." },
+      Owner: { dynamic: "Owner/Pet", match: "Pet/Puppy/Kitten/Toy", desc: "A playful or possessive bond.", longDesc: "Control and care meet animal personas or objectification." },
+      Rigger: { dynamic: "Bondage Play", match: "Rope Bunny", desc: "An artistic exchange.", longDesc: "Creativity and trust are woven into ties." },
+      Sadist: { dynamic: "Sadomasochism", match: "Masochist/Painslut", desc: "A thrilling exchange.", longDesc: "Infliction meets reception safely and intensely." },
+      Hunter: { dynamic: "Primal Play", match: "Prey/Captive", desc: "A wild chase.", longDesc: "Pursuit fuels this energetic bond." },
+      Trainer: { dynamic: "Training Play", match: "Puppy/Slave/Pet", desc: "A structured growth bond.", longDesc: "Discipline and skill development are key." },
+      Puppeteer: { dynamic: "Control Play", match: "Doll/Puppet/Toy", desc: "A creative bond of control.", longDesc: "Precision shapes this artistic dynamic." },
+      Protector: { dynamic: "Protection Play", match: "Little/Pet/Bunny", desc: "A strong, safe bond.", longDesc: "Vigilant care meets trust and vulnerability." },
+      Disciplinarian: { dynamic: "Discipline Play", match: "Brat/Slave/Submissive", desc: "A lively challenge or ordered structure.", longDesc: "Control meets defiance or willing compliance." },
+      Caretaker: { dynamic: "Caretaking Play", match: "Little/Pet/Bunny", desc: "A deeply nurturing bond.", longDesc: "Love, support, and exploration define this." },
+      Sir: { dynamic: "Sir/Submissive", match: "Classic Submissive/Servant/Maid", desc: "A respectful, formal bond.", longDesc: "Honor meets obedience or refined service." },
+      Goddess: { dynamic: "Worship Play", match: "Thrall/Slave/Servant", desc: "A divine, reverent bond.", longDesc: "Adoration meets effortless command." },
+      Commander: { dynamic: "Command Play", match: "Classic Submissive/Slave/Switch", desc: "A strategic, decisive bond.", longDesc: "Control meets obedience or adaptable execution." }
     };
-    this.sfStyleKeyTraits = { // Mapping for scoring
-      'Submissive': ['obedience', 'submissionDepth', 'vulnerability'],
-      'Brat': ['rebellion', 'mischief', 'playfulness'],
-      'Slave': ['service', 'devotion', 'submissionDepth'],
-      'Switch': ['adaptability', 'exploration', 'playfulness'],
-      'Pet': ['affection', 'playfulness', 'devotion'],
-      'Little': ['innocence', 'dependence', 'affection'],
-      'Puppy': ['playfulness', 'devotion', 'affection'],
-      'Kitten': ['sensuality', 'mischief', 'affection'],
-      'Princess': ['sensuality', 'innocence', 'dependence'],
-      'Rope Bunny': ['sensuality', 'exploration', 'submissionDepth'],
-      'Masochist': ['painTolerance', 'submissionDepth', 'vulnerability'],
-      'Prey': ['exploration', 'vulnerability', 'rebellion'],
-      'Toy': ['submissionDepth', 'adaptability', 'service'],
-      'Doll': ['vulnerability', 'dependence', 'sensuality'],
-      'Bunny': ['playfulness', 'innocence', 'affection'],
-      'Servant': ['service', 'obedience', 'devotion'],
-      'Playmate': ['playfulness', 'mischief', 'exploration'],
-      'Babygirl': ['dependence', 'innocence', 'affection'],
-      'Captive': ['submissionDepth', 'vulnerability', 'exploration'],
-      'Thrall': ['devotion', 'submissionDepth', 'dependence'],
-      'Puppet': ['receptiveness', 'adaptability'],
-      'Maid': ['tidiness', 'politeness'],
-      'Painslut': ['painTolerance', 'craving'],
-      'Bottom': ['receptiveness', 'painTolerance'],
-      'Dominant': ['authority', 'confidence', 'leadership'],
-      'Assertive': ['boldness', 'intensity', 'authority'],
-      'Nurturer': ['care', 'empathy', 'patience'],
-      'Strict': ['discipline', 'control', 'precision'],
-      'Master': ['authority', 'possession', 'dominanceDepth'],
-      'Mistress': ['confidence', 'creativity', 'dominanceDepth'],
-      'Daddy': ['care', 'possession', 'empathy'],
-      'Mommy': ['care', 'patience', 'empathy'],
-      'Owner': ['possession', 'control', 'dominanceDepth'],
-      'Rigger': ['creativity', 'precision', 'control'],
-      'Sadist': ['sadism', 'intensity', 'control'],
-      'Hunter': ['boldness', 'leadership', 'intensity'],
-      'Trainer': ['patience', 'discipline', 'leadership'],
-      'Puppeteer': ['control', 'creativity', 'precision'],
-      'Protector': ['care', 'authority', 'possession'],
-      'Disciplinarian': ['discipline', 'authority', 'precision'],
-      'Caretaker': ['care', 'empathy', 'patience'],
-      'Sir': ['authority', 'confidence', 'leadership'],
-      'Goddess': ['confidence', 'intensity', 'dominanceDepth'],
-      'Commander': ['authority', 'intensity', 'dominanceDepth']
+    this.sfStyleKeyTraits = { // Mapping for scoring - Ensure keys match sfStyleDescriptions & sfDynamicMatches
+      'Classic Submissive': ['obedience', 'service', 'presentation', 'trust'], 'Brat': ['playful defiance', 'mischief', 'trust'], 'Slave': ['devotion', 'surrender', 'obedience', 'service'], 'Pet': ['affection seeking', 'playfulness', 'non-verbal expression', 'trust'], 'Little': ['age regression comfort', 'need for guidance', 'trust'], 'Puppy': ['boundless energy', 'trainability', 'obedience'], 'Kitten': ['curiosity', 'gracefulness', 'affection seeking'], 'Princess': ['desire for pampering', 'delegation tendency', 'innocence'], 'Rope Bunny': ['rope enthusiasm', 'patience during tying', 'sensuality'], 'Masochist': ['pain interpretation', 'sensation seeking', 'trust'], 'Prey': ['enjoyment of chase', 'fear play comfort', 'vulnerability'], 'Toy': ['objectification comfort', 'responsiveness to control', 'adaptability'], 'Doll': ['aesthetic focus', 'stillness / passivity', 'objectification comfort'], 'Bunny': ['shyness / skittishness', 'gentle affection need', 'innocence'], 'Servant': ['task focus', 'anticipating needs', 'obedience', 'politeness'], 'Playmate': ['enthusiasm for games', 'good sport', 'playfulness'], 'Babygirl': ['vulnerability expression', 'coquettishness', 'need for guidance'], 'Captive': ['struggle performance', 'acceptance of fate', 'vulnerability'], 'Thrall': ['mental focus', 'suggestibility', 'devotion'], 'Puppet': ['responsiveness to direction', 'passivity in control', 'adaptability'], 'Maid': ['attention to detail', 'uniformity', 'service'], 'Painslut': ['pain seeking', 'endurance display', 'craving'], 'Bottom': ['receptivity', 'power exchange focus', 'painTolerance'],
+      'Classic Dominant': ['leadership', 'control', 'authority', 'care'], 'Assertive': ['direct communication', 'boundary setting', 'authority'], 'Nurturer': ['emotional support', 'patience', 'care', 'empathy'], 'Strict': ['rule enforcement', 'discipline focus', 'authority'], 'Master': ['expectation setting', 'presence', 'authority', 'control'], 'Mistress': ['expectation setting', 'presence', 'authority', 'creativity'], 'Daddy': ['protective guidance', 'affectionate authority', 'care'], 'Mommy': ['nurturing comfort', 'gentle discipline', 'care'], 'Owner': ['possessiveness', 'behavioral training', 'control'], 'Rigger': ['rope technique', 'aesthetic vision', 'precision', 'care'], 'Sadist': ['sensation control', 'psychological focus', 'intensity', 'care'], 'Hunter': ['pursuit drive', 'instinct reliance', 'boldness'], 'Trainer': ['skill development focus', 'structured methodology', 'patience', 'discipline focus'], 'Puppeteer': ['fine motor control', 'objectification gaze', 'control', 'creativity'], 'Protector': ['vigilance', 'defensive instinct', 'care', 'authority'], 'Disciplinarian': ['consequence delivery', 'detachment during discipline', 'rule enforcement'], 'Caretaker': ['holistic well-being focus', 'rule implementation for safety', 'care'], 'Sir': ['formal demeanor', 'service expectation', 'authority'], 'Goddess': ['worship seeking', 'effortless command', 'presence'], 'Commander': ['strategic direction', 'decisiveness', 'leadership', 'authority']
     };
 
     // --- Element Mapping ---
@@ -335,6 +77,7 @@ class TrackerApp {
       avatarPicker: document.querySelector('.avatar-picker'),
       role: document.getElementById('role'),
       style: document.getElementById('style'),
+      formStyleFinderLink: document.getElementById('form-style-finder-link'), // Link inside form
       traitsContainer: document.getElementById('traits-container'),
       traitInfoPopup: document.getElementById('trait-info-popup'),
       traitInfoClose: document.getElementById('trait-info-close'),
@@ -350,6 +93,7 @@ class TrackerApp {
       resourcesBtn: document.getElementById('resources-btn'),
       resourcesModal: document.getElementById('resources-modal'),
       resourcesClose: document.getElementById('resources-close'),
+      resourcesBody: document.getElementById('resources-body'), // Added ID for content
       glossaryBtn: document.getElementById('glossary-btn'),
       glossaryModal: document.getElementById('glossary-modal'),
       glossaryClose: document.getElementById('glossary-close'),
@@ -370,72 +114,135 @@ class TrackerApp {
       // Style Finder elements
       styleFinderTriggerBtn: document.getElementById('style-finder-trigger-btn'),
       sfModal: document.getElementById('style-finder-modal'),
-      sfCloseBtn: document.getElementById('sf-close-style-finder'), // Corrected ID
+      sfCloseBtn: document.getElementById('sf-close-style-finder'),
       sfProgressTracker: document.getElementById('sf-progress-tracker'),
       sfStepContent: document.getElementById('sf-step-content'),
       sfFeedback: document.getElementById('sf-feedback'),
-      sfDashboard: document.getElementById('sf-dashboard')
-    }; // <-- Correct closing brace for elements object
+      sfDashboard: document.getElementById('sf-dashboard'),
+      // Added Title IDs for Modals
+      detailModalTitle: document.getElementById('detail-modal-title'),
+      resourcesModalTitle: document.getElementById('resources-modal-title'),
+      glossaryModalTitle: document.getElementById('glossary-modal-title'),
+      styleDiscoveryTitle: document.getElementById('style-discovery-title'),
+      themesModalTitle: document.getElementById('themes-modal-title'),
+      sfModalTitle: document.getElementById('sf-modal-title'),
+      formTitle: document.getElementById('form-title'),
+    };
 
     // Critical element check
-    const criticalElements = ['name', 'role', 'style', 'save', 'peopleList', 'modal', 'sfModal', 'sfStepContent', 'styleFinderTriggerBtn'];
+    const criticalElements = ['name', 'role', 'style', 'save', 'peopleList', 'modal', 'sfModal', 'sfStepContent', 'styleFinderTriggerBtn', 'glossaryBody', 'resourcesBody', 'styleDiscoveryBody', 'themesBody', 'modalBody', 'livePreview', 'traitsContainer'];
     let missingElement = false;
     for (const key of criticalElements) { if (!this.elements[key]) { console.error(`Missing critical element: ID '${key}'`); missingElement = true; } }
-    if (missingElement) { throw new Error("Missing critical HTML elements needed for KinkCompass or Style Finder."); }
+    if (missingElement) { throw new Error("Missing critical HTML elements. Cannot initialize KinkCompass."); }
 
     console.log("CONSTRUCTOR: Elements found.");
     this.addEventListeners();
     console.log("CONSTRUCTOR: Listeners added.");
     this.loadFromLocalStorage();
     this.applySavedTheme();
-    this.renderStyles(this.elements.role.value);
-    this.renderTraits(this.elements.role.value, '');
+    this.renderStyles(this.elements.role.value); // Initial render based on default role
+    this.renderTraits(this.elements.role.value, this.elements.style.value); // Initial trait render
     this.renderList();
     this.updateLivePreview();
     console.log("CONSTRUCTOR: Initial render complete.");
   } // --- End of constructor ---
 
   // --- Local Storage ---
-  loadFromLocalStorage(){try{const d=localStorage.getItem('kinkProfiles');const p=d?JSON.parse(d):[];this.people=p.map(p=>({...p,goals:Array.isArray(p.goals)?p.goals:[],history:Array.isArray(p.history)?p.history:[],avatar:p.avatar||'❓',achievements:Array.isArray(p.achievements)?p.achievements:[],reflections:typeof p.reflections==='object'?p.reflections:{}}));console.log(`Loaded ${this.people.length}`);}catch(e){console.error("Load Error:",e);this.people=[];}}
-  saveToLocalStorage(){try{localStorage.setItem('kinkProfiles',JSON.stringify(this.people));console.log(`Saved ${this.people.length}`);}catch(e){console.error("Save Error:",e);alert("Save failed.");}}
+  loadFromLocalStorage(){try{const data=localStorage.getItem('kinkProfiles');const profiles=data?JSON.parse(data):[];this.people=profiles.map(p=>({...p,id:p.id??Date.now(),name:p.name??"Unnamed",role:p.role??"submissive",style:p.style??"",avatar:p.avatar||'❓',goals:Array.isArray(p.goals)?p.goals:[],history:Array.isArray(p.history)?p.history:[],achievements:Array.isArray(p.achievements)?p.achievements:[],reflections:typeof p.reflections==='object'&&p.reflections!==null?p.reflections:{text:p.reflections||''},traits:typeof p.traits==='object'&&p.traits!==null?p.traits:{}}));console.log(`Loaded ${this.people.length} profiles.`);}catch(e){console.error("Failed to load profiles:",e);this.people=[];}}
+  saveToLocalStorage(){try{localStorage.setItem('kinkProfiles',JSON.stringify(this.people));console.log(`Saved ${this.people.length} profiles.`);}catch(e){console.error("Failed to save profiles:",e);this.showNotification("Error saving data. Storage might be full.", "error");}}
 
-  // --- Event Listeners Setup (Corrected) ---
+
+  // --- Event Listeners Setup ---
   addEventListeners() {
     console.log("Attaching event listeners...");
-    // KinkCompass Core Listeners
-    this.elements.role?.addEventListener('change',() => { const r=this.elements.role.value;this.renderStyles(r);this.elements.style.value='';this.renderTraits(r,'');this.updateLivePreview(); });
-    this.elements.style?.addEventListener('change',() => { this.renderTraits(this.elements.role.value,this.elements.style.value);this.updateLivePreview(); });
-    this.elements.name?.addEventListener('input',() => this.updateLivePreview());
-    this.elements.avatarPicker?.addEventListener('click',(e) => { if(e.target.classList.contains('avatar-btn')){const em=e.target.dataset.emoji;if(em){this.elements.avatarInput.value=em;this.elements.avatarDisplay.textContent=em;this.elements.avatarPicker.querySelectorAll('.avatar-btn').forEach(b=>b.classList.toggle('selected',b===e.target));this.updateLivePreview();}} });
-    this.elements.save?.addEventListener('click',() => this.savePerson());
-    this.elements.clearForm?.addEventListener('click',() => this.resetForm(true));
-    this.elements.themeToggle?.addEventListener('click',() => this.toggleTheme());
-    this.elements.exportBtn?.addEventListener('click',() => this.exportData());
-    this.elements.importBtn?.addEventListener('click',() => this.elements.importFileInput?.click());
-    this.elements.importFileInput?.addEventListener('change',(e) => this.importData(e));
-    this.elements.peopleList?.addEventListener('click',(e) => this.handleListClick(e));
-    this.elements.peopleList?.addEventListener('keydown',(e) => this.handleListKeydown(e));
-    this.elements.modalClose?.addEventListener('click',() => this.closeModal(this.elements.modal));
-    this.elements.resourcesBtn?.addEventListener('click',() => this.openModal(this.elements.resourcesModal));
-    this.elements.resourcesClose?.addEventListener('click',() => this.closeModal(this.elements.resourcesModal));
-    this.elements.glossaryBtn?.addEventListener('click',() => this.showGlossary());
-    this.elements.glossaryClose?.addEventListener('click',() => this.closeModal(this.elements.glossaryModal));
-    this.elements.styleDiscoveryBtn?.addEventListener('click',() => this.showStyleDiscovery());
-    this.elements.styleDiscoveryClose?.addEventListener('click',() => this.closeModal(this.elements.styleDiscoveryModal));
-    this.elements.styleDiscoveryRoleFilter?.addEventListener('change',() => this.renderStyleDiscoveryContent());
-    this.elements.themesBtn?.addEventListener('click',() => this.openModal(this.elements.themesModal));
-    this.elements.themesClose?.addEventListener('click',() => this.closeModal(this.elements.themesModal));
-    this.elements.themesBody?.addEventListener('click',(e) => this.handleThemeSelection(e));
-    this.elements.traitsContainer?.addEventListener('input',(e) => this.handleTraitSliderInput(e));
-    this.elements.traitsContainer?.addEventListener('click',(e) => this.handleTraitInfoClick(e));
-    this.elements.traitInfoClose?.addEventListener('click',() => this.hideTraitInfo());
-    this.elements.modalBody?.addEventListener('click',(e) => this.handleModalBodyClick(e));
+    // Role change
+    this.elements.role?.addEventListener('change', (e) => {
+        const selectedRole = e.target.value;
+        this.renderStyles(selectedRole); // Update style dropdown
+        this.elements.style.value = ''; // Reset style selection
+        this.renderTraits(selectedRole, ''); // Clear/update traits
+        this.updateLivePreview();
+    });
 
-    // --- Style Finder Event Listeners (Integrated) ---
+    // Style change
+    this.elements.style?.addEventListener('change', (e) => {
+        this.renderTraits(this.elements.role.value, e.target.value);
+        this.updateLivePreview();
+    });
+
+    // Name input
+    this.elements.name?.addEventListener('input', () => this.updateLivePreview());
+
+    // Avatar Picker
+    this.elements.avatarPicker?.addEventListener('click', (e) => {
+        if (e.target.classList.contains('avatar-btn')) {
+            const emoji = e.target.dataset.emoji;
+            if (emoji) {
+                this.elements.avatarInput.value = emoji;
+                this.elements.avatarDisplay.textContent = emoji;
+                // Update selected state
+                this.elements.avatarPicker.querySelectorAll('.avatar-btn').forEach(btn => {
+                    btn.classList.toggle('selected', btn === e.target);
+                });
+                this.updateLivePreview();
+            }
+        }
+    });
+
+    // Form buttons
+    this.elements.save?.addEventListener('click', () => this.savePerson());
+    this.elements.clearForm?.addEventListener('click', () => this.resetForm(true)); // Pass true to confirm clear
+
+     // Link within form to open Style Finder
+    this.elements.formStyleFinderLink?.addEventListener('click', () => this.sfStart());
+
+    // Trait interaction
+    this.elements.traitsContainer?.addEventListener('input', (e) => {
+        if (e.target.classList.contains('trait-slider')) {
+            this.handleTraitSliderInput(e);
+        }
+    });
+    this.elements.traitsContainer?.addEventListener('click', (e) => {
+        if (e.target.classList.contains('trait-info-btn')) {
+            this.handleTraitInfoClick(e);
+        }
+    });
+    this.elements.traitInfoClose?.addEventListener('click', () => this.hideTraitInfo());
+
+    // Profile List interaction
+    this.elements.peopleList?.addEventListener('click', (e) => this.handleListClick(e));
+    this.elements.peopleList?.addEventListener('keydown', (e) => this.handleListKeydown(e));
+
+    // Header Buttons & Modals
     this.elements.styleFinderTriggerBtn?.addEventListener('click', () => this.sfStart());
     this.elements.sfCloseBtn?.addEventListener('click', () => this.sfClose());
 
-    // Delegated listener for actions within the SF modal content area
+    this.elements.styleDiscoveryBtn?.addEventListener('click', () => this.showStyleDiscovery());
+    this.elements.styleDiscoveryClose?.addEventListener('click', () => this.closeModal(this.elements.styleDiscoveryModal));
+    this.elements.styleDiscoveryRoleFilter?.addEventListener('change', () => this.renderStyleDiscoveryContent());
+
+    this.elements.glossaryBtn?.addEventListener('click', () => this.showGlossary());
+    this.elements.glossaryClose?.addEventListener('click', () => this.closeModal(this.elements.glossaryModal));
+
+    this.elements.resourcesBtn?.addEventListener('click', () => this.openModal(this.elements.resourcesModal));
+    this.elements.resourcesClose?.addEventListener('click', () => this.closeModal(this.elements.resourcesModal));
+
+    this.elements.themesBtn?.addEventListener('click', () => this.openModal(this.elements.themesModal));
+    this.elements.themesClose?.addEventListener('click', () => this.closeModal(this.elements.themesModal));
+    this.elements.themesBody?.addEventListener('click', (e) => this.handleThemeSelection(e));
+
+    this.elements.exportBtn?.addEventListener('click', () => this.exportData());
+    this.elements.importBtn?.addEventListener('click', () => this.elements.importFileInput?.click());
+    this.elements.importFileInput?.addEventListener('change', (e) => this.importData(e));
+
+    this.elements.themeToggle?.addEventListener('click', () => this.toggleTheme());
+
+    // Detail Modal Interaction (Delegated)
+    this.elements.modalBody?.addEventListener('click', (e) => this.handleModalBodyClick(e));
+    this.elements.modalClose?.addEventListener('click', () => this.closeModal(this.elements.modal));
+
+
+    // Style Finder Modal Interaction (Delegated)
     this.elements.sfStepContent?.addEventListener('click', (e) => {
         const button = e.target.closest('button[data-action]');
         if (button) {
@@ -448,43 +255,34 @@ class TrackerApp {
             return;
         }
     });
-
-    // Delegated listener for slider input
     this.elements.sfStepContent?.addEventListener('input', (e) => {
         if (e.target.classList.contains('sf-trait-slider') && e.target.dataset.trait) {
             this.handleStyleFinderSliderInput(e.target);
         }
     });
-
-    // Listener for closing dynamically created popups (SF specific popups)
-    document.body.addEventListener('click', (e) => {
+    document.body.addEventListener('click', (e) => { // For dynamic SF popups
       if (e.target.classList.contains('sf-close-btn')) {
-          const popup = e.target.closest('.sf-style-info-popup');
-          if (popup) {
-              popup.remove();
-          }
+          e.target.closest('.sf-style-info-popup')?.remove();
       }
     });
 
-    // General Window Listeners
-    window.addEventListener('click',(e) => this.handleWindowClick(e));
-    window.addEventListener('keydown',(e) => this.handleWindowKeydown(e));
+    // General Window Listeners (Modal closing)
+    window.addEventListener('click', (e) => this.handleWindowClick(e));
+    window.addEventListener('keydown', (e) => this.handleWindowKeydown(e));
 
     console.log("Event listeners setup complete.");
   } // --- End addEventListeners ---
 
 
   // --- Event Handlers ---
-  handleListClick(e){const li=e.target.closest('.person');if(!li)return;const id=parseInt(li.dataset.id);if(isNaN(id))return;console.log("List Click on ID:",id,"Target:",e.target);const actionTarget = e.target.closest('button'); const action = actionTarget ? actionTarget.dataset.action : null; if(action === 'edit') this.editPerson(id); else if(action === 'delete') this.deletePerson(id); else this.showPersonDetails(id);}
-  handleListKeydown(e){const li=e.target.closest('.person');if(!li)return;if(e.key==='Enter'||e.key===' '){e.preventDefault();const id=parseInt(li.dataset.id);if(!isNaN(id))this.showPersonDetails(id);}}
-  handleWindowClick(e){if(e.target===this.elements.modal)this.closeModal(this.elements.modal);if(e.target===this.elements.sfModal)this.sfClose();
-      if(e.target===this.elements.resourcesModal)this.closeModal(this.elements.resourcesModal);if(e.target===this.elements.glossaryModal)this.closeModal(this.elements.glossaryModal);if(e.target===this.elements.styleDiscoveryModal)this.closeModal(this.elements.styleDiscoveryModal);if(e.target===this.elements.themesModal)this.closeModal(this.elements.themesModal);}
-  handleWindowKeydown(e){if(e.key==='Escape'){if(this.elements.modal?.style.display==='flex')this.closeModal(this.elements.modal);if(this.elements.sfModal?.style.display==='flex')this.sfClose();
-      if(this.elements.resourcesModal?.style.display==='flex')this.closeModal(this.elements.resourcesModal);if(this.elements.glossaryModal?.style.display==='flex')this.closeModal(this.elements.glossaryModal);if(this.elements.styleDiscoveryModal?.style.display==='flex')this.closeModal(this.elements.styleDiscoveryModal);if(this.elements.themesModal?.style.display==='flex')this.closeModal(this.elements.themesModal);}}
-  handleTraitSliderInput(e){if(e.target.classList.contains('trait-slider')){this.updateTraitDescription(e.target);this.updateLivePreview();const v=e.target.value;const p=this.currentEditId?this.people.find(p=>p.id===this.currentEditId):null;if(p){if(v==='5')grantAchievement(p,'max_trait');if(v==='1')grantAchievement(p,'min_trait');}}}
-  handleTraitInfoClick(e){if(e.target.classList.contains('trait-info-btn')){const tN=e.target.dataset.trait;if(tN)this.showTraitInfo(tN);}}
-  handleModalBodyClick(e){console.log("Modal Click:",e.target);const btn=e.target.closest('button');const tgt=e.target;const check=btn||tgt;if(!check||(check.tagName!=='BUTTON'&&!check.classList.contains('snapshot-info-btn'))){return;}const id=check.id;const cl=check.classList;const pId=parseInt(check.dataset.personId);const gId=parseInt(check.dataset.goalId);console.log("Check Elm:",check,"ID:",id,"Class:",cl);if(id==='save-reflections-btn'&&!isNaN(pId))this.saveReflections(pId);else if(id==='prompt-btn')this.showJournalPrompt();else if(id==='snapshot-btn'&&!isNaN(pId))this.addSnapshotToHistory(pId);else if(cl.contains('snapshot-info-btn'))this.toggleSnapshotInfo(check);else if(id==='reading-btn'&&!isNaN(pId))this.showKinkReading(pId);else if(cl.contains('add-goal-btn')&&!isNaN(pId))this.addGoal(pId);else if(cl.contains('toggle-goal-btn')&&!isNaN(pId)&&!isNaN(gId))this.toggleGoalStatus(pId,gId);else if(cl.contains('delete-goal-btn')&&!isNaN(pId)&&!isNaN(gId))this.deleteGoal(pId,gId);else console.log("No matching modal action.");}
-  handleThemeSelection(e){if(e.target.classList.contains('theme-option-btn')){const tN=e.target.dataset.theme;if(tN){this.setTheme(tN);grantAchievement({},'theme_changer');}}}
+  handleListClick(e){const li=e.target.closest('.person');if(!li)return;const id=parseInt(li.dataset.id,10);if(isNaN(id))return;console.log("List Click on ID:",id,"Target:",e.target);const actionTarget=e.target.closest('button');const action=actionTarget?actionTarget.dataset.action:null;if(action==='edit'){this.editPerson(id);}else if(action==='delete'){this.deletePerson(id);}else{this.showPersonDetails(id);}}
+  handleListKeydown(e){const li=e.target.closest('.person');if(!li)return;if(e.key==='Enter'||e.key===' '){e.preventDefault();const id=parseInt(li.dataset.id,10);if(!isNaN(id))this.showPersonDetails(id);}}
+  handleWindowClick(e){const target=e.target;if(target.classList.contains('modal')){if(target===this.elements.modal)this.closeModal(this.elements.modal);else if(target===this.elements.sfModal)this.sfClose();else if(target===this.elements.resourcesModal)this.closeModal(this.elements.resourcesModal);else if(target===this.elements.glossaryModal)this.closeModal(this.elements.glossaryModal);else if(target===this.elements.styleDiscoveryModal)this.closeModal(this.elements.styleDiscoveryModal);else if(target===this.elements.themesModal)this.closeModal(this.elements.themesModal);}}
+  handleWindowKeydown(e){if(e.key==='Escape'){if(this.elements.modal?.style.display!=='none')this.closeModal(this.elements.modal);if(this.elements.sfModal?.style.display!=='none')this.sfClose();if(this.elements.resourcesModal?.style.display!=='none')this.closeModal(this.elements.resourcesModal);if(this.elements.glossaryModal?.style.display!=='none')this.closeModal(this.elements.glossaryModal);if(this.elements.styleDiscoveryModal?.style.display!=='none')this.closeModal(this.elements.styleDiscoveryModal);if(this.elements.themesModal?.style.display!=='none')this.closeModal(this.elements.themesModal);}}
+  handleTraitSliderInput(e){const slider=e.target;this.updateTraitDescription(slider);this.updateLivePreview();const value=slider.value;const person=this.currentEditId?this.people.find(p=>p.id===this.currentEditId):null;if(person){if(value==='5')grantAchievement(person,'max_trait');if(value==='1')grantAchievement(person,'min_trait');}}
+  handleTraitInfoClick(e){const button=e.target;const traitName=button.dataset.trait;if(traitName)this.showTraitInfo(traitName);}
+  handleModalBodyClick(e){const target=e.target;const button=target.closest('button');const check=button||target;if(!check)return;const id=check.id;const classList=check.classList;const personId=parseInt(check.dataset.personId,10);const goalId=parseInt(check.dataset.goalId,10);console.log("Detail Modal Click: Elm:",check,"ID:",id,"Class:",classList);if(id==='save-reflections-btn'&&!isNaN(personId)){this.saveReflections(personId);}else if(id==='prompt-btn'){this.showJournalPrompt(personId);}else if(id==='snapshot-btn'&&!isNaN(personId)){this.addSnapshotToHistory(personId);}else if(classList.contains('snapshot-info-btn')){this.toggleSnapshotInfo(check);}else if(id==='reading-btn'&&!isNaN(personId)){this.showKinkReading(personId);}else if(classList.contains('add-goal-btn')&&!isNaN(personId)){this.addGoal(personId);}else if(classList.contains('toggle-goal-btn')&&!isNaN(personId)&&!isNaN(goalId)){this.toggleGoalStatus(personId,goalId);}else if(classList.contains('delete-goal-btn')&&!isNaN(personId)&&!isNaN(goalId)){this.deleteGoal(personId,goalId);}else{console.log("No matching detail modal action.");}}
+  handleThemeSelection(e){const button=e.target.closest('.theme-option-btn');if(button){const themeName=button.dataset.theme;if(themeName){this.setTheme(themeName);grantAchievement({},'theme_changer');this.closeModal(this.elements.themesModal);}}} // Close modal on selection
 
   handleStyleFinderAction(action, dataset = {}) {
       console.log("SF Action:", action, dataset);
@@ -567,53 +365,609 @@ class TrackerApp {
 
 
   // --- Core Rendering ---
-  renderStyles(r){this.elements.style.innerHTML='<option value="">Pick flavor!</option>';if(!bdsmData[r]?.styles)return;bdsmData[r].styles.forEach(s=>{this.elements.style.innerHTML+=`<option value="${this.escapeHTML(s.name)}">${this.escapeHTML(s.name)}</option>`;});}
-  renderTraits(r,sN){this.elements.traitsContainer.innerHTML='';if(!bdsmData[r])return;const core=bdsmData[r].coreTraits||[];let styleT=[];let styleO=null;if(sN){styleO=bdsmData[r].styles.find(s=>s.name===sN);styleT=styleO?.traits||[];}const toRender=[];const uN=new Set();[...core,...styleT].forEach(t=>{if(t&&t.name&&!uN.has(t.name)){toRender.push(t);uN.add(t.name);}});if(toRender.length===0){this.elements.traitsContainer.innerHTML=`<p class="muted-text">No traits.</p>`;}else{toRender.forEach(t=>{this.elements.traitsContainer.innerHTML+=this.createTraitHTML(t);});this.elements.traitsContainer.querySelectorAll('.trait-slider').forEach(s=>this.updateTraitDescription(s));}if(sN&&styleO&&styleT.length===0&&core.length>0){const m=document.createElement('p');m.className='muted-text trait-info-message';m.textContent=`Style '${this.escapeHTML(sN)}' uses core traits.`;this.elements.traitsContainer.prepend(m);}else if(!sN&&core.length===0){this.elements.traitsContainer.innerHTML=`<p>Select style or define traits.</p>`;}this.hideTraitInfo();}
-  createTraitHTML(t){const dN=t.name.charAt(0).toUpperCase()+t.name.slice(1);const id=`trait-${t.name.replace(/[^a-zA-Z0-9-_]/g,'-')}`;return`<div class="trait"><label for="${id}">${this.escapeHTML(dN)}</label><button class="trait-info-btn" data-trait="${t.name}" aria-label="Info: ${this.escapeHTML(dN)}">ℹ️</button><input type="range" id="${id}" min="1" max="5" value="3" class="trait-slider" data-trait="${t.name}" aria-label="${this.escapeHTML(dN)}" autocomplete="off"/><span class="trait-value">3</span><div class="trait-desc muted-text"></div></div>`;}
-  updateTraitDescription(sl){const tN=sl.getAttribute('data-trait');const v=sl.value;const dD=sl.parentElement?.querySelector('.trait-desc');const vS=sl.parentElement?.querySelector('.trait-value');if(!dD||!vS)return;const r=this.elements.role.value;const sN=this.elements.style.value;let tD=bdsmData[r]?.styles.find(s=>s.name===sN)?.traits?.find(t=>t.name===tN)||bdsmData[r]?.coreTraits?.find(t=>t.name===tN);vS.textContent=v;if(tD?.desc?.[v]){dD.textContent=this.escapeHTML(tD.desc[v]);}else{dD.textContent=tD?'Desc unavailable.':'Trait unavailable.';}}
-  renderList(){if(!this.elements.peopleList)return;this.elements.peopleList.innerHTML=this.people.length===0?`<li>No pals yet! ✨</li>`:this.people.map(p=>this.createPersonListItemHTML(p)).join('');}
-  createPersonListItemHTML(p){const sD=p.style?this.escapeHTML(p.style):"N/A";const rD=p.role.charAt(0).toUpperCase()+p.role.slice(1);const nE=this.escapeHTML(p.name);const av=p.avatar||'❓';return`<li class="person" data-id="${p.id}" tabindex="0"><span class="person-info"><span class="person-avatar">${av}</span><span class="person-name-details"><strong class="person-name">${nE}</strong><span class="person-details muted-text">(${rD} - ${sD})</span></span></span><span class="person-actions"><button class="edit-btn small-btn" data-action="edit" data-id="${p.id}" aria-label="Edit ${nE}">✏️</button><button class="delete-btn small-btn" data-action="delete" data-id="${p.id}" aria-label="Delete ${nE}">🗑️</button></span></li>`;}
+  renderStyles(roleKey) {
+      const roleData = bdsmData[roleKey];
+      const selectElement = this.elements.style;
+      if (!selectElement) return;
+
+      selectElement.innerHTML = '<option value="">-- Select a Style --</option>'; // Default option
+
+      if (roleData && roleData.styles) {
+          roleData.styles.forEach(style => {
+              selectElement.innerHTML += `<option value="${this.escapeHTML(style.name)}">${this.escapeHTML(style.name)}</option>`;
+          });
+      } else if (roleKey === 'switch') {
+           // Add default Switch styles if bdsmData doesn't define them explicitly
+           bdsmData.switch?.styles?.forEach(style => { // Use optional chaining
+               selectElement.innerHTML += `<option value="${this.escapeHTML(style.name)}">${this.escapeHTML(style.name)}</option>`;
+           });
+       }
+       else {
+          console.warn(`No styles found for role: ${roleKey}`);
+          // Optionally disable the dropdown
+          // selectElement.disabled = true;
+      }
+      // selectElement.disabled = !(roleData && roleData.styles && roleData.styles.length > 0); // Disable if no styles
+  }
+
+  renderTraits(roleKey, styleName) {
+      const container = this.elements.traitsContainer;
+      if (!container) return;
+
+      container.innerHTML = ''; // Clear previous traits
+
+      const roleData = bdsmData[roleKey];
+      if (!roleData) {
+          container.innerHTML = `<p class="muted-text">Select a valid role.</p>`;
+          return;
+      }
+
+      const coreTraits = roleData.coreTraits || [];
+      let styleTraits = [];
+      let styleObj = null;
+      let message = '';
+
+      if (styleName) {
+          styleObj = roleData.styles?.find(s => s.name === styleName);
+          if (styleObj) {
+              styleTraits = styleObj.traits || [];
+              if (styleTraits.length === 0 && coreTraits.length > 0) {
+                  message = `<p class="muted-text trait-info-message">Style '${this.escapeHTML(styleName)}' primarily uses the core traits for this role.</p>`;
+              }
+          } else {
+              console.warn(`Style object not found for: ${roleKey} - ${styleName}`);
+               message = `<p class="muted-text trait-info-message">Details for style '${this.escapeHTML(styleName)}' not found. Showing core traits.</p>`;
+          }
+      } else if (coreTraits.length === 0) {
+          container.innerHTML = `<p class="muted-text">Select a style to see relevant traits, or define core traits for this role.</p>`;
+          return
+      } else {
+           // No style selected, but core traits exist
+            message = `<p class="muted-text trait-info-message">Select a style, or adjust core traits below.</p>`;
+      }
+
+      const traitsToRender = [];
+      const uniqueTraitNames = new Set();
+
+      // Combine and deduplicate traits, prioritizing style-specific ones if they exist
+      [...styleTraits, ...coreTraits].forEach(trait => {
+          if (trait && trait.name && !uniqueTraitNames.has(trait.name)) {
+              // Find the full trait definition (prefer style, fallback to core)
+              const fullTraitDef = styleTraits.find(st => st.name === trait.name) || coreTraits.find(ct => ct.name === trait.name);
+              if (fullTraitDef) {
+                  traitsToRender.push(fullTraitDef);
+                  uniqueTraitNames.add(trait.name);
+              }
+          }
+      });
+
+      if (traitsToRender.length === 0 && !styleName) {
+           container.innerHTML = `<p class="muted-text">No core traits defined for role '${roleKey}'. Select a style.</p>`;
+           return;
+       }
+       if (traitsToRender.length === 0 && styleName) {
+           container.innerHTML = `<p class="muted-text">No specific or core traits found for style '${this.escapeHTML(styleName)}'.</p>`;
+           return;
+       }
+
+
+      // Render message first if it exists
+      if(message) container.innerHTML += message;
+
+      // Render trait sliders
+      traitsToRender.forEach(trait => {
+          container.innerHTML += this.createTraitHTML(trait);
+      });
+
+      // Update descriptions for the newly rendered sliders
+      container.querySelectorAll('.trait-slider').forEach(slider => {
+          this.updateTraitDescription(slider);
+      });
+
+      this.hideTraitInfo(); // Ensure info popup is hidden
+  }
+
+  createTraitHTML(trait) {
+      const displayName = trait.name.charAt(0).toUpperCase() + trait.name.slice(1);
+      const id = `trait-${trait.name.replace(/[^a-zA-Z0-9-_]/g, '-')}`;
+      const initialValue = 3; // Default value
+
+      // Get description for initial value
+       let initialDesc = 'Adjust slider...';
+       if (trait.desc && trait.desc[initialValue]) {
+           initialDesc = trait.desc[initialValue];
+       } else if (trait.desc && trait.desc["3"]) { // Fallback check for string key "3"
+            initialDesc = trait.desc["3"];
+       } else {
+           console.warn(`Initial description missing for trait '${trait.name}' at value 3.`);
+       }
+
+
+      return `
+          <div class="trait">
+              <label for="${id}">${this.escapeHTML(displayName)}</label>
+              <button class="trait-info-btn" data-trait="${trait.name}" aria-label="Info about ${this.escapeHTML(displayName)}">ℹ️</button>
+              <span class="trait-value">${initialValue}</span>
+              <input type="range" id="${id}" min="1" max="5" value="${initialValue}" class="trait-slider" data-trait="${trait.name}" aria-label="${this.escapeHTML(displayName)} rating" autocomplete="off"/>
+              <div class="trait-desc muted-text">${this.escapeHTML(initialDesc)}</div>
+          </div>
+      `;
+  }
+
+  updateTraitDescription(slider) {
+      const traitName = slider.dataset.trait;
+      const value = slider.value;
+      const traitDescElement = slider.parentElement?.querySelector('.trait-desc');
+      const traitValueElement = slider.parentElement?.querySelector('.trait-value');
+
+      if (!traitDescElement || !traitValueElement || !traitName) return;
+
+      // Update the displayed value number
+      traitValueElement.textContent = value;
+
+      // Find the trait definition (check current role/style)
+      const roleKey = this.elements.role.value;
+      const styleName = this.elements.style.value;
+      const roleData = bdsmData[roleKey];
+      let traitDef = null;
+
+      if (roleData) {
+           // Prioritize style-specific trait definition
+           if (styleName) {
+               const styleObj = roleData.styles?.find(s => s.name === styleName);
+               traitDef = styleObj?.traits?.find(t => t.name === traitName);
+           }
+           // Fallback to core trait definition
+           if (!traitDef) {
+               traitDef = roleData.coreTraits?.find(t => t.name === traitName);
+           }
+            // Special check for Switch core traits if role is Switch
+            if (!traitDef && roleKey === 'switch') {
+                 traitDef = bdsmData.switch?.coreTraits?.find(t => t.name === traitName);
+            }
+      }
+
+
+      // Update the text description
+      if (traitDef?.desc && traitDef.desc[value]) {
+          traitDescElement.textContent = this.escapeHTML(traitDef.desc[value]);
+      } else {
+          traitDescElement.textContent = traitDef ? 'Description unavailable for this level.' : 'Trait definition missing.';
+          if(!traitDef) console.warn(`Trait definition not found for ${traitName} in role ${roleKey}/${styleName || 'core'}`);
+      }
+  }
+
+  renderList(){if(!this.elements.peopleList)return;this.elements.peopleList.innerHTML=this.people.length===0?`<li>No personas created yet! Use the form to start. ✨</li>`:this.people.map(p=>this.createPersonListItemHTML(p)).join('');} // Updated empty message
+  createPersonListItemHTML(person) {
+    const styleDisplay = person.style ? this.escapeHTML(person.style) : "Style N/A";
+    const roleDisplay = person.role.charAt(0).toUpperCase() + person.role.slice(1);
+    const nameDisplay = this.escapeHTML(person.name);
+    const avatar = person.avatar || '❓';
+    return `
+        <li class="person" data-id="${person.id}" tabindex="0" aria-label="${nameDisplay}, ${roleDisplay} - ${styleDisplay}. Click to view details.">
+            <span class="person-info">
+                <span class="person-avatar" aria-hidden="true">${avatar}</span>
+                <span class="person-name-details">
+                    <strong class="person-name">${nameDisplay}</strong>
+                    <span class="person-details muted-text">(${roleDisplay} - ${styleDisplay})</span>
+                </span>
+            </span>
+            <span class="person-actions">
+                <button class="edit-btn small-btn" data-action="edit" data-id="${person.id}" aria-label="Edit ${nameDisplay}">✏️</button>
+                <button class="delete-btn small-btn" data-action="delete" data-id="${person.id}" aria-label="Delete ${nameDisplay}">🗑️</button>
+            </span>
+        </li>`;
+  }
 
   // --- CRUD ---
-  savePerson(){const name=this.elements.name.value.trim()||"Unnamed";const av=this.elements.avatarInput.value||'❓';const r=this.elements.role.value;const sN=this.elements.style.value;if(!sN){alert("Select style.");return;}const sliders=this.elements.traitsContainer.querySelectorAll('.trait-slider');const expected=[...(bdsmData[r]?.coreTraits||[]),...(bdsmData[r]?.styles.find(s=>s.name===sN)?.traits||[])];const uniqueE=new Set(expected.map(t=>t.name));if(sliders.length!==uniqueE.size&&uniqueE.size>0){alert("Trait error.");return;}const tr={};let mD=false;sliders.forEach(s=>{const n=s.getAttribute('data-trait');if(n)tr[n]=s.value;else mD=true;});if(mD){alert("Gather trait error.");return;}for(const n of uniqueE){if(!tr.hasOwnProperty(n)){alert(`Missing data: '${n}'.`);return;}}const ex=this.currentEditId?this.people.find(p=>p.id===this.currentEditId):null;const pD={id:this.currentEditId||Date.now(),name,avatar:av,role:r,style:sN,goals:ex?.goals||[],traits:tr,history:ex?.history||[],achievements:ex?.achievements||[],reflections:ex?.reflections||{}};if(!this.currentEditId)grantAchievement(pD,'profile_created');if(this.people.length===4&&!this.currentEditId)grantAchievement(pD,'five_profiles');if(this.currentEditId)grantAchievement(pD,'profile_edited');if(this.currentEditId){const i=this.people.findIndex(p=>p.id===this.currentEditId);if(i!==-1)this.people[i]=pD;else{console.error("Update ID error");pD.id=Date.now();this.people.push(pD);}}else{this.people.push(pD);}this.saveToLocalStorage();this.renderList();this.resetForm(true);alert(`${this.escapeHTML(name)} saved! ✨`);}
-  editPerson(pId){const p=this.people.find(p=>p.id===pId);if(!p){alert("Not found.");return;}this.currentEditId=pId;this.elements.name.value=p.name;this.elements.avatarDisplay.textContent=p.avatar||'❓';this.elements.avatarInput.value=p.avatar||'❓';this.elements.avatarPicker?.querySelectorAll('.avatar-btn').forEach(b=>b.classList.toggle('selected',b.dataset.emoji===p.avatar));this.elements.role.value=p.role;this.renderStyles(p.role);this.elements.style.value=p.style;this.renderTraits(p.role,p.style);requestAnimationFrame(()=>{if(p.traits){Object.entries(p.traits).forEach(([n,v])=>{const s=this.elements.traitsContainer.querySelector(`.trait-slider[data-trait="${n}"]`);if(s){s.value=v;this.updateTraitDescription(s);}}); }this.updateLivePreview();this.elements.save.textContent='Update ✨';this.elements.formSection?.scrollIntoView({behavior:'smooth'});this.elements.name.focus();});}
-  deletePerson(pId){const idx=this.people.findIndex(p=>p.id===pId);if(idx===-1)return;const name=this.people[idx].name;if(confirm(`Delete ${this.escapeHTML(name)}?`)){this.people.splice(idx,1);this.saveToLocalStorage();this.renderList();if(this.currentEditId===pId)this.resetForm(true);alert(`${this.escapeHTML(name)} deleted.`);}}
-  resetForm(clear=false){this.elements.name.value='';this.elements.avatarDisplay.textContent='❓';this.elements.avatarInput.value='❓';this.elements.avatarPicker?.querySelectorAll('.selected').forEach(b=>b.classList.remove('selected'));this.elements.role.value='submissive';this.renderStyles('submissive');this.elements.style.value='';this.renderTraits('submissive','');this.currentEditId=null;this.elements.save.textContent='Save Sparkle! 💖';if(clear)this.updateLivePreview();this.elements.name.focus();console.log("Form reset.");this.hideTraitInfo();}
+  savePerson() {
+    const nameInput = this.elements.name;
+    const name = nameInput.value.trim();
+    const avatar = this.elements.avatarInput.value || '❓';
+    const role = this.elements.role.value;
+    const style = this.elements.style.value;
+
+    // Basic Validation
+    if (!name) {
+        this.showNotification("Please enter a name for your persona.", "error");
+        nameInput.focus();
+        return;
+    }
+     if (!role) { // Should generally not happen with select, but good practice
+        this.showNotification("Please select a role.", "error");
+        this.elements.role.focus();
+        return;
+    }
+    if (!style) {
+        this.showNotification("Please select a style for your persona.", "error");
+        this.elements.style.focus();
+        return;
+    }
+
+    const sliders = this.elements.traitsContainer.querySelectorAll('.trait-slider');
+    const currentTraits = {};
+    let missingTraitData = false;
+
+    // Gather trait values from sliders
+    sliders.forEach(slider => {
+        const traitName = slider.dataset.trait;
+        if (traitName) {
+            currentTraits[traitName] = slider.value;
+        } else {
+            console.error("Slider missing data-trait attribute:", slider);
+            missingTraitData = true;
+        }
+    });
+
+    if (missingTraitData) {
+         this.showNotification("Error gathering trait data. Please try again.", "error");
+         return;
+    }
+
+    // Find expected traits for validation (more robust)
+    const roleData = bdsmData[role];
+    const coreTraits = roleData?.coreTraits?.map(t => t.name) || [];
+    const styleObj = roleData?.styles?.find(s => s.name === style);
+    const styleSpecificTraits = styleObj?.traits?.map(t => t.name) || [];
+    const expectedTraitNames = new Set([...coreTraits, ...styleSpecificTraits]);
+
+    // Validate all expected traits are present in currentTraits
+    for (const expectedName of expectedTraitNames) {
+        if (!currentTraits.hasOwnProperty(expectedName)) {
+            // This might happen if traits didn't render correctly
+            console.error(`Missing trait data for expected trait: '${expectedName}'. Traits rendered:`, Object.keys(currentTraits));
+            this.showNotification(`Missing data for required trait: '${expectedName}'. Please ensure all sliders are present and try again.`, "error");
+            return;
+        }
+    }
+
+
+    const existingPerson = this.currentEditId ? this.people.find(p => p.id === this.currentEditId) : null;
+
+    const personData = {
+        id: this.currentEditId || Date.now(),
+        name: name,
+        avatar: avatar,
+        role: role,
+        style: style,
+        traits: currentTraits,
+        goals: existingPerson?.goals || [],
+        history: existingPerson?.history || [],
+        achievements: existingPerson?.achievements || [],
+        reflections: existingPerson?.reflections || { text: '' }, // Ensure reflections is object
+        lastUpdated: Date.now()
+    };
+
+    let isNew = false;
+    if (this.currentEditId) {
+        // Update existing
+        const index = this.people.findIndex(p => p.id === this.currentEditId);
+        if (index !== -1) {
+            this.people[index] = personData;
+            grantAchievement(personData, 'profile_edited'); // Grant edit achievement
+        } else {
+            // Should not happen, but handle gracefully
+            console.error("Error updating persona: ID not found.");
+             this.showNotification("Error updating persona.", "error");
+            this.people.push(personData); // Add as new if update failed
+            isNew = true;
+        }
+    } else {
+        // Add new
+        this.people.push(personData);
+        isNew = true;
+        grantAchievement(personData, 'profile_created'); // Grant create achievement
+        if (this.people.length >= 5) { // Check AFTER adding
+             grantAchievement(personData, 'five_profiles');
+        }
+    }
+
+     // Grant avatar achievement if a non-default avatar was chosen
+     if (avatar !== '❓') {
+         grantAchievement(personData, 'avatar_chosen');
+     }
+
+
+    this.saveToLocalStorage();
+    this.renderList();
+    this.showNotification(`${this.escapeHTML(name)} ${isNew ? 'created' : 'updated'} successfully! ✨`, "success");
+    this.resetForm(); // Reset form after successful save
+}
+
+  editPerson(personId) {
+    const person = this.people.find(p => p.id === personId);
+    if (!person) {
+        this.showNotification("Persona not found.", "error");
+        return;
+    }
+
+    console.log("Editing person:", person);
+    this.currentEditId = personId;
+
+    // Populate form fields
+    this.elements.formTitle.textContent = `✨ Edit ${this.escapeHTML(person.name)} ✨`;
+    this.elements.name.value = person.name;
+    this.elements.avatarInput.value = person.avatar || '❓';
+    this.elements.avatarDisplay.textContent = person.avatar || '❓';
+    this.elements.avatarPicker?.querySelectorAll('.avatar-btn').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.emoji === person.avatar);
+    });
+    this.elements.role.value = person.role;
+
+    // Render styles for the role, THEN set the style value
+    this.renderStyles(person.role);
+    this.elements.style.value = person.style; // Set style *after* options are populated
+
+    // Render traits for the role/style, THEN set slider values
+    this.renderTraits(person.role, person.style);
+
+    // Use rAF to ensure sliders are in the DOM before setting values
+    requestAnimationFrame(() => {
+        if (person.traits) {
+            Object.entries(person.traits).forEach(([traitName, value]) => {
+                const slider = this.elements.traitsContainer.querySelector(`.trait-slider[data-trait="${traitName}"]`);
+                if (slider) {
+                    slider.value = value;
+                    this.updateTraitDescription(slider); // Update text based on loaded value
+                } else {
+                    console.warn(`Slider for trait '${traitName}' not found during edit.`);
+                }
+            });
+        }
+        this.updateLivePreview(); // Update preview after traits are set
+        this.elements.save.textContent = 'Update Persona! ✨'; // Change button text
+        this.elements.formSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        this.elements.name.focus(); // Focus name field
+    });
+  }
+
+  deletePerson(personId) {
+    const index = this.people.findIndex(p => p.id === personId);
+    if (index === -1) return;
+
+    const personName = this.people[index].name;
+    // Use a more visually distinct confirmation
+    if (confirm(`🚨 Really delete persona "${this.escapeHTML(personName)}"? This cannot be undone.`)) {
+        this.people.splice(index, 1);
+        this.saveToLocalStorage();
+        this.renderList();
+        this.showNotification(`"${this.escapeHTML(personName)}" deleted.`, "info");
+
+        // If the deleted profile was being edited, reset the form
+        if (this.currentEditId === personId) {
+            this.resetForm();
+        }
+    }
+  }
+
+  resetForm(isManualClear = false) { // Added flag
+      if (isManualClear && this.currentEditId) {
+          // If editing, confirm before clearing manually
+          if (!confirm("Discard current edits and clear the form?")) {
+              return; // User cancelled
+          }
+      }
+      this.elements.formTitle.textContent = '✨ Create New Persona ✨';
+      this.elements.name.value = '';
+      this.elements.avatarInput.value = '❓';
+      this.elements.avatarDisplay.textContent = '❓';
+      this.elements.avatarPicker?.querySelectorAll('.selected').forEach(btn => btn.classList.remove('selected'));
+      this.elements.role.value = 'submissive'; // Default role
+      this.renderStyles('submissive'); // Render default styles
+      this.elements.style.value = ''; // Reset style
+      this.renderTraits('submissive', ''); // Reset traits
+      this.currentEditId = null;
+      this.elements.save.textContent = 'Save Persona! 💖';
+      this.updateLivePreview();
+      if (isManualClear) { // Only focus if manually cleared
+           this.elements.name.focus();
+      }
+      console.log("Form reset.");
+      this.hideTraitInfo();
+  }
 
   // --- Live Preview ---
-  updateLivePreview(){const name=this.elements.name.value.trim()||"Unnamed";const av=this.elements.avatarInput.value||'❓';const r=this.elements.role.value;const s=this.elements.style.value;const tr={};this.elements.traitsContainer.querySelectorAll('.trait-slider').forEach(sl=>{const n=sl.getAttribute('data-trait');if(n)tr[n]=sl.value;});let html='';if(!s&&r&&Object.keys(tr).length>0){html=`<h3 class="preview-title">${av} ${this.escapeHTML(name)}’s Core Vibe ${av}</h3><p><strong>Role:</strong> ${r.charAt(0).toUpperCase()+r.slice(1)}</p><p class="muted-text"><i>Core traits active. Pick Style!</i></p><div class="core-trait-preview"><strong>Core Traits:</strong><ul>`;bdsmData[r]?.coreTraits?.forEach(ct=>{const score=tr[ct.name];if(score){const tD=bdsmData[r]?.coreTraits?.find(t=>t.name===ct.name);const d=tD?.desc?.[score]||"N/A";html+=`<li><strong>${this.escapeHTML(ct.name)} (${score}):</strong> ${this.escapeHTML(d)}</li>`;}});html+=`</ul></div>`;}else if(s){const getB=r==='submissive'?getSubBreakdown:getDomBreakdown;const B=getB(s,tr);let topStyleInfo=null;const sO=bdsmData[r]?.styles.find(st=>st.name===s);if(sO?.traits?.length>0){let topSc=-1;let topN='';sO.traits.forEach(tDef=>{const sc=parseInt(tr[tDef.name]||0);if(sc>topSc){topSc=sc;topN=tDef.name;}});if(topN&&topSc>0){const tD=sO.traits.find(t=>t.name===topN);const d=tD?.desc?.[topSc]||"N/A";topStyleInfo=`<strong>Top Style Vibe (${this.escapeHTML(topN)} Lvl ${topSc}):</strong> ${this.escapeHTML(d)}`;}}html=`<h3 class="preview-title">${av} ${this.escapeHTML(name)}’s Live Vibe ${av}</h3><p><strong>Role:</strong> ${r.charAt(0).toUpperCase()+r.slice(1)}</p><p><strong>Style:</strong> ${this.escapeHTML(s)}</p><div class="style-breakdown preview-breakdown">`;if(B.strengths)html+=`<div class="strengths"><h4>✨ Powers</h4><div>${B.strengths}</div></div>`;if(B.improvements)html+=`<div class="improvements"><h4>🌟 Quests</h4><div>${B.improvements}</div></div>`;html+=`</div>`;if(topStyleInfo){html+=`<div class="top-trait-preview"><hr><p>${topStyleInfo}</p></div>`;}}else{html=`<p class="muted-text">Pick role & style! 🌈</p>`;}this.elements.livePreview.innerHTML=html;}
+  updateLivePreview(){const name=this.elements.name.value.trim()||"Persona Name";const avatar=this.elements.avatarInput.value||'❓';const role=this.elements.role.value;const style=this.elements.style.value;const traits={};let hasTraits=false;this.elements.traitsContainer.querySelectorAll('.trait-slider').forEach(slider=>{const traitName=slider.dataset.trait;if(traitName){traits[traitName]=slider.value;hasTraits=true;}});let html='';if(!role){html=`<p class="muted-text">Select a role...</p>`;}else if(!style&&!hasTraits){html=`<p class="muted-text">Select a style for ${this.escapeHTML(name)} (${role})...</p>`;}else if(!style&&hasTraits){const roleData=bdsmData[role];html=`<h3 class="preview-title">${avatar} ${this.escapeHTML(name)}’s Core Vibe ${avatar}</h3><p><strong>Role:</strong> ${role.charAt(0).toUpperCase()+role.slice(1)}</p><p class="muted-text"><i>Core traits active. Select a style for more details!</i></p>`;if(roleData?.coreTraits?.length>0){html+=`<div class="core-trait-preview"><strong>Core Traits:</strong><ul>`;roleData.coreTraits.forEach(ct=>{const score=traits[ct.name];if(score){const desc=ct.desc?.[score]||"N/A";html+=`<li><strong>${this.escapeHTML(ct.name)} (${score}):</strong> ${this.escapeHTML(desc)}</li>`;}});html+=`</ul></div>`;}else{html+=`<p class="muted-text">No core traits defined for this role.</p>`;}}else if(style){const getBreakdownFunc=role==='submissive'?getSubBreakdown:(role==='dominant'?getDomBreakdown:null);let breakdown={strengths:'',improvements:''};if(getBreakdownFunc){try{breakdown=getBreakdownFunc(style,traits);}catch(e){console.error("Error getting style breakdown:",e);}}let topStyleTraitInfo=null;const roleData=bdsmData[role];const styleObj=roleData?.styles?.find(st=>st.name===style);if(styleObj?.traits?.length>0){let topScore=-1;let topTraitName='';styleObj.traits.forEach(traitDef=>{const score=parseInt(traits[traitDef.name]||0,10);if(score>topScore){topScore=score;topTraitName=traitDef.name;}});if(topTraitName&&topScore>0){const traitDef=styleObj.traits.find(t=>t.name===topTraitName);const desc=traitDef?.desc?.[topScore]||"N/A";topStyleTraitInfo=`<strong>Top Style Trait (${this.escapeHTML(topTraitName)} Lvl ${topScore}):</strong> ${this.escapeHTML(desc)}`;}}html=`<h3 class="preview-title">${avatar} ${this.escapeHTML(name)}’s Vibe ${avatar}</h3><p><strong>Role:</strong> ${role.charAt(0).toUpperCase()+role.slice(1)}</p><p><strong>Style:</strong> ${this.escapeHTML(style)}</p>`;if(breakdown.strengths||breakdown.improvements){html+=`<div class="style-breakdown preview-breakdown">`;if(breakdown.strengths)html+=`<div class="strengths"><h4>✨ Powers</h4><div>${breakdown.strengths}</div></div>`; // Assumes breakdown returns HTML/safe string
+if(breakdown.improvements)html+=`<div class="improvements"><h4>🌟 Quests</h4><div>${breakdown.improvements}</div></div>`;html+=`</div>`;}if(topStyleTraitInfo){html+=`<div class="top-trait-preview"><hr><p>${topStyleTraitInfo}</p></div>`;}}else{html=`<p class="muted-text">Select Role & Style to see the vibe! 🌈</p>`;}this.elements.livePreview.innerHTML=html;}
 
   // --- Modal Display ---
-  showPersonDetails(pId){const p=this.people.find(p=>p.id===pId);if(!p)return;console.log("Showing details:",p);p.goals=p.goals||[];p.history=p.history||[];p.achievements=p.achievements||[];p.reflections=p.reflections||{};p.avatar=p.avatar||'❓';const getB=p.role==='submissive'?getSubBreakdown:getDomBreakdown;const B=getB(p.style,p.traits||{});let html=`<h2 class="modal-title">${p.avatar} ${this.escapeHTML(p.name)}’s Kingdom ${p.avatar}</h2>`;html+=`<p class="modal-subtitle">${p.role.charAt(0).toUpperCase()+p.role.slice(1)} - ${p.style?this.escapeHTML(p.style):'N/A'}</p>`; let intro="Explore!";try{if(typeof this.getIntroForStyle==='function'){intro=this.getIntroForStyle(p.style);}else{console.warn("getIntroForStyle missing!");}}catch(e){console.error("Intro error:",e);}if(intro)html+=`<p class="modal-intro">${intro}</p>`;html+=`<section class="goals-section"><h3>🎯 Goals</h3><ul id="goal-list-${p.id}"></ul><div class="add-goal-form"><input type="text" id="new-goal-text-${p.id}" placeholder="Add goal..."><button class="add-goal-btn save-btn small-btn" data-person-id="${p.id}">+ Add</button></div></section>`;html+=`<section class="breakdown-section"><h3>🌈 Strengths & Growth</h3><div class="style-breakdown modal-breakdown">`;if(B.strengths)html+=`<div class="strengths"><h4>✨ Powers</h4><div>${B.strengths}</div></div>`;if(B.improvements)html+=`<div class="improvements"><h4>🌟 Quests</h4><div>${B.improvements}</div></div>`;html+=`</div></section>`;html+=`<section class="traits-section"><h3>🎨 Trait Tales</h3>`;const defs=[...(bdsmData[p.role]?.coreTraits||[]),...(bdsmData[p.role]?.styles.find(s=>s.name===p.style)?.traits||[])];const uDefs=Array.from(new Map(defs.map(t=>[t.name,t])).values());html+='<div class="trait-details-grid">';if(p.traits&&Object.keys(p.traits).length>0){Object.entries(p.traits).forEach(([n,sc])=>{const tO=uDefs.find(t=>t.name===n);const dN=n.charAt(0).toUpperCase()+n.slice(1);if(!tO){html+=`<div class="trait-detail-item"><h4>${this.escapeHTML(dN)} - Lvl ${sc}❓</h4><p><em>Def missing.</em></p></div>`;return;} const dT=tO.desc?.[sc]||"N/A";const fl=this.getFlairForScore(sc);html+=`<div class="trait-detail-item"><h4>${this.escapeHTML(dN)} - Lvl ${sc} ${this.getEmojiForScore(sc)}</h4><p><strong>Vibe:</strong> ${this.escapeHTML(dT)}</p><p><em>${fl}</em></p></div>`;});}else{html+=`<p>No scores.</p>`;}html+='</div></section>';html+=`<section class="history-section"><h3>⏳ History<button class="snapshot-info-btn" aria-label="Info">ℹ️</button></h3><p class="snapshot-info muted-text" style="display:none;">Snapshot saves current traits to track growth!</p><div class="history-chart-container"><canvas id="history-chart"></canvas></div><button id="snapshot-btn" class="small-btn" data-person-id="${p.id}">📸 Snapshot</button></section>`;html+=`<section class="achievements-section"><h3>🏆 Achievements</h3><div id="achievements-list-${p.id}"></div></section>`;html+=`<section class="kink-reading-section"><h3>🔮 Reading</h3><button id="reading-btn" class="small-btn" data-person-id="${p.id}">Get Reading!</button><div id="kink-reading-output" class="kink-reading-output" style="display:none;"></div></section>`;html+=`<section class="reflections-section"><h3>📝 Reflections</h3><div id="journal-prompt-area" style="display:none;"></div><div class="modal-actions"><button id="prompt-btn" class="small-btn">💡 Prompt</button></div><textarea id="reflections-text" class="reflections-textarea" data-person-id="${p.id}" rows="6" placeholder="Thoughts?">${this.escapeHTML(p.reflections?.text||'')}</textarea><button id="save-reflections-btn" class="save-btn" data-person-id="${p.id}">Save 💭</button></section>`;this.elements.modalBody.innerHTML=html;this.renderGoalList(p);this.renderAchievements(p);this.openModal(this.elements.modal);this.renderHistoryChart(p);}
+  showPersonDetails(personId) {
+    const person = this.people.find(p => p.id === personId);
+    if (!person) {
+        this.showNotification("Could not find persona details.", "error");
+        return;
+    }
+    console.log("Showing details for:", person);
+
+    // Ensure data consistency
+    const goals = person.goals || [];
+    const history = person.history || [];
+    const achievements = person.achievements || [];
+    const reflections = person.reflections || { text: '' };
+    const avatar = person.avatar || '❓';
+    const style = person.style || 'N/A';
+    const traits = person.traits || {};
+    const role = person.role || 'N/A';
+
+    const getBreakdownFunc = role === 'submissive' ? getSubBreakdown : (role === 'dominant' ? getDomBreakdown : null);
+    let breakdown = { strengths: 'N/A', improvements: 'N/A' };
+    if (getBreakdownFunc && style !== 'N/A') {
+        try {
+             // Pass breakdown function HTML/safe strings directly
+             breakdown = getBreakdownFunc(style, traits);
+        } catch(e) {
+            console.error("Error generating style breakdown for modal:", e);
+            breakdown = { strengths: 'Error loading insights.', improvements: 'Please check style definitions.'};
+        }
+    }
+
+    let html = `<h2 class="modal-title" id="detail-modal-title">${avatar} ${this.escapeHTML(person.name)}’s Kingdom ${avatar}</h2>`;
+    html += `<p class="modal-subtitle">${role.charAt(0).toUpperCase() + role.slice(1)} - ${this.escapeHTML(style)}</p>`;
+
+    try {
+        const intro = this.getIntroForStyle(style);
+        if (intro) html += `<p class="modal-intro">${this.escapeHTML(intro)}</p>`;
+    } catch (e) {
+        console.error("Error getting intro for style:", e);
+    }
+
+    // Goals Section
+    html += `<section class="goals-section" aria-labelledby="goals-heading-${personId}">
+                <h3 id="goals-heading-${personId}">🎯 Goals & Aspirations</h3>
+                <ul id="goal-list-${personId}"></ul>
+                <div class="add-goal-form">
+                    <input type="text" id="new-goal-text-${personId}" placeholder="Add a new goal...">
+                    <button class="add-goal-btn save-btn small-btn" data-person-id="${personId}">+ Add Goal</button>
+                </div>
+             </section>`;
+
+    // Breakdown Section
+    html += `<section class="breakdown-section" aria-labelledby="breakdown-heading-${personId}">
+                <h3 id="breakdown-heading-${personId}">🌈 Style Insights</h3>
+                <div class="style-breakdown modal-breakdown">
+                    <div class="strengths"><h4>✨ Powers</h4><div>${breakdown.strengths}</div></div>
+                    <div class="improvements"><h4>🌟 Quests</h4><div>${breakdown.improvements}</div></div>
+                </div>
+             </section>`;
+
+    // Traits Section
+    html += `<section class="traits-section" aria-labelledby="traits-heading-${personId}">
+                <h3 id="traits-heading-${personId}">🎨 Trait Constellation</h3>`;
+    const roleData = bdsmData[role];
+    const coreTraits = roleData?.coreTraits || [];
+    const styleObj = roleData?.styles?.find(s => s.name === style);
+    const styleTraits = styleObj?.traits || [];
+    const combinedTraits = [...styleTraits, ...coreTraits];
+    const uniqueTraitDefs = Array.from(new Map(combinedTraits.map(t => [t.name, t])).values());
+
+    html += '<div class="trait-details-grid">';
+    if (Object.keys(traits).length > 0) {
+        Object.entries(traits).forEach(([name, score]) => {
+            const traitDef = uniqueTraitDefs.find(t => t.name === name);
+            const displayName = name.charAt(0).toUpperCase() + name.slice(1);
+            const description = traitDef?.desc?.[score] || "Description N/A";
+            const flair = this.getFlairForScore(score);
+            const emoji = this.getEmojiForScore(score);
+            html += `<div class="trait-detail-item">
+                        <h4>${this.escapeHTML(displayName)} - Lvl ${score} ${emoji}</h4>
+                        <p><strong>Vibe:</strong> ${this.escapeHTML(description)}</p>
+                        <p><em>${flair}</em></p>
+                     </div>`;
+        });
+    } else {
+        html += `<p class="muted-text">No trait scores recorded for this persona yet.</p>`;
+    }
+    html += '</div></section>';
+
+    // History Section
+    html += `<section class="history-section" aria-labelledby="history-heading-${personId}">
+                <h3 id="history-heading-${personId}">⏳ Growth Over Time <button class="snapshot-info-btn" aria-label="Snapshot Info" aria-expanded="false">ℹ️</button></h3>
+                <p class="snapshot-info muted-text" style="display:none;">Snapshots save the current trait scores to track evolution over time!</p>
+                <div class="history-chart-container"><canvas id="history-chart"></canvas></div>
+                <button id="snapshot-btn" class="small-btn save-btn" data-person-id="${personId}">📸 Take Snapshot</button>
+             </section>`;
+
+    // Achievements Section
+    html += `<section class="achievements-section" aria-labelledby="achievements-heading-${personId}">
+                <h3 id="achievements-heading-${personId}">🏆 Achievements Unlocked</h3>
+                <div id="achievements-list-${personId}"></div>
+             </section>`;
+
+    // Kink Reading Section
+    html += `<section class="kink-reading-section" aria-labelledby="reading-heading-${personId}">
+                 <h3 id="reading-heading-${personId}">🔮 Compass Reading</h3>
+                 <button id="reading-btn" class="small-btn" data-person-id="${personId}">Get My Reading!</button>
+                 <div id="kink-reading-output" class="kink-reading-output" style="display:none;" aria-live="polite"></div>
+             </section>`;
+
+    // Reflections Section
+    html += `<section class="reflections-section" aria-labelledby="reflections-heading-${personId}">
+                <h3 id="reflections-heading-${personId}">📝 Journal Reflections</h3>
+                <div id="journal-prompt-area" style="display:none;" aria-live="polite"></div>
+                <div class="modal-actions">
+                    <button id="prompt-btn" class="small-btn" data-person-id="${personId}">💡 New Prompt</button>
+                </div>
+                <textarea id="reflections-text" class="reflections-textarea" data-person-id="${personId}" rows="7" placeholder="Reflect on your experiences, feelings, or goals..." aria-label="Journal Entry">${this.escapeHTML(reflections.text || '')}</textarea>
+                <button id="save-reflections-btn" class="save-btn" data-person-id="${personId}">Save Reflection 💭</button>
+             </section>`;
+
+    this.elements.modalBody.innerHTML = html; // Set the innerHTML
+
+    // Now render dynamic lists/charts
+    this.renderGoalList(person);
+    this.renderAchievements(person);
+    this.openModal(this.elements.modal); // Open modal *after* content is set
+    this.renderHistoryChart(person); // Render chart *after* modal is open and canvas exists
+  }
+
 
   // --- New Feature Logic ---
-  addGoal(pId){const p=this.people.find(p=>p.id===pId);const i=this.elements.modalBody?.querySelector(`#new-goal-text-${pId}`);if(!p||!i)return;const t=i.value.trim();if(!t)return;const nG={id:Date.now(),text:t,status:'todo'};p.goals.push(nG);grantAchievement(p,'goal_added');this.saveToLocalStorage();this.renderGoalList(p);i.value='';}
-  toggleGoalStatus(pId,gId){const p=this.people.find(p=>p.id===pId);const g=p?.goals.find(g=>g.id===gId);if(!g)return;g.status=(g.status==='done'?'todo':'done');this.saveToLocalStorage();this.renderGoalList(p);}
-  deleteGoal(pId,gId){const p=this.people.find(p=>p.id===pId);if(!p)return;if(confirm('Delete goal?')){p.goals=p.goals.filter(g=>g.id!==gId);this.saveToLocalStorage();this.renderGoalList(p);}}
-  renderGoalList(p){const l=this.elements.modalBody?.querySelector(`#goal-list-${p.id}`);if(!l)return;let h='';if(p.goals.length>0){p.goals.forEach(g=>{h+=`<li class="${g.status==='done'?'done':''}" data-goal-id="${g.id}"><span>${this.escapeHTML(g.text)}</span><span class="goal-actions"><button class="toggle-goal-btn small-btn" data-person-id="${p.id}" data-goal-id="${g.id}">${g.status==='done'?'🔄':'✅'}</button><button class="delete-goal-btn small-btn delete-btn" data-person-id="${p.id}" data-goal-id="${g.id}">🗑️</button></span></li>`;});}else{h=`<li>No goals!</li>`;}l.innerHTML=h;}
-  showJournalPrompt(){const a=this.elements.modalBody?.querySelector('#journal-prompt-area');if(a){a.innerHTML = `<p class="journal-prompt">${getRandomPrompt()}</p>`;a.style.display='block';this.elements.modalBody?.querySelector('#reflections-text')?.focus();}}
-  saveReflections(pId){const p=this.people.find(p=>p.id===pId);const el=this.elements.modalBody?.querySelector('#reflections-text');if(!p||!el){alert("Error.");return;}const txt=el.value;if(!p.reflections)p.reflections={};p.reflections.text=txt;p.reflections.lastUpdated=Date.now();let first=false;if(txt.trim().length>0)first=grantAchievement(p,'reflection_saved');const count=Object.values(this.people.reduce((a,p)=>{if(p.reflections?.text?.trim().length>0)a[p.id]=true;return a;},{})).length;if(count>=5)grantAchievement(p,'five_reflections');this.saveToLocalStorage();const btn=this.elements.modalBody.querySelector('#save-reflections-btn');if(btn){btn.textContent='Saved ✓';btn.disabled=true;setTimeout(()=>{btn.textContent='Save 💭';btn.disabled=false;},2000);}else{alert("Saved! ✨");}}
-  addSnapshotToHistory(pId){const p=this.people.find(p=>p.id===pId);if(!p||!p.traits){alert("Cannot snapshot.");return;}const snap={date:Date.now(),traits:{...p.traits}};p.history.push(snap);grantAchievement(p,'history_snapshot');this.saveToLocalStorage();alert("Snapshot saved! 📸");this.renderHistoryChart(p);this.renderAchievements(p);}
-  renderHistoryChart(p){const cont=this.elements.modalBody?.querySelector('.history-chart-container');let ctx=cont?.querySelector('#history-chart')?.getContext('2d');if(this.chartInstance){this.chartInstance.destroy();this.chartInstance=null;}if(!ctx){if(cont)cont.innerHTML=`<p>Chart canvas missing.</p>`;return;}if(!p?.history?.length){cont.innerHTML=`<p>No history yet!</p>`;return;}if(cont.querySelector('p'))cont.innerHTML=`<canvas id="history-chart"></canvas>`;ctx=cont.querySelector('#history-chart').getContext('2d');const labels=p.history.map(s=>new Date(s.date).toLocaleDateString());const allN=new Set();p.history.forEach(s=>Object.keys(s.traits).forEach(n=>allN.add(n)));if(p.traits)Object.keys(p.traits).forEach(n=>allN.add(n));const dSets=[];const clrs=['#ff69b4','#8a5a6d','#ff85cb','#4a2c3d','#f4d4e4','#c49db1','#a0d8ef','#dcc1ff'];let cI=0;allN.forEach(tN=>{const data=p.history.map(s=>s.traits[tN]!==undefined?parseInt(s.traits[tN]):null);const c=clrs[cI%clrs.length];dSets.push({label:tN.charAt(0).toUpperCase()+tN.slice(1),data:data,borderColor:c,backgroundColor:c+'80',tension:.1,fill:false,spanGaps:true});cI++;});const isD=document.body.getAttribute('data-theme')==='dark'||document.body.getAttribute('data-theme')==='velvet';const gC=isD?'rgba(244,212,228,0.15)':'rgba(74,44,61,0.1)';const lC=isD?'#c49db1':'#8a5a6d';this.chartInstance=new Chart(ctx,{type:'line',data:{labels:labels,datasets:dSets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{color:lC}},tooltip:{mode:'index',intersect:false,}},scales:{y:{min:1,max:5,ticks:{stepSize:1,color:lC},grid:{color:gC}},x:{ticks:{color:lC},grid:{color:gC}}}}});}
-  toggleSnapshotInfo(btn){const inf=btn.closest('.history-section')?.querySelector('.snapshot-info');if(inf){const isH=inf.style.display==='none';inf.style.display=isH?'block':'none';btn.setAttribute('aria-expanded',isH);}}
-  renderAchievements(p){const l=this.elements.modalBody?.querySelector(`#achievements-list-${p.id}`);if(!l)return;let h='';if(p.achievements.length>0){h+=`<ul>`;p.achievements.forEach(id=>{const d=achievementList[id];if(d){const e=d.name.match(/([\p{Emoji}\p{Emoji_Modifier}\p{Emoji_Component}\p{Emoji_Presentation}\p{Emoji_Modifier_Base}]+)/u)?.[0]||'🏆';h+=`<li title="${this.escapeHTML(d.desc)}"><span class="achievement-icon">${e}</span><span class="achievement-name">${this.escapeHTML(d.name)}</span></li>`;}});h+=`</ul>`;}else{h=`<p class="muted-text">No achievements yet!</p>`;}l.innerHTML=h;}
-  showKinkReading(pId){const p=this.people.find(p=>p.id===pId);const o=this.elements.modalBody?.querySelector('#kink-reading-output');if(!p||!o)return;grantAchievement(p,'kink_reading');this.saveToLocalStorage();this.renderAchievements(p);let r=`🔮 ${this.escapeHTML(p.name)}'s Reading 🔮\nAs a ${this.escapeHTML(p.style)} ${p.role}, path sparkles!\n`;const t=p.traits||{};const s=Object.entries(t).map(([n,sc])=>({name:n,score:parseInt(sc)})).sort((a,b)=>b.score-a.score);if(s.length>0){const h=s[0];const l=s[s.length-1];const c1=bdsmData[p.role]?.coreTraits[0]?.name;const c2=bdsmData[p.role]?.coreTraits[1]?.name;r+=`\n✨ Star: **${h.name}(${h.score})**! ${this.getReadingDescriptor(h.name,h.score)}.\n`;if(c1&&t[c1])r+=`🧭 Core **${c1}(${t[c1]})**: ${this.getReadingDescriptor(c1,t[c1])}.\n`;if(c2&&t[c2])r+=`🧭 Core **${c2}(${t[c2]})**: ${this.getReadingDescriptor(c2,t[c2])}.\n`;if(s.length>1&&h.score!==l.score)r+=`\n🌱 Bloom: **${l.name}(${l.score})**. Explore ${this.getReadingDescriptor(l.name,l.score)}.\n`;}else{r+=`\nTraits uncharted!\n`;}r+=`\n💖 ${this.escapeHTML(p.style)} is about ${this.getStyleEssence(p.style)}!\n`;o.textContent=r;o.style.display='block';}
-  getReadingDescriptor(tN,sc){sc=parseInt(sc);if(tN==='obedience')return sc>=4?"joyful compliance":sc<=2?"independent spirit":"developing discipline";if(tN==='trust')return sc>=4?"deep connection":sc<=2?"cautious exploration":"building security"; return"unique expression";}
-  getStyleEssence(sN){const e={"brat":"playful challenge","slave":"deep devotion",/*...*/};const k=sN?.toLowerCase().replace(/\(.*?\)/g,'').replace(/ \/ /g,'/').trim()||'';return e[k]||`your magic`;}
-  showGlossary(){if(!this.elements.glossaryBody)return;grantAchievement({},'glossary_user');let h='<dl>';for(const k in glossaryTerms){const d=glossaryTerms[k];h+=`<dt id="gloss-term-${k}">${this.escapeHTML(d.term)}</dt><dd>${this.escapeHTML(d.definition)}`;if(d.related?.length){h+=`<br><span class="related-terms">See also: `;h+=d.related.map(rK=>`<a href="#gloss-term-${rK}">${glossaryTerms[rK]?.term||rK}</a>`).join(', ');h+=`</span>`;}h+=`</dd>`;}h+='</dl>';this.elements.glossaryBody.innerHTML=h;this.openModal(this.elements.glossaryModal);}
+  addGoal(personId){const person=this.people.find(p=>p.id===personId);const inputElement=this.elements.modalBody?.querySelector(`#new-goal-text-${personId}`);if(!person||!inputElement)return;const text=inputElement.value.trim();if(!text){this.showNotification("Goal text cannot be empty.", "error");return;}const newGoal={id:Date.now(),text:text,status:'todo',createdAt:Date.now()};person.goals=person.goals||[];person.goals.push(newGoal);grantAchievement(person,'goal_added');this.saveToLocalStorage();this.renderGoalList(person);inputElement.value='';inputElement.focus();}
+  toggleGoalStatus(personId,goalId){const person=this.people.find(p=>p.id===personId);const goal=person?.goals?.find(g=>g.id===goalId);if(!goal)return;goal.status=(goal.status==='done'?'todo':'done');if(goal.status==='done'){goal.completedAt=Date.now();grantAchievement(person,'goal_completed');const completedCount=person.goals.filter(g=>g.status==='done').length;if(completedCount>=5)grantAchievement(person,'five_goals_completed');}else{delete goal.completedAt;}this.saveToLocalStorage();this.renderGoalList(person);}
+  deleteGoal(personId,goalId){const person=this.people.find(p=>p.id===personId);if(!person)return;if(confirm('🚨 Delete this goal permanently?')){person.goals=person.goals.filter(g=>g.id!==goalId);this.saveToLocalStorage();this.renderGoalList(person);this.showNotification("Goal deleted.", "info");}}
+  renderGoalList(person){const listElement=this.elements.modalBody?.querySelector(`#goal-list-${person.id}`);if(!listElement)return;const goals=person.goals||[];let htmlString='';if(goals.length>0){goals.sort((a,b)=>(a.status==='done'?1:-1)||(b.createdAt-a.createdAt));goals.forEach(goal=>{htmlString+=`<li class="${goal.status==='done'?'done':''}" data-goal-id="${goal.id}"><span>${this.escapeHTML(goal.text)}</span><span class="goal-actions"><button class="toggle-goal-btn small-btn" data-person-id="${person.id}" data-goal-id="${goal.id}" aria-label="${goal.status==='done'?'Mark as to-do':'Mark as done'}">${goal.status==='done'?'🔄':'✅'}</button><button class="delete-goal-btn small-btn delete-btn" data-person-id="${person.id}" data-goal-id="${goal.id}" aria-label="Delete goal">🗑️</button></span></li>`;});}else{htmlString=`<li class="muted-text">No goals set yet. Add one below!</li>`;}listElement.innerHTML=htmlString;}
+  showJournalPrompt(personId){const promptArea=this.elements.modalBody?.querySelector('#journal-prompt-area');const textarea=this.elements.modalBody?.querySelector('#reflections-text');if(promptArea&&textarea){const promptText=getRandomPrompt();promptArea.innerHTML=`<p class="journal-prompt">${this.escapeHTML(promptText)}</p>`;promptArea.style.display='block';textarea.focus();grantAchievement(this.people.find(p=>p.id===personId),'prompt_used');this.saveToLocalStorage();}} // Grant achievement
+  saveReflections(personId){const person=this.people.find(p=>p.id===personId);const textarea=this.elements.modalBody?.querySelector('#reflections-text');if(!person||!textarea){this.showNotification("Error saving reflection.", "error");return;}const text=textarea.value;if(!person.reflections)person.reflections={};person.reflections.text=text;person.reflections.lastUpdated=Date.now();let newlySaved=false;if(text.trim().length>0){newlySaved=grantAchievement(person,'reflection_saved');}const reflectionCount=this.people.reduce((count,p)=>{return count+(p.reflections?.text?.trim().length>0?1:0);},0);if(reflectionCount>=5)grantAchievement(person,'five_reflections');this.saveToLocalStorage();const button=this.elements.modalBody.querySelector('#save-reflections-btn');if(button){button.textContent='Saved ✓';button.disabled=true;setTimeout(()=>{button.textContent='Save Reflection 💭';button.disabled=false;},2000);}else{this.showNotification("Reflection Saved! ✨","success");}}
+  addSnapshotToHistory(personId){const person=this.people.find(p=>p.id===personId);if(!person||!person.traits||Object.keys(person.traits).length===0){this.showNotification("Cannot take snapshot: No traits recorded for this persona yet.", "error");return;}const snapshot={date:Date.now(),traits:{...person.traits},style:person.style};person.history=person.history||[];person.history.push(snapshot);grantAchievement(person,'history_snapshot');if(person.history.length>=10)grantAchievement(person,'ten_snapshots');this.saveToLocalStorage();this.showNotification("Snapshot saved! 📸","success");this.renderHistoryChart(person);this.renderAchievements(person);}
+  renderHistoryChart(person){const container=this.elements.modalBody?.querySelector('.history-chart-container');const canvas=container?.querySelector('#history-chart');if(this.chartInstance){this.chartInstance.destroy();this.chartInstance=null;}if(!container){console.error("Chart container not found");return;}if(!canvas){container.innerHTML=`<p>Error: Chart canvas element missing.</p>`;return;}const history=person.history||[];if(history.length===0){container.innerHTML=`<p class="muted-text">No history snapshots yet! Take one to see progress.</p>`;return;}if(container.querySelector('p')){container.innerHTML=`<canvas id="history-chart"></canvas>`;}const ctx=container.querySelector('#history-chart').getContext('2d');const labels=history.map(s=>new Date(s.date).toLocaleDateString());const allTraitNames=new Set();history.forEach(s=>Object.keys(s.traits).forEach(name=>allTraitNames.add(name)));if(person.traits)Object.keys(person.traits).forEach(name=>allTraitNames.add(name));const datasets=[];const colors=['#ff69b4','#8a5a6d','#a0d8ef','#dcc1ff','#ff85cb','#4a2c3d','#f4d4e4','#c49db1'];let colorIndex=0;allTraitNames.forEach(traitName=>{const data=history.map(s=>s.traits[traitName]!==undefined?parseInt(s.traits[traitName],10):null);const color=colors[colorIndex%colors.length];datasets.push({label:traitName.charAt(0).toUpperCase()+traitName.slice(1),data:data,borderColor:color,backgroundColor:color+'80',tension:0.1,fill:false,spanGaps:true,pointRadius:4,pointHoverRadius:6});colorIndex++;});const isDark=document.body.getAttribute('data-theme')==='dark'||document.body.getAttribute('data-theme')==='velvet';const gridColor=isDark?'rgba(244, 212, 228, 0.15)':'rgba(74, 44, 61, 0.1)';const labelColor=isDark?'#c49db1':'#8a5a6d';this.chartInstance=new Chart(ctx,{type:'line',data:{labels:labels,datasets:datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:labelColor,boxWidth:12,padding:15}},tooltip:{mode:'index',intersect:false,backgroundColor:isDark?'rgba(255,255,255,0.9)':'rgba(0,0,0,0.8)',titleColor:isDark?'#000':'#fff',bodyColor:isDark?'#000':'#fff',borderColor:isDark?'#ccc':'#333',borderWidth:1}},scales:{y:{min:1,max:5,ticks:{stepSize:1,color:labelColor},grid:{color:gridColor}},x:{ticks:{color:labelColor},grid:{color:gridColor}}}}});}
+  toggleSnapshotInfo(button){const infoPanel=button.closest('.history-section')?.querySelector('.snapshot-info');if(infoPanel){const isHidden=infoPanel.style.display==='none';infoPanel.style.display=isHidden?'block':'none';button.setAttribute('aria-expanded',isHidden);}}
+  renderAchievements(person){const listElement=this.elements.modalBody?.querySelector(`#achievements-list-${person.id}`);if(!listElement)return;const achievements=person.achievements||[];let htmlString='';if(achievements.length>0){htmlString+=`<ul>`;achievements.forEach(id=>{const details=achievementList[id];if(details){const icon=details.name.match(/([\p{Emoji}\p{Emoji_Modifier}\p{Emoji_Component}\p{Emoji_Presentation}\p{Emoji_Modifier_Base}]+)/u)?.[0]||'🏆';htmlString+=`<li title="${this.escapeHTML(details.desc)}"><span class="achievement-icon">${icon}</span><span class="achievement-name">${this.escapeHTML(details.name)}</span></li>`;}});htmlString+=`</ul>`;}else{htmlString=`<p class="muted-text">No achievements unlocked for this persona yet!</p>`;}listElement.innerHTML=htmlString;}
+  showKinkReading(personId){const person=this.people.find(p=>p.id===personId);const outputElement=this.elements.modalBody?.querySelector('#kink-reading-output');if(!person||!outputElement)return;grantAchievement(person,'kink_reading');this.saveToLocalStorage();this.renderAchievements(person);let reading=`🔮 ${this.escapeHTML(person.name)}'s Kink Compass Reading 🔮\n\nEmbracing the path of a **${this.escapeHTML(person.style)} ${person.role}**, your journey unfolds with unique sparkles!\n\n`;const traits=person.traits||{};const sortedTraits=Object.entries(traits).map(([name,score])=>({name,score:parseInt(score,10)})).sort((a,b)=>b.score-a.score);if(sortedTraits.length>0){const highest=sortedTraits[0];const lowest=sortedTraits[sortedTraits.length-1];const coreTrait1=bdsmData[person.role]?.coreTraits?.[0]?.name;const coreTrait2=bdsmData[person.role]?.coreTraits?.[1]?.name;reading+=`✨ Your current North Star appears to be **${highest.name} (Lvl ${highest.score})**: ${this.getReadingDescriptor(highest.name,highest.score)}.\n\n`;if(coreTrait1&&traits[coreTrait1]!==undefined){reading+=`🧭 Core Compass Point - **${coreTrait1} (Lvl ${traits[coreTrait1]})**: Reflects ${this.getReadingDescriptor(coreTrait1,traits[coreTrait1])}.\n`;}if(coreTrait2&&traits[coreTrait2]!==undefined){reading+=`🧭 Core Compass Point - **${coreTrait2} (Lvl ${traits[coreTrait2]})**: Resonates with ${this.getReadingDescriptor(coreTrait2,traits[coreTrait2])}.\n`;}if(sortedTraits.length>1&&highest.score!==lowest.score){reading+=`\n🌱 An area ripe for exploration or growth might be **${lowest.name} (Lvl ${lowest.score})**: Consider exploring aspects of ${this.getReadingDescriptor(lowest.name,lowest.score)}.\n`;}}else{reading+=`Your trait map is currently uncharted! Explore the sliders to define your path.\n`;}reading+=`\n💖 Remember, the essence of being a ${this.escapeHTML(person.style)} is about **${this.getStyleEssence(person.style)}**. Continue exploring authentically!\n`;outputElement.textContent=reading;outputElement.style.display='block';outputElement.focus(); /* Focus for screen readers */}
+  getReadingDescriptor(traitName,score){score=parseInt(score,10);const highThreshold=4;const lowThreshold=2;const baseDescriptions={'obedience':'following guidance','trust':'opening up','service':'helping others','presentation':'how you appear','playful defiance':'pushing boundaries','mischief':'causing playful trouble','devotion':'deep loyalty','surrender':'letting go of control','affection seeking':'desiring closeness','playfulness':'engaging in fun','non-verbal expression':'communicating without words','age regression comfort':"embracing a younger mindset",'need for guidance':'relying on structure','boundless energy':'enthusiasm','trainability':'learning quickly','curiosity':'investigating','gracefulness':'poise','desire for pampering':'being spoiled','delegation tendency':'letting others help','rope enthusiasm':'enjoying bonds','patience during tying':'stillness','pain interpretation':'processing sensation','sensation seeking':'craving intensity','enjoyment of chase':'the thrill of pursuit','fear play comfort':'flirting with vulnerability','objectification comfort':'being a focus','responsiveness to control':'adapting to direction','aesthetic focus':'visual appeal','stillness / passivity':'calm inaction','shyness / skittishness':'gentle caution','gentle affection need':'soft interactions','task focus':'completing duties','anticipating needs':'proactive help','enthusiasm for games':'loving play','good sport':'playing fairly','vulnerability expression':'showing softness','coquettishness':'playful charm','struggle performance':'acting resistant','acceptance of fate':'inner yielding','mental focus':'deep concentration','suggestibility':'openness to influence','responsiveness to direction':'following commands','passivity in control':'waiting for direction','attention to detail':'precision','uniformity':'embracing attire','pain seeking':'desiring intensity','endurance display':'showing toughness','receptivity':'openness to receiving','power exchange focus':'enjoying the dynamic','authority':'taking charge','care':'nurturing others','leadership':'guiding','control':'managing details','direct communication':'clarity','boundary setting':'defining limits','emotional support':'comforting others','patience':'calm guidance','rule enforcement':'maintaining order','discipline focus':'using consequences','expectation setting':'defining standards','presence':'commanding aura','protective guidance':'fatherly care','affectionate authority':'warm firmness','nurturing comfort':'motherly care','gentle discipline':'kind correction','possessiveness':'claiming','behavioral training':'shaping actions','rope technique':'skill with knots','aesthetic vision':'visual artistry','sensation control':'precise delivery','psychological focus':"observing reactions",'pursuit drive':'instinct to chase','instinct reliance':'acting on gut feeling','skill development focus':'teaching ability','structured methodology':'using clear steps','fine motor control':'precise direction','objectification gaze':'viewing as object','vigilance':'watchfulness','defensive instinct':'shielding others','consequence delivery':'administering punishment','detachment during discipline':'objectivity','holistic well-being focus':'overall care','rule implementation for safety':'practical structure','formal demeanor':'respectful authority','service expectation':'requiring respect','worship seeking':'desiring adoration','effortless command':'innate authority','strategic direction':'planning actions','decisiveness':'firm choices',};const defaultDesc=traitName;if(score>=highThreshold){return`a strong affinity for ${baseDescriptions[traitName]||defaultDesc}`;}else if(score<=lowThreshold){return`potential hesitation or less focus on ${baseDescriptions[traitName]||defaultDesc}`;}else{return`a balanced approach to ${baseDescriptions[traitName]||defaultDesc}`;}}
+  getStyleEssence(styleName){const essences={'Classic Submissive':'trust and willingness','Brat':'playful challenge and connection','Slave':'profound devotion and service','Pet':'affectionate loyalty and play','Little':'innocent joy and secure dependence','Puppy':'boundless enthusiasm and eagerness to please','Kitten':'curious grace and affectionate independence','Princess':'being cherished and adored','Rope Bunny':'aesthetic surrender and sensation','Masochist':'transcending limits through sensation','Prey':'the exhilarating dance of pursuit','Toy':'delighting in being used and responsive','Doll':'embodying curated perfection and passivity','Bunny':'gentle connection and soft vulnerability','Servant':'finding purpose in meticulous duty','Playmate':'shared joy and adventurous fun','Babygirl':'charming vulnerability and needing care','Captive':'the dramatic tension of capture and surrender','Thrall':'deep mental connection and yielding','Puppet':'responsive surrender to direct control','Maid':'order, presentation, and respectful service','Painslut':'boldly embracing and seeking intensity','Bottom':'receptive strength and power exchange','Classic Dominant':'confident guidance and responsibility','Assertive':'clear communication and setting direction','Nurturer':'compassionate support and fostering growth','Strict':'structure, order, and clear expectations','Master':'profound authority and shaping potential','Mistress':'elegant command and creative control','Daddy':'protective guidance and affectionate firmness','Mommy':'warm nurturing and gentle structure','Owner':'possessive care and shaping behavior','Rigger':'the artful application of restraint','Sadist':'the controlled exploration of sensation','Hunter':'the primal thrill of the chase','Trainer':'patiently cultivating skills and discipline','Puppeteer':'precise control and creative direction','Protector':'steadfast vigilance and ensuring safety','Disciplinarian':'fair correction and maintaining standards','Caretaker':'holistic well-being and providing comfort','Sir':'dignified authority and earned respect','Goddess':'inspiring worship through presence','Commander':'strategic leadership and decisive action',};const key=styleName?.replace(/\(.*?\)/g,'').trim()||'';return essences[key]||`your unique expression`;}
+  showGlossary(){if(!this.elements.glossaryBody)return;grantAchievement({},'glossary_user');let html='<dl>';Object.entries(glossaryTerms).sort((a,b)=>a[1].term.localeCompare(b[1].term)).forEach(([key,termData])=>{html+=`<dt id="gloss-term-${key}">${this.escapeHTML(termData.term)}</dt><dd>${this.escapeHTML(termData.definition)}`;if(termData.related?.length){html+=`<br><span class="related-terms">See also: `;html+=termData.related.map(relKey=>`<a href="#gloss-term-${relKey}">${glossaryTerms[relKey]?.term||relKey}</a>`).join(', ');html+=`</span>`;}html+=`</dd>`;});html+='</dl>';this.elements.glossaryBody.innerHTML=html;this.openModal(this.elements.glossaryModal);}
   showStyleDiscovery(){grantAchievement({},'style_explorer');this.renderStyleDiscoveryContent();this.openModal(this.elements.styleDiscoveryModal);}
-  renderStyleDiscoveryContent(){if(!this.elements.styleDiscoveryBody||!this.elements.styleDiscoveryRoleFilter)return;const sel=this.elements.styleDiscoveryRoleFilter.value;let h='';['submissive','dominant'].forEach(r=>{if(sel==='all'||sel===r){h+=`<h3>${r.charAt(0).toUpperCase()+r.slice(1)} Styles</h3>`;if(bdsmData[r]?.styles){bdsmData[r].styles.forEach(st=>{h+=`<div class="style-discovery-item"><h4>${this.escapeHTML(st.name)}</h4>`; if(st.summary)h+=`<p><em>${this.escapeHTML(st.summary)}</em></p>`; if(st.traits?.length){h+=`<strong>Traits:</strong><ul>`;st.traits.forEach(tr=>{h+=`<li>${this.escapeHTML(tr.name.charAt(0).toUpperCase()+tr.name.slice(1))}</li>`;});h+=`</ul>`;}else{h+=`<p>Uses core traits.</p>`;}h+=`</div>`;});}else{h+=`<p>No styles.</p>`;}}});this.elements.styleDiscoveryBody.innerHTML=h||'<p>No styles.</p>';}
-  setTheme(tN){document.body.setAttribute('data-theme',tN);const iD=tN==='dark'||tN==='velvet';if(this.elements.themeToggle){this.elements.themeToggle.textContent=iD?'☀️':'🌙';this.elements.themeToggle.setAttribute('title',`Switch to ${iD?'light':'dark'} mode`);}try{localStorage.setItem('kinkCompassTheme',tN);}catch(e){console.warn("Save theme failed:",e);}if(this.chartInstance&&this.currentEditId){const p=this.people.find(p=>p.id===this.currentEditId);if(p)this.renderHistoryChart(p);}}
-  applySavedTheme(){let saved='light';try{if(typeof localStorage!=='undefined')saved=localStorage.getItem('kinkCompassTheme')||'light';}catch(e){console.warn("Read theme failed:",e);}this.setTheme(saved);console.log(`Applied theme: ${saved}`);}
-  toggleTheme(){const cur=document.body.getAttribute('data-theme')||'light';const isD=cur==='dark'||cur==='velvet';this.setTheme(isD?'light':'dark');}
-  exportData(){if(this.people.length===0){alert("No profiles!");return;}try{const dS=JSON.stringify(this.people,null,2);const b=new Blob([dS],{type:"application/json"});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=`kinkcompass_${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);grantAchievement({},'data_exported');console.log("Exported.");a.remove();}catch(e){console.error("Export failed:",e);alert("Export failed.");}}
-  importData(ev){const f=ev.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=(e)=>{try{const imp=JSON.parse(e.target.result);if(!Array.isArray(imp))throw new Error("Not array.");const valid=imp.every(i=>typeof i==='object'&&i!==null&&'id'in i&&'name'in i);if(!valid)throw new Error("Invalid format.");if(confirm(`Import ${imp.length}? OVERWRITES current ${this.people.length}.`)){this.people=imp.map(p=>({...p,goals:p.goals||[],history:p.history||[],avatar:p.avatar||'❓',achievements:p.achievements||[], reflections:p.reflections||{}}));this.saveToLocalStorage();this.renderList();this.resetForm(true);alert(`Imported ${this.people.length}.`);}}catch(err){console.error("Import failed:",err);alert(`Import failed: ${err.message}`);}finally{ev.target.value=null;}};r.onerror=()=>{alert("Error reading file.");ev.target.value=null;};r.readAsText(f);}
-  showTraitInfo(tN){const r=this.elements.role.value;const sN=this.elements.style.value;const tD=bdsmData[r]?.styles.find(s=>s.name===sN)?.traits?.find(t=>t.name===tN)||bdsmData[r]?.coreTraits?.find(t=>t.name===tN);if(tD&&this.elements.traitInfoPopup&&this.elements.traitInfoTitle&&this.elements.traitInfoBody){const title=tN.charAt(0).toUpperCase()+tN.slice(1);this.elements.traitInfoTitle.textContent=`${this.getEmojiForScore(3)} ${title} Levels`;let bodyHtml='';for(let i=1;i<=5;i++){const s=String(i);const d=tD.desc?.[s]||'N/A';const e=this.getEmojiForScore(s);bodyHtml+=`<p><strong>${e} Lvl ${s}:</strong> ${this.escapeHTML(d)}</p>`;}this.elements.traitInfoBody.innerHTML=bodyHtml;this.elements.traitInfoPopup.style.display='block';this.elements.traitInfoPopup.scrollIntoView({behavior:'smooth',block:'nearest'});}else{console.warn("No trait data/popup:",tN);this.hideTraitInfo();}}
-  hideTraitInfo(){if(this.elements.traitInfoPopup)this.elements.traitInfoPopup.style.display='none';}
+  renderStyleDiscoveryContent(){const container=this.elements.styleDiscoveryBody;const roleFilter=this.elements.styleDiscoveryRoleFilter;if(!container||!roleFilter)return;const selectedRole=roleFilter.value;let htmlString='';const rolesToShow=selectedRole==='all'?['submissive','dominant','switch']: [selectedRole];rolesToShow.forEach(roleKey=>{const roleData=bdsmData[roleKey];if(roleData&&roleData.styles?.length>0){htmlString+=`<h3>${roleData.roleName||roleKey.charAt(0).toUpperCase()+roleKey.slice(1)} Styles</h3>`;roleData.styles.forEach(style=>{htmlString+=`<div class="style-discovery-item"><h4>${this.escapeHTML(style.name)}</h4>`;if(style.summary)htmlString+=`<p><em>${this.escapeHTML(style.summary)}</em></p>`;const traits=style.traits||roleData.coreTraits||[];if(traits.length>0){htmlString+=`<strong>Key Traits:</strong><ul>`;traits.forEach(trait=>{htmlString+=`<li>${this.escapeHTML(trait.name.charAt(0).toUpperCase()+trait.name.slice(1))}</li>`;});htmlString+=`</ul>`;}else{htmlString+=`<p class="muted-text">Trait details not specified.</p>`;}htmlString+=`</div>`;});}else{if(selectedRole!=='all')htmlString+=`<p>No specific styles defined yet for role: ${roleKey}</p>`;}});container.innerHTML=htmlString||'<p>Select a role or check data definitions.</p>';}
+  setTheme(themeName){document.body.setAttribute('data-theme',themeName);const isDark=themeName==='dark'||themeName==='velvet';if(this.elements.themeToggle){this.elements.themeToggle.textContent=isDark?'☀️':'🌙';this.elements.themeToggle.setAttribute('title',`Switch to ${isDark?'Light':'Dark'} Mode`);}try{localStorage.setItem('kinkCompassTheme',themeName);}catch(e){console.warn("Failed to save theme:",e);}if(this.chartInstance&&this.currentEditId){const person=this.people.find(p=>p.id===this.currentEditId);if(person)this.renderHistoryChart(person);}}
+  applySavedTheme(){let savedTheme='light';try{if(typeof localStorage!=='undefined')savedTheme=localStorage.getItem('kinkCompassTheme')||'light';}catch(e){console.warn("Failed to read saved theme:",e);}this.setTheme(savedTheme);console.log(`Applied saved theme: ${savedTheme}`);}
+  toggleTheme(){const currentTheme=document.body.getAttribute('data-theme')||'light';const isCurrentlyDark=currentTheme==='dark'||currentTheme==='velvet';this.setTheme(isCurrentlyDark?'light':'dark');} // Toggle between light/dark basic
+  exportData(){if(this.people.length===0){this.showNotification("No personas to export!", "info");return;}try{const dataString=JSON.stringify(this.people,null,2);const blob=new Blob([dataString],{type:"application/json"});const url=URL.createObjectURL(blob);const anchor=document.createElement('a');anchor.href=url;anchor.download=`kinkcompass_personas_${new Date().toISOString().slice(0,10)}.json`;anchor.click();URL.revokeObjectURL(url);grantAchievement({},'data_exported');this.showNotification("Data exported successfully!", "success");anchor.remove();}catch(e){console.error("Export failed:",e);this.showNotification("Export failed. See console for details.", "error");}}
+  importData(event){const file=event.target.files?.[0];if(!file){return;}if(file.type!=="application/json"){this.showNotification("Import failed: File must be a JSON file.", "error");event.target.value=null;return;}const reader=new FileReader();reader.onload=(e)=>{try{const importedData=JSON.parse(e.target.result);if(!Array.isArray(importedData)){throw new Error("Invalid format: Imported data is not an array.");}const validatedData=importedData.map(p=>({...p,id:p.id??Date.now(),name:p.name??"Unnamed",role:p.role??"submissive",style:p.style??"",avatar:p.avatar||'❓',goals:Array.isArray(p.goals)?p.goals:[],history:Array.isArray(p.history)?p.history:[],achievements:Array.isArray(p.achievements)?p.achievements:[],reflections:typeof p.reflections==='object'&&p.reflections!==null?p.reflections:{text:p.reflections||''},traits:typeof p.traits==='object'&&p.traits!==null?p.traits:{}}));if(confirm(`Import ${validatedData.length} personas? This will OVERWRITE your current ${this.people.length} personas.`)){this.people=validatedData;this.saveToLocalStorage();this.renderList();this.resetForm();this.showNotification(`Imported ${this.people.length} personas successfully.`, "success");grantAchievement({},'data_imported');}}catch(err){console.error("Import failed:",err);this.showNotification(`Import failed: ${err.message}`, "error");}finally{event.target.value=null;}};reader.onerror=()=>{this.showNotification("Error reading the import file.", "error");event.target.value=null;};reader.readAsText(file);}
+  showTraitInfo(traitName) {
+      const roleKey = this.elements.role.value;
+      const styleName = this.elements.style.value;
+      const roleData = bdsmData[roleKey];
+      let traitDef = null;
+
+      if (roleData) {
+           if (styleName) {
+               const styleObj = roleData.styles?.find(s => s.name === styleName);
+               traitDef = styleObj?.traits?.find(t => t.name === traitName);
+           }
+           if (!traitDef) traitDef = roleData.coreTraits?.find(t => t.name === traitName);
+           if (!traitDef && roleKey === 'switch') traitDef = bdsmData.switch?.coreTraits?.find(t => t.name === traitName);
+      }
+
+      if (traitDef && this.elements.traitInfoPopup && this.elements.traitInfoTitle && this.elements.traitInfoBody) {
+          const title = traitName.charAt(0).toUpperCase() + traitName.slice(1);
+          this.elements.traitInfoTitle.textContent = `${this.getEmojiForScore(3)} ${title} Levels Explained`; // Use level 3 emoji as default visual
+          let bodyHtml = '';
+          // Generate descriptions for levels 1 through 5
+          for (let i = 1; i <= 5; i++) {
+              const score = String(i);
+              const description = traitDef.desc?.[score] || `(No description provided for Level ${score})`;
+              const emoji = this.getEmojiForScore(score);
+              bodyHtml += `<p><strong>${emoji} Level ${score}:</strong> ${this.escapeHTML(description)}</p>`;
+          }
+          this.elements.traitInfoBody.innerHTML = bodyHtml;
+          this.elements.traitInfoPopup.style.display = 'block';
+          this.elements.traitInfoPopup.setAttribute('aria-hidden', 'false');
+          this.elements.traitInfoClose?.focus(); // Focus close button
+          this.elements.traitInfoPopup.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } else {
+          console.warn(`Could not find trait definition or popup elements for '${traitName}'`);
+          this.hideTraitInfo(); // Ensure it's hidden if data is missing
+      }
+  }
+  hideTraitInfo() {
+      if (this.elements.traitInfoPopup) {
+           this.elements.traitInfoPopup.style.display = 'none';
+           this.elements.traitInfoPopup.setAttribute('aria-hidden', 'true');
+      }
+   }
 
 
-  // --- Style Finder Methods (Restored & Integrated - CORRECTED) ---
-
+  // --- Style Finder Methods ---
   sfStart() {
       this.sfActive = true;
       this.sfStep = 0;
@@ -626,41 +980,292 @@ class TrackerApp {
       this.sfSteps = [];
       if(this.elements.sfDashboard) this.elements.sfDashboard.style.display = 'none';
       if(this.elements.sfFeedback) this.elements.sfFeedback.textContent = '';
-
-      if (!this.elements.sfStepContent) {
-          console.error("Style Finder step content element not found!");
-          alert("Error: Cannot start Style Finder.");
-          return;
-      }
-
+      if (!this.elements.sfStepContent) { console.error("Style Finder step content element not found!"); alert("Error: Cannot start Style Finder."); return; }
       this.openModal(this.elements.sfModal);
       this.sfRenderStep();
       this.sfShowFeedback("Let’s begin your journey!");
+      grantAchievement({}, 'style_finder_complete'); // Grant achievement on start/completion? Choose one.
   }
 
-  sfClose() {
-      this.sfActive = false;
-      this.closeModal(this.elements.sfModal);
-      console.log("Style Finder closed.");
-  }
+  sfClose() { this.sfActive = false; this.closeModal(this.elements.sfModal); console.log("Style Finder closed."); }
 
   sfCalculateSteps() {
       this.sfSteps = [];
       this.sfSteps.push({ type: 'welcome' });
       this.sfSteps.push({ type: 'role' });
-
       if (this.sfRole) {
           const baseTraitSet = (this.sfRole === 'dominant' ? this.sfDomFinderTraits : this.sfSubFinderTraits);
-          // Only recalculate/shuffle if sfTraitSet is empty or role changed implicitly
-          if(this.sfTraitSet.length === 0) {
-            this.sfTraitSet = [...baseTraitSet].sort(() => 0.5 - Math.random());
-          }
+          if(this.sfTraitSet.length === 0) { this.sfTraitSet = [...baseTraitSet].sort(() => 0.5 - Math.random()); }
           this.sfTraitSet.forEach(trait => this.sfSteps.push({ type: 'trait', trait: trait.name }));
           this.sfSteps.push({ type: 'roundSummary', round: 'Traits' });
       }
-
       this.sfSteps.push({ type: 'result' });
   }
 
   sfRenderStep() {
       if (!this.sfActive || !this.elements.sfStepContent) return;
+      this.sfCalculateSteps();
+      if (this.sfStep < 0 || this.sfStep >= this.sfSteps.length) { console.error(`Invalid SF step index: ${this.sfStep}. Resetting.`); this.sfStep = 0; this.sfCalculateSteps(); if(this.sfSteps.length === 0){ this.elements.sfStepContent.innerHTML = "<p>Error calculating steps.</p>"; return; }}
+      const step = this.sfSteps[this.sfStep];
+      if (!step) { console.error(`No step data for index ${this.sfStep}`); this.elements.sfStepContent.innerHTML = "<p>Error loading step.</p>"; return; }
+      console.log(`Rendering SF Step ${this.sfStep}:`, step);
+      let html = "";
+      const progressTracker = this.elements.sfProgressTracker;
+
+      if (step.type === 'trait' && this.sfRole && this.sfTraitSet.length > 0) {
+          const currentTraitIndex = this.sfTraitSet.findIndex(t => t.name === step.trait);
+          if (currentTraitIndex !== -1 && progressTracker) {
+             const questionsLeft = this.sfTraitSet.length - (currentTraitIndex + 1);
+             progressTracker.style.display = 'block';
+             progressTracker.textContent = `Trait ${currentTraitIndex + 1} / ${this.sfTraitSet.length} (${questionsLeft} more!)`;
+          } else { if(progressTracker) progressTracker.style.display = 'none'; console.warn(`Trait '${step.trait}' not found for progress.`); }
+      } else { if(progressTracker) progressTracker.style.display = 'none'; }
+
+      switch (step.type) {
+          case 'welcome': html = `<h2>Welcome, Brave Explorer!</h2><p>Dive into a quest to find your BDSM style!</p><button data-action="next">Start the Journey! ✨</button>`; break;
+          case 'role': html = `<h2>Pick Your Path!</h2><p>Do you feel more drawn to guiding (Dominant) or following (Submissive)?</p><button data-action="setRole" data-role="dominant">Guiding! (Dominant)</button><button data-action="setRole" data-role="submissive">Following! (Submissive)</button>`; break;
+          case 'trait':
+              const traitObj = this.sfTraitSet.find(t => t.name === step.trait);
+               if (!traitObj) { html = `<p>Error loading trait: ${step.trait}.</p> <button data-action="prev">Back</button>`; break; }
+              const currentValue = this.sfAnswers.traits[traitObj.name] ?? 5;
+              const footnoteSet = (this.sfRole === 'dominant' ? this.sfDomTraitFootnotes : this.sfSubTraitFootnotes);
+              const footnote = footnoteSet[traitObj.name] || "1: Least / 10: Most";
+              const isFirstTraitStep = this.sfSteps.findIndex(s => s.type === 'trait') === this.sfStep;
+              const sliderDescArray = this.sfSliderDescriptions?.[traitObj.name] ?? [];
+              const safeCurrentValue = Number(currentValue);
+              let sliderDescText = `Level ${safeCurrentValue}`;
+              const safeIndex = safeCurrentValue - 1;
+              if (safeIndex >= 0 && safeIndex < sliderDescArray.length) { sliderDescText = sliderDescArray[safeIndex]; } else { console.warn(`Slider desc OOB for '${traitObj.name}' at ${safeCurrentValue}`); }
+              html = `<h2>${this.escapeHTML(traitObj.desc)}<button class="sf-info-icon" data-trait="${traitObj.name}" data-action="showTraitInfo" aria-label="More info about ${traitObj.name}">ℹ️</button></h2>
+                      ${isFirstTraitStep ? '<p>Slide to find your vibe! (1 = Not Me, 10 = Totally Me)</p>' : ''}
+                      <input type="range" min="1" max="10" value="${safeCurrentValue}" class="sf-trait-slider" data-trait="${traitObj.name}" aria-label="${traitObj.name} rating">
+                      <div id="sf-desc-${traitObj.name}" class="sf-slider-description">${this.escapeHTML(sliderDescText)}</div>
+                      <p class="sf-slider-footnote">${this.escapeHTML(footnote)}</p>
+                      <div style="margin-top: 15px;">
+                          <button data-action="next" data-trait="${traitObj.name}">Next Step!</button>
+                          ${this.sfStep > 1 ? `<button data-action="prev" style="margin-left: 10px;">Back</button>` : ''}
+                      </div>`;
+              break;
+          case 'roundSummary':
+               html = `<h2>${step.round} Check-In!</h2><p>Here’s how your choices are shaping up:</p><div id="sf-summary-dashboard-placeholder">Loading Dashboard...</div><button data-action="next">See Top Style!</button><button data-action="prev" style="margin-left: 10px;">Back</button>`;
+               requestAnimationFrame(() => this.sfUpdateDashboard(true));
+               break;
+          case 'result':
+              this.sfCalculateResult();
+              const sortedScores = Object.entries(this.sfScores).sort((a, b) => b[1] - a[1]);
+              if (sortedScores.length === 0 || !sortedScores[0] || sortedScores[0][1] <= 0) { html = `<div class="sf-result-section sf-fade-in"><h2 class="sf-result-heading">Hmm... 🤔</h2><p>Not enough data or unique responses to determine a top style yet. Your vibe is uniquely you!</p><div class="sf-result-buttons"><button data-action="startOver">Try Again?</button><button data-action="close">Close</button></div></div>`; break; }
+              const topStyle = sortedScores[0][0];
+              const matchData = this.sfDynamicMatches[topStyle] || { dynamic: "Unique", match: "Explorer", desc: "Find your perfect match!", longDesc: "Explore dynamics that resonate!" };
+              const descData = this.sfStyleDescriptions[topStyle] || { short: "A unique blend!", long: "Your combination of traits creates a special style.", tips: ["Keep exploring!", "Communicate your desires."] };
+              html = `<div class="sf-result-section sf-fade-in"><h2 class="sf-result-heading">🎉 Your Top BDSM Style: ${this.escapeHTML(topStyle)} 🎉</h2><p><strong>${this.escapeHTML(descData.short)}</strong></p><p>${this.escapeHTML(descData.long)}</p><h3>Potential Dynamic Match: ${this.escapeHTML(matchData.match)}</h3><p><em>${this.escapeHTML(matchData.dynamic)}</em> - ${this.escapeHTML(matchData.desc)}</p><p>${this.escapeHTML(matchData.longDesc)}</p><h3>Tips for You:</h3><ul style="text-align: left; margin: 10px auto; max-width: 350px; list-style: '✨ '; padding-left: 1.5em;">${descData.tips.map(tip => `<li>${this.escapeHTML(tip)}</li>`).join('')}</ul><div class="sf-result-buttons"><button data-action="applyStyle" data-role="${this.sfRole}" data-style="${this.escapeHTML(topStyle)}">📝 Track This Style!</button><button data-action="startOver">Try Again?</button><button data-action="showFullDetails" data-style="${this.escapeHTML(topStyle)}">More Details</button><button data-action="close">Close</button></div></div>`;
+              if (window.confetti) { setTimeout(() => confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#ff69b4', '#ff85cb', '#f4d4e4', '#fff', '#a0d8ef', '#dcc1ff'] }), 300); }
+              break;
+          default: html = "<p>Oops! Something went wrong.</p> <button data-action='prev'>Back</button>";
+      } // End switch
+
+      try {
+           if (!this.elements.sfStepContent) throw new Error("sfStepContent element missing");
+           this.elements.sfStepContent.innerHTML = html;
+           if (step.type === 'trait') { this.sfUpdateDashboard(); }
+           else if (step.type !== 'roundSummary') { if (this.elements.sfDashboard) this.elements.sfDashboard.style.display = 'none'; }
+            console.log(`SF Step ${this.sfStep} rendered successfully.`);
+       } catch (e) {
+           console.error(`Render SF Step ${this.sfStep} Error:`, e);
+           if (this.elements.sfStepContent) { this.elements.sfStepContent.innerHTML = `<p>Error rendering step.</p> <button data-action="prev">Back</button>`; }
+       }
+  } // End sfRenderStep
+
+  sfSetRole(role) {
+      this.sfRole = role;
+      this.sfAnswers.role = role;
+      this.sfAnswers.traits = {};
+      this.sfScores = {};
+      this.sfPreviousScores = {};
+      this.sfHasRenderedDashboard = false;
+      this.sfTraitSet = [];
+      this.sfSteps = [];
+      this.sfNextStep();
+  }
+
+  sfSetTrait(trait, value) { this.sfAnswers.traits[trait] = parseInt(value, 10); this.sfShowFeedback(`You vibe with ${trait} at ${value}!`); }
+  sfNextStep() { this.sfStep++; this.sfRenderStep(); }
+  sfPrevStep() { if (this.sfStep > 0) { const stepWeAreLeaving = this.sfSteps[this.sfStep]; this.sfStep--; if(stepWeAreLeaving?.type === 'result' || stepWeAreLeaving?.type === 'roundSummary'){ console.log("Moving back, resetting scores."); this.sfScores = {}; this.sfPreviousScores = {}; this.sfHasRenderedDashboard = false; } this.sfRenderStep(); } }
+  sfStartOver() { this.sfStep = 0; this.sfRole = null; this.sfAnswers = { traits: {} }; this.sfScores = {}; this.sfPreviousScores = {}; this.sfHasRenderedDashboard = false; this.sfTraitSet = []; this.sfSteps = []; if (this.elements.sfDashboard) this.elements.sfDashboard.style.display = 'none'; this.sfRenderStep(); this.sfShowFeedback("Fresh start—here we go!"); }
+
+  sfComputeScores() {
+      let scores = {};
+      if (!this.sfRole || !this.sfStyles[this.sfRole]) return scores;
+      const roleStyles = this.sfStyles[this.sfRole];
+      roleStyles.forEach(style => { scores[style] = 0; });
+      Object.keys(this.sfAnswers.traits).forEach(trait => {
+          const rating = this.sfAnswers.traits[trait] ?? 0;
+          roleStyles.forEach(style => {
+              const keyTraits = this.sfStyleKeyTraits[style] || [];
+              if (keyTraits.includes(trait)) { scores[style] += rating * 1.5; }
+          });
+      });
+      return scores;
+  }
+
+   sfUpdateDashboard(forceVisible = false) {
+       if (!this.sfSteps || this.sfSteps.length === 0) this.sfCalculateSteps(); // Ensure steps are calculated
+       const currentStepType = this.sfSteps[this.sfStep]?.type;
+       const shouldShowDashboard = forceVisible || (this.sfRole && currentStepType === 'trait');
+       if (!this.elements.sfDashboard) { console.error("Dashboard element missing!"); return; }
+       if (!shouldShowDashboard) { this.elements.sfDashboard.style.display = 'none'; return; }
+       this.elements.sfDashboard.style.display = 'block';
+       const scores = this.sfComputeScores();
+       const sortedScores = Object.entries(scores).filter(([_, score]) => score > 0.1).sort((a, b) => b[1] - a[1]).slice(0, 7);
+       let dashboardHTML = "<div class='sf-dashboard-header'>✨ Your Live Vibes! ✨</div>";
+       if (sortedScores.length === 0) { dashboardHTML += "<p class='muted-text' style='padding: 10px;'>Keep rating traits!</p>"; }
+       else {
+            const previousPositions = {};
+            if (this.sfPreviousScores) { Object.entries(this.sfPreviousScores).filter(([_, score]) => score > 0.1).sort((a, b) => b[1] - a[1]).forEach(([style, _], index) => { previousPositions[style] = index; }); }
+            const isFirstRender = !this.sfHasRenderedDashboard;
+            const styleIcons = this.getStyleIcons();
+            sortedScores.forEach(([style, score], index) => {
+                const prevPos = previousPositions[style] ?? index;
+                const movement = prevPos - index;
+                let moveIndicator = '';
+                if (!isFirstRender && movement > 0) moveIndicator = '<span class="sf-move-up">↑</span>'; else if (!isFirstRender && movement < 0) moveIndicator = '<span class="sf-move-down">↓</span>';
+                const prevScore = this.sfPreviousScores ? (this.sfPreviousScores[style] || 0) : 0;
+                const delta = score - prevScore;
+                let deltaDisplay = '';
+                if (!isFirstRender && Math.abs(delta) > 0.1) { deltaDisplay = `<span class="sf-score-delta ${delta > 0 ? 'positive' : 'negative'}">${delta > 0 ? '+' : ''}${delta.toFixed(1)}</span>`; }
+                const animationClass = isFirstRender ? 'sf-fade-in' : '';
+                dashboardHTML += `<div class="sf-dashboard-item ${animationClass}"><span class="sf-style-name">${styleIcons[style] || '🌟'} ${this.escapeHTML(style)}</span><span class="sf-dashboard-score">${score.toFixed(1)} ${deltaDisplay} ${moveIndicator}</span></div>`;
+            });
+       }
+       this.elements.sfDashboard.innerHTML = dashboardHTML;
+       this.sfPreviousScores = { ...scores };
+       this.sfHasRenderedDashboard = true;
+   }
+
+  sfCalculateResult() { this.sfScores = this.sfComputeScores(); const totalAnswers = Object.keys(this.sfAnswers.traits).length; if (totalAnswers === 0) return; console.log("Final Scores Calculated:", this.sfScores); }
+  sfShowFeedback(message) { if (!this.elements.sfFeedback) return; this.elements.sfFeedback.textContent = this.escapeHTML(message); this.elements.sfFeedback.classList.remove('sf-feedback-animation'); void this.elements.sfFeedback.offsetWidth; this.elements.sfFeedback.classList.add('sf-feedback-animation'); }
+
+  sfShowTraitInfo(traitName) {
+      if (!traitName) { console.error("Cannot show trait info: traitName missing."); return; }
+      const explanation = this.sfTraitExplanations[traitName] || "No extra info available.";
+      const popup = document.createElement('div');
+      popup.className = 'sf-style-info-popup';
+      popup.innerHTML = `<h3>${this.escapeHTML(traitName.charAt(0).toUpperCase() + traitName.slice(1))}</h3><p>${this.escapeHTML(explanation)}</p><button class="sf-close-btn" aria-label="Close trait info">×</button>`;
+      document.body.appendChild(popup);
+      popup.querySelector('.sf-close-btn')?.focus();
+  }
+
+  sfShowFullDetails(styleName) {
+      if (!styleName) { console.error("Cannot show full details: styleName missing."); return; }
+      const descData = this.sfStyleDescriptions[styleName];
+      const matchData = this.sfDynamicMatches[styleName];
+      if (!descData || !matchData) { alert(`Details for style "${styleName}" not found.`); return; }
+      const popup = document.createElement('div');
+      popup.className = 'sf-style-info-popup wide-popup';
+      popup.innerHTML = `<h3>${this.escapeHTML(styleName)}</h3><p><strong>${this.escapeHTML(descData.short)}</strong></p><p>${this.escapeHTML(descData.long)}</p><h4>Potential Dynamic Match: ${this.escapeHTML(matchData.match)}</h4><p><em>${this.escapeHTML(matchData.dynamic)}</em> - ${this.escapeHTML(matchData.longDesc)}</p><h4>Tips for You:</h4><ul style="list-style: '✨ '; padding-left: 1.5em;">${descData.tips.map(tip => `<li>${this.escapeHTML(tip)}</li>`).join('')}</ul><button class="sf-close-btn" aria-label="Close style details">×</button>`;
+      document.body.appendChild(popup);
+      popup.querySelector('.sf-close-btn')?.focus();
+  }
+
+    getStyleIcons() { return { 'Classic Submissive': '🙇‍♀️', 'Brat': '😈', 'Slave': '🔗', 'Pet': '🐾', 'Little': '🍼', 'Puppy': '🐶', 'Kitten': '🐱', 'Princess': '👑', 'Rope Bunny': '🪢', 'Masochist': '💥', 'Prey': '🏃‍♀️', 'Toy': '🎲', 'Doll': '🎎', 'Bunny': '🐰', 'Servant': '🧹', 'Playmate': '🎉', 'Babygirl': '🌸', 'Captive': '⛓️', 'Thrall': '🛐', 'Puppet': '🎭', 'Maid': '🧼', 'Painslut': '🔥', 'Bottom': '⬇️', 'Classic Dominant': '👑', 'Assertive': '💪', 'Nurturer': '🤗', 'Strict': '📏', 'Master': '🎓', 'Mistress': '👸', 'Daddy': '👨‍🏫', 'Mommy': '👩‍🏫', 'Owner': '🔑', 'Rigger': '🧵', 'Sadist': '😏', 'Hunter': '🏹', 'Trainer': '🏋️‍♂️', 'Puppeteer': '🕹️', 'Protector': '🛡️', 'Disciplinarian': '✋', 'Caretaker': '🧡', 'Sir': '🎩', 'Goddess': '🌟', 'Commander': '⚔️', 'Switch': '🔄' }; }
+
+   applyStyleFinderResult(r, s) {
+        console.log(`Applying SF Result: Role=${r}, Style=${s}`);
+        if (!r || !s || !this.elements.role || !this.elements.style) { console.error("Cannot apply style - missing elements/args."); alert("Error applying style."); return; }
+        this.elements.role.value = r;
+        this.renderStyles(r);
+        requestAnimationFrame(() => {
+            const styleExists = Array.from(this.elements.style.options).some(option => option.value === s);
+            if (styleExists) { this.elements.style.value = s; }
+            else { console.warn(`Style "${s}" not found in dropdown for role "${r}". Clearing selection.`); this.elements.style.value = ''; }
+            this.renderTraits(r, this.elements.style.value);
+            this.updateLivePreview();
+            this.sfClose();
+            this.elements.formSection?.scrollIntoView({ behavior: 'smooth' });
+            this.elements.name?.focus();
+            this.showNotification(`Style "${s}" selected in form! Review and save your persona. ✨`, "success");
+        });
+    }
+
+  // --- Other Helper Functions ---
+  getFlairForScore(s){return parseInt(s,10)<=2?"🌱 Nurturing!":parseInt(s,10)===3?"⚖️ Balanced!":"🌟 Shining!";}
+  getEmojiForScore(s){return parseInt(s,10)<=2?"💧":parseInt(s,10)===3?"🌱":parseInt(s,10)===4?"✨":"🌟";}
+  escapeHTML(str){ const div=document.createElement('div'); div.appendChild(document.createTextNode(str ?? '')); return div.innerHTML; }
+  openModal(modalElement){if(!modalElement)return;modalElement.style.display='flex';const focusable=modalElement.querySelector('button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])');if(focusable)requestAnimationFrame(()=>focusable.focus());}
+  closeModal(modalElement){if(!modalElement)return;modalElement.style.display='none';}
+  getIntroForStyle(styleName){ const key=styleName?.toLowerCase().replace(/\(.*?\)/g,'').trim()||''; const intros={'classic submissive':'Trusting the lead...', brat:'Ready to play... or push?', slave:'In devoted service...', pet:'Eager for affection...', little:'Time for cuddles and rules!', puppy:'Ready to learn and play!', kitten:'Curious and coy...', princess:'Waiting to be adored...', 'rope bunny':'Anticipating the ties...', masochist:'Seeking the edge...', prey:'The chase begins...', toy:'Ready to be used...', doll:'Poised for perfection...', bunny:'Gentle heart awaits...', servant:'Duty calls...', playmate:'Let the games begin!', babygirl:'Needing care and charm...', captive:'Caught in the moment...', thrall:'Mind focused, will yielded...', puppet:'Waiting for direction...', maid:'Order and grace...', painslut:'Craving intensity...', bottom:'Open and ready...', 'classic dominant':'Taking the reins...', assertive:'Clear and direct...', nurturer:'Supporting the journey...', strict:'Order must prevail...', master:'Guiding with purpose...', mistress:'Commanding with elegance...', daddy:'Protecting and guiding...', mommy:'Nurturing with love...', owner:'Claiming what is mine...', rigger:'The canvas awaits...', sadist:'Exploring sensations...', hunter:'The pursuit is on...', trainer:'Cultivating potential...', puppeteer:'Strings at the ready...', protector:'Shields up...', disciplinarian:'Lessons will be learned...', caretaker:'Ensuring well-being...', sir:'Leading with honor...', goddess:'Accepting devotion...', commander:'Directing the action...', switch:'Ready for either flow...'}; return intros[key]||"Explore your unique expression!";}
+
+    // --- Simple Notification System ---
+    showNotification(message, type = 'info') { // types: info, success, error, warning
+        let notification = document.getElementById('app-notification');
+        if (!notification) {
+            notification = document.createElement('div');
+            notification.id = 'app-notification';
+            // Basic styling - Enhance in CSS
+            notification.style.position = 'fixed';
+            notification.style.top = '20px';
+            notification.style.left = '50%';
+            notification.style.transform = 'translateX(-50%)';
+            notification.style.padding = '10px 20px';
+            notification.style.borderRadius = '8px';
+            notification.style.zIndex = '2000';
+            notification.style.opacity = '0';
+            notification.style.transition = 'opacity 0.5s ease, top 0.5s ease';
+            notification.style.boxShadow = '0 3px 10px rgba(0,0,0,0.2)';
+            document.body.appendChild(notification);
+        }
+
+        notification.textContent = message;
+        notification.className = `app-notification notification-${type}`; // Use class for styling
+
+        // Apply type-specific styles (adjust colors in CSS)
+        switch (type) {
+            case 'success':
+                notification.style.backgroundColor = '#4CAF50'; // Use CSS var later
+                notification.style.color = 'white';
+                break;
+            case 'error':
+                notification.style.backgroundColor = '#f44336'; // Use CSS var later
+                 notification.style.color = 'white';
+                 break;
+            case 'warning':
+                notification.style.backgroundColor = '#ff9800'; // Use CSS var later
+                 notification.style.color = 'black';
+                 break;
+            default: // info
+                 notification.style.backgroundColor = '#2196F3'; // Use CSS var later
+                 notification.style.color = 'white';
+                 break;
+        }
+
+        // Fade in
+        requestAnimationFrame(() => {
+             notification.style.opacity = '1';
+             notification.style.top = '30px';
+        });
+
+
+        // Clear existing timer if any
+        if (this.notificationTimer) {
+            clearTimeout(this.notificationTimer);
+        }
+
+        // Fade out after delay
+        this.notificationTimer = setTimeout(() => {
+             notification.style.opacity = '0';
+             notification.style.top = '20px';
+             // Optional: Remove element after transition
+             // setTimeout(() => notification.remove(), 500);
+        }, 4000); // 4 seconds duration
+    }
+
+} // --- END OF TrackerApp CLASS ---
+
+// --- Initialization ---
+try {
+    console.log("SCRIPT END: Initializing KinkCompass App...");
+    window.kinkCompassApp = new TrackerApp();
+    console.log("SCRIPT END: KinkCompass App Initialized Successfully.");
+} catch (error) {
+    console.error("Fatal error during App initialization:", error);
+    document.body.innerHTML = `<div style="padding: 2em; margin: 2em; border: 2px solid red; background: #fff0f0; color: #333;"> <h1 style="color: red;">Oops! Failed to Start</h1> <p>Error: ${error.message}. Check console (F12).</p> <pre>${error.stack}</pre> </div>`;
+}
