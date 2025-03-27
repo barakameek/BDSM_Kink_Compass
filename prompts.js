@@ -1,41 +1,46 @@
-// --- START OF FILE prompts.js ---
+// === prompts.js ===
+
 export const journalPrompts = [
-    // General
-    "What was a moment this week where I felt truly authentic in my dynamic?",
-    "What's one boundary I communicated clearly recently? How did it feel?",
-    "What does 'safety' mean to me in the context of kink?",
-    "How did I practice aftercare (for myself or a partner) recently?",
-    "What's one small step I can take towards a current kink goal?",
-    "What surprised me about my desires or reactions lately?",
-    "Describe a time negotiation went really well. What made it successful?",
-    "What's a kink-related skill I'd like to learn or improve?",
-    "How do trust and vulnerability show up in my dynamic?",
-    "What's one assumption about kink (mine or others') I've challenged recently?",
+    // General Reflection
+    "What was a moment this week where I felt truly connected to my desires?",
+    "Describe a recent boundary negotiation. What went well? What could be improved?",
+    "How does safety (physical and emotional) manifest in my ideal dynamic?",
+    "Reflect on a recent aftercare experience (giving or receiving). What impact did it have?",
+    "What small, achievable step can I take towards a kink-related goal this week?",
+    "What surprised me about a recent kink experience or fantasy?",
+    "How do I currently balance my kink identity with other parts of my life?",
+    "What's a kink-related skill or area of knowledge I'm curious about exploring?",
+    "How has my understanding or expression of trust evolved recently?",
+    "What societal message about kink have I consciously decided to reject or reframe?",
+    "Describe a time I felt fully 'in the moment' during play. What facilitated that?",
+    "How do I handle feelings of vulnerability when they arise in a kink context?",
 
-    // Submissive Focused
-    "When did I feel the most surrendered recently? What triggered it?",
-    "Describe a time I truly enjoyed serving my partner. What made it special?",
-    "How does obedience feel different from simple compliance for me?",
-    "What kind of praise or validation makes me feel most cherished?",
-    "What does my 'ideal' submissive headspace feel like?",
+    // Role/Style Specific
+    "If Submissive: When did I feel the most empowered in my submission recently?",
+    "If Dominant: When did I feel my guidance was most effectively received and appreciated?",
+    "If Switch: What triggers my desire to shift roles? How do I communicate that shift?",
+    "If Brat: How do I ensure my brattiness enhances the dynamic rather than derails it?",
+    "If Little: What specific elements create the safest and most joyful littlespace for me?",
+    "If Pet: How do I best communicate my needs and feelings when in petspace?",
+    "If Master/Mistress: How do I balance high expectations with compassion and care?",
+    "If Slave/Servant: What acts of service feel most meaningful and fulfilling to me?",
+    "If Sadist/Masochist: How do I communicate about intensity levels during a scene?",
+    "If Rigger/Bunny: What does the aesthetic vs. sensation aspect of rope mean to me?",
 
-    // Dominant Focused
-    "When did I feel most confident in my authority recently?",
-    "Describe a time I provided effective care or aftercare. What was the impact?",
-    "How do I balance control with my partner's autonomy and well-being?",
-    "What kind of respect or devotion from my partner feels most meaningful?",
-    "What responsibilities do I feel come with my dominant role?",
-
-    // Style Specific (Examples - expand!)
-    "Brat: What's the line between playful defiance and disrespect for me/my partner?",
-    "Little: What activities bring me the most joy when I'm in littlespace?",
-    "Rigger: What's the connection between the rope and the person for me?",
-    "Sadist: How do I ensure my partner's pleasure/release is centered, even when causing pain?",
-    "Daddy/Mommy: How do I foster growth and independence alongside providing care?",
+    // Deeper Exploration
+    "What fears or insecurities sometimes hold me back in my kink exploration?",
+    "How does my body language communicate my desires or limits, even without words?",
+    "What does 'power' mean to me in the context of BDSM?",
+    "How do I process challenging emotions (like sub drop, dom drop, or scene processing) afterwards?",
+    "What's one way I can show appreciation for my partner(s) in our dynamic?",
+    "If I could design a perfect scene right now, what key elements would it include?",
+    "How do my past experiences influence my current desires and boundaries?",
 ];
 
 export function getRandomPrompt() {
+    if (!journalPrompts || journalPrompts.length === 0) {
+        return "Reflect on your journey today..."; // Fallback
+    }
     const randomIndex = Math.floor(Math.random() * journalPrompts.length);
     return journalPrompts[randomIndex];
 }
-// --- END OF FILE prompts.js ---
