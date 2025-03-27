@@ -1,11 +1,10 @@
-// --- START OF FILE paraphrasing_dom.js ---
+// === paraphrasing_dom.js === (Ensure import path is correct)
 
-import { bdsmData } from './data.js';
+import { bdsmData } from './data.js'; // Path might need adjustment
 
 // Helper to normalize style names for lookup
 function normalizeStyleKey(name) {
     if (!name) return '';
-    // Lowercase, remove content in parentheses, normalize slashes, trim
     return name.toLowerCase().replace(/\(.*?\)/g, '').replace(/ \/ /g, '/').trim();
 }
 
@@ -172,20 +171,29 @@ export function getStyleBreakdown(styleName, traits) {
   if (styleObj && styleObj.traits) {
       traitScores = styleObj.traits.map(t => parseInt(traits[t.name]) || 3);
   }
-  // Optional: Include core traits in average?
-  // traitScores.push(parseInt(traits.authority) || 3);
-  // traitScores.push(parseInt(traits.care) || 3);
+   // Add core traits to the average score calculation
+   if(traits.authority) traitScores.push(parseInt(traits.authority) || 3);
+   if(traits.care) traitScores.push(parseInt(traits.care) || 3);
 
   const avgScore = traitScores.length > 0
     ? Math.round(traitScores.reduce((a, b) => a + b, 0) / traitScores.length)
-    : 3; // Default if no specific style traits
+    : 3; // Default if no traits to average
 
   const scoreIndex = Math.max(1, Math.min(5, avgScore)); // Ensure score is 1-5
-  const { paraphrase, suggestion } = styleData[scoreIndex];
+  const levelData = styleData[scoreIndex];
+
+   if(!levelData) {
+      console.warn(`No paraphrase/suggestion found for style ${styleKey} at level ${scoreIndex}`);
+      return {
+          strengths: `Leading the way as a ${styleName}! 🔥`,
+          improvements: `Continue sharpening your unique ${styleName} command! 💪`
+      };
+  }
+
+  const { paraphrase, suggestion } = levelData;
 
   const isStrength = scoreIndex >= 4;
 
-  // Use markdown for emphasis
   const strengthsText = isStrength
     ? `✨ **${paraphrase}** ${suggestion}`
     : `🌱 You're cultivating powerful skills in ${styleName}! Keep honing your command, mighty one!`;
