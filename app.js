@@ -257,15 +257,7 @@ class TrackerApp {
         throw new Error(errorMsg);
     }
     // End Critical element check block
-    // End Critical element check block
-    
 
-    if (missingKeys.length > 0) {
-        const errorMsg = `Cannot initialize: HTML element(s) not found (ID: ${missingKeys.join(', ')}). Check index.html.`;
-        console.error(errorMsg);
-        throw new Error(errorMsg);
-    }
-    // End Critical element check block
     
     // Log and throw error *after* the loop
   // Log and throw error *after* the loop if (missingElement) { const errorMsg = `Initialization failed: Required HTML element(s) absent. Check console for details (IDs: ${missingKeys.join(', ')}).`; console.error(`Critical HTML element(s) not found: ID(s) '${missingKeys.join("', '")}'. Cannot initialize KinkCompass.`); // Log detailed info throw new Error(errorMsg); // Throw error  }
