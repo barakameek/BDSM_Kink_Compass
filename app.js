@@ -237,10 +237,23 @@ class TrackerApp {
       formTitle: document.getElementById('form-title'),
     };
 
+       // Critical element check
     const criticalElements = ['name', 'role', 'style', 'save', 'peopleList', 'modal', 'sfModal', 'sfStepContent', 'styleFinderTriggerBtn', 'glossaryBody', 'resourcesBody', 'styleDiscoveryBody', 'themesBody', 'modalBody', 'livePreview', 'traitsContainer'];
     let missingElement = false;
-    for (const key of criticalElements) { if (!this.elements[key]) { console.error(`Missing critical element: ID '${key}'`); missingElement = true; } }
-    if (missingElement) { throw new Error("Missing critical HTML elements. Cannot initialize KinkCompass."); }
+    const missingKeys = []; // Keep track of missing keys
+    for (const key of criticalElements) {
+        if (!this.elements[key]) {
+             // Instead of logging immediately, store the key
+             missingKeys.push(key);
+             missingElement = true;
+        }
+    }
+    // Log and throw error *after* the loop
+    if (missingElement) {
+        const errorMsg = `Missing critical HTML element(s): ID(s) '${missingKeys.join("', '")}'. Cannot initialize KinkCompass.`;
+        console.error(errorMsg); // Log the consolidated error message
+        throw new Error(errorMsg); // Throw the error
+    }
 
     console.log("CONSTRUCTOR: Elements found.");
     this.addEventListeners();
