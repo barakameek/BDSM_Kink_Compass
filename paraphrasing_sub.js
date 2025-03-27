@@ -1,10 +1,8 @@
-
-import { bdsmData } from './data.js';
+import { bdsmData } from './data.js'; // Path might need adjustment
 
 // Helper to normalize style names for lookup
 function normalizeStyleKey(name) {
     if (!name) return '';
-    // Lowercase, remove content in parentheses, normalize slashes, trim
     return name.toLowerCase().replace(/\(.*?\)/g, '').replace(/ \/ /g, '/').trim();
 }
 
@@ -192,6 +190,7 @@ export function getStyleBreakdown(styleName, traits) {
     };
   }
 
+  // Use data directly from bdsmData for trait definitions if needed
   const roleData = bdsmData.submissive;
   const styleObj = roleData.styles.find(s => normalizeStyleKey(s.name) === styleKey);
 
@@ -199,20 +198,31 @@ export function getStyleBreakdown(styleName, traits) {
   if (styleObj && styleObj.traits) {
       traitScores = styleObj.traits.map(t => parseInt(traits[t.name]) || 3);
   }
-  // Optional: Include core traits in average? Decide if this makes sense.
-  // traitScores.push(parseInt(traits.obedience) || 3);
-  // traitScores.push(parseInt(traits.trust) || 3);
+  // Add core traits to the average score calculation
+  if(traits.obedience) traitScores.push(parseInt(traits.obedience) || 3);
+  if(traits.trust) traitScores.push(parseInt(traits.trust) || 3);
+
 
   const avgScore = traitScores.length > 0
     ? Math.round(traitScores.reduce((a, b) => a + b, 0) / traitScores.length)
-    : 3; // Default if no specific style traits
+    : 3; // Default if no traits to average
 
   const scoreIndex = Math.max(1, Math.min(5, avgScore)); // Ensure score is 1-5
-  const { paraphrase, suggestion } = styleData[scoreIndex];
+  const levelData = styleData[scoreIndex];
+
+  if(!levelData) {
+      console.warn(`No paraphrase/suggestion found for style ${styleKey} at level ${scoreIndex}`);
+      return {
+          strengths: `Exploring the path of a ${styleName}! ✨`,
+          improvements: `Continue refining your unique ${styleName} expression! 🌱`
+      };
+  }
+
+  const { paraphrase, suggestion } = levelData;
 
   const isStrength = scoreIndex >= 4;
 
-  // Use markdown for emphasis
+  // Use markdown-like syntax for emphasis (will be handled by UI)
   const strengthsText = isStrength
     ? `✨ **${paraphrase}** ${suggestion}`
     : `🌱 You're cultivating wonderful skills in ${styleName}! Keep nurturing your growth, star!`;
@@ -225,5 +235,4 @@ export function getStyleBreakdown(styleName, traits) {
     strengths: strengthsText,
     improvements: improvementsText
   };
-}
-// --- END OF FILE paraphrasing_sub.js ---
+} END OF FILE paraphrasing_sub.js ---
