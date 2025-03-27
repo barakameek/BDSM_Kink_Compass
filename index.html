@@ -37,7 +37,6 @@
                     <div class="avatar-picker">
                         <span id="avatar-display" aria-hidden="true">❓</span>
                         <input type="hidden" id="avatar-input" value="❓">
-                        {/* <!-- Add more buttons as needed --> */}
                         <button class="avatar-btn" data-emoji="🎀" aria-label="Ribbon">🎀</button>
                         <button class="avatar-btn" data-emoji="✨" aria-label="Sparkles">✨</button>
                         <button class="avatar-btn" data-emoji="💖" aria-label="Sparkling Heart">💖</button>
@@ -73,11 +72,9 @@
                  <p class="muted-text" style="margin-top: 0.3em;">Don't know? Use the <button type="button" id="form-style-finder-link" class="link-button">Style Finder</button>!</p>
             </div>
             <div id="traits-container">
-                {/* <!-- Trait sliders will be rendered here by JS --> */}
-                <p class="muted-text">Select Role & Style to see relevant traits...</p>
+               <p class="muted-text">Select Role & Style to see relevant traits...</p>
             </div>
-            {/* <!-- Trait Info Popup (Positioned Relative to traits-container) --> */}
-            <div id="trait-info-popup" class="trait-info-popup card" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="trait-info-title">
+              <div id="trait-info-popup" class="trait-info-popup card" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="trait-info-title">
                 <button id="trait-info-close" class="modal-close" aria-label="Close trait info">×</button>
                 <h4 id="trait-info-title">Trait Info</h4>
                 <div id="trait-info-body"></div>
@@ -88,8 +85,7 @@
             </div>
         </section>
 
-        {/* <!-- Profile List --> */}
-        <section class="list-section card">
+            <section class="list-section card">
             <h2>🌟 Persona Crew 🌟</h2>
             <p class="muted-text">Click a persona to view details or edit.</p>
             <ul id="people-list" aria-live="polite">
@@ -97,8 +93,7 @@
             </ul>
         </section>
 
-        {/* <!-- Live Preview --> */}
-        <section class="preview-section card">
+          <section class="preview-section card">
             <h2>🎈 Live Vibe Preview 🎈</h2>
             <div id="live-preview">
                 <p class="muted-text">Fill the form to see your persona's vibe! 🌈</p>
@@ -106,10 +101,7 @@
         </section>
     </main>
 
-    {/* <!-- MODALS --> */}
-
-    {/* <!-- Persona Detail Modal --> */}
-    <div class="modal" id="detail-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="detail-modal-title">
+       <div class="modal" id="detail-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="detail-modal-title">
         <div class="modal-content card">
             <button class="modal-close" id="modal-close" aria-label="Close details">×</button>
             {/* <!-- Modal title needed for aria-labelledby --> */}
@@ -120,8 +112,7 @@
         </div>
     </div>
 
-    {/* <!-- Resources Modal --> */}
-    <div class="modal" id="resources-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="resources-modal-title">
+     <div class="modal" id="resources-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="resources-modal-title">
         <div class="modal-content card">
             <button class="modal-close" id="resources-close" aria-label="Close resources">×</button>
             <h2 id="resources-modal-title">🔗 Helpful Resources</h2>
