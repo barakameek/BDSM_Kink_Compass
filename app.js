@@ -248,7 +248,7 @@ class TrackerApp {
         if (!this.elements[key]) {
             missingKeys.push(key);
         }
-    }
+    
 
     if (missingKeys.length > 0) {
         const errorMsg = `Cannot initialize: HTML element(s) not found (ID: ${missingKeys.join(', ')}). Check index.html.`;
