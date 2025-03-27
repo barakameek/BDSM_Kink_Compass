@@ -1,3 +1,5 @@
+```css
+/* === styles.css === */
 
 /* --- Configuration & Base Variables --- */
 :root {
@@ -52,7 +54,7 @@
   --sf-slider-footnote-color: var(--muted-text-color);
   --sf-popup-bg: var(--card-bg-color);
   --sf-score-delta-negative-color: var(--muted-text-color);
-  /* Add Notification variables */
+  /* Notification variables */
   --notification-info-bg: #2196F3;
   --notification-success-bg: var(--success-color);
   --notification-error-bg: var(--danger-color);
@@ -97,11 +99,11 @@ body[data-theme="dark"] {
   --sf-popup-bg: #3b233a;
   --sf-score-delta-negative-color: #d8b8cb;
 
-  --notification-info-bg: #64b5f6; /* Lighter blue */
+  --notification-info-bg: #64b5f6;
   --notification-success-bg: var(--success-color);
   --notification-error-bg: var(--danger-color);
-  --notification-warning-bg: #ffb74d; /* Lighter orange */
-  --notification-text-light: #000000; /* Better contrast on light backgrounds */
+  --notification-warning-bg: #ffb74d;
+  --notification-text-light: #000000;
   --notification-text-dark: #ffffff;
 }
 
@@ -109,27 +111,27 @@ body[data-theme="dark"] {
 body[data-theme="pastel"] {
   --bg-color: #fdf6f9;
   --card-bg-color: #ffffff;
-  --text-color: #6d5a6d; /* Muted purple */
-  --accent-color: #a0d8ef; /* Pastel Blue */
+  --text-color: #6d5a6d;
+  --accent-color: #a0d8ef;
   --accent-color-darker: #79b8d1;
   --accent-color-light: #c0e8f9;
   --muted-text-color: #b0a7b0;
   --border-color: #e8ddee;
   --focus-ring-color: var(--accent-color-light);
-  --link-color: var(--accent-color-darker); /* Darker blue for links */
-  --link-hover-color: #5a9cb0; /* Even darker blue */
+  --link-color: var(--accent-color-darker);
+  --link-hover-color: #5a9cb0;
 
   --sf-dashboard-item-bg: color-mix(in srgb, var(--accent-color) 10%, transparent);
   --sf-slider-track-bg: #e8ddee;
-  /* Use default notification colors */
+  /* Use default light notification colors */
 }
 
 /* --- Velvet Theme --- */
 body[data-theme="velvet"] {
-  --bg-color: #1a122a; /* Deep velvet */
+  --bg-color: #1a122a;
   --card-bg-color: #2c1f3e;
-  --text-color: #e8ddee; /* Light lilac */
-  --accent-color: #dcc1ff; /* Amethyst */
+  --text-color: #e8ddee;
+  --accent-color: #dcc1ff;
   --accent-color-darker: #b899e0;
   --accent-color-light: #c8a8f0;
   --muted-text-color: #a08cb0;
@@ -161,7 +163,6 @@ body[data-theme="velvet"] {
   --notification-text-dark: #ffffff;
 }
 
-
 /* --- General Styles & Resets --- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
@@ -180,7 +181,7 @@ dd ul { list-style: disc; padding-left: 1.5em; margin-top: 0.3em; }
 a, .link-button { color: var(--link-color); text-decoration: none; transition: color var(--transition-duration) var(--transition-timing); cursor: pointer; }
 a:hover, .link-button:hover { color: var(--link-hover-color); text-decoration: underline; }
 .link-button { background: none; border: none; padding: 0; font: inherit; text-decoration: underline; }
-*:focus-visible { outline: var(--border-width-thick) solid var(--focus-ring-color); outline-offset: 2px; box-shadow: 0 0 0 4px color-mix(in srgb, var(--focus-ring-color) calc(var(--focus-ring-alpha) * 100%), transparent); }
+*:focus-visible { outline: var(--border-width-thick) solid var(--focus-ring-color); outline-offset: 2px; box-shadow: 0 0 0 4px color-mix(in srgb, var(--focus-ring-color) calc(var(--focus-ring-alpha) * 100%), transparent); border-radius: 2px; /* Subtle radius on outline */ }
 *:focus:not(:focus-visible) { outline: none; }
 
 
@@ -190,10 +191,10 @@ a:hover, .link-button:hover { color: var(--link-hover-color); text-decoration: u
 
 
 /* --- Header --- */
-.app-header { padding: 0.8em 1.5em; background: var(--accent-color); color: var(--text-color-light); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; border-bottom: 3px solid color-mix(in srgb, var(--accent-color) 80%, black); box-shadow: 0 2px 8px rgba(0,0,0,0.15); position: sticky; top: 0; z-index: 500; transition: background-color var(--transition-duration) var(--transition-timing); }
-.app-header h1 { margin: 0 1em 0 0; font-size: clamp(1.4em, 3vw, 1.8em); color: var(--text-color-light); text-shadow: 1px 1px 2px rgba(0,0,0,0.2); flex-shrink: 0; margin-bottom: 0; }
-.header-nav { display: flex; flex-wrap: wrap; gap: 0.6em; align-items: center; margin-left: auto; }
-.header-btn { background: none; border: var(--border-width-thick) solid var(--text-color-light); color: var(--text-color-light); padding: 0.4em 0.8em; border-radius: var(--border-radius-small); cursor: pointer; font-size: clamp(0.75em, 1.5vw, 0.9em); font-weight: bold; transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease; white-space: nowrap; }
+.app-header { padding: 0.8em 1.5em; background: var(--accent-color); color: var(--text-color-light); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: stretch; /* Stretch items vertically */ border-bottom: 3px solid color-mix(in srgb, var(--accent-color) 80%, black); box-shadow: 0 2px 8px rgba(0,0,0,0.15); position: sticky; top: 0; z-index: 500; transition: background-color var(--transition-duration) var(--transition-timing); min-height: 55px; /* Ensure header has height */ }
+.app-header h1 { margin: 0 1em 0 0; font-size: clamp(1.4em, 3vw, 1.8em); color: var(--text-color-light); text-shadow: 1px 1px 2px rgba(0,0,0,0.2); flex-shrink: 0; margin-bottom: 0; display: flex; align-items: center; /* Center h1 content */ }
+.header-nav { display: flex; flex-wrap: wrap; gap: 0.6em; align-items: stretch; /* Stretch buttons */ margin-left: auto; }
+.header-btn { background: none; border: var(--border-width-thick) solid var(--text-color-light); color: var(--text-color-light); padding: 0.4em 0.8em; border-radius: var(--border-radius-small); cursor: pointer; font-size: clamp(0.75em, 1.5vw, 0.9em); font-weight: bold; transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; text-align: center; }
 .header-btn:hover, .header-btn:focus-visible { background: rgba(255, 255, 255, 0.2); transform: translateY(-1px); box-shadow: var(--button-shadow); }
 .theme-btn { font-size: 1.2em; padding: 0.2em 0.5em; }
 
@@ -204,7 +205,9 @@ a:hover, .link-button:hover { color: var(--link-hover-color); text-decoration: u
 .field-group label { display: block; font-weight: 600; margin-bottom: 0.5em; color: var(--accent-color); font-size: 0.95em; }
 .field-group input[type="text"], .field-group select, .field-group textarea { width: 100%; padding: 0.8em 1em; font-size: 1em; border: var(--border-width) solid var(--border-color); border-radius: var(--border-radius-small); background: var(--bg-color); color: var(--text-color); transition: border-color var(--transition-duration) var(--transition-timing), background-color var(--transition-duration) var(--transition-timing), color var(--transition-duration) var(--transition-timing), box-shadow var(--transition-duration) var(--transition-timing); box-shadow: var(--input-shadow-inset); }
 .field-group input[type="text"]:focus, .field-group select:focus, .field-group textarea:focus { border-color: var(--accent-color); background-color: var(--card-bg-color); }
-.field-group select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23${(props) => props.theme.mutedTextColor.substring(1)}' viewBox='0 0 16 16'%3E%3Cpath d='M8 11.414l-4.707-4.707a1 1 0 011.414-1.414L8 8.586l3.293-3.293a1 1 0 111.414 1.414L8 11.414z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.8em center; background-size: 1em; padding-right: 2.5em; } /* Needs JS to update fill color on theme change or use mask */
+.field-group select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%238a5a6d' viewBox='0 0 16 16'%3E%3Cpath d='M8 11.414l-4.707-4.707a1 1 0 011.414-1.414L8 8.586l3.293-3.293a1 1 0 111.414 1.414L8 11.414z'/%3E%3C/svg%3E"); /* Default color, consider dynamic SVG or mask */ background-repeat: no-repeat; background-position: right 0.8em center; background-size: 1em; padding-right: 2.5em; }
+body[data-theme="dark"] .field-group select, body[data-theme="velvet"] .field-group select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23c49db1' viewBox='0 0 16 16'%3E%3Cpath d='M8 11.414l-4.707-4.707a1 1 0 011.414-1.414L8 8.586l3.293-3.293a1 1 0 111.414 1.414L8 11.414z'/%3E%3C/svg%3E"); }
+body[data-theme="pastel"] .field-group select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23b0a7b0' viewBox='0 0 16 16'%3E%3Cpath d='M8 11.414l-4.707-4.707a1 1 0 011.414-1.414L8 8.586l3.293-3.293a1 1 0 111.414 1.414L8 11.414z'/%3E%3C/svg%3E"); }
 .field-group textarea { resize: vertical; min-height: 80px; }
 
 /* Avatar Picker */
@@ -223,7 +226,7 @@ a:hover, .link-button:hover { color: var(--link-hover-color); text-decoration: u
 /* Individual Trait Styling */
 .trait { margin-bottom: 1.5em; background: color-mix(in srgb, var(--accent-color) 5%, transparent); padding: 1.2em; border-radius: var(--border-radius-small); border: var(--border-width) solid var(--border-color); transition: background-color var(--transition-duration) var(--transition-timing), border-color var(--transition-duration) var(--transition-timing); position: relative; }
 .trait label { font-weight: bold; color: var(--accent-color); display: inline-block; margin-right: 0.3em; margin-bottom: 0; vertical-align: middle; }
-.trait-info-btn { background: none; border: none; color: var(--accent-color); cursor: pointer; font-size: 0.9em; padding: 0 0.3em; display: inline-flex; /* Use flex */ align-items: center; /* Center icon vertically */ justify-content: center; vertical-align: middle; transition: color 0.2s ease, transform 0.2s ease; width: 20px; height: 20px; /* Give it dimensions */ }
+.trait-info-btn { background: none; border: none; color: var(--accent-color); cursor: pointer; font-size: 0.9em; padding: 0 0.3em; display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; transition: color 0.2s ease, transform 0.2s ease; width: 20px; height: 20px; }
 .trait-info-btn:hover { color: var(--accent-color-darker); transform: scale(1.2); }
 .trait input[type="range"].trait-slider { width: 100%; accent-color: var(--accent-color); margin-top: 0.8em; margin-bottom: 0.3em; cursor: grab; display: block; height: 8px; }
 .trait input[type="range"].trait-slider:active { cursor: grabbing; }
@@ -279,6 +282,7 @@ a:hover, .link-button:hover { color: var(--link-hover-color); text-decoration: u
 .top-trait-preview hr { border: none; border-top: var(--border-width) dashed var(--border-color); margin: 1em 0; transition: border-color var(--transition-duration) var(--transition-timing); }
 .top-trait-preview p { font-size: 0.9em; }
 
+
 /* --- Modals (General) --- */
 .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.65); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; padding: 1em; overflow-y: auto; }
 .modal-content { position: relative; background: var(--card-bg-color); padding: 2em; border-radius: var(--border-radius-medium); border: var(--border-width-thick) solid var(--accent-color); max-width: 95%; width: 700px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.25); transition: background-color var(--transition-duration) var(--transition-timing), border-color var(--transition-duration) var(--transition-timing); animation: modalFadeIn 0.3s ease; }
@@ -293,8 +297,8 @@ a:hover, .link-button:hover { color: var(--link-hover-color); text-decoration: u
 #modal-body { padding: 0.5em; }
 #modal-body section { margin-top: 1.8em; margin-bottom: 1.8em; padding: 1.5em; border: var(--border-width) solid var(--border-color); border-radius: var(--border-radius-small); background-color: color-mix(in srgb, var(--card-bg-color) 95%, var(--bg-color)); box-shadow: 0 2px 5px rgba(74, 44, 61, 0.05); transition: background-color var(--transition-duration) var(--transition-timing), border-color var(--transition-duration) var(--transition-timing); }
 #modal-body section h3 { margin-top: 0; margin-bottom: 1em; padding-bottom: 0.6em; border-bottom: var(--border-width) dashed var(--accent-color); display: flex; align-items: center; gap: 0.6em; font-size: 1.4em; transition: border-color var(--transition-duration) var(--transition-timing); }
-.modal-title { font-size: 1.8em; margin-bottom: 0.2em; }
-.modal-subtitle { text-align: center; margin-top: -0.8em; margin-bottom: 1.5em; color: var(--muted-text-color); font-weight: bold; font-size: 1.05em; }
+.modal-title { font-size: 1.8em; margin-bottom: 0.2em; text-align: center; /* Center main title */ }
+.modal-subtitle { text-align: center; margin-top: 0.2em; /* Reduced top margin */ margin-bottom: 1.5em; color: var(--muted-text-color); font-weight: bold; font-size: 1.05em; }
 .modal-intro { font-style: italic; color: var(--accent-color-darker); text-align: center; margin: -0.5em auto 1.8em auto; font-size: 1.1em; max-width: 80%;}
 
 /* Goals Section (Detail Modal) */
@@ -346,7 +350,7 @@ a:hover, .link-button:hover { color: var(--link-hover-color); text-decoration: u
 
 /* Reflections Section (Detail Modal) */
 .reflections-section .modal-actions { margin-bottom: 1.2em; text-align: center; }
-.reflections-textarea { display: block; width: 100%; min-height: 150px; margin-bottom: 1.2em; line-height: 1.7; } /* Inherits general input styles */
+.reflections-textarea { display: block; width: 100%; min-height: 150px; margin-bottom: 1.2em; line-height: 1.7; /* Inherits general input styles */ }
 #save-reflections-btn { display: block; margin: 0 auto; }
 .journal-prompt { background-color: color-mix(in srgb, var(--bg-color) 90%, var(--accent-color)); padding: 1em; border-radius: var(--border-radius-small); margin-bottom: 1.2em; font-style: italic; text-align: center; transition: background-color var(--transition-duration) var(--transition-timing); border-left: 4px solid var(--accent-color); }
 
@@ -381,12 +385,11 @@ a:hover, .link-button:hover { color: var(--link-hover-color); text-decoration: u
 #sf-close-style-finder { /* Uses .modal-close */ }
 #sf-progress-tracker { font-size: 0.95em; color: var(--sf-progress-color, var(--muted-text-color)); margin-bottom: 18px; font-weight: bold; text-align: center; transition: color var(--transition-duration) var(--transition-timing); }
 #sf-step-content { padding: 0.5em 0; }
-#sf-step-content h2 { color: var(--accent-color-darker); margin-bottom: 12px; font-size: 1.35em; line-height: 1.4; text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.3em; /* Align icon */ }
+#sf-step-content h2 { color: var(--accent-color-darker); margin-bottom: 12px; font-size: 1.35em; line-height: 1.4; text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.4em; }
 #sf-step-content p { margin-bottom: 18px; color: var(--text-color); text-align: center; font-size: 0.95em; }
 #sf-step-content button { background: var(--accent-color); color: var(--text-color-light); border: none; padding: 0.8em 1.6em; border-radius: 50px; cursor: pointer; font-size: 1em; font-weight: bold; margin: 8px 5px; transition: all 0.2s ease; }
 #sf-step-content button:hover { background: var(--accent-color-darker); transform: translateY(-2px); box-shadow: var(--button-shadow); }
-/* Centering button container */
-#sf-step-content .sf-button-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 1em; margin-top: 15px; }
+#sf-step-content .sf-button-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 1em; margin-top: 20px; /* Increased margin */ }
 #sf-step-content button[data-action="prev"] { background: var(--muted-text-color); color: var(--card-bg-color); }
 #sf-step-content button[data-action="prev"]:hover { background: var(--text-color); }
 #sf-feedback { font-size: 0.95em; color: var(--accent-color); margin: 12px 0; font-weight: bold; min-height: 1.3em; text-align: center; transition: color var(--transition-duration) var(--transition-timing); }
@@ -409,35 +412,8 @@ body[data-theme="dark"] .sf-score-delta.positive, body[data-theme="velvet"] .sf-
 .sf-trait-slider::-moz-range-thumb:hover { background: var(--accent-color-darker); transform: scale(1.1); }
 .sf-slider-description { font-size: 1em; color: var(--accent-color); margin-top: 12px; font-weight: bold; transition: all 0.2s ease; text-align: center; padding: 10px 15px; background: color-mix(in srgb, var(--accent-color) 10%, transparent); border-radius: var(--border-radius-small); max-width: 400px; margin-left: auto; margin-right: auto; min-height: 2.8em; display: flex; align-items: center; justify-content: center; }
 .sf-slider-footnote { font-size: 0.85em; color: var(--sf-slider-footnote-color, var(--muted-text-color)); margin-top: 8px; text-align: center; transition: color var(--transition-duration) var(--transition-timing); }
-
-/* Improved Info Icon Style */
-.sf-info-icon {
-    cursor: pointer;
-    color: var(--accent-color);
-    background: color-mix(in srgb, var(--accent-color) 10%, transparent);
-    border: 1px solid color-mix(in srgb, var(--accent-color) 30%, transparent);
-    border-radius: 50%;
-    width: 1.5em; /* Relative size */
-    height: 1.5em;
-    font-size: 0.8em; /* Make icon slightly smaller than heading */
-    font-weight: bold;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: 0.5em;
-    vertical-align: middle; /* Align better with text */
-    transition: all 0.2s ease;
-    line-height: 1; /* Prevent extra spacing */
-    padding: 0; /* Reset padding */
-}
-.sf-info-icon:hover {
-    transform: scale(1.15);
-    color: var(--accent-color-darker);
-    background: color-mix(in srgb, var(--accent-color) 20%, transparent);
-    border-color: var(--accent-color);
-    box-shadow: 0 0 5px color-mix(in srgb, var(--accent-color) 40%, transparent);
-}
-
+.sf-info-icon { cursor: pointer; color: var(--accent-color); background-color: color-mix(in srgb, var(--accent-color) 15%, transparent); border: 1px solid color-mix(in srgb, var(--accent-color) 40%, transparent); border-radius: 50%; width: 1.6em; height: 1.6em; font-size: 0.85em; font-weight: bold; display: inline-flex; align-items: center; justify-content: center; margin-left: 0.6em; vertical-align: middle; transition: all 0.2s ease; line-height: 1; padding: 0; text-decoration: none; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+.sf-info-icon:hover { transform: scale(1.15) rotate(10deg); color: var(--accent-color-darker); background-color: color-mix(in srgb, var(--accent-color) 25%, transparent); border-color: var(--accent-color); box-shadow: 0 0 6px color-mix(in srgb, var(--accent-color) 50%, transparent); }
 /* Info Popups */
 .sf-style-info-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--sf-popup-bg, var(--card-bg-color)); padding: 25px; border-radius: var(--border-radius-medium); max-width: 500px; width: 90%; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3); z-index: 1001; text-align: left; border: var(--border-width-thick) solid var(--accent-color); max-height: 85vh; overflow-y: auto; transition: background-color var(--transition-duration) var(--transition-timing), border-color var(--transition-duration) var(--transition-timing); }
 .sf-style-info-popup.wide-popup { max-width: 650px; }
@@ -454,11 +430,10 @@ body[data-theme="dark"] .sf-score-delta.positive, body[data-theme="velvet"] .sf-
 .sf-result-heading { color: var(--accent-color); padding-bottom: 8px; margin-bottom: 18px; font-size: 1.7em; text-align: center; }
 .sf-result-section p { margin-bottom: 1em; text-align: left; margin-left: auto; margin-right: auto; max-width: 90%; }
 .sf-result-section h3 { font-size: 1.4em; margin-top: 1.8em; margin-bottom: 0.6em; color: var(--accent-color-darker); text-align: center; }
-.sf-result-section ul { text-align: left; max-width: 400px; margin: 0.5em auto 1.8em auto; padding-left: 1.8em; /* Keep list style */ }
+.sf-result-section ul { text-align: left; max-width: 400px; margin: 0.5em auto 1.8em auto; padding-left: 1.8em; }
 .sf-result-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 25px; }
-.sf-result-buttons button[data-action="applyStyle"] { background-color: var(--success-color); color: var(--text-color-light); } /* Ensure text color */
+.sf-result-buttons button[data-action="applyStyle"] { background-color: var(--success-color); color: var(--text-color-light); }
 .sf-result-buttons button[data-action="applyStyle"]:hover { background-color: color-mix(in srgb, var(--success-color) 80%, black); }
-
 
 /* --- Animations (Prefixed) --- */
 .sf-fade-in { animation: sfFadeIn 0.3s ease-in; }
@@ -468,7 +443,6 @@ body[data-theme="dark"] .sf-score-delta.positive, body[data-theme="velvet"] .sf-
 @keyframes sfSlideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 @keyframes sfFadeOut { 0% { opacity: 1; } 100% { opacity: 0; } }
 
-
 /* --- Footer --- */
 .app-footer { text-align: center; padding: 1.8em 1em; margin-top: 2.5em; color: var(--muted-text-color); font-size: 0.9em; border-top: var(--border-width) solid var(--border-color); transition: color var(--transition-duration) var(--transition-timing), border-color var(--transition-duration) var(--transition-timing); }
 .app-footer small { font-size: 0.85em; }
@@ -477,7 +451,7 @@ body[data-theme="dark"] .sf-score-delta.positive, body[data-theme="velvet"] .sf-
 .muted-text { color: var(--muted-text-color); font-size: 0.9em; transition: color var(--transition-duration) var(--transition-timing); }
 
 /* --- Notification Styles --- */
-#app-notification { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 12px 25px; border-radius: 8px; z-index: 2000; opacity: 0; transition: opacity 0.5s ease, top 0.5s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.2); font-size: 0.95em; text-align: center; /* Base styles */ }
+#app-notification { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 12px 25px; border-radius: 8px; z-index: 2000; opacity: 0; transition: opacity 0.5s ease, top 0.5s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.2); font-size: 0.95em; text-align: center; pointer-events: none; /* Prevent interaction */ }
 .notification-success { background-color: var(--notification-success-bg, var(--success-color)); color: var(--notification-text-light, white); }
 .notification-error { background-color: var(--notification-error-bg, var(--danger-color)); color: var(--notification-text-light, white); }
 .notification-warning { background-color: var(--notification-warning-bg, #ff9800); color: var(--notification-text-dark, black); }
@@ -486,5 +460,7 @@ body[data-theme="dark"] .sf-score-delta.positive, body[data-theme="velvet"] .sf-
 
 /* --- Responsiveness --- */
 @media (max-width: 900px) { .modal-content.wide-modal { width: 90%; } .sf-style-info-popup.wide-popup { max-width: 90%; } }
-@media (max-width: 768px) { .container { padding: 1em; gap: 1em; } .card { padding: 1.2em; } .app-header { padding: 0.8em 1em; } .app-header h1 { font-size: clamp(1.3em, 4vw, 1.6em); } .header-nav { gap: 0.4em; } .header-btn { padding: 0.3em 0.6em; font-size: clamp(0.7em, 1.8vw, 0.8em); } .theme-btn { font-size: 1.1em;} .modal-content { padding: 1.5em; max-width: 95%; width: auto; } .form-actions { flex-direction: column; } .trait-details-grid { grid-template-columns: 1fr; } .sf-modal .sf-modal-content { max-width: 95%; padding: 20px; } #sf-step-content h2 { font-size: 1.25em; } }
-@media (max-width: 480px) { body { font-size: 15px; } .app-header { flex-direction: column; align-items: flex-start; } .app-header h1 { margin-bottom: 0.5em; width: 100%; text-align: center; } .header-nav { margin-left: 0; width: 100%; justify-content: space-around; gap: 0.3em; } .header-btn { padding: 0.4em 0.6em; } .container { grid-template-columns: 1fr; padding: 0.8em; gap: 0.8em; } .card { padding: 1em; } .modal-content { padding: 1.2em; } .form-actions { gap: 0.8em; } .save-btn, .clear-btn { font-size: 1em; padding: 0.7em 1.5em; } .sf-modal .sf-modal-content { padding: 15px; } .sf-modal-content h3 { font-size: 1.4em; } #sf-step-content h2 { font-size: 1.15em; } .sf-trait-slider { max-width: 95%; } .sf-slider-description { font-size: 0.9em; padding: 8px 10px; min-height: 2.5em; } .sf-slider-footnote { font-size: 0.8em; } .sf-style-info-popup { max-width: 95%; padding: 15px; } .sf-style-info-popup h3 { font-size: 1.2em; } .sf-result-section ul { max-width: 90%; } #sf-step-content button { padding: 0.7em 1.4em; font-size: 0.95em; } .sf-result-buttons { gap: 8px; } }
+@media (max-width: 768px) { .container { padding: 1em; gap: 1em; } .card { padding: 1.2em; } .app-header { padding: 0.8em 1em; } .app-header h1 { font-size: clamp(1.3em, 4vw, 1.6em); } .header-nav { gap: 0.4em; align-items: center; /* Reset */ } .header-btn { height: auto; padding: 0.3em 0.6em; font-size: clamp(0.7em, 1.8vw, 0.8em); } .theme-btn { font-size: 1.1em;} .modal-content { padding: 1.5em; max-width: 95%; width: auto; } .form-actions { flex-direction: column; } .trait-details-grid { grid-template-columns: 1fr; } .sf-modal .sf-modal-content { max-width: 95%; padding: 20px; } #sf-step-content h2 { font-size: 1.25em; } }
+@media (max-width: 480px) { body { font-size: 15px; } .app-header { flex-direction: column; align-items: flex-start; } .app-header h1 { margin-bottom: 0.5em; width: 100%; text-align: center; } .header-nav { margin-left: 0; width: 100%; justify-content: space-around; gap: 0.5em; } .header-btn { padding: 0.5em 0.8em; } .container { grid-template-columns: 1fr; padding: 0.8em; gap: 0.8em; } .card { padding: 1em; } .modal-content { padding: 1.2em; } .form-actions { gap: 0.8em; } .save-btn, .clear-btn { font-size: 1em; padding: 0.7em 1.5em; } .sf-modal .sf-modal-content { padding: 15px; } .sf-modal-content h3 { font-size: 1.4em; } #sf-step-content h2 { font-size: 1.15em; flex-direction: column; /* Stack icon above text */ gap: 0.2em; } .sf-trait-slider { max-width: 95%; } .sf-slider-description { font-size: 0.9em; padding: 8px 10px; min-height: 2.5em; } .sf-slider-footnote { font-size: 0.8em; } .sf-style-info-popup { max-width: 95%; padding: 15px; } .sf-style-info-popup h3 { font-size: 1.2em; } .sf-result-section ul { max-width: 90%; } #sf-step-content button { padding: 0.7em 1.4em; font-size: 0.95em; } .sf-result-buttons { gap: 8px; } }
+
+/* --- END OF FILE styles.css --- */
