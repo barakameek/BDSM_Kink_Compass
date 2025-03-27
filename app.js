@@ -252,12 +252,11 @@ class TrackerApp {
         }
     } // <<< Closing brace for the loop
 
-    if (missingKeys.length > 0) {
-        const errorMsg = `Initialization failed: Required HTML element(s) not found (IDs: ${missingKeys.join(', ')}). Check index.html.`;
-        console.error(errorMsg); // Log the error
-        throw new Error(errorMsg); // Stop execution
-    }
-    // End Critical element check block
+         if (missingKeys.length > 0) {
+        const errorMsg = `Init failed - Elements missing: ${missingKeys.join(', ')}`;
+        console.error(errorMsg);
+        throw new Error(errorMsg);
+    }nd Critical element check block
 
     
     // Log and throw error *after* the loop
