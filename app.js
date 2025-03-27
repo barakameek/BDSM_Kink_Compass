@@ -237,16 +237,25 @@ class TrackerApp {
       formTitle: document.getElementById('form-title'),
     };
 
-       // Critical element check
-    const criticalElements = ['name', 'role', 'style', 'save', 'peopleList', 'modal', 'sfModal', 'sfStepContent', 'styleFinderTriggerBtn', 'glossaryBody', 'resourcesBody', 'styleDiscoveryBody', 'themesBody', 'modalBody', 'livePreview', 'traitsContainer'];
-    let missingElement = false;
-    const missingKeys = []; // Keep track of missing keys
+         // Critical element check
+    const criticalElements = [
+        'name', 'role', 'style', 'save', 'peopleList', 'modal', 'sfModal',
+        'sfStepContent', 'styleFinderTriggerBtn', 'glossaryBody', 'resourcesBody',
+        'styleDiscoveryBody', 'themesBody', 'modalBody', 'livePreview', 'traitsContainer'
+    ];
+    const missingKeys = [];
     for (const key of criticalElements) {
         if (!this.elements[key]) {
-             // Instead of logging immediately, store the key
-             missingKeys.push(key);
-             missingElement = true;
+            missingKeys.push(key);
         }
+    }
+
+    if (missingKeys.length > 0) {
+        const errorMsg = `Cannot initialize: HTML element(s) not found (ID: ${missingKeys.join(', ')}). Check index.html.`;
+        console.error(errorMsg);
+        throw new Error(errorMsg);
+    }
+    // End Critical element check block
     }
     // Log and throw error *after* the loop
   // Log and throw error *after* the loop if (missingElement) { const errorMsg = `Initialization failed: Required HTML element(s) absent. Check console for details (IDs: ${missingKeys.join(', ')}).`; console.error(`Critical HTML element(s) not found: ID(s) '${missingKeys.join("', '")}'. Cannot initialize KinkCompass.`); // Log detailed info throw new Error(errorMsg); // Throw error  }
