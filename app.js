@@ -561,12 +561,13 @@ class TrackerApp {
           // Ensure sfSliderDescriptions and the specific trait array exist
           const descriptions = this.sfSliderDescriptions?.[traitName] ?? [];
           if (descElement) { // Check if element exists
-              if (descriptions.length > 0 && value >= 1 && value <= descriptions.length) {
-                   descElement.textContent = this.escapeHTML(descriptions[value - 1]);
+              const safeValue = Number(value); // Ensure value is a number for comparison
+              if (descriptions.length > 0 && safeValue >= 1 && safeValue <= descriptions.length) {
+                   descElement.textContent = this.escapeHTML(descriptions[safeValue - 1]);
               } else {
                    // Fallback if descriptions are missing or index is out of bounds
-                   descElement.textContent = `Level ${value}`;
-                   console.warn(`Slider description missing or invalid for trait '${traitName}' at value ${value}`);
+                   descElement.textContent = `Level ${safeValue}`;
+                   console.warn(`Slider description missing or invalid for trait '${traitName}' at value ${safeValue}`);
               }
           }
           this.sfUpdateDashboard(); // Update the dashboard on slider change
@@ -622,67 +623,65 @@ class TrackerApp {
   hideTraitInfo(){if(this.elements.traitInfoPopup)this.elements.traitInfoPopup.style.display='none';}
 
 
-  // --- Style Finder Methods (Restored & Integrated) ---
+  // --- Style Finder Methods (Restored & Integrated - CORRECTED) ---
 
-  sfStart() { // Renamed from styleFinderBtn click handler
+  sfStart() {
       this.sfActive = true;
       this.sfStep = 0;
       this.sfRole = null;
       this.sfAnswers = { traits: {} };
       this.sfScores = {};
       this.sfHasRenderedDashboard = false;
-      this.sfPreviousScores = {}; // Reset previous scores
-      this.sfTraitSet = []; // Reset trait set
-      this.sfSteps = []; // Reset steps
-      if(this.elements.sfDashboard) this.elements.sfDashboard.style.display = 'none'; // Hide dashboard initially
-      if(this.elements.sfFeedback) this.elements.sfFeedback.textContent = ''; // Clear feedback
+      this.sfPreviousScores = {};
+      this.sfTraitSet = [];
+      this.sfSteps = [];
+      if(this.elements.sfDashboard) this.elements.sfDashboard.style.display = 'none';
+      if(this.elements.sfFeedback) this.elements.sfFeedback.textContent = '';
 
-      // Ensure modal content area exists
       if (!this.elements.sfStepContent) {
           console.error("Style Finder step content element not found!");
           alert("Error: Cannot start Style Finder.");
           return;
       }
 
-      this.openModal(this.elements.sfModal); // Use generic openModal
-      this.sfRenderStep(); // Render the first step
+      this.openModal(this.elements.sfModal);
+      this.sfRenderStep();
       this.sfShowFeedback("Let’s begin your journey!");
   }
 
-  sfClose() { // Renamed from closeStyleFinder click handler
+  sfClose() {
       this.sfActive = false;
-      this.closeModal(this.elements.sfModal); // Use generic closeModal
+      this.closeModal(this.elements.sfModal);
       console.log("Style Finder closed.");
   }
 
-  sfCalculateSteps() { // Determine the sequence of steps dynamically
+  sfCalculateSteps() {
       this.sfSteps = [];
       this.sfSteps.push({ type: 'welcome' });
       this.sfSteps.push({ type: 'role' });
 
       if (this.sfRole) {
-          // Get the correct trait list and randomize it
           const baseTraitSet = (this.sfRole === 'dominant' ? this.sfDomFinderTraits : this.sfSubFinderTraits);
-          // Make a copy and randomize it for this run
-          this.sfTraitSet = [...baseTraitSet].sort(() => 0.5 - Math.random());
+          // Only recalculate/shuffle if sfTraitSet is empty or role changed implicitly
+          if(this.sfTraitSet.length === 0) {
+            this.sfTraitSet = [...baseTraitSet].sort(() => 0.5 - Math.random());
+          }
           this.sfTraitSet.forEach(trait => this.sfSteps.push({ type: 'trait', trait: trait.name }));
-          this.sfSteps.push({ type: 'roundSummary', round: 'Traits' }); // Add summary step
+          this.sfSteps.push({ type: 'roundSummary', round: 'Traits' });
       }
 
       this.sfSteps.push({ type: 'result' });
-      //console.log("Calculated steps:", this.sfSteps);
   }
 
-  sfRenderStep() { // Renamed from renderStyleFinder
+  sfRenderStep() {
       if (!this.sfActive || !this.elements.sfStepContent) return;
 
-      this.sfCalculateSteps(); // Recalculate steps each time to handle role selection
+      this.sfCalculateSteps();
 
-      // Validate step index
       if (this.sfStep < 0 || this.sfStep >= this.sfSteps.length) {
           console.error(`Invalid Style Finder step index: ${this.sfStep}. Resetting.`);
           this.sfStep = 0;
-           this.sfCalculateSteps(); // Recalculate
+           this.sfCalculateSteps();
            if(this.sfSteps.length === 0){
               this.elements.sfStepContent.innerHTML = "<p>Error calculating steps.</p>";
               return;
@@ -707,461 +706,6 @@ class TrackerApp {
              this.elements.sfProgressTracker.style.display = 'block';
              this.elements.sfProgressTracker.textContent = `Trait ${currentTraitIndex + 1} / ${this.sfTraitSet.length} (${questionsLeft} more!)`;
           } else {
-             this.elements.sfProgressTracker.style.display = 'none'; // Hide if trait index is weird
+             this.elements.sfProgressTracker.style.display = 'none';
              console.warn(`Could not find trait '${step.trait}' in sfTraitSet for progress.`);
           }
-
-      } else {
-          this.elements.sfProgressTracker.style.display = 'none';
-      }
-
-      // Step Content Generation
-      switch (step.type) {
-          case 'welcome':
-              html = `
-                  <h2>Welcome, Brave Explorer!</h2>
-                  <p>Dive into a quest to find your BDSM style!</p>
-                  <button data-action="next">Start the Journey! ✨</button>
-              `;
-              break;
-          case 'role':
-              html = `
-                  <h2>Pick Your Path!</h2>
-                  <p>Do you feel more drawn to guiding (Dominant) or following (Submissive)?</p>
-                  <button data-action="setRole" data-role="dominant">Guiding! (Dominant)</button>
-                  <button data-action="setRole" data-role="submissive">Following! (Submissive)</button>
-              `;
-              break;
-          case 'trait':
-              // Find the trait object from the *current* randomized set for this run
-              const traitObj = this.sfTraitSet.find(t => t.name === step.trait);
-               if (!traitObj) {
-                    console.error(`Trait object not found for name: ${step.trait}`);
-                    html = `<p>Error loading trait: ${step.trait}.</p> <button data-action="prev">Back</button>`;
-                    break;
-                }
-
-              const currentValue = this.sfAnswers.traits[traitObj.name] !== undefined ? this.sfAnswers.traits[traitObj.name] : 5;
-              const footnoteSet = (this.sfRole === 'dominant' ? this.sfDomTraitFootnotes : this.sfSubTraitFootnotes);
-              const footnote = footnoteSet[traitObj.name] || "1: Least / 10: Most";
-              const isFirstTraitStep = this.sfSteps.findIndex(s => s.type === 'trait') === this.sfStep; // Check if it's the first trait step
-
-              // Get slider description, ensuring fallback
-              const sliderDescArray = this.sfSliderDescriptions?.[traitObj.name] ?? []; // Default array
-              const sliderDescText = (value >= 1 && value <= sliderDescArray.length) ? sliderDescArray[currentValue - 1] : `Level ${currentValue}`; // Check bounds
-
-              html = `
-                  <h2>${this.escapeHTML(traitObj.desc)}<button class="sf-info-icon" data-trait="${traitObj.name}" data-action="showTraitInfo" aria-label="More info about ${traitObj.name}">ℹ️</button></h2>
-                  ${isFirstTraitStep ? '<p>Slide to find your vibe! (1 = Not Me, 10 = Totally Me)</p>' : ''}
-                  <input type="range" min="1" max="10" value="${currentValue}" class="sf-trait-slider" data-trait="${traitObj.name}" aria-label="${traitObj.name} rating">
-                  <div id="sf-desc-${traitObj.name}" class="sf-slider-description">${this.escapeHTML(sliderDescText)}</div>
-                  <p class="sf-slider-footnote">${this.escapeHTML(footnote)}</p>
-                  <div style="margin-top: 15px;">
-                      <button data-action="next" data-trait="${traitObj.name}">Next Step!</button>
-                      ${this.sfStep > 1 ? `<button data-action="prev" style="margin-left: 10px;">Back</button>` : ''}
-                  </div>
-              `;
-              break;
-
-          case 'roundSummary':
-               html = `
-                   <h2>${step.round} Check-In!</h2>
-                   <p>Here’s how your choices are shaping up based on the traits:</p>
-                   <div id="sf-summary-dashboard-placeholder">Loading Dashboard...</div>
-                   <button data-action="next">See Top Style!</button>
-                   <button data-action="prev" style="margin-left: 10px;">Back</button>
-               `;
-               // Update dashboard after rendering this HTML structure
-               requestAnimationFrame(() => this.sfUpdateDashboard(true)); // Force update to show final trait scores
-               break;
-
-          case 'result':
-              this.sfCalculateResult(); // Calculate final scores
-              const sortedScores = Object.entries(this.sfScores).sort((a, b) => b[1] - a[1]);
-
-              if (sortedScores.length === 0 || !sortedScores[0] || sortedScores[0][1] <= 0) { // Check score > 0
-                 html = `
-                     <div class="sf-result-section sf-fade-in">
-                         <h2 class="sf-result-heading">Hmm... 🤔</h2>
-                         <p>Not enough data or unique responses to determine a top style yet. Your vibe is uniquely you!</p>
-                         <div class="sf-result-buttons">
-                             <button data-action="startOver">Try Again?</button>
-                              <button data-action="close">Close</button>
-                         </div>
-                     </div>`;
-                 break;
-              }
-
-              const topStyle = sortedScores[0][0];
-              const matchData = this.sfDynamicMatches[topStyle] || { dynamic: "Unique", match: "Explorer", desc: "Find your perfect match!", longDesc: "Explore dynamics that resonate!" };
-              const descData = this.sfStyleDescriptions[topStyle] || { short: "A unique blend!", long: "Your combination of traits creates a special style.", tips: ["Keep exploring!", "Communicate your desires."] };
-
-              html = `
-                  <div class="sf-result-section sf-fade-in">
-                      <h2 class="sf-result-heading">🎉 Your Top BDSM Style: ${this.escapeHTML(topStyle)} 🎉</h2>
-                      <p><strong>${this.escapeHTML(descData.short)}</strong></p>
-                      <p>${this.escapeHTML(descData.long)}</p>
-                      <h3>Potential Dynamic Match: ${this.escapeHTML(matchData.match)}</h3>
-                      <p><em>${this.escapeHTML(matchData.dynamic)}</em> - ${this.escapeHTML(matchData.desc)}</p>
-                      <p>${this.escapeHTML(matchData.longDesc)}</p>
-                      <h3>Tips for You:</h3>
-                      <ul style="text-align: left; margin: 10px auto; max-width: 350px; list-style: '✨ '; padding-left: 1.5em;">
-                          ${descData.tips.map(tip => `<li>${this.escapeHTML(tip)}</li>`).join('')}
-                      </ul>
-                      <div class="sf-result-buttons">
-                           <button data-action="applyStyle" data-role="${this.sfRole}" data-style="${this.escapeHTML(topStyle)}">📝 Track This Style!</button>
-                           <button data-action="startOver">Try Again?</button>
-                           <button data-action="showFullDetails" data-style="${this.escapeHTML(topStyle)}">More Details</button>
-                          <button data-action="close">Close</button>
-                      </div>
-                  </div>
-              `;
-              // Trigger confetti celebration
-              if (window.confetti) {
-                  setTimeout(() => confetti({
-                     particleCount: 150, // More confetti!
-                     spread: 80,         // Spread it out
-                     origin: { y: 0.6 },
-                     colors: ['#ff69b4', '#ff85cb', '#f4d4e4', '#fff', '#a0d8ef', '#dcc1ff'] // Use theme colors
-                 }), 300);
-              }
-              break;
-          default:
-              html = "<p>Oops! Something went wrong.</p> <button data-action='prev'>Back</button>";
-      }
-
-      // Render the HTML and manage dashboard visibility
-      try {
-           if (!this.elements.sfStepContent) throw new Error("sfStepContent element missing");
-           this.elements.sfStepContent.innerHTML = html;
-
-           // Update dashboard visibility based on step type
-           if (step.type === 'trait') {
-               this.sfUpdateDashboard(); // Show/update dashboard for trait steps
-           } else if (step.type !== 'roundSummary') { // Dashboard handled separately for summary
-               if (this.elements.sfDashboard) this.elements.sfDashboard.style.display = 'none';
-           }
-            console.log(`SF Step ${this.sfStep} rendered successfully.`);
-       } catch (e) {
-           console.error(`Render SF Step ${this.sfStep} Error:`, e);
-           if (this.elements.sfStepContent) {
-               this.elements.sfStepContent.innerHTML = `<p>Error rendering step.</p> <button data-action="prev">Back</button>`;
-           }
-       }
-  }
-
-  sfSetRole(role) { // Renamed from setStyleFinderRole
-      this.sfRole = role;
-      this.sfAnswers.role = role;
-      this.sfAnswers.traits = {}; // Reset trait answers when role changes
-      this.sfScores = {}; // Reset scores
-      this.sfPreviousScores = {}; // Reset previous scores
-      this.sfHasRenderedDashboard = false; // Reset dashboard flag
-      this.sfTraitSet = []; // Clear current trait set
-      this.sfSteps = []; // Clear current steps
-      this.sfNextStep(); // Move to the first trait question (will recalculate steps)
-  }
-
-  sfSetTrait(trait, value) { // Renamed from setStyleFinderTrait
-      this.sfAnswers.traits[trait] = parseInt(value, 10);
-      this.sfShowFeedback(`You vibe with ${trait} at ${value}!`);
-      // Dashboard updated via slider input handler
-  }
-
-  sfNextStep() { // Renamed from nextStyleFinderStep
-      // Validation moved to handleStyleFinderAction
-      this.sfStep++;
-      this.sfRenderStep();
-  }
-
-  sfPrevStep() { // Renamed from prevStyleFinderStep
-      if (this.sfStep > 0) {
-          // Determine the type of the step we are moving *back from*
-          const nextStepIndex = this.sfStep; // Index of the step we were on
-          const stepWeAreLeaving = this.sfSteps[nextStepIndex];
-
-          this.sfStep--; // Actually move back
-
-           // If moving back *from* results/summary, reset scores
-           if(stepWeAreLeaving?.type === 'result' || stepWeAreLeaving?.type === 'roundSummary'){
-                console.log("Moving back from result/summary, resetting scores.")
-                this.sfScores = {};
-                this.sfPreviousScores = {};
-                this.sfHasRenderedDashboard = false;
-           }
-          this.sfRenderStep(); // Render the previous step
-      }
-  }
-
-  sfStartOver() { // Renamed from startOver
-      // Reset state and go back to the first step (welcome)
-      this.sfStep = 0;
-      this.sfRole = null;
-      this.sfAnswers = { traits: {} };
-      this.sfScores = {};
-      this.sfPreviousScores = {};
-      this.sfHasRenderedDashboard = false;
-      this.sfTraitSet = [];
-      this.sfSteps = [];
-      if (this.elements.sfDashboard) this.elements.sfDashboard.style.display = 'none';
-      this.sfRenderStep();
-      this.sfShowFeedback("Fresh start—here we go!");
-  }
-
-  sfComputeScores() { // Renamed from computeCurrentScores, uses scoring map
-      let scores = {};
-      if (!this.sfRole || !this.sfStyles[this.sfRole]) {
-           console.warn("Cannot compute scores: Role not set or invalid.");
-           return scores;
-      }
-      const roleStyles = this.sfStyles[this.sfRole];
-      roleStyles.forEach(style => { scores[style] = 0; }); // Initialize all styles for the role
-
-      Object.keys(this.sfAnswers.traits).forEach(trait => {
-          const rating = this.sfAnswers.traits[trait] ?? 0; // Default to 0 if undefined
-
-          // Iterate through all styles for the current role
-          roleStyles.forEach(style => {
-              const keyTraits = this.sfStyleKeyTraits[style] || [];
-              // If the current trait is a key trait for this style, add score
-              if (keyTraits.includes(trait)) {
-                  // Weighting can be adjusted here if desired
-                  scores[style] += rating * 1.5; // Simple weighting from old script
-              }
-          });
-      });
-      // console.log("Computed Scores:", scores); // Log can be noisy, keep commented unless debugging
-      return scores;
-  }
-
-   sfUpdateDashboard(forceVisible = false) { // Renamed from updateDashboard
-       // Determine if dashboard should be shown based on current step type
-       const currentStepType = this.sfSteps[this.sfStep]?.type;
-       const shouldShowDashboard = forceVisible || (this.sfRole && currentStepType === 'trait');
-
-       if (!this.elements.sfDashboard) {
-           console.error("Dashboard element not found!");
-           return;
-       }
-
-       if (!shouldShowDashboard) {
-           this.elements.sfDashboard.style.display = 'none';
-           return;
-       }
-
-       this.elements.sfDashboard.style.display = 'block'; // Ensure visible
-
-       const scores = this.sfComputeScores();
-       const sortedScores = Object.entries(scores)
-           .filter(([style, score]) => score > 0.1) // Only show styles with score > 0.1 (allow for float precision)
-           .sort((a, b) => b[1] - a[1])
-           .slice(0, 7); // Show top 7
-
-       let dashboardHTML = "<div class='sf-dashboard-header'>✨ Your Live Vibes! ✨</div>";
-
-       if (sortedScores.length === 0) {
-            dashboardHTML += "<p class='muted-text' style='padding: 10px;'>Keep rating traits!</p>";
-       } else {
-            // Prepare previous positions for move indicators
-            const previousPositions = {};
-            if (this.sfPreviousScores) {
-                 Object.entries(this.sfPreviousScores)
-                    .filter(([style, score]) => score > 0.1) // Consider only previously shown styles
-                    .sort((a, b) => b[1] - a[1])
-                    .forEach(([style, score], index) => {
-                        previousPositions[style] = index;
-                    });
-            }
-
-            const isFirstRender = !this.sfHasRenderedDashboard;
-            const styleIcons = this.getStyleIcons(); // Use helper method
-
-            sortedScores.forEach(([style, score], index) => {
-                const prevPos = previousPositions[style] !== undefined ? previousPositions[style] : index; // If new, assume current pos
-                const movement = prevPos - index;
-                let moveIndicator = '';
-                // Add move indicator only if not the first render and there was movement
-                if (!isFirstRender && movement > 0) moveIndicator = '<span class="sf-move-up">↑</span>';
-                else if (!isFirstRender && movement < 0) moveIndicator = '<span class="sf-move-down">↓</span>';
-
-                const prevScore = this.sfPreviousScores ? (this.sfPreviousScores[style] || 0) : 0;
-                const delta = score - prevScore;
-                let deltaDisplay = '';
-                // Add delta display only if not the first render and delta is significant
-                if (!isFirstRender && Math.abs(delta) > 0.1) {
-                    deltaDisplay = `<span class="sf-score-delta ${delta > 0 ? 'positive' : 'negative'}">${delta > 0 ? '+' : ''}${delta.toFixed(1)}</span>`;
-                }
-
-                const animationClass = isFirstRender ? 'sf-fade-in' : ''; // Use class for animation
-                dashboardHTML += `
-                    <div class="sf-dashboard-item ${animationClass}">
-                        <span class="sf-style-name">${styleIcons[style] || '🌟'} ${this.escapeHTML(style)}</span>
-                        <span class="sf-dashboard-score">${score.toFixed(1)} ${deltaDisplay} ${moveIndicator}</span>
-                    </div>
-                `;
-            });
-       }
-
-       this.elements.sfDashboard.innerHTML = dashboardHTML;
-       this.sfPreviousScores = { ...scores }; // Store current scores for next update's comparison
-       this.sfHasRenderedDashboard = true; // Mark that dashboard has rendered at least once
-   }
-
-
-  sfCalculateResult() { // Renamed from calculateStyleFinderResult
-      this.sfScores = this.sfComputeScores(); // Use the consistent scoring method
-      const totalAnswers = Object.keys(this.sfAnswers.traits).length;
-      if (totalAnswers === 0) return; // Avoid issues if no answers
-
-       // Optional Normalization: Convert raw scores to percentage if desired
-       // let maxPossibleScore = 0;
-       // this.sfTraitSet.forEach(trait => {
-       //     this.sfStyles[this.sfRole].forEach(style => {
-       //         const keyTraits = this.sfStyleKeyTraits[style] || [];
-       //         if (keyTraits.includes(trait.name)) {
-       //              // Calculate max contribution for this trait to any style
-       //              // Assuming max rating is 10 and weight is 1.5
-       //              maxPossibleScore += 10 * 1.5;
-       //              // Note: This simplistic max score might overestimate if traits overlap heavily
-       //              // A more accurate max would consider the highest score one style *could* get
-       //         }
-       //     });
-       // });
-       // if (maxPossibleScore > 0) {
-       //     Object.keys(this.sfScores).forEach(style => {
-       //         this.sfScores[style] = Math.min(100, (this.sfScores[style] / maxPossibleScore) * 100); // Cap at 100%
-       //     });
-       // }
-
-       console.log("Final Scores Calculated:", this.sfScores);
-  }
-
-  sfShowFeedback(message) { // Renamed from showFeedback
-      if (!this.elements.sfFeedback) return;
-      this.elements.sfFeedback.textContent = this.escapeHTML(message); // Use textContent and escape
-      this.elements.sfFeedback.classList.remove('sf-feedback-animation');
-      void this.elements.sfFeedback.offsetWidth; // Trigger reflow for animation restart
-      this.elements.sfFeedback.classList.add('sf-feedback-animation');
-  }
-
-  sfShowTraitInfo(traitName) { // Renamed from showTraitInfo
-      if (!traitName) {
-           console.error("Cannot show trait info: traitName is missing.");
-           return;
-      }
-      const explanation = this.sfTraitExplanations[traitName] || "No extra info available for this trait!";
-      // Create a popup dynamically
-      const popup = document.createElement('div');
-      popup.className = 'sf-style-info-popup'; // Use the dedicated class
-      popup.innerHTML = `
-          <h3>${this.escapeHTML(traitName.charAt(0).toUpperCase() + traitName.slice(1))}</h3>
-          <p>${this.escapeHTML(explanation)}</p>
-          <button class="sf-close-btn" aria-label="Close trait info">×</button>
-      `;
-      // Append to body to ensure it's on top
-      document.body.appendChild(popup);
-      // Focus the close button for accessibility
-      popup.querySelector('.sf-close-btn')?.focus();
-  }
-
-  sfShowFullDetails(styleName) { // Renamed from showFullDetails
-      if (!styleName) {
-          console.error("Cannot show full details: styleName is missing.");
-          return;
-      }
-      const descData = this.sfStyleDescriptions[styleName];
-      const matchData = this.sfDynamicMatches[styleName];
-
-      if (!descData || !matchData) {
-          alert(`Details for style "${styleName}" not found.`);
-          return;
-      }
-
-      const popup = document.createElement('div');
-      popup.className = 'sf-style-info-popup wide-popup'; // Use wider popup class if defined
-      popup.innerHTML = `
-          <h3>${this.escapeHTML(styleName)}</h3>
-          <p><strong>${this.escapeHTML(descData.short)}</strong></p>
-          <p>${this.escapeHTML(descData.long)}</p>
-          <h4>Potential Dynamic Match: ${this.escapeHTML(matchData.match)}</h4>
-          <p><em>${this.escapeHTML(matchData.dynamic)}</em> - ${this.escapeHTML(matchData.longDesc)}</p>
-          <h4>Tips for You:</h4>
-          <ul style="list-style: '✨ '; padding-left: 1.5em;">
-             ${descData.tips.map(tip => `<li>${this.escapeHTML(tip)}</li>`).join('')}
-          </ul>
-          <button class="sf-close-btn" aria-label="Close style details">×</button>
-      `;
-      document.body.appendChild(popup);
-      popup.querySelector('.sf-close-btn')?.focus();
-  }
-
-   // Method used by SF Dashboard and Results
-    getStyleIcons() {
-        // Consistent icon mapping
-        return {
-            'Submissive': '🙇', 'Brat': '😈', 'Slave': '🔗', 'Switch': '🔄', 'Pet': '🐾',
-            'Little': '🍼', 'Puppy': '🐶', 'Kitten': '🐱', 'Princess': '👑', 'Rope Bunny': '🪢',
-            'Masochist': '💥', 'Prey': '🏃', 'Toy': '🎲', 'Doll': '🎎', 'Bunny': '🐰',
-            'Servant': '🧹', 'Playmate': '🎉', 'Babygirl': '🌸', 'Captive': '⛓️', 'Thrall': '🛐',
-            'Puppet': '🎭', 'Maid': '🧼', 'Painslut': '🔥', 'Bottom': '⬇️',
-            'Dominant': '👤', 'Assertive': '💪', 'Nurturer': '🤗', 'Strict': '📏', 'Master': '🎓',
-            'Mistress': '👸', 'Daddy': '👨‍🏫', 'Mommy': '👩‍🏫', 'Owner': '🔑', 'Rigger': '🪢',
-            'Sadist': '😏', 'Hunter': '🏹', 'Trainer': '🏋️', 'Puppeteer': '🎭', 'Protector': '🛡️',
-            'Disciplinarian': '✋', 'Caretaker': '🧡', 'Sir': '🎩', 'Goddess': '🌟', 'Commander': '⚔️'
-        };
-    }
-
-   applyStyleFinderResult(r, s) {
-        console.log(`Applying SF Result: Role=${r}, Style=${s}`);
-        if (!r || !s || !this.elements.role || !this.elements.style) {
-             console.error("Cannot apply style - role/style element missing or invalid arguments.");
-             alert("Error applying style.");
-             return;
-        }
-        this.elements.role.value = r;
-        this.renderStyles(r); // Re-render styles for the selected role
-
-        // Use requestAnimationFrame to ensure dropdown is populated before setting value
-        requestAnimationFrame(() => {
-            // Check if the style exists in the dropdown options
-            const styleExists = Array.from(this.elements.style.options).some(option => option.value === s);
-
-            if (styleExists) {
-                this.elements.style.value = s;
-                console.log(`Style dropdown set to: ${this.elements.style.value}`);
-            } else {
-                console.warn(`Style "${s}" not found in dropdown for role "${r}". Style not set automatically.`);
-                this.elements.style.value = ''; // Clear style if not found
-            }
-
-            this.renderTraits(r, this.elements.style.value); // Render traits based on potentially cleared style
-            this.updateLivePreview();
-            this.sfClose(); // Close the finder modal
-            this.elements.formSection?.scrollIntoView({ behavior: 'smooth' });
-            this.elements.name?.focus();
-            alert(`Style "${s}" selected in form! Review and save your profile. ✨`);
-        });
-    }
-
-
-  // --- Other Helper Functions (Keep existing methods) ---
-  getFlairForScore(s){return parseInt(s)<=2?"🌱 Nurturing!":parseInt(s)===3?"⚖️ Balanced!":"🌟 Shining!";}
-  getEmojiForScore(s){return parseInt(s)<=2?"💧":parseInt(s)===3?"🌱":parseInt(s)===4?"✨":"🌟";}
-  escapeHTML(s){s=String(s??'');const e=document.createElement('div');e.textContent=s;return e.innerHTML;}
-  openModal(mE){if(!mE)return;mE.style.display='flex';const f=mE.querySelector('button,[href],input:not([type="hidden"]),select,textarea,[tabindex]:not([tabindex="-1"])');if(f)requestAnimationFrame(()=>f.focus());}
-  closeModal(mE){if(!mE)return;mE.style.display='none';}
-  getIntroForStyle(sN){const k=sN?.toLowerCase().replace(/\(.*?\)/g,'').replace(/ \/ /g,'/').trim()||'';const i={"submissive":"Welcome! ✨","brat":"Hehe! 😉","slave":"Devotion awaits. 🙏","switch":"Dance between! ↔️","pet":"Head pats! 💖","little":"Playtime! 🧸","puppy":"Woof! 🦴","kitten":"Meow? 🧶","princess":"Adore me! 👑","rope bunny":"Tangled fun! 🎀","masochist":"Sensation seeker! 🔥","prey":"Chase me! 🦊","toy":"Play time! 🎁","doll":"Strike a pose! 💖","bunny":"Gentle heart! 🐇","servant":"At your service! 🧹","playmate":"Adventure time! 🎉","babygirl":"Cherish me! 😉","captive":"Caught again? ⛓️","thrall":"Connect deeply. 🌀","puppet":"Dance! 🎭","maid":"Sparkle & shine! ✨","painslut":"Revel in intensity! 🔥","bottom":"Receive & connect. 💖","dominant":"Lead & inspire! 🔥","assertive":"Speak truth! 💪","nurturer":"Support & uplift! 🌸","strict":"Order & structure! ⚖️","master":"Shape your domain! 🏰","mistress":"Rule with grace! 👑","daddy":"Protect & guide! 🧸","mommy":"Nurture & love! 💖","owner":"Claim & cherish! 🐾","rigger":"Bind beauty! 🎨","sadist":"Explore sensation! 🔥","hunter":"Thrill of pursuit! 🐺","trainer":"Cultivate potential! 🏆","puppeteer":"Direct performance! 🎭","protector":"Defend & ensure safety! 🛡️","disciplinarian":"Maintain order! 👨‍⚖️","caretaker":"Ensure well-being! ❤️‍🩹","sir":"Lead with honor! 🎩","goddess":"Inspire worship! ✨","commander":"Lead the charge! 🎖️"};return i[k]||"Explore expression!";}
-
-} // --- END OF TrackerApp CLASS ---
-
-// --- Initialization ---
-try {
-    console.log("SCRIPT END: Initializing KinkCompass App...");
-    // Ensure the class is available globally for inline event handlers if needed,
-    // though delegated listeners are preferred.
-    window.kinkCompassApp = new TrackerApp();
-    console.log("SCRIPT END: KinkCompass App Initialized Successfully.");
-} catch (error) {
-    console.error("Fatal error during App initialization:", error);
-    document.body.innerHTML = `<div style="padding: 2em; margin: 2em; border: 2px solid red; background: #fff0f0; color: #333;"> <h1 style="color: red;">Oops! Failed to Start</h1> <p>Error: ${error.message}. Check console (F12).</p> <pre>${error.stack}</pre> </div>`; // Added stack trace
-}
