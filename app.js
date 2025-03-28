@@ -1,4 +1,13 @@
 
+*   Includes the `explanation` lookup in `showTraitInfo`.
+*   Includes the CSS class additions in `sfRenderStep`.
+*   Includes the clean name logic in `applyStyleFinderResult`, `getIntroForStyle`, and `getStyleIcons`.
+*   Includes the fix for `closeModal` focus order.
+*   Includes the fix for missing `applySavedTheme`.
+
+```javascript
+// === app.js === (COMPLETE & FINAL - Incorporating All Fixes)
+
 // Import necessary modules
 import { bdsmData } from './data.js';
 import { getStyleBreakdown as getSubBreakdown } from './paraphrasing_sub.js';
