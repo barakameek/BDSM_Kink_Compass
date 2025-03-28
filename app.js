@@ -1544,5 +1544,5 @@ try {
 } catch (error) {
     console.error("Fatal error during App initialization:", error);
     // Display user-friendly error message in the body
-    document.body.innerHTML = `... error display HTML ...`;
+    document.body.innerHTML = `<div style='color: red; padding: 20px;'>${error.message}</div>`; // Simplified error display
 }
