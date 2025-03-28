@@ -1164,7 +1164,7 @@ showGlossary(termKeyToHighlight = null) {
     }
 
     // --- >>> TEMPORARILY COMMENT OUT FROM HERE... <<< ---
-    /*
+    
     if (!this.elements.glossaryBody || !this.elements.glossaryModal) {
         console.error("!!! showGlossary Error: Missing glossaryBody or glossaryModal element!");
         return; // Stop if elements are missing
@@ -1219,7 +1219,7 @@ showGlossary(termKeyToHighlight = null) {
             termElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
          });
     }
-    */
+   
     // --- >>> ...TO HERE <<< ---
 
     console.log("--- Exiting showGlossary (Testing Import) ---"); // <<-- Log Exit
