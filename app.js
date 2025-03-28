@@ -3135,3 +3135,26 @@ class TrackerApp {
             }
         } else {
             console.warn("No stored element to restore focus to, or it's not focusable.");
+             try { document.body.focus(); console.log("Fell back to focusing body."); } catch (bodyErr) { console.warn("Could not focus body either.");}
+        }
+        this.elementThatOpenedModal = null; // Clear stored element
+    }
+
+
+} // <<< FINAL, CORRECT CLOSING BRACE FOR THE TrackerApp CLASS
+// --- END OF TrackerApp CLASS ---
+
+
+// --- Initialization ---
+try {
+    console.log("SCRIPT END: Initializing KinkCompass App...");
+    window.kinkCompassApp = new TrackerApp();
+    console.log("SCRIPT END: KinkCompass App Initialized Successfully.");
+} catch (error) {
+    console.error("Fatal error during App initialization:", error);
+    // Display error more prominently for the user
+    const errorDiv = document.createElement('div');
+    errorDiv.style.cssText = 'color: red; padding: 20px; border: 2px solid red; margin: 20px; background: white; font-family: monospace; white-space: pre-wrap; z-index: 9999; position: fixed; top: 10px; left: 10px; right: 10px;';
+    errorDiv.innerHTML = `<strong>Fatal Error: KinkCompass could not start.</strong><br>${error.message}<br><br>Stack Trace:<br>${error.stack || 'Not available'}`;
+    document.body.prepend(errorDiv); // Add to top of body
+}
