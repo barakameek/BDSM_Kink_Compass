@@ -676,35 +676,7 @@ escapeHTML(str){
     console.log(`escapeHTML Input: "${str}", Output (textContent): "${div.textContent}", Output (innerHTML): "${div.innerHTML}"`); // <<-- ADD LOG
     return div.innerHTML;
 }
-        this.elementThatOpenedModal = document.activeElement;
-        console.log("Storing focused element before modal open:", this.elementThatOpenedModal);
-
-        modalElement.style.display='flex';
-        modalElement.setAttribute('aria-hidden', 'false');
-        console.log(`Set display='flex' for #${modalElement.id}. Current display:`, window.getComputedStyle(modalElement).display);
-
-        const focusable = modalElement.querySelector('button:not([disabled]), [href], input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'); // Improved selector
-        if(focusable) {
-            console.log(`Found focusable element in #${modalElement.id}:`, focusable);
-             setTimeout(() => {
-                 try { focusable.focus(); } catch(e){ console.warn("Focus failed:", e)}
-             }, 50);
-        } else {
-            console.warn(`No focusable element found in #${modalElement.id}.`);
-             // Focusing the modal itself can help trap focus if it has tabindex="-1"
-             // setTimeout(() => modalElement.focus(), 50);
-        }
-        console.log("--- Exiting openModal ---");
-    }
-
-    // MODIFIED: closeModal with focus restoration & logging
-    closeModal(modalElement){
-        if(!modalElement)return;
-        console.log(`--- Closing modal: #${modalElement.id} ---`);
-
-        modalElement.style.display='none';
-        modalElement.setAttribute('aria-hidden','true');
-
+        
         console.log("Attempting to restore focus to:", this.elementThatOpenedModal);
         if (this.elementThatOpenedModal && typeof this.elementThatOpenedModal.focus === 'function') {
             try {
