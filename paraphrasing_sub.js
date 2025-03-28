@@ -2,11 +2,26 @@
 
 import { bdsmData } from './data.js';
 
+// === In BOTH paraphrasing_sub.js AND paraphrasing_dom.js ===
+
 function normalizeStyleKey(name) {
     if (!name) return '';
-    return name.toLowerCase().replace(/\(.*?\)/g, '').replace(/ \/ /g, '/').trim();
+    // 1. Convert to lowercase
+    // 2. Remove emojis (using a broader Unicode range)
+    // 3. Remove anything in parentheses (like P/E)
+    // 4. Trim whitespace
+    const cleanedName = name
+        .toLowerCase()
+        // Remove common emojis and symbols - adjust range if needed
+        .replace(/([\u{1F300}-\u{1F5FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1FA70}-\u{1FAFF}\u{FE00}-\u{FE0F}\u{1F900}-\u{1F9FF}]+)/gu, '')
+        .replace(/\(.*?\)/g, '') // Remove content in parentheses
+        .replace(/ \/ /g, '/')   // Keep slashes if intended (like switch styles)
+        .trim();
+    // console.log(`Normalized "${name}" to "${cleanedName}"`); // Optional: Add log for debugging normalization
+    return cleanedName;
 }
 
+// ... rest of the file (domStyleSuggestions or subStyleSuggestions, getStyleBreakdown) ...
 const subStyleSuggestions = {
   'classic submissive': {
     1: { paraphrase: "🌱 Just beginning your journey of yielding?", suggestion: "Practice one small act of trust or service today. How did it feel? 😊" },
