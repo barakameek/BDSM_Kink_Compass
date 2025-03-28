@@ -1,4 +1,4 @@
-// === app.js === (COMPLETE - Incorporating All Requested Changes)
+// === app.js === (COMPLETE - Incorporating Diagnostic Logs in showGlossary & openModal)
 
 // Import necessary modules
 import { bdsmData } from './data.js';
@@ -45,16 +45,18 @@ class TrackerApp {
 
     // --- Style Finder Data Structures ---
     // (Keep your existing data structures here)
-    this.sfStyles = { submissive: [ /*...*/ ], dominant: [ /*...*/ ] };
-    this.sfSubFinderTraits = [ /*...*/ ];
-    this.sfSubTraitFootnotes = { /*...*/ };
-    this.sfDomFinderTraits = [ /*...*/ ];
-    this.sfDomTraitFootnotes = { /*...*/ };
-    this.sfSliderDescriptions = { /*...*/ };
-    this.sfTraitExplanations = { /*...*/ };
-    this.sfStyleDescriptions = { /*...*/ };
-    this.sfDynamicMatches = { /*...*/ };
-    this.sfStyleKeyTraits = { /*...*/ };
+    // NOTE: Keep the actual data structures from your original file
+    this.sfStyles = { submissive: [ 'Classic Submissive', 'Brat', 'Slave', /* ... */ 'Bottom' ], dominant: [ 'Classic Dominant', 'Assertive', /* ... */ 'Commander' ] };
+    this.sfSubFinderTraits = [ { name: 'obedience', desc: '...' }, /* ... */ ];
+    this.sfSubTraitFootnotes = { obedience: '...', /* ... */ };
+    this.sfDomFinderTraits = [ { name: 'authority', desc: '...' }, /* ... */ ];
+    this.sfDomTraitFootnotes = { authority: '...', /* ... */ };
+    this.sfSliderDescriptions = { obedience: [ '...' ], /* ... */ };
+    this.sfTraitExplanations = { obedience: '...', /* ... */ };
+    this.sfStyleDescriptions = { 'Classic Submissive': { short: '...', long: '...', tips: ['...'] }, /* ... */ };
+    this.sfDynamicMatches = { 'Classic Submissive': { dynamic: '...', match: '...', desc: '...', longDesc: '...' }, /* ... */ };
+    this.sfStyleKeyTraits = { 'Classic Submissive': ['...'], /* ... */ };
+
 
     // --- Element Mapping ---
     this.elements = {
@@ -119,7 +121,7 @@ class TrackerApp {
       sfStepContent: document.getElementById('sf-step-content'),
       sfFeedback: document.getElementById('sf-feedback'),
       sfDashboard: document.getElementById('sf-dashboard'),
-      // sfDashboardToggle: document.getElementById('sf-dashboard-toggle'), // This is dynamically added, so don't map here
+      // sfDashboardToggle is dynamic
       detailModalTitle: document.getElementById('detail-modal-title'),
       resourcesModalTitle: document.getElementById('resources-modal-title'),
       glossaryModalTitle: document.getElementById('glossary-modal-title'),
@@ -131,9 +133,9 @@ class TrackerApp {
       formTitle: document.getElementById('form-title'),
     };
 
-    // --- >>> ADD DIAGNOSTIC LOGS HERE <<< ---
+    // --- DIAGNOSTIC LOGS ---
     console.log("--- Element Check ---");
-    console.log("role:", !!this.elements.role, this.elements.role); // Log element itself too
+    console.log("role:", !!this.elements.role, this.elements.role);
     console.log("style:", !!this.elements.style, this.elements.style);
     console.log("achievementsBtn:", !!this.elements.achievementsBtn, this.elements.achievementsBtn);
     console.log("glossaryBtn:", !!this.elements.glossaryBtn, this.elements.glossaryBtn);
@@ -144,19 +146,18 @@ class TrackerApp {
     console.log("exportBtn:", !!this.elements.exportBtn, this.elements.exportBtn);
     console.log("importBtn:", !!this.elements.importBtn, this.elements.importBtn);
     console.log("themeToggle:", !!this.elements.themeToggle, this.elements.themeToggle);
-    console.log("modalTabs:", !!this.elements.modalTabs, this.elements.modalTabs); // Crucial for detail tabs
+    console.log("modalTabs:", !!this.elements.modalTabs, this.elements.modalTabs);
     console.log("save:", !!this.elements.save, this.elements.save);
     console.log("clearForm:", !!this.elements.clearForm, this.elements.clearForm);
     console.log("formStyleFinderLink:", !!this.elements.formStyleFinderLink, this.elements.formStyleFinderLink);
     console.log("--- End Element Check ---");
-    // --- >>> END DIAGNOSTIC LOGS <<< ---
+    // --- END DIAGNOSTIC LOGS ---
 
 
     // Critical element check
     const criticalElements = Object.keys(this.elements);
     const missingKeys = [];
     for (const key of criticalElements) {
-        // Skip sfDashboardToggle as it's dynamic
         if (key === 'sfDashboardToggle') continue;
         if (!this.elements[key]) {
             missingKeys.push(key);
@@ -166,9 +167,8 @@ class TrackerApp {
     if (missingKeys.length > 0) {
         const errorMsg = `Initialization failed: Required HTML element(s) not found (IDs: ${missingKeys.join(', ')}). Check index.html.`;
         console.error(errorMsg);
-        // Optionally display error to user more prominently
         document.body.innerHTML = `<div style='color: red; padding: 20px;'>${errorMsg}</div>`;
-        throw new Error(errorMsg); // Stop execution
+        throw new Error(errorMsg);
     }
 
     console.log("CONSTRUCTOR: Elements found.");
@@ -176,7 +176,7 @@ class TrackerApp {
     console.log("CONSTRUCTOR: Listeners added.");
     this.loadFromLocalStorage();
     this.applySavedTheme();
-    this.renderStyles(this.elements.role?.value); // Use optional chaining just in case
+    this.renderStyles(this.elements.role?.value);
     this.renderTraits(this.elements.role?.value, this.elements.style?.value);
     this.renderList();
     this.updateLivePreview();
@@ -184,9 +184,10 @@ class TrackerApp {
     console.log("CONSTRUCTOR: Initial render complete.");
   } // --- End of constructor ---
 
-  // --- Local Storage --- (No changes needed)
-  loadFromLocalStorage(){ /* ... */ }
-  saveToLocalStorage(){ /* ... */ }
+  // --- Local Storage ---
+  loadFromLocalStorage(){try{const data=localStorage.getItem('kinkProfiles');const profiles=data?JSON.parse(data):[];this.people=profiles.map(p=>({...p,id:p.id??Date.now(),name:p.name??"Unnamed",role:p.role??"submissive",style:p.style??"",avatar:p.avatar||'❓',goals:Array.isArray(p.goals)?p.goals:[],history:Array.isArray(p.history)?p.history:[],achievements:Array.isArray(p.achievements)?p.achievements:[],reflections:typeof p.reflections==='object'&&p.reflections!==null?p.reflections:{text:p.reflections||''},traits:typeof p.traits==='object'&&p.traits!==null?p.traits:{}}));console.log(`Loaded ${this.people.length} profiles.`);}catch(e){console.error("Failed to load profiles:",e);this.people=[];this.showNotification("Error loading profiles. Starting fresh.", "error");}}
+  saveToLocalStorage(){try{localStorage.setItem('kinkProfiles',JSON.stringify(this.people));console.log(`Saved ${this.people.length} profiles.`);}catch(e){console.error("Failed to save profiles:",e);this.showNotification("Error saving data. Storage might be full or corrupted.", "error");}}
+
 
   // NEW: Onboarding check
   checkAndShowWelcome() {
@@ -197,7 +198,6 @@ class TrackerApp {
           }
       } catch (e) {
           console.warn("Could not check onboarding status:", e);
-          // Proceed without welcome if localStorage fails
       }
   }
 
@@ -205,7 +205,6 @@ class TrackerApp {
   showWelcomeMessage() {
       if (this.elements.welcomeModal) {
           this.openModal(this.elements.welcomeModal);
-          // Set flag when closed
           const closeHandler = () => {
               try {
                   localStorage.setItem('kinkCompassOnboarded', 'true');
@@ -214,58 +213,69 @@ class TrackerApp {
                   console.warn("Could not save onboarding status:", e);
               }
               this.elements.welcomeClose?.removeEventListener('click', closeHandler);
-              this.elements.welcomeModal?.removeEventListener('click', modalCloseHandler); // Remove outer click listener too
+              this.elements.welcomeModal?.removeEventListener('click', modalCloseHandler);
           };
           const modalCloseHandler = (e) => {
              if (e.target === this.elements.welcomeModal) {
                 this.closeModal(this.elements.welcomeModal);
-                closeHandler(); // Also mark as onboarded if closed by clicking outside
+                closeHandler();
              }
           }
           this.elements.welcomeClose?.addEventListener('click', closeHandler, { once: true });
-          this.elements.welcomeModal?.addEventListener('click', modalCloseHandler); // Add listener for outside click
+          this.elements.welcomeModal?.addEventListener('click', modalCloseHandler);
       } else {
           console.warn("Welcome modal element not found.");
       }
   }
 
   // --- Event Listeners Setup ---
-  // MODIFIED: Added listeners for new elements and features
   addEventListeners() {
     console.log("Attaching event listeners...");
 
     // Form Elements
     this.elements.role?.addEventListener('change', (e) => {
-        console.log(">>> Role Dropdown Changed!"); // <<-- DEBUG LOG
+        console.log(">>> Role Dropdown Changed!");
         const selectedRole = e.target.value;
         this.renderStyles(selectedRole);
-        this.elements.style.value = '';
+        if (this.elements.style) this.elements.style.value = '';
         this.renderTraits(selectedRole, '');
         this.updateLivePreview();
         this.updateStyleExploreLink();
     });
     this.elements.style?.addEventListener('change', (e) => {
-        console.log(">>> Style Dropdown Changed!"); // <<-- DEBUG LOG
+        console.log(">>> Style Dropdown Changed!");
         this.renderTraits(this.elements.role.value, e.target.value);
         this.updateLivePreview();
         this.updateStyleExploreLink();
     });
     this.elements.name?.addEventListener('input', () => this.updateLivePreview());
-    this.elements.avatarPicker?.addEventListener('click', (e) => { if (e.target.classList.contains('avatar-btn')) { /* ... avatar logic ... */ this.updateLivePreview(); } });
+    this.elements.avatarPicker?.addEventListener('click', (e) => {
+        if (e.target.classList.contains('avatar-btn')) {
+            const emoji = e.target.dataset.emoji;
+            if (emoji && this.elements.avatarInput && this.elements.avatarDisplay) {
+                this.elements.avatarInput.value = emoji;
+                this.elements.avatarDisplay.textContent = emoji;
+                this.elements.avatarPicker.querySelectorAll('.avatar-btn').forEach(btn => {
+                    btn.classList.toggle('selected', btn === e.target);
+                });
+                this.updateLivePreview();
+            }
+        }
+     });
     this.elements.save?.addEventListener('click', () => {
-        console.log(">>> Save Button Clicked!"); // <<-- DEBUG LOG
+        console.log(">>> Save Button Clicked!");
         this.savePerson();
     });
     this.elements.clearForm?.addEventListener('click', () => {
-        console.log(">>> Clear Form Button Clicked!"); // <<-- DEBUG LOG
+        console.log(">>> Clear Form Button Clicked!");
         this.resetForm(true);
     });
     this.elements.formStyleFinderLink?.addEventListener('click', () => {
-        console.log(">>> Form Style Finder Link Clicked!"); // <<-- DEBUG LOG
+        console.log(">>> Form Style Finder Link Clicked!");
         this.sfStart();
     });
     this.elements.styleExploreLink?.addEventListener('click', (e) => {
-        console.log(">>> Explore Style Link Clicked!"); // <<-- DEBUG LOG
+        console.log(">>> Explore Style Link Clicked!");
         this.handleExploreStyleLinkClick(e);
     });
 
@@ -281,39 +291,39 @@ class TrackerApp {
 
     // Header Buttons / Main Triggers
     this.elements.styleFinderTriggerBtn?.addEventListener('click', () => {
-        console.log(">>> Header Style Finder Button Clicked!"); // <<-- DEBUG LOG
+        console.log(">>> Header Style Finder Button Clicked!");
         this.sfStart();
     });
     this.elements.styleDiscoveryBtn?.addEventListener('click', () => {
-        console.log(">>> Explore Styles Button Clicked!"); // <<-- DEBUG LOG
+        console.log(">>> Explore Styles Button Clicked!");
         this.showStyleDiscovery();
     });
     this.elements.achievementsBtn?.addEventListener('click', () => {
-        console.log(">>> Achievements Button Clicked!"); // <<-- DEBUG LOG
+        console.log(">>> Achievements Button Clicked!");
         this.showAchievements();
     });
     this.elements.glossaryBtn?.addEventListener('click', () => {
-        console.log(">>> Glossary Button Clicked!"); // <<-- DEBUG LOG
+        console.log(">>> Glossary Button Clicked!");
         this.showGlossary();
     });
     this.elements.resourcesBtn?.addEventListener('click', () => {
-        console.log(">>> Resources Button Clicked!"); // <<-- DEBUG LOG
+        console.log(">>> Resources Button Clicked!");
         this.openModal(this.elements.resourcesModal);
     });
     this.elements.themesBtn?.addEventListener('click', () => {
-        console.log(">>> Themes Button Clicked!"); // <<-- DEBUG LOG
+        console.log(">>> Themes Button Clicked!");
         this.openModal(this.elements.themesModal);
     });
     this.elements.exportBtn?.addEventListener('click', () => {
-        console.log(">>> Export Button Clicked!"); // <<-- DEBUG LOG
+        console.log(">>> Export Button Clicked!");
         this.exportData();
     });
     this.elements.importBtn?.addEventListener('click', () => {
-        console.log(">>> Import Button Clicked!"); // <<-- DEBUG LOG
+        console.log(">>> Import Button Clicked!");
         this.elements.importFileInput?.click();
     });
     this.elements.themeToggle?.addEventListener('click', () => {
-        console.log(">>> Theme Toggle Button Clicked!"); // <<-- DEBUG LOG
+        console.log(">>> Theme Toggle Button Clicked!");
         this.toggleTheme();
     });
     this.elements.importFileInput?.addEventListener('change', (e) => this.importData(e));
@@ -326,13 +336,13 @@ class TrackerApp {
     this.elements.styleDiscoveryClose?.addEventListener('click', () => this.closeModal(this.elements.styleDiscoveryModal));
     this.elements.themesClose?.addEventListener('click', () => this.closeModal(this.elements.themesModal));
     this.elements.achievementsClose?.addEventListener('click', () => this.closeModal(this.elements.achievementsModal));
-    this.elements.welcomeClose?.addEventListener('click', () => this.closeModal(this.elements.welcomeModal)); // Note: Onboarding flag set elsewhere
+    this.elements.welcomeClose?.addEventListener('click', () => this.closeModal(this.elements.welcomeModal));
     this.elements.sfCloseBtn?.addEventListener('click', () => this.sfClose());
 
     // Specific Modal Body Interactions
     this.elements.modalBody?.addEventListener('click', (e) => this.handleModalBodyClick(e));
     this.elements.modalTabs?.addEventListener('click', (e) => {
-        console.log(">>> Modal Tab Area Clicked!"); // <<-- DEBUG LOG
+        console.log(">>> Modal Tab Area Clicked!");
         this.handleDetailTabClick(e);
     });
     this.elements.themesBody?.addEventListener('click', (e) => this.handleThemeSelection(e));
@@ -346,9 +356,8 @@ class TrackerApp {
         if (button) { this.handleStyleFinderAction(button.dataset.action, button.dataset); return; }
         const icon = e.target.closest('.sf-info-icon[data-trait]');
         if (icon) { this.handleStyleFinderAction('showTraitInfo', icon.dataset); return; }
-        // Check specifically for the toggle button ID
         if (e.target.id === 'sf-dashboard-toggle') {
-             console.log(">>> SF Dashboard Toggle Clicked!"); // <<-- DEBUG LOG
+             console.log(">>> SF Dashboard Toggle Clicked!");
              this.toggleStyleFinderDashboard();
              return;
         }
@@ -364,7 +373,8 @@ class TrackerApp {
   } // --- End addEventListeners ---
 
   // --- Event Handlers ---
-  // (Keep existing handlers like handleListClick, handleListKeydown)
+  handleListClick(e){const li=e.target.closest('.person');if(!li)return;const id=parseInt(li.dataset.id,10);if(isNaN(id))return;console.log("List Click on ID:",id,"Target:",e.target);const actionTarget=e.target.closest('button');const action=actionTarget?actionTarget.dataset.action:null;if(action==='edit'){this.editPerson(id);}else if(action==='delete'){this.deletePerson(id);}else{this.showPersonDetails(id);}}
+  handleListKeydown(e){const li=e.target.closest('.person');if(!li)return;if(e.key==='Enter'||e.key===' '){e.preventDefault();const id=parseInt(li.dataset.id,10);if(!isNaN(id))this.showPersonDetails(id);}}
 
   handleWindowClick(e){const target=e.target;if(target.classList.contains('modal')){ // Check if the backdrop was clicked
       if(target===this.elements.modal)this.closeModal(this.elements.modal);
@@ -373,29 +383,42 @@ class TrackerApp {
       else if(target===this.elements.glossaryModal)this.closeModal(this.elements.glossaryModal);
       else if(target===this.elements.styleDiscoveryModal)this.closeModal(this.elements.styleDiscoveryModal);
       else if(target===this.elements.themesModal)this.closeModal(this.elements.themesModal);
-      else if(target===this.elements.achievementsModal)this.closeModal(this.elements.achievementsModal); // NEW
-      else if(target===this.elements.welcomeModal)this.closeModal(this.elements.welcomeModal); // NEW (Also triggers onboarded flag)
-      else if(target===this.elements.contextHelpPopup)this.hideContextHelp(); // NEW
-      // Trait info popup handled by its own close button or clicking outside it (handled implicitly)
+      else if(target===this.elements.achievementsModal)this.closeModal(this.elements.achievementsModal);
+      else if(target===this.elements.welcomeModal){ this.closeModal(this.elements.welcomeModal); try { localStorage.setItem('kinkCompassOnboarded', 'true'); console.log("Onboarding complete via backdrop click.");} catch(e){console.warn("Could not save onboarding status:",e);}}
+      else if(target===this.elements.contextHelpPopup)this.hideContextHelp();
     }}
   handleWindowKeydown(e){if(e.key==='Escape'){
       if(this.elements.traitInfoPopup?.style.display!=='none') this.hideTraitInfo();
-      else if(this.elements.contextHelpPopup?.style.display!=='none') this.hideContextHelp(); // NEW
+      else if(this.elements.contextHelpPopup?.style.display!=='none') this.hideContextHelp();
       else if(this.elements.modal?.style.display!=='none')this.closeModal(this.elements.modal);
       else if(this.elements.sfModal?.style.display!=='none')this.sfClose();
       else if(this.elements.resourcesModal?.style.display!=='none')this.closeModal(this.elements.resourcesModal);
       else if(this.elements.glossaryModal?.style.display!=='none')this.closeModal(this.elements.glossaryModal);
       else if(this.elements.styleDiscoveryModal?.style.display!=='none')this.closeModal(this.elements.styleDiscoveryModal);
       else if(this.elements.themesModal?.style.display!=='none')this.closeModal(this.elements.themesModal);
-      else if(this.elements.achievementsModal?.style.display!=='none')this.closeModal(this.elements.achievementsModal); // NEW
-      else if(this.elements.welcomeModal?.style.display!=='none')this.closeModal(this.elements.welcomeModal); // NEW
+      else if(this.elements.achievementsModal?.style.display!=='none')this.closeModal(this.elements.achievementsModal);
+      else if(this.elements.welcomeModal?.style.display!=='none')this.closeModal(this.elements.welcomeModal); // Also closes welcome on Esc
     }}
-  handleTraitSliderInput(e){ /* ... (existing logic) ... */ }
-  handleTraitInfoClick(e){ /* ... (existing logic) ... */ }
+  handleTraitSliderInput(e){ const slider=e.target;this.updateTraitDescription(slider);this.updateLivePreview();const value=slider.value;const person=this.currentEditId?this.people.find(p=>p.id===this.currentEditId):null;if(person){if(value==='5')grantAchievement(person,'max_trait');if(value==='1')grantAchievement(person,'min_trait');}}
+  handleTraitInfoClick(e){const button=e.target;const traitName=button.dataset.trait;if(traitName)this.showTraitInfo(traitName);}
 
-  // MODIFIED: handleModalBodyClick to delegate more actions
-  handleModalBodyClick(e){const target=e.target;const button=target.closest('button');const link = target.closest('a'); const check=button||target; if(!check)return;const id=check.id;const classList=check.classList; const dataset = check.dataset; const personId=parseInt(dataset.personId,10);const goalId=parseInt(dataset.goalId,10);const helpKey = dataset.helpKey; // NEW: Context help
+  // MODIFIED: handleModalBodyClick
+  handleModalBodyClick(e){
+      const target=e.target;
+      const button=target.closest('button');
+      const link = target.closest('a');
+      const check=button||target; // Prioritize button, fallback to target
+      if(!check) return;
+
+      const id=check.id;
+      const classList=check.classList;
+      const dataset = check.dataset || {}; // Ensure dataset exists
+      const personId=parseInt(dataset.personId,10);
+      const goalId=parseInt(dataset.goalId,10);
+      const helpKey = dataset.helpKey;
+
       console.log("Detail Modal Click: Elm:",check,"ID:",id,"Class:",classList, "Dataset:", dataset);
+
       if(id==='save-reflections-btn'&&!isNaN(personId)){this.saveReflections(personId);}
       else if(id==='prompt-btn'){this.showJournalPrompt(personId);}
       else if(id==='snapshot-btn'&&!isNaN(personId)){this.addSnapshotToHistory(personId);}
@@ -404,36 +427,60 @@ class TrackerApp {
       else if(classList.contains('add-goal-btn')&&!isNaN(personId)){this.addGoal(personId);}
       else if(classList.contains('toggle-goal-btn')&&!isNaN(personId)&&!isNaN(goalId)){this.toggleGoalStatus(personId,goalId);}
       else if(classList.contains('delete-goal-btn')&&!isNaN(personId)&&!isNaN(goalId)){this.deleteGoal(personId,goalId);}
-      // NEW: Handle context help button clicks
       else if(classList.contains('context-help-btn') && helpKey) { this.showContextHelp(helpKey); }
-      // NEW: Handle glossary links within modal content (if any added)
       else if (classList.contains('glossary-link') && dataset.termKey) { e.preventDefault(); this.showGlossary(dataset.termKey); }
       else{console.log("No matching detail modal action.");}
   }
 
-  handleThemeSelection(e){ /* ... (existing logic) ... */ }
+  handleThemeSelection(e){const button=e.target.closest('.theme-option-btn');if(button){const themeName=button.dataset.theme;if(themeName){this.setTheme(themeName);grantAchievement({},'theme_changer');this.closeModal(this.elements.themesModal);}}}
 
   // MODIFIED: Style finder action handler
   handleStyleFinderAction(action, dataset = {}) {
       console.log("SF Action:", action, dataset);
-      // Add a loading state temporarily if needed for longer actions
       const stepContent = this.elements.sfStepContent;
-      if (stepContent) stepContent.classList.add('loading'); // Add a CSS class for visual feedback
+      if (stepContent) stepContent.classList.add('loading');
 
       try {
           switch (action) {
               case 'next':
-                  // ... (existing 'next' logic remains mostly the same)
+                  const currentTrait = dataset.trait;
+                  const currentStepType = this.sfSteps[this.sfStep]?.type;
+                  if (currentStepType === 'trait' && currentTrait && this.sfAnswers.traits[currentTrait] === undefined) {
+                      console.log(`Trait ${currentTrait} not answered, setting default value 5.`);
+                      this.sfSetTrait(currentTrait, 5);
+                      const descElement = this.elements.sfStepContent?.querySelector(`#sf-desc-${currentTrait}`);
+                      const descriptions = this.sfSliderDescriptions?.[currentTrait] ?? [];
+                      if (descElement && descriptions.length > 0) {
+                          descElement.textContent = this.escapeHTML(descriptions[5 - 1] || `Level 5`);
+                      }
+                      this.sfUpdateDashboard();
+                  }
                   this.sfNextStep();
                   break;
               case 'prev':
                   this.sfPrevStep();
                   break;
               case 'identifyRole':
-                  // ... (existing logic)
+                  if (dataset.identifiedRole && ['submissive', 'dominant', 'switch'].includes(dataset.identifiedRole)) {
+                      this.sfAnswers.rolePreference = dataset.identifiedRole;
+                      this.sfIdentifiedRole = dataset.identifiedRole;
+                      if (this.sfIdentifiedRole === 'switch') {
+                          this.sfNextStep();
+                      } else {
+                          this.sfSetRole(this.sfIdentifiedRole);
+                      }
+                  } else {
+                      console.error("Identify role action with invalid data:", dataset.identifiedRole);
+                      this.showNotification("Invalid selection.", "error");
+                  }
                   break;
               case 'setRole':
-                  // ... (existing logic)
+                  if (dataset.role && ['submissive', 'dominant'].includes(dataset.role)) {
+                      this.sfSetRole(dataset.role);
+                  } else {
+                      console.error("Set role action triggered without valid role data:", dataset.role);
+                      this.showNotification("Invalid role selected.", "error");
+                  }
                   break;
               case 'startOver':
                   this.sfStartOver();
@@ -441,23 +488,32 @@ class TrackerApp {
               case 'close':
                   this.sfClose();
                   break;
-              case 'applyStyle': // MODIFIED: Add confirmation
+              case 'applyStyle':
                   const r = dataset.role;
                   const s = dataset.style;
                   if (r && s) {
-                      this.confirmApplyStyleFinderResult(r, s); // Call confirmation function
+                      this.confirmApplyStyleFinderResult(r, s);
                   } else {
                       this.showNotification("Error applying style. Role or Style missing.", "error");
                       console.error("Apply Style Error: Missing role or style in dataset", dataset);
                   }
                   break;
               case 'showFullDetails':
-                  // ... (existing logic)
+                  if (dataset.style) {
+                      this.sfShowFullDetails(dataset.style);
+                  } else {
+                      console.error("Show Full Details action triggered without style data.");
+                      this.showNotification("Could not show details for style.", "error");
+                  }
                   break;
               case 'showTraitInfo':
-                  // ... (existing logic)
+                  if (dataset.trait) {
+                      this.sfShowTraitInfo(dataset.trait);
+                  } else {
+                      console.error("Show Trait Info action triggered without trait data.");
+                      this.showNotification("Could not show info for trait.", "error");
+                  }
                   break;
-              // NEW: Toggle dashboard visibility
               case 'toggleDashboard':
                   this.toggleStyleFinderDashboard();
                   break;
@@ -468,23 +524,23 @@ class TrackerApp {
            console.error("Error handling Style Finder action:", action, error);
            this.showNotification("An error occurred processing your action.", "error");
       } finally {
-           if (stepContent) stepContent.classList.remove('loading'); // Remove loading state
+           if (stepContent) stepContent.classList.remove('loading');
       }
   } // --- End handleStyleFinderAction ---
 
-  handleStyleFinderSliderInput(sliderElement){ /* ... (existing logic) ... */ }
+  handleStyleFinderSliderInput(sliderElement) { const traitName = sliderElement.dataset.trait; const value = parseInt(sliderElement.value, 10); if (traitName) { this.sfSetTrait(traitName, value); const descElement = this.elements.sfStepContent?.querySelector(`#sf-desc-${traitName}`); const descriptions = this.sfSliderDescriptions?.[traitName] ?? []; if (descElement) { const safeValue = Number(value); if (descriptions.length > 0 && safeValue >= 1 && safeValue <= descriptions.length) { descElement.textContent = this.escapeHTML(descriptions[safeValue - 1]); } else { descElement.textContent = `Level ${safeValue}`; console.warn(`Slider description missing or invalid for trait '${traitName}' at value ${safeValue}`); } } this.sfUpdateDashboard(); } else { console.error("Slider input event fired without data-trait attribute."); } }
 
   // NEW: Handle clicking on tabs in the detail modal
   handleDetailTabClick(e) {
       const button = e.target.closest('.tab-link');
       if (!button || button.classList.contains('active') || !this.elements.modalBody || !this.elements.modalTabs) {
-          return; // Clicked not on a button, or already active
+          return;
       }
 
       const targetTabId = button.dataset.tab;
       if (!targetTabId) return;
 
-      const personIdStr = this.elements.modal?.dataset.personId; // Store personId on the modal itself
+      const personIdStr = this.elements.modal?.dataset.personId;
       const personId = personIdStr ? parseInt(personIdStr, 10) : null;
       if (isNaN(personId)) {
           console.error("Person ID not found on modal for tab switching");
@@ -507,12 +563,11 @@ class TrackerApp {
       const targetContent = this.elements.modalBody.querySelector(`#${targetTabId}`);
       if (targetContent) {
           targetContent.classList.add('active');
-          this.activeDetailModalTab = targetTabId; // Store active tab
+          this.activeDetailModalTab = targetTabId;
 
-          // Render content IF it hasn't been rendered yet (lazy loading)
           if (!targetContent.dataset.rendered) {
               this.renderDetailTabContent(person, targetTabId, targetContent);
-              targetContent.dataset.rendered = 'true'; // Mark as rendered
+              targetContent.dataset.rendered = 'true';
           }
       } else {
           console.error(`Content pane for tab ${targetTabId} not found!`);
@@ -525,7 +580,7 @@ class TrackerApp {
       if (link) {
           e.preventDefault();
           const termKey = link.dataset.termKey;
-          this.showGlossary(termKey); // Pass key to highlight/scroll
+          this.showGlossary(termKey);
       }
   }
 
@@ -534,76 +589,78 @@ class TrackerApp {
     e.preventDefault();
     const styleName = e.target.dataset.style;
     if (styleName) {
-        this.showStyleDiscovery(styleName); // Open discovery and potentially highlight the style
+        this.showStyleDiscovery(styleName);
     }
   }
 
   // --- Core Rendering ---
-  renderStyles(roleKey) { /* ... (existing logic, ensure it calls updateStyleExploreLink) ... */ this.updateStyleExploreLink(); }
+  renderStyles(roleKey) { const selectElement=this.elements.style; if(!selectElement)return; selectElement.innerHTML='<option value="">-- Select a Style --</option>'; const roleData=bdsmData[roleKey]; let styles=[]; if(roleData?.styles){styles=roleData.styles;} if(styles.length>0){styles.sort((a,b) => a.name.localeCompare(b.name)).forEach(style=>{selectElement.innerHTML+=`<option value="${this.escapeHTML(style.name)}">${this.escapeHTML(style.name)}</option>`;}); selectElement.disabled=false;}else{selectElement.innerHTML=`<option value="">-- No Styles for ${roleKey} --</option>`; selectElement.disabled=true;} this.updateStyleExploreLink(); }
 
   // MODIFIED: Handle initial trait visibility state
   renderTraits(roleKey, styleName) {
       const container = this.elements.traitsContainer;
-      const messageEl = this.elements.traitsMessage; // NEW
+      const messageEl = this.elements.traitsMessage;
       if (!container || !messageEl) return;
 
-      container.innerHTML = ''; // Clear previous traits
+      container.innerHTML = '';
       const roleData = bdsmData[roleKey];
-
-      // Determine if traits should be visible
       const showTraits = roleKey && (styleName || (roleData?.coreTraits?.length > 0));
 
       if (!showTraits) {
-          container.style.display = 'none'; // Hide container
+          container.style.display = 'none';
           messageEl.textContent = roleKey ? "Select a Style to see and customize relevant traits." : "Select a Role first to see options.";
           messageEl.style.display = 'block';
           this.hideTraitInfo();
           return;
       }
 
-      // If showing traits, hide the message and show the container
       container.style.display = 'block';
       messageEl.style.display = 'none';
 
-      // ... (rest of the existing trait rendering logic) ...
+      if (!roleData) {container.innerHTML=`<p class="muted-text">Select a valid role.</p>`; return;}
 
-      if (!roleData) { /* ... */ }
-      const coreTraits = roleData.coreTraits || [];
-      let styleTraits = [];
-      let styleObj = null;
-      let infoMessage = ''; // Renamed from 'message' to avoid conflict
+      const coreTraits=roleData.coreTraits||[];
+      let styleTraits=[];
+      let styleObj=null;
+      let infoMessage='';
 
-      if (styleName) { /* ... find styleObj ... */
-          if (styleObj) { /* ... set styleTraits ... */
-              if (styleTraits.length === 0 && coreTraits.length > 0) { infoMessage = `... uses core traits.`; }
-          } else { infoMessage = `... showing core traits.`; }
-      } else if (roleKey === 'switch') { infoMessage = `<p class="muted-text trait-info-message">Adjust core Switch traits below, or select a leaning style for more specific traits.</p>`; }
-        else if (coreTraits.length > 0) { infoMessage = `<p class="muted-text trait-info-message">Core traits for ${roleData.roleName}. Select a style for more nuances.</p>`;}
+      if(styleName){
+          styleObj=roleData.styles?.find(s=>s.name===styleName);
+          if(styleObj){
+              styleTraits=styleObj.traits||[];
+              if(styleTraits.length===0&&coreTraits.length>0){infoMessage=`<p class="muted-text trait-info-message">Style '${this.escapeHTML(styleName)}' primarily uses the core traits for this role.</p>`;}
+          } else {
+              console.warn(`Style object not found for: ${roleKey} - ${styleName}`);
+              infoMessage=`<p class="muted-text trait-info-message">Details for style '${this.escapeHTML(styleName)}' not found. Showing core traits.</p>`;
+          }
+      } else if (roleKey === 'switch') {
+          infoMessage = `<p class="muted-text trait-info-message">Adjust core Switch traits below, or select a leaning style for more specific traits.</p>`;
+      } else if (coreTraits.length > 0){
+          infoMessage=`<p class="muted-text trait-info-message">Core traits for ${roleData.roleName}. Select a style for more nuances.</p>`;
+      } else {
+          container.innerHTML = `<p class="muted-text">Select a style to see relevant traits, or define core traits for this role.</p>`; return;
+      }
 
 
-      const traitsToRender = [];
-      const uniqueTraitNames = new Set();
-      [...styleTraits, ...coreTraits].forEach(trait => { /* ... build traitsToRender ... */ });
+      const traitsToRender=[];
+      const uniqueTraitNames=new Set();
+      [...styleTraits,...coreTraits].forEach(trait=>{if(trait&&trait.name&&!uniqueTraitNames.has(trait.name)){const fullTraitDef=styleTraits.find(st=>st.name===trait.name)||coreTraits.find(ct=>ct.name===trait.name); if(fullTraitDef){traitsToRender.push(fullTraitDef); uniqueTraitNames.add(trait.name);}}});
 
-      if (traitsToRender.length === 0) { /* ... handle no traits ... */ }
+      if(traitsToRender.length===0 && !styleName && roleKey !== 'switch'){container.innerHTML=`<p class="muted-text">No core traits defined for role '${roleKey}'. Select a style.</p>`; return;}
+      if(traitsToRender.length===0 && styleName){container.innerHTML=`<p class="muted-text">No specific or core traits found for style '${this.escapeHTML(styleName)}'.</p>`; return;}
 
-      if (infoMessage) container.innerHTML += infoMessage; // Add info message
 
-      traitsToRender.sort((a, b) => a.name.localeCompare(b.name)).forEach(trait => {
-          container.innerHTML += this.createTraitHTML(trait);
-      });
-
-      container.querySelectorAll('.trait-slider').forEach(slider => {
-          this.updateTraitDescription(slider);
-      });
+      if(infoMessage)container.innerHTML+=infoMessage;
+      traitsToRender.sort((a,b) => a.name.localeCompare(b.name)).forEach(trait=>{container.innerHTML+=this.createTraitHTML(trait);});
+      container.querySelectorAll('.trait-slider').forEach(slider=>{this.updateTraitDescription(slider);});
       this.hideTraitInfo();
-      this.updateStyleExploreLink(); // Update link when traits render
+      this.updateStyleExploreLink();
   }
 
-  createTraitHTML(trait){ /* ... (existing logic, ensure trait-info-btn exists) ... */ }
-  updateTraitDescription(slider){ /* ... (existing logic) ... */ }
-  renderList(){ /* ... (existing logic, maybe add item-just-saved class handling here if preferred) ... */ }
-  createPersonListItemHTML(person){ /* ... (existing logic) ... */ }
+  createTraitHTML(trait){const displayName=trait.name.charAt(0).toUpperCase()+trait.name.slice(1); const id=`trait-${trait.name.replace(/[^a-zA-Z0-9-_]/g,'-')}`; const initialValue=3; let initialDesc='Adjust slider...'; if(trait.desc&&trait.desc[initialValue]){initialDesc=trait.desc[initialValue];}else if(trait.desc&&trait.desc["3"]){initialDesc=trait.desc["3"];}else{console.warn(`Initial description missing for trait '${trait.name}' at value 3.`);} return`<div class="trait"><label for="${id}">${this.escapeHTML(displayName)}</label><button class="trait-info-btn" data-trait="${trait.name}" aria-label="Info about ${this.escapeHTML(displayName)}">ℹ️</button><span class="trait-value">${initialValue}</span><input type="range" id="${id}" min="1" max="5" value="${initialValue}" class="trait-slider" data-trait="${trait.name}" aria-label="${this.escapeHTML(displayName)} rating" autocomplete="off"/><div class="trait-desc muted-text">${this.escapeHTML(initialDesc)}</div></div>`;}
+  updateTraitDescription(slider){const traitName=slider.dataset.trait; const value=slider.value; const traitDescElement=slider.parentElement?.querySelector('.trait-desc'); const traitValueElement=slider.parentElement?.querySelector('.trait-value'); if(!traitDescElement||!traitValueElement||!traitName)return; traitValueElement.textContent=value; const roleKey=this.elements.role.value; const styleName=this.elements.style.value; const roleData=bdsmData[roleKey]; let traitDef=null; if(roleData){if(styleName){const styleObj=roleData.styles?.find(s=>s.name===styleName); traitDef=styleObj?.traits?.find(t=>t.name===traitName);} if(!traitDef){traitDef=roleData.coreTraits?.find(t=>t.name===traitName);}} if(traitDef?.desc&&traitDef.desc[value]){traitDescElement.textContent=this.escapeHTML(traitDef.desc[value]);}else{traitDescElement.textContent=traitDef?'Description unavailable for this level.':'Trait definition missing.'; if(!traitDef)console.warn(`Trait definition not found for ${traitName} in role ${roleKey}/${styleName||'core'}`);}}
+  renderList(){if(!this.elements.peopleList)return;this.elements.peopleList.innerHTML=this.people.length===0?`<li>No personas created yet! Use the form to start. ✨</li>`:this.people.map(p=>this.createPersonListItemHTML(p)).join('');}
+  createPersonListItemHTML(person){const styleDisplay=person.style?this.escapeHTML(person.style):"Style N/A"; const roleDisplay=person.role.charAt(0).toUpperCase()+person.role.slice(1); const nameDisplay=this.escapeHTML(person.name); const avatar=person.avatar||'❓'; return`<li class="person" data-id="${person.id}" tabindex="0" aria-label="${nameDisplay}, ${roleDisplay} - ${styleDisplay}. Click to view details."><span class="person-info"><span class="person-avatar" aria-hidden="true">${avatar}</span><span class="person-name-details"><strong class="person-name">${nameDisplay}</strong><span class="person-details muted-text">(${roleDisplay} - ${styleDisplay})</span></span></span><span class="person-actions"><button class="edit-btn small-btn" data-action="edit" data-id="${person.id}" aria-label="Edit ${nameDisplay}">✏️</button><button class="delete-btn small-btn" data-action="delete" data-id="${person.id}" aria-label="Delete ${nameDisplay}">🗑️</button></span></li>`;}
 
   // NEW: Update the visibility and link for exploring style details
   updateStyleExploreLink() {
@@ -613,11 +670,11 @@ class TrackerApp {
 
       const selectedStyle = styleSelect.value;
       if (selectedStyle) {
-          link.style.display = 'inline'; // Show the link
-          link.dataset.style = selectedStyle; // Update the data attribute
+          link.style.display = 'inline';
+          link.dataset.style = selectedStyle;
           link.textContent = `(Explore ${this.escapeHTML(selectedStyle)} Details)`;
       } else {
-          link.style.display = 'none'; // Hide if no style selected
+          link.style.display = 'none';
       }
   }
 
@@ -628,125 +685,124 @@ class TrackerApp {
       const saveButton = this.elements.save;
       if (!saveButton) return;
 
-      // NEW: Add Loading State
       saveButton.disabled = true;
-      saveButton.innerHTML = 'Saving... <span class="spinner"></span>'; // Add a CSS spinner
+      saveButton.innerHTML = 'Saving... <span class="spinner"></span>';
 
-      // Basic validation first
       const nameInput=this.elements.name; const name=nameInput.value.trim(); const avatar=this.elements.avatarInput.value||'❓'; const role=this.elements.role.value; let style=this.elements.style.value;
       if(!name || (!role) || (!style && role !== 'switch')) {
           this.showNotification("Please fill required fields (Name, Role, Style).","error");
-          // NEW: Remove Loading State on validation error
           saveButton.disabled = false;
           saveButton.innerHTML = this.currentEditId ? 'Update Persona! ✨' : 'Save Persona! 💖';
           if (!name) nameInput.focus(); else if (!role) this.elements.role.focus(); else this.elements.style.focus();
           return;
       }
-      // ... (rest of the validation and data gathering logic remains the same)
-      const sliders=this.elements.traitsContainer.querySelectorAll('.trait-slider'); const currentTraits={}; /* ... */
+       if(!style && role === 'switch') { style = 'Fluid Switch'; console.log("Defaulting Switch style to 'Fluid Switch'"); }
 
-      // Simulate save delay for visual effect (remove in production)
-      setTimeout(() => {
+      const sliders=this.elements.traitsContainer.querySelectorAll('.trait-slider'); const currentTraits={}; let missingTraitData=false; sliders.forEach(slider=>{const traitName=slider.dataset.trait; if(traitName){currentTraits[traitName]=slider.value;}else{console.error("Slider missing data-trait attribute:",slider); missingTraitData=true;}}); if(missingTraitData){this.showNotification("Error gathering trait data.","error"); return;}
+
+      const roleData=bdsmData[role]; const coreTraits=roleData?.coreTraits?.map(t=>t.name)||[]; const styleObj=roleData?.styles?.find(s=>s.name===style); const styleSpecificTraits=styleObj?.traits?.map(t=>t.name)||[]; const expectedTraitNames=new Set([...coreTraits,...styleSpecificTraits]);
+      if(role !== 'switch'){ for(const expectedName of expectedTraitNames){if(!currentTraits.hasOwnProperty(expectedName)){console.error(`Missing trait data for expected trait: '${expectedName}'. Rendered:`,Object.keys(currentTraits)); this.showNotification(`Missing data for required trait: '${expectedName}'. Try again.`,"error"); saveButton.disabled = false; saveButton.innerHTML = this.currentEditId ? 'Update Persona! ✨' : 'Save Persona! 💖'; return;}}} // Check required traits
+
+      const existingPerson=this.currentEditId?this.people.find(p=>p.id===this.currentEditId):null;
+      const personData={id:this.currentEditId||Date.now(),name:name,avatar:avatar,role:role,style:style,traits:currentTraits,goals:existingPerson?.goals||[],history:existingPerson?.history||[],achievements:existingPerson?.achievements||[],reflections:existingPerson?.reflections||{text:''},lastUpdated:Date.now()};
+
+      setTimeout(() => { // Simulate save delay
           try {
-              const personData={id:this.currentEditId||Date.now(), name, avatar, role, style, traits: currentTraits, /* ... other fields ... */ lastUpdated:Date.now()};
               let isNew=false;
               let savedItemId = personData.id;
 
-              if(this.currentEditId){ /* ... update existing ... */ }
-              else { /* ... add new ... */ isNew=true; }
+              if(this.currentEditId){
+                  const index=this.people.findIndex(p=>p.id===this.currentEditId);
+                  if(index!==-1){this.people[index]=personData; grantAchievement(personData,'profile_edited');}
+                  else{console.error("Error updating persona: ID not found."); this.showNotification("Error updating persona.","error"); this.people.push(personData); isNew=true;}
+              } else {
+                  this.people.push(personData);
+                  isNew=true;
+                  grantAchievement(personData,'profile_created');
+                  if(this.people.length>=5){grantAchievement(personData,'five_profiles');}
+              }
+              if(avatar!=='❓'){grantAchievement(personData,'avatar_chosen');}
 
               this.saveToLocalStorage();
               this.renderList();
 
-              // NEW: Saving Indication
               const listItem = this.elements.peopleList?.querySelector(`li[data-id="${savedItemId}"]`);
               if (listItem) {
                   listItem.classList.add('item-just-saved');
-                  setTimeout(() => listItem.classList.remove('item-just-saved'), 1500); // CSS needed for .item-just-saved
+                  setTimeout(() => listItem.classList.remove('item-just-saved'), 1500);
               }
 
               this.showNotification(`${this.escapeHTML(name)} ${isNew?'created':'updated'}! ✨`,"success");
-              this.resetForm(); // Resets currentEditId and button text
+              this.resetForm();
           } catch (error) {
               console.error("Error saving persona:", error);
               this.showNotification("Failed to save persona.", "error");
-          } finally {
-              // NEW: Remove Loading State
-              // ResetForm already handles button text, just ensure disabled is false
+              // Ensure button is re-enabled on error AFTER timeout
               saveButton.disabled = false;
-              // If resetForm wasn't called, manually reset button here
-              if (this.currentEditId) { // If save failed during edit
-                 saveButton.textContent = 'Update Persona! ✨';
-              }
+              saveButton.innerHTML = this.currentEditId ? 'Update Persona! ✨' : 'Save Persona! 💖';
           }
-      }, 300); // 300ms simulated delay
+      }, 300);
   }
 
-  editPerson(personId){ /* ... (existing logic) ... */ this.updateStyleExploreLink(); }
-  deletePerson(personId){ /* ... (existing logic) ... */ }
-  resetForm(isManualClear=false){ /* ... (existing logic, ensure it calls renderTraits and updateStyleExploreLink) ... */ this.renderTraits(this.elements.role.value, ''); this.updateStyleExploreLink(); }
+  editPerson(personId){const person=this.people.find(p=>p.id===personId); if(!person){this.showNotification("Persona not found.","error"); return;} console.log("Editing person:",person); this.currentEditId=personId; this.elements.formTitle.textContent=`✨ Edit ${this.escapeHTML(person.name)} ✨`; this.elements.name.value=person.name; this.elements.avatarInput.value=person.avatar||'❓'; this.elements.avatarDisplay.textContent=person.avatar||'❓'; this.elements.avatarPicker?.querySelectorAll('.avatar-btn').forEach(btn=>{btn.classList.toggle('selected',btn.dataset.emoji===person.avatar);}); this.elements.role.value=person.role; this.renderStyles(person.role); this.elements.style.value=person.style; this.renderTraits(person.role,person.style); requestAnimationFrame(()=>{if(person.traits){Object.entries(person.traits).forEach(([traitName,value])=>{const slider=this.elements.traitsContainer.querySelector(`.trait-slider[data-trait="${traitName}"]`); if(slider){slider.value=value; this.updateTraitDescription(slider);}else{console.warn(`Slider for trait '${traitName}' not found during edit.`);}}); } this.updateLivePreview(); this.elements.save.textContent='Update Persona! ✨'; this.elements.formSection?.scrollIntoView({behavior:'smooth',block:'start'}); this.elements.name.focus(); this.updateStyleExploreLink(); });}
+  deletePerson(personId){const index=this.people.findIndex(p=>p.id===personId); if(index===-1)return; const personName=this.people[index].name; if(confirm(`🚨 Really delete persona "${this.escapeHTML(personName)}"? This cannot be undone.`)){this.people.splice(index,1); this.saveToLocalStorage(); this.renderList(); this.showNotification(`"${this.escapeHTML(personName)}" deleted.`,"info"); if(this.currentEditId===personId){this.resetForm();}}}
+  resetForm(isManualClear=false){if(isManualClear&&this.currentEditId){if(!confirm("Discard current edits and clear the form?")){return;}} this.elements.formTitle.textContent='✨ Create New Persona ✨'; this.elements.name.value=''; this.elements.avatarInput.value='❓'; this.elements.avatarDisplay.textContent='❓'; this.elements.avatarPicker?.querySelectorAll('.selected').forEach(btn=>btn.classList.remove('selected')); this.elements.role.value='submissive'; this.renderStyles('submissive'); this.elements.style.value=''; this.renderTraits('submissive',''); this.currentEditId=null; this.elements.save.textContent='Save Persona! 💖'; this.updateLivePreview(); if(isManualClear){this.elements.name.focus();} console.log("Form reset."); this.hideTraitInfo(); this.updateStyleExploreLink();}
 
   // --- Live Preview ---
-  updateLivePreview(){ /* ... (existing logic) ... */ }
+  updateLivePreview(){const name=this.elements.name.value.trim()||"Persona Name";const avatar=this.elements.avatarInput.value||'❓';const role=this.elements.role.value;const style=this.elements.style.value;const traits={};let hasTraits=false;this.elements.traitsContainer.querySelectorAll('.trait-slider').forEach(slider=>{const traitName=slider.dataset.trait;if(traitName){traits[traitName]=slider.value;hasTraits=true;}});let html='';if(!role){html=`<p class="muted-text">Select a role...</p>`;}else if(!style&&!hasTraits){html=`<p class="muted-text">Select a style for ${this.escapeHTML(name)} (${role})...</p>`;}else if(!style&&hasTraits){const roleData=bdsmData[role];html=`<h3 class="preview-title">${avatar} ${this.escapeHTML(name)}’s Core Vibe ${avatar}</h3><p><strong>Role:</strong> ${role.charAt(0).toUpperCase()+role.slice(1)}</p><p class="muted-text"><i>Core traits active. Select a style for more details!</i></p>`;if(roleData?.coreTraits?.length>0){html+=`<div class="core-trait-preview"><strong>Core Traits:</strong><ul>`;roleData.coreTraits.forEach(ct=>{const score=traits[ct.name];if(score){const desc=ct.desc?.[score]||"N/A";html+=`<li><strong>${this.escapeHTML(ct.name)} (${score}):</strong> ${this.escapeHTML(desc)}</li>`;}});html+=`</ul></div>`;}else{html+=`<p class="muted-text">No core traits defined for this role.</p>`;}}else if(style){const getBreakdownFunc=role==='submissive'?getSubBreakdown:(role==='dominant'?getDomBreakdown:null);let breakdown={strengths:'',improvements:''};if(getBreakdownFunc){try{breakdown=getBreakdownFunc(style,traits);}catch(e){console.error("Error getting style breakdown:",e);}}let topStyleTraitInfo=null;const roleData=bdsmData[role];const styleObj=roleData?.styles?.find(st=>st.name===style);if(styleObj?.traits?.length>0){let topScore=-1;let topTraitName='';styleObj.traits.forEach(traitDef=>{const score=parseInt(traits[traitDef.name]||0,10);if(score>topScore){topScore=score;topTraitName=traitDef.name;}});if(topTraitName&&topScore>0){const traitDef=styleObj.traits.find(t=>t.name===topTraitName);const desc=traitDef?.desc?.[topScore]||"N/A";topStyleTraitInfo=`<strong>Top Style Trait (${this.escapeHTML(topTraitName)} Lvl ${topScore}):</strong> ${this.escapeHTML(desc)}`;}}html=`<h3 class="preview-title">${avatar} ${this.escapeHTML(name)}’s Vibe ${avatar}</h3><p><strong>Role:</strong> ${role.charAt(0).toUpperCase()+role.slice(1)}</p><p><strong>Style:</strong> ${this.escapeHTML(style)}</p>`;if(breakdown.strengths||breakdown.improvements){html+=`<div class="style-breakdown preview-breakdown">`;if(breakdown.strengths)html+=`<div class="strengths"><h4>✨ Powers</h4><div>${breakdown.strengths}</div></div>`;if(breakdown.improvements)html+=`<div class="improvements"><h4>🌟 Quests</h4><div>${breakdown.improvements}</div></div>`;html+=`</div>`;}if(topStyleTraitInfo){html+=`<div class="top-trait-preview"><hr><p>${topStyleTraitInfo}</p></div>`;}}else{html=`<p class="muted-text">Select Role & Style to see the vibe! 🌈</p>`;}this.elements.livePreview.innerHTML=html;}
+
 
   // --- Modal Display ---
-  // MODIFIED: showPersonDetails to use tabs
+  // MODIFIED: showPersonDetails
   showPersonDetails(personId) {
       const person = this.people.find(p => p.id === personId);
-      if (!person) { /* ... error handling ... */ return; }
+      if (!person) { this.showNotification("Could not find persona details.","error"); return; }
       console.log("Showing details for:", person);
 
-      // Prepare basic modal structure with tabs
-      const { avatar = '❓', name, role = 'N/A', style = 'N/A' } = person;
+      const { avatar = '❓', name } = person;
+
       let tabsHTML = `
-          <button class="tab-link active" data-tab="tab-goals">🎯 Goals</button>
-          <button class="tab-link" data-tab="tab-traits">🎨 Traits</button>
-          <button class="tab-link" data-tab="tab-history">⏳ History</button>
-          <button class="tab-link" data-tab="tab-journal">📝 Journal</button>
-          <button class="tab-link" data-tab="tab-reading">🔮 Reading</button>
-          <button class="tab-link" data-tab="tab-achievements">🏆 Achievements</button>
+          <button class="tab-link active" role="tab" aria-selected="true" aria-controls="tab-goals" data-tab="tab-goals">🎯 Goals</button>
+          <button class="tab-link" role="tab" aria-selected="false" aria-controls="tab-traits" data-tab="tab-traits">🎨 Traits</button>
+          <button class="tab-link" role="tab" aria-selected="false" aria-controls="tab-history" data-tab="tab-history">⏳ History</button>
+          <button class="tab-link" role="tab" aria-selected="false" aria-controls="tab-journal" data-tab="tab-journal">📝 Journal</button>
+          <button class="tab-link" role="tab" aria-selected="false" aria-controls="tab-reading" data-tab="tab-reading">🔮 Reading</button>
+          <button class="tab-link" role="tab" aria-selected="false" aria-controls="tab-achievements" data-tab="tab-achievements">🏆 Achievements</button>
       `;
       let bodyHTML = `
-          <div id="tab-goals" class="tab-content active"></div>
-          <div id="tab-traits" class="tab-content"></div>
-          <div id="tab-history" class="tab-content"></div>
-          <div id="tab-journal" class="tab-content"></div>
-          <div id="tab-reading" class="tab-content"></div>
-          <div id="tab-achievements" class="tab-content"></div>
+          <div id="tab-goals" class="tab-content active" role="tabpanel" aria-labelledby="tab-goals"></div>
+          <div id="tab-traits" class="tab-content" role="tabpanel" aria-labelledby="tab-traits"></div>
+          <div id="tab-history" class="tab-content" role="tabpanel" aria-labelledby="tab-history"></div>
+          <div id="tab-journal" class="tab-content" role="tabpanel" aria-labelledby="tab-journal"></div>
+          <div id="tab-reading" class="tab-content" role="tabpanel" aria-labelledby="tab-reading"></div>
+          <div id="tab-achievements" class="tab-content" role="tabpanel" aria-labelledby="tab-achievements"></div>
       `;
 
-      // Set modal title and subtitle
       if (this.elements.detailModalTitle) {
           this.elements.detailModalTitle.innerHTML = `${avatar} ${this.escapeHTML(name)}’s Kingdom ${avatar}`;
-          // This title element itself might be hidden if tabs are used prominently,
-          // but keep it for aria-labelledby.
-          // Consider adding subtitle element if needed, or putting it below tabs.
-          // e.g., `<p class="modal-subtitle">${role.charAt(0).toUpperCase()+role.slice(1)} - ${this.escapeHTML(style)}</p>`
       }
 
       if (this.elements.modalTabs) this.elements.modalTabs.innerHTML = tabsHTML;
       if (this.elements.modalBody) this.elements.modalBody.innerHTML = bodyHTML;
-      if (this.elements.modal) this.elements.modal.dataset.personId = personId; // Store ID for tab switching
+      if (this.elements.modal) this.elements.modal.dataset.personId = personId;
 
-      this.activeDetailModalTab = 'tab-goals'; // Reset to default tab
+      this.activeDetailModalTab = 'tab-goals';
 
-      // Render the content ONLY for the initially active tab
       const initialTabContent = this.elements.modalBody?.querySelector(`#${this.activeDetailModalTab}`);
       if (initialTabContent) {
           this.renderDetailTabContent(person, this.activeDetailModalTab, initialTabContent);
-          initialTabContent.dataset.rendered = 'true'; // Mark as rendered
+          initialTabContent.dataset.rendered = 'true';
       }
 
       this.openModal(this.elements.modal);
   }
 
-  // NEW: Function to render content for a specific detail tab
+  // MODIFIED: renderDetailTabContent
   renderDetailTabContent(person, tabId, contentElement) {
       if (!person || !contentElement) return;
       console.log(`Rendering content for tab: ${tabId}`);
-      contentElement.innerHTML = '<p class="loading-text">Loading...</p>'; // Basic loading state
+      contentElement.innerHTML = '<p class="loading-text">Loading...</p>';
 
-      // Use requestAnimationFrame or setTimeout to allow UI update before potentially heavy rendering
       requestAnimationFrame(() => {
           let html = '';
           const personId = person.id;
@@ -764,16 +820,15 @@ class TrackerApp {
                               </div>
                           </section>`;
                       contentElement.innerHTML = html;
-                      this.renderGoalList(person); // Render the list items
+                      this.renderGoalList(person);
                       break;
 
                   case 'tab-traits':
                       const { traits = {}, role = 'N/A', style = 'N/A' } = person;
                       const getBreakdownFunc = role === 'submissive' ? getSubBreakdown : (role === 'dominant' ? getDomBreakdown : null);
                       let breakdown = { strengths: 'N/A', improvements: 'N/A' };
-                      if (getBreakdownFunc && style !== 'N/A') {
-                          try { breakdown = getBreakdownFunc(style, traits); } catch (e) { /* ... error handling ... */ }
-                      }
+                      if (getBreakdownFunc && style !== 'N/A') { try { breakdown = getBreakdownFunc(style, traits); } catch (e) {console.error("Error generating breakdown:",e);} }
+
                       html = `
                           <section class="breakdown-section" aria-labelledby="breakdown-heading-${personId}">
                               <h3 id="breakdown-heading-${personId}">🌈 Style Insights</h3>
@@ -785,6 +840,7 @@ class TrackerApp {
                           <section class="traits-section" aria-labelledby="traits-heading-${personId}">
                               <h3 id="traits-heading-${personId}">🎨 Trait Constellation <button class="context-help-btn small-btn" data-help-key="traitsSectionInfo" aria-label="Traits Info">ℹ️</button></h3>
                               <div class="trait-details-grid">`;
+
                       const roleData = bdsmData[role];
                       const coreTraits = roleData?.coreTraits || [];
                       const styleObj = roleData?.styles?.find(s => s.name === style);
@@ -799,7 +855,6 @@ class TrackerApp {
                               const description = traitDef?.desc?.[score] || "Description N/A";
                               const flair = this.getFlairForScore(score);
                               const emoji = this.getEmojiForScore(score);
-                              // NEW: Add link to glossary if trait name matches a term (simple match)
                               const termKey = Object.keys(glossaryTerms).find(key => glossaryTerms[key].term.toLowerCase() === name.toLowerCase());
                               const displayNameHTML = termKey
                                  ? `<a href="#" class="glossary-link" data-term-key="${termKey}">${this.escapeHTML(displayName)}</a>`
@@ -821,7 +876,7 @@ class TrackerApp {
                               <button id="snapshot-btn" class="small-btn save-btn" data-person-id="${personId}">📸 Take Snapshot</button>
                           </section>`;
                       contentElement.innerHTML = html;
-                      this.renderHistoryChart(person, `history-chart-${personId}`); // Pass unique canvas ID
+                      this.renderHistoryChart(person, `history-chart-${personId}`);
                       break;
 
                   case 'tab-journal':
@@ -829,7 +884,7 @@ class TrackerApp {
                       html = `
                           <section class="reflections-section" aria-labelledby="reflections-heading-${personId}">
                               <h3 id="reflections-heading-${personId}">📝 Journal Reflections <button class="context-help-btn small-btn" data-help-key="journalSectionInfo" aria-label="Journal Info">ℹ️</button></h3>
-                              <div id="journal-prompt-area" style="display:none;" aria-live="polite"></div>
+                              <div id="journal-prompt-area-${personId}" style="display:none;" aria-live="polite"></div>
                               <div class="modal-actions">
                                   <button id="prompt-btn" class="small-btn" data-person-id="${personId}">💡 New Prompt</button>
                               </div>
@@ -840,81 +895,75 @@ class TrackerApp {
                       break;
 
                   case 'tab-reading':
-                      html = `
-                          <section class="kink-reading-section" aria-labelledby="reading-heading-${personId}">
-                              <h3 id="reading-heading-${personId}">🔮 Compass Reading</h3>
-                              <button id="reading-btn" class="small-btn" data-person-id="${personId}">Get My Reading!</button>
-                              <div id="kink-reading-output-${personId}" class="kink-reading-output" style="display:none;" aria-live="polite"></div>
-                          </section>`;
-                       contentElement.innerHTML = html;
-                       // Reading content is generated on button click
-                       break;
+                       html = `
+                           <section class="kink-reading-section" aria-labelledby="reading-heading-${personId}">
+                               <h3 id="reading-heading-${personId}">🔮 Compass Reading</h3>
+                               <button id="reading-btn" class="small-btn" data-person-id="${personId}">Get My Reading!</button>
+                               <div id="kink-reading-output-${personId}" class="kink-reading-output" style="display:none;" aria-live="polite"></div>
+                           </section>`;
+                        contentElement.innerHTML = html;
+                        break;
 
                    case 'tab-achievements':
-                      html = `
-                          <section class="achievements-section" aria-labelledby="achievements-heading-${personId}">
-                              <h3 id="achievements-heading-${personId}">🏆 Achievements Unlocked <button class="context-help-btn small-btn" data-help-key="achievementsSectionInfo" aria-label="Achievements Info">ℹ️</button></h3>
-                              <div id="achievements-list-${personId}"></div>
-                              <p class="muted-text" style="text-align: center; margin-top: 1em;">View all possible achievements via the header button!</p>
-                          </section>`;
-                      contentElement.innerHTML = html;
-                      this.renderAchievementsList(person, `achievements-list-${personId}`); // Render the list items
-                      break;
+                       html = `
+                           <section class="achievements-section" aria-labelledby="achievements-heading-${personId}">
+                               <h3 id="achievements-heading-${personId}">🏆 Achievements Unlocked <button class="context-help-btn small-btn" data-help-key="achievementsSectionInfo" aria-label="Achievements Info">ℹ️</button></h3>
+                               <div id="achievements-list-${personId}"></div>
+                               <p class="muted-text" style="text-align: center; margin-top: 1em;">View all possible achievements via the header button!</p>
+                           </section>`;
+                       contentElement.innerHTML = html;
+                       this.renderAchievementsList(person, `achievements-list-${personId}`);
+                       break;
 
-                  default:
-                      contentElement.innerHTML = `<p>Tab content not implemented yet.</p>`;
-              }
-          } catch (error) {
-              console.error(`Error rendering tab ${tabId}:`, error);
-              contentElement.innerHTML = `<p class="error-text">Error loading content for this section.</p>`;
-          }
-      });
-  }
+                   default:
+                       contentElement.innerHTML = `<p>Tab content not implemented yet.</p>`;
+               }
+           } catch (error) {
+               console.error(`Error rendering tab ${tabId}:`, error);
+               contentElement.innerHTML = `<p class="error-text">Error loading content for this section.</p>`;
+           }
+       });
+   }
 
 
   // --- New Feature Logic ---
-  // MODIFIED: Add loading state to goal actions if needed (usually fast enough)
-  addGoal(personId){ /* ... (existing logic) ... */ }
-  toggleGoalStatus(personId,goalId){ /* ... (existing logic) ... */ }
-  deleteGoal(personId,goalId){ /* ... (existing logic) ... */ }
-  renderGoalList(person){ /* ... (existing logic - ensure it targets the correct ul#goal-list-ID) ... */ }
+  addGoal(personId){const person=this.people.find(p=>p.id===personId);const inputElement=this.elements.modalBody?.querySelector(`#new-goal-text-${personId}`);if(!person||!inputElement)return;const text=inputElement.value.trim();if(!text){this.showNotification("Goal text cannot be empty.","error");return;}const newGoal={id:Date.now(),text:text,status:'todo',createdAt:Date.now()};person.goals=person.goals||[];person.goals.push(newGoal);grantAchievement(person,'goal_added');this.saveToLocalStorage();this.renderGoalList(person);inputElement.value='';inputElement.focus();}
+  toggleGoalStatus(personId,goalId){const person=this.people.find(p=>p.id===personId);const goal=person?.goals?.find(g=>g.id===goalId);if(!goal)return;goal.status=(goal.status==='done'?'todo':'done');if(goal.status==='done'){goal.completedAt=Date.now();grantAchievement(person,'goal_completed');const completedCount=person.goals.filter(g=>g.status==='done').length;if(completedCount>=5)grantAchievement(person,'five_goals_completed');}else{delete goal.completedAt;}this.saveToLocalStorage();this.renderGoalList(person);}
+  deleteGoal(personId,goalId){const person=this.people.find(p=>p.id===personId);if(!person)return;if(confirm('🚨 Delete this goal permanently?')){person.goals=person.goals.filter(g=>g.id!==goalId);this.saveToLocalStorage();this.renderGoalList(person);this.showNotification("Goal deleted.","info");}}
+  renderGoalList(person){const listElement=this.elements.modalBody?.querySelector(`#goal-list-${person.id}`);if(!listElement)return;const goals=person.goals||[];let htmlString='';if(goals.length>0){goals.sort((a,b)=>(a.status==='done'?1:-1)||(b.createdAt-a.createdAt));goals.forEach(goal=>{htmlString+=`<li class="${goal.status==='done'?'done':''}" data-goal-id="${goal.id}"><span>${this.escapeHTML(goal.text)}</span><span class="goal-actions"><button class="toggle-goal-btn small-btn" data-person-id="${person.id}" data-goal-id="${goal.id}" aria-label="${goal.status==='done'?'Mark as to-do':'Mark as done'}">${goal.status==='done'?'🔄':'✅'}</button><button class="delete-goal-btn small-btn delete-btn" data-person-id="${person.id}" data-goal-id="${goal.id}" aria-label="Delete goal">🗑️</button></span></li>`;});}else{htmlString=`<li class="muted-text">No goals set yet. Add one below!</li>`;}listElement.innerHTML=htmlString;}
 
-  showJournalPrompt(personId){ /* ... (existing logic - ensure it targets the correct elements by ID) ... */ }
+  showJournalPrompt(personId){ const promptArea=this.elements.modalBody?.querySelector(`#journal-prompt-area-${personId}`); const textarea=this.elements.modalBody?.querySelector(`#reflections-text-${personId}`); if(promptArea&&textarea){const promptText=getRandomPrompt();promptArea.innerHTML=`<p class="journal-prompt">${this.escapeHTML(promptText)}</p>`;promptArea.style.display='block';textarea.focus();const person = this.people.find(p => p.id === personId); if(person) grantAchievement(person,'prompt_used'); this.saveToLocalStorage();}}
 
   // MODIFIED: Add saving indication
   saveReflections(personId){
       const person=this.people.find(p=>p.id===personId);
       const textarea=this.elements.modalBody?.querySelector(`#reflections-text-${personId}`);
-      const saveButton=this.elements.modalBody?.querySelector(`#save-reflections-btn[data-person-id="${personId}"]`); // More specific selector
+      const saveButton=this.elements.modalBody?.querySelector(`#save-reflections-btn[data-person-id="${personId}"]`);
 
       if(!person||!textarea || !saveButton){this.showNotification("Error saving reflection.","error");return;}
 
-      // Add Loading State
       saveButton.disabled = true;
       saveButton.textContent = 'Saving...';
 
-      // Simulate delay
       setTimeout(() => {
           try {
               const text=textarea.value;
               if(!person.reflections)person.reflections={};
               person.reflections.text=text;
               person.reflections.lastUpdated=Date.now();
-              /* ... achievement logic ... */
+              let newlySaved=false; if(text.trim().length>0){newlySaved=grantAchievement(person,'reflection_saved');} const reflectionCount=this.people.reduce((count,p)=>{return count+(p.reflections?.text?.trim().length>0?1:0);},0); if(reflectionCount>=5)grantAchievement(person,'five_reflections');
               this.saveToLocalStorage();
 
-              // Saving Indication
-              textarea.classList.add('input-just-saved'); // Add CSS for this class (e.g., brief border highlight)
+              textarea.classList.add('input-just-saved');
               setTimeout(() => textarea.classList.remove('input-just-saved'), 1500);
 
-              this.showNotification("Reflection Saved! ✨","success"); // Use main notification
+              this.showNotification("Reflection Saved! ✨","success");
 
           } catch(e) {
               console.error("Error saving reflection:", e);
               this.showNotification("Failed to save reflection.", "error");
           } finally {
-              // Remove Loading State
-              saveButton.textContent='Saved ✓'; // Indicate success briefly
+              saveButton.textContent='Saved ✓';
               setTimeout(()=>{saveButton.textContent='Save Reflection 💭'; saveButton.disabled = false;},2000);
           }
       }, 300);
@@ -924,35 +973,29 @@ class TrackerApp {
   addSnapshotToHistory(personId){
       const person=this.people.find(p=>p.id===personId);
       const snapshotButton = this.elements.modalBody?.querySelector(`#snapshot-btn[data-person-id="${personId}"]`);
-      if(!person||!person.traits||Object.keys(person.traits).length===0){ /* ... error handling ... */ return;}
+      if(!person||!person.traits||Object.keys(person.traits).length===0){ this.showNotification("Cannot take snapshot: No traits recorded yet.","error"); return;}
 
       if (snapshotButton) {
           snapshotButton.disabled = true;
           snapshotButton.textContent = 'Saving...';
       }
 
-      // Simulate delay
       setTimeout(() => {
           try {
               const snapshot={date:Date.now(),traits:{...person.traits},style:person.style};
               person.history=person.history||[];
               person.history.push(snapshot);
-              /* ... achievement logic ... */
+              grantAchievement(person,'history_snapshot'); if(person.history.length>=10)grantAchievement(person,'ten_snapshots');
               this.saveToLocalStorage();
               this.showNotification("Snapshot saved! 📸","success");
 
-              // Re-render chart if the history tab is active
               if (this.activeDetailModalTab === 'tab-history') {
                  const chartCanvasId = `history-chart-${personId}`;
                  this.renderHistoryChart(person, chartCanvasId);
               }
-               // Re-render achievements if that tab is active (or just update data silently)
                if (this.activeDetailModalTab === 'tab-achievements') {
                   const listId = `achievements-list-${personId}`;
                   this.renderAchievementsList(person, listId);
-               } else {
-                   // If achievements are global, maybe update the main achievement modal data?
-                   // Or just let it refresh next time it's opened.
                }
           } catch (e) {
               console.error("Error taking snapshot:", e);
@@ -966,9 +1009,9 @@ class TrackerApp {
       }, 300);
   }
 
-  // MODIFIED: renderHistoryChart - accept canvas ID, add legend interaction
+  // MODIFIED: renderHistoryChart
   renderHistoryChart(person, canvasId) {
-      const container=this.elements.modalBody?.querySelector(`#${canvasId}`)?.parentElement; // Get container from canvas
+      const container=this.elements.modalBody?.querySelector(`#${canvasId}`)?.parentElement;
       const canvas=container?.querySelector(`#${canvasId}`);
 
       if(this.chartInstance && this.chartInstance.canvas.id === canvasId){
@@ -979,13 +1022,11 @@ class TrackerApp {
       if(!canvas){container.innerHTML=`<p>Error: Chart canvas element missing.</p>`;return;}
 
       const history=person.history||[];
-      if(history.length===0){ /* ... handle no history ... */ return;}
-      if(container.querySelector('p')){container.innerHTML=`<canvas id="${canvasId}"></canvas>`;} // Replace placeholder if needed
+      if(history.length===0){ container.innerHTML=`<p class="muted-text">No history snapshots yet!</p>`; return;}
+      if(container.querySelector('p')){container.innerHTML=`<canvas id="${canvasId}"></canvas>`;}
 
-      // Add loading state (optional, good for many points)
       container.classList.add('chart-loading');
 
-      // Use setTimeout to ensure DOM is ready and show loading state
       setTimeout(() => {
           try {
               const ctx=container.querySelector(`#${canvasId}`).getContext('2d');
@@ -995,10 +1036,9 @@ class TrackerApp {
               if(person.traits)Object.keys(person.traits).forEach(name=>allTraitNames.add(name));
 
               const datasets=[];
-              const colors=['#ff69b4','#8a5a6d','#a0d8ef','#dcc1ff','#ff85cb','#4a2c3d','#f4d4e4','#c49db1', '#f5b7b1', '#a9dfbf', '#f7dc6f', '#aebece']; // Expanded colors
+              const colors=['#ff69b4','#8a5a6d','#a0d8ef','#dcc1ff','#ff85cb','#4a2c3d','#f4d4e4','#c49db1', '#f5b7b1', '#a9dfbf', '#f7dc6f', '#aebece'];
               let colorIndex=0;
 
-              // Identify current style/core traits for potential highlighting
               const roleData = bdsmData[person.role];
               const styleObj = roleData?.styles?.find(s => s.name === person.style);
               const currentTraitNames = new Set([
@@ -1009,18 +1049,14 @@ class TrackerApp {
               allTraitNames.forEach(traitName=>{
                   const data=history.map(s=>s.traits[traitName]!==undefined?parseInt(s.traits[traitName],10):null);
                   const color=colors[colorIndex%colors.length];
-                  const isCurrentTrait = currentTraitNames.has(traitName); // Check if relevant
+                  const isCurrentTrait = currentTraitNames.has(traitName);
 
                   datasets.push({
                       label:traitName.charAt(0).toUpperCase()+traitName.slice(1),
-                      data:data,
-                      borderColor:color,
-                      backgroundColor:color+'80',
-                      tension:0.1,
-                      fill:false,
-                      spanGaps:true,
-                      pointRadius: isCurrentTrait ? 5 : 3, // Highlight relevant traits
-                      borderWidth: isCurrentTrait ? 2.5 : 1.5, // Highlight relevant traits
+                      data:data, borderColor:color, backgroundColor:color+'80',
+                      tension:0.1, fill:false, spanGaps:true,
+                      pointRadius: isCurrentTrait ? 5 : 3,
+                      borderWidth: isCurrentTrait ? 2.5 : 1.5,
                       pointHoverRadius:6
                   });
                   colorIndex++;
@@ -1030,63 +1066,57 @@ class TrackerApp {
               const gridColor=isDark?'rgba(244, 212, 228, 0.15)':'rgba(74, 44, 61, 0.1)';
               const labelColor=isDark?'#c49db1':'#8a5a6d';
 
-              // Store reference associated with the canvas ID if managing multiple charts
               this.chartInstance = new Chart(ctx,{
-                  type:'line',
-                  data:{labels:labels,datasets:datasets},
+                  type:'line', data:{labels:labels,datasets:datasets},
                   options:{
-                      responsive:true,
-                      maintainAspectRatio:false,
+                      responsive:true, maintainAspectRatio:false,
                       plugins:{
                           legend:{
-                              position:'bottom',
-                              labels:{color:labelColor, boxWidth:12, padding:15},
-                              // NEW: Default Chart.js v3+ legend click handler usually works for toggling.
-                              // Explicitly setting it ensures it if needed.
+                              position:'bottom', labels:{color:labelColor, boxWidth:12, padding:15},
                               onClick: (e, legendItem, legend) => {
-                                  const index = legendItem.datasetIndex;
-                                  const ci = legend.chart;
-                                  if (ci.isDatasetVisible(index)) {
-                                      ci.hide(index);
-                                      legendItem.hidden = true;
-                                  } else {
-                                      ci.show(index);
-                                      legendItem.hidden = false;
-                                  }
+                                  const index = legendItem.datasetIndex; const ci = legend.chart;
+                                  if (ci.isDatasetVisible(index)) { ci.hide(index); legendItem.hidden = true; }
+                                  else { ci.show(index); legendItem.hidden = false; }
                               }
                           },
-                          tooltip:{ /* ... existing tooltip options ... */ }
+                          tooltip:{mode:'index',intersect:false,backgroundColor:isDark?'rgba(255,255,255,0.9)':'rgba(0,0,0,0.8)',titleColor:isDark?'#000':'#fff',bodyColor:isDark?'#000':'#fff',borderColor:isDark?'#ccc':'#333',borderWidth:1}
                       },
-                      scales:{ /* ... existing scale options ... */ }
+                      scales:{y:{min:1,max:5,ticks:{stepSize:1,color:labelColor},grid:{color:gridColor}},x:{ticks:{color:labelColor},grid:{color:gridColor}}}
                   }
               });
           } catch (chartError) {
               console.error("Failed to render history chart:", chartError);
               container.innerHTML = `<p class="error-text">Could not display history chart.</p>`;
           } finally {
-              container.classList.remove('chart-loading'); // Remove loading state
+              container.classList.remove('chart-loading');
           }
-      }, 50); // Small delay
+      }, 50);
   }
 
-  toggleSnapshotInfo(button){ /* ... (existing logic) ... */ }
+  toggleSnapshotInfo(button){const infoPanel=button.closest('.history-section')?.querySelector('.snapshot-info');if(infoPanel){const isHidden=infoPanel.style.display==='none';infoPanel.style.display=isHidden?'block':'none';button.setAttribute('aria-expanded',isHidden);}}
 
-  // MODIFIED: Renamed to avoid conflict, ensure it targets correct element ID
+  // MODIFIED: Renamed
   renderAchievementsList(person, listElementId){
       const listElement=this.elements.modalBody?.querySelector(`#${listElementId}`);
       if(!listElement)return;
-      /* ... (rest of existing logic) ... */
-      listElement.innerHTML=htmlString || `<p class="muted-text">No achievements unlocked for this persona yet!</p>`;
-  }
+      const achievements=person.achievements||[];
+      let htmlString='';
+      if(achievements.length>0){
+          htmlString+=`<ul>`;
+          achievements.forEach(id=>{ const details=achievementList[id]; if(details){ const icon=details.name.match(/([\p{Emoji}\p{Emoji_Modifier}\p{Emoji_Component}\p{Emoji_Presentation}\p{Emoji_Modifier_Base}]+)/u)?.[0]||'🏆'; htmlString+=`<li title="${this.escapeHTML(details.desc)}"><span class="achievement-icon">${icon}</span><span class="achievement-name">${this.escapeHTML(details.name)}</span></li>`;}});
+          htmlString+=`</ul>`;
+      } else { htmlString=`<p class="muted-text">No achievements unlocked for this persona yet!</p>`;}
+      listElement.innerHTML=htmlString;
+   }
 
-  // NEW: Show the dedicated Achievements Modal (shows ALL unlocked across profiles)
+  // NEW: Show the dedicated Achievements Modal
   showAchievements() {
     if (!this.elements.achievementsBody || !this.elements.achievementsModal) return;
 
     const allUnlockedIds = new Set(this.people.flatMap(p => p.achievements || []));
     let html = '<h2>🏆 All Unlocked Achievements 🏆</h2>';
     html += '<p>Achievements earned across all your personas.</p>';
-    html += '<ul class="all-achievements-list">'; // Add a class for specific styling
+    html += '<ul class="all-achievements-list">';
 
     const sortedAchievementKeys = Object.keys(achievementList).sort((a, b) =>
         achievementList[a].name.localeCompare(achievementList[b].name)
@@ -1103,8 +1133,10 @@ class TrackerApp {
             html += `
                 <li class="${unlocked ? 'unlocked' : 'locked'}" title="${unlocked ? this.escapeHTML(details.desc) : 'Locked'}">
                     <span class="achievement-icon">${unlocked ? icon : '❓'}</span>
-                    <span class="achievement-name">${this.escapeHTML(details.name)}</span>
-                    ${unlocked ? `<span class="achievement-desc">${this.escapeHTML(details.desc)}</span>` : '<span class="achievement-desc muted-text">Keep exploring to unlock!</span>'}
+                    <div class="achievement-details"> {/* NEW Wrapper */}
+                        <span class="achievement-name">${this.escapeHTML(details.name)}</span>
+                        ${unlocked ? `<span class="achievement-desc">${this.escapeHTML(details.desc)}</span>` : '<span class="achievement-desc muted-text">Keep exploring to unlock!</span>'}
+                    </div>
                 </li>`;
         });
     }
@@ -1115,31 +1147,28 @@ class TrackerApp {
 }
 
 
-  showKinkReading(personId){ /* ... (existing logic - ensure targets correct output ID) ... */ }
-  getReadingDescriptor(traitName,score){ /* ... (existing logic) ... */ }
-  getStyleEssence(styleName){ /* ... (existing logic) ... */ }
+  showKinkReading(personId){ const person=this.people.find(p=>p.id===personId); const outputElement=this.elements.modalBody?.querySelector(`#kink-reading-output-${personId}`); if(!person||!outputElement)return; grantAchievement(person,'kink_reading'); this.saveToLocalStorage(); if (this.activeDetailModalTab === 'tab-achievements') {this.renderAchievementsList(person, `achievements-list-${personId}`);} let reading=`🔮 ${this.escapeHTML(person.name)}'s Kink Compass Reading 🔮\n\nEmbracing the path of a **${this.escapeHTML(person.style)} ${person.role}**, your journey unfolds with unique sparkles!\n\n`; const traits=person.traits||{}; const sortedTraits=Object.entries(traits).map(([name,score])=>({name,score:parseInt(score,10)})).sort((a,b)=>b.score-a.score); if(sortedTraits.length>0){const highest=sortedTraits[0];const lowest=sortedTraits[sortedTraits.length-1];const coreTrait1=bdsmData[person.role]?.coreTraits?.[0]?.name;const coreTrait2=bdsmData[person.role]?.coreTraits?.[1]?.name;reading+=`✨ Your current North Star appears to be **${highest.name} (Lvl ${highest.score})**: ${this.getReadingDescriptor(highest.name,highest.score)}.\n\n`;if(coreTrait1&&traits[coreTrait1]!==undefined){reading+=`🧭 Core Compass Point - **${coreTrait1} (Lvl ${traits[coreTrait1]})**: Reflects ${this.getReadingDescriptor(coreTrait1,traits[coreTrait1])}.\n`;}if(coreTrait2&&traits[coreTrait2]!==undefined){reading+=`🧭 Core Compass Point - **${coreTrait2} (Lvl ${traits[coreTrait2]})**: Resonates with ${this.getReadingDescriptor(coreTrait2,traits[coreTrait2])}.\n`;}if(sortedTraits.length>1&&highest.score!==lowest.score){reading+=`\n🌱 An area ripe for exploration or growth might be **${lowest.name} (Lvl ${lowest.score})**: Consider exploring aspects of ${this.getReadingDescriptor(lowest.name,lowest.score)}.\n`;}}else{reading+=`Your trait map is currently uncharted! Explore the sliders to define your path.\n`;}reading+=`\n💖 Remember, the essence of being a ${this.escapeHTML(person.style)} is about **${this.getStyleEssence(person.style)}**. Continue exploring authentically!\n`; outputElement.textContent=reading; outputElement.style.display='block'; outputElement.focus();}
+  getReadingDescriptor(traitName,score){score=parseInt(score,10); const highThreshold=4; const lowThreshold=2; const baseDescriptions={'obedience':'following guidance','trust':'opening up','service':'helping others','presentation':'how you appear','playful defiance':'pushing boundaries','mischief':'causing playful trouble','devotion':'deep loyalty','surrender':'letting go of control','affection seeking':'desiring closeness','playfulness':'engaging in fun','non-verbal expression':'communicating without words','age regression comfort':"embracing a younger mindset",'need for guidance':'relying on structure','boundless energy':'enthusiasm','trainability':'learning quickly','curiosity':'investigating','gracefulness':'poise','desire for pampering':'being spoiled','delegation tendency':'letting others help','rope enthusiasm':'enjoying bonds','patience during tying':'stillness','pain interpretation':'processing sensation','sensation seeking':'craving intensity','enjoyment of chase':'the thrill of pursuit','fear play comfort':'flirting with vulnerability','objectification comfort':'being a focus','responsiveness to control':'adapting to direction','aesthetic focus':'visual appeal','stillness / passivity':'calm inaction','shyness / skittishness':'gentle caution','gentle affection need':'soft interactions','task focus':'completing duties','anticipating needs':'proactive help','enthusiasm for games':'loving play','good sport':'playing fairly','vulnerability expression':'showing softness','coquettishness':'playful charm','struggle performance':'acting resistant','acceptance of fate':'inner yielding','mental focus':'deep concentration','suggestibility':'openness to influence','responsiveness to direction':'following commands','passivity in control':'waiting for direction','attention to detail':'precision','uniformity':'embracing attire','pain seeking':'desiring intensity','endurance display':'showing toughness','receptivity':'openness to receiving','power exchange focus':'enjoying the dynamic','authority':'taking charge','care':'nurturing others','leadership':'guiding','control':'managing details','direct communication':'clarity','boundary setting':'defining limits','emotional support':'comforting others','patience':'calm guidance','rule enforcement':'maintaining order','discipline focus':'using consequences','expectation setting':'defining standards','presence':'commanding aura','protective guidance':'fatherly care','affectionate authority':'warm firmness','nurturing comfort':'motherly care','gentle discipline':'kind correction','possessiveness':'claiming','behavioral training':'shaping actions','rope technique':'skill with knots','aesthetic vision':'visual artistry','sensation control':'precise delivery','psychological focus':"observing reactions",'pursuit drive':'instinct to chase','instinct reliance':'acting on gut feeling','skill development focus':'teaching ability','structured methodology':'using clear steps','fine motor control':'precise direction','objectification gaze':'viewing as object','vigilance':'watchfulness','defensive instinct':'shielding others','consequence delivery':'administering punishment','detachment during discipline':'objectivity','holistic well-being focus':'overall care','rule implementation for safety':'practical structure','formal demeanor':'respectful authority','service expectation':'requiring respect','worship seeking':'desiring adoration','effortless command':'innate authority','strategic direction':'planning actions','decisiveness':'firm choices',}; const defaultDesc=traitName; if(score>=highThreshold){return`a strong affinity for ${baseDescriptions[traitName]||defaultDesc}`;}else if(score<=lowThreshold){return`potential hesitation or less focus on ${baseDescriptions[traitName]||defaultDesc}`;}else{return`a balanced approach to ${baseDescriptions[traitName]||defaultDesc}`;}}
+  getStyleEssence(styleName){const essences={'Classic Submissive':'trust and willingness','Brat':'playful challenge and connection','Slave':'profound devotion and service','Pet':'affectionate loyalty and play','Little':'innocent joy and secure dependence','Puppy':'boundless enthusiasm and eagerness to please','Kitten':'curious grace and affectionate independence','Princess':'being cherished and adored','Rope Bunny':'aesthetic surrender and sensation','Masochist':'transcending limits through sensation','Prey':'the exhilarating dance of pursuit','Toy':'delighting in being used and responsive','Doll':'embodying curated perfection and passivity','Bunny':'gentle connection and soft vulnerability','Servant':'finding purpose in meticulous duty','Playmate':'shared joy and adventurous fun','Babygirl':'charming vulnerability and needing care','Captive':'the dramatic tension of capture and surrender','Thrall':'deep mental connection and yielding','Puppet':'responsive surrender to direct control','Maid':'order, presentation, and respectful service','Painslut':'boldly embracing and seeking intensity','Bottom':'receptive strength and power exchange','Classic Dominant':'confident guidance and responsibility','Assertive':'clear communication and setting direction','Nurturer':'compassionate support and fostering growth','Strict':'structure, order, and clear expectations','Master':'profound authority and shaping potential','Mistress':'elegant command and creative control','Daddy':'protective guidance and affectionate firmness','Mommy':'warm nurturing and gentle structure','Owner':'possessive care and shaping behavior','Rigger':'the artful application of restraint','Sadist':'the controlled exploration of sensation','Hunter':'the primal thrill of the chase','Trainer':'patiently cultivating skills and discipline','Puppeteer':'precise control and creative direction','Protector':'steadfast vigilance and ensuring safety','Disciplinarian':'fair correction and maintaining standards','Caretaker':'holistic well-being and providing comfort','Sir':'dignified authority and earned respect','Goddess':'inspiring worship through presence','Commander':'strategic leadership and decisive action','Fluid Switch': 'versatility and dynamic flow', 'Dominant-Leaning Switch':'leading with flexibility', 'Submissive-Leaning Switch':'following with flexibility', 'Situational Switch':'adapting to the moment'}; const key=styleName?.replace(/\(.*?\)/g,'').trim()||''; return essences[key]||`your unique expression`;}
 
-  // MODIFIED: Add optional termKey to highlight/scroll, add glossary links
+  // MODIFIED: showGlossary with logging and test structure
 showGlossary(termKeyToHighlight = null) {
-    console.log("--- Entering showGlossary (Simple Test) ---");
+    // Add logs INSIDE this function
+    console.log("--- Entering showGlossary (Testing Import) ---", termKeyToHighlight); // <<-- Log Entry
+
     console.log("Imported glossaryTerms:", glossaryTerms); // <<-- FOCUS ON THIS LOG
-    // Comment out the rest of the function for now
+    // Check if it's an object and has keys
+    if (typeof glossaryTerms !== 'object' || glossaryTerms === null || Object.keys(glossaryTerms).length === 0) {
+         console.error("!!! glossaryTerms is empty or invalid!", glossaryTerms);
+    }
+
+    // --- >>> TEMPORARILY COMMENT OUT FROM HERE... <<< ---
     /*
-    if (!this.elements.glossaryBody || !this.elements.glossaryModal) { ... }
-    grantAchievement(...);
-    let html = ...
-    try { ... } catch { ... }
-    this.elements.glossaryBody.innerHTML = html;
-    this.openModal(...);
-    if (termKeyToHighlight) { ... }
-    */
-    console.log("--- Exiting showGlossary (Simple Test) ---");
-}
     if (!this.elements.glossaryBody || !this.elements.glossaryModal) {
-        console.error("!!! showGlossary Error: Missing glossaryBody or glossaryModal element!"); // <<-- ADD 2
+        console.error("!!! showGlossary Error: Missing glossaryBody or glossaryModal element!");
         return; // Stop if elements are missing
     }
-    console.log("Glossary elements found:", this.elements.glossaryBody, this.elements.glossaryModal); // <<-- ADD 3
+    console.log("Glossary elements found:", this.elements.glossaryBody, this.elements.glossaryModal);
 
     grantAchievement({}, 'glossary_user');
 
@@ -1147,51 +1176,53 @@ showGlossary(termKeyToHighlight = null) {
     try { // Add try..catch around HTML generation
         Object.entries(glossaryTerms).sort((a, b) => a[1].term.localeCompare(b[1].term))
             .forEach(([key, termData]) => {
-                // ... (HTML generation logic) ...
+                 // Log inside the loop for the first item only?
+                 if (html === '<dl>') { // Log only once
+                     console.log("Looping through glossary term:", key, termData);
+                 }
+                 // --- Original HTML Generation Logic Would Be Here ---
+                 const termId = `gloss-term-${key}`;
+                 const isHighlighted = key === termKeyToHighlight;
+                 html += `<dt id="${termId}" class="${isHighlighted ? 'highlighted-term' : ''}">${this.escapeHTML(termData.term)}</dt>`;
+                 html += `<dd>${this.escapeHTML(termData.definition)}`;
+                 if (termData.related?.length) {
+                     html += `<br><span class="related-terms">See also: `;
+                     html += termData.related.map(relKey => {
+                         const relatedTerm = glossaryTerms[relKey]?.term || relKey;
+                         return `<a href="#gloss-term-${relKey}" class="glossary-link" data-term-key="${relKey}">${this.escapeHTML(relatedTerm)}</a>`;
+                     }).join(', ');
+                     html += `</span>`;
+                 }
+                 html += `</dd>`;
+                 // --- End of original HTML Generation ---
             });
         html += '</dl>';
-        console.log("Generated Glossary HTML (snippet):", html.substring(0, 200)); // <<-- ADD 4
+        console.log("Generated Glossary HTML (snippet):", html.substring(0, 200));
     } catch (htmlError) {
-         console.error("!!! showGlossary Error: Failed to generate HTML!", htmlError); // <<-- ADD 5
+         console.error("!!! showGlossary Error: Failed to generate HTML!", htmlError);
          this.elements.glossaryBody.innerHTML = "<p class='error-text'>Error loading glossary content.</p>";
-         this.openModal(this.elements.glossaryModal); // Still open modal to show error
+         // this.openModal(this.elements.glossaryModal); // Don't open if HTML failed
          return;
     }
 
     this.elements.glossaryBody.innerHTML = html;
-    console.log("Set glossaryBody innerHTML."); // <<-- ADD 6
+    console.log("Set glossaryBody innerHTML.");
 
-    // --- PROBLEM LIKELY HERE ---
     this.openModal(this.elements.glossaryModal);
-    console.log("Called openModal for glossaryModal."); // <<-- ADD 7
+    console.log("Called openModal for glossaryModal.");
 
     // Scroll logic (should happen after modal is open)
     if (termKeyToHighlight) {
-        // ... (scroll logic) ...
+         const termElement = this.elements.glossaryBody.querySelector(`#gloss-term-${termKeyToHighlight}`);
+         requestAnimationFrame(() => { // Ensure element is visible before scrolling
+            termElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+         });
     }
-    console.log("--- Exiting showGlossary ---"); // <<-- ADD 8
-}
+    */
+    // --- >>> ...TO HERE <<< ---
 
-// Also add logs inside openModal
-openModal(modalElement){
-    console.log("--- Entering openModal --- Trying to open:", modalElement?.id); // <<-- ADD 9
-    if(!modalElement){
-         console.error("!!! openModal Error: modalElement is null or undefined!"); // <<-- ADD 10
-         return;
-    }
-    modalElement.style.display='flex';
-    modalElement.setAttribute('aria-hidden', 'false'); // Also set ARIA
-    console.log(`Set display='flex' for #${modalElement.id}. Current display:`, window.getComputedStyle(modalElement).display); // <<-- ADD 11
-
-    const focusable = modalElement.querySelector('button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])');
-    if(focusable) {
-        console.log(`Found focusable element in #${modalElement.id}:`, focusable); // <<-- ADD 12
-        requestAnimationFrame(()=> focusable.focus());
-    } else {
-        console.warn(`No focusable element found in #${modalElement.id}.`); // <<-- ADD 13
-    }
-    console.log("--- Exiting openModal ---"); // <<-- ADD 14
-}
+    console.log("--- Exiting showGlossary (Testing Import) ---"); // <<-- Log Exit
+} // <--- This is the closing brace for the showGlossary function
 
 
   // MODIFIED: Show style discovery, potentially highlighting a style
@@ -1256,27 +1287,26 @@ openModal(modalElement){
   }
 
 
-  setTheme(themeName){ /* ... (existing logic) ... */ }
-  applySavedTheme(){ /* ... (existing logic) ... */ }
-  toggleTheme(){ /* ... (existing logic) ... */ }
-  exportData(){ /* ... (existing logic) ... */ }
-  importData(event){ /* ... (existing logic) ... */ }
+  setTheme(themeName){ document.body.setAttribute('data-theme',themeName); const isDark=themeName==='dark'||themeName==='velvet'; if(this.elements.themeToggle){this.elements.themeToggle.textContent=isDark?'☀️':'🌙';this.elements.themeToggle.setAttribute('title',`Switch to ${isDark?'Light':'Dark'} Mode`);} try{localStorage.setItem('kinkCompassTheme',themeName);}catch(e){console.warn("Failed to save theme:",e);} if(this.chartInstance&&this.currentEditId){const person=this.people.find(p=>p.id===this.currentEditId); if(person && this.activeDetailModalTab === 'tab-history'){ const chartCanvasId = `history-chart-${this.currentEditId}`; this.renderHistoryChart(person, chartCanvasId);}} } // Re-render chart on theme change if visible
+  applySavedTheme(){let savedTheme='light';try{if(typeof localStorage!=='undefined')savedTheme=localStorage.getItem('kinkCompassTheme')||'light';}catch(e){console.warn("Failed to read saved theme:",e);}this.setTheme(savedTheme);console.log(`Applied saved theme: ${savedTheme}`);}
+  toggleTheme(){const currentTheme=document.body.getAttribute('data-theme')||'light';const isCurrentlyDark=currentTheme==='dark'||currentTheme==='velvet';this.setTheme(isCurrentlyDark?'light':'dark');}
+  exportData(){if(this.people.length===0){this.showNotification("No personas to export!","info");return;}try{const dataString=JSON.stringify(this.people,null,2);const blob=new Blob([dataString],{type:"application/json"});const url=URL.createObjectURL(blob);const anchor=document.createElement('a');anchor.href=url;anchor.download=`kinkcompass_personas_${new Date().toISOString().slice(0,10)}.json`;anchor.click();URL.revokeObjectURL(url);grantAchievement({},'data_exported');this.showNotification("Data exported successfully!","success");anchor.remove();}catch(e){console.error("Export failed:",e);this.showNotification("Export failed.","error");}}
+  importData(event){const file=event.target.files?.[0];if(!file){return;}if(file.type!=="application/json"){this.showNotification("Import failed: File must be JSON.","error");event.target.value=null;return;}const reader=new FileReader();reader.onload=(e)=>{try{const importedData=JSON.parse(e.target.result);if(!Array.isArray(importedData)){throw new Error("Invalid format: Not an array.");}const validatedData=importedData.map(p=>({...p,id:p.id??Date.now(),name:p.name??"Unnamed",role:p.role??"submissive",style:p.style??"",avatar:p.avatar||'❓',goals:Array.isArray(p.goals)?p.goals:[],history:Array.isArray(p.history)?p.history:[],achievements:Array.isArray(p.achievements)?p.achievements:[],reflections:typeof p.reflections==='object'&&p.reflections!==null?p.reflections:{text:p.reflections||''},traits:typeof p.traits==='object'&&p.traits!==null?p.traits:{}}));if(confirm(`Import ${validatedData.length} personas? This will OVERWRITE your current ${this.people.length} personas.`)){this.people=validatedData;this.saveToLocalStorage();this.renderList();this.resetForm();this.showNotification(`Imported ${this.people.length} personas.`,"success");grantAchievement({},'data_imported');}}catch(err){console.error("Import failed:",err);this.showNotification(`Import failed: ${err.message}`,"error");}finally{event.target.value=null;}};reader.onerror=()=>{this.showNotification("Error reading file.","error");event.target.value=null;};reader.readAsText(file);}
 
-  // MODIFIED: Add context help display
-  showTraitInfo(traitName){ /* ... (existing logic for trait info popup) ... */ }
-  hideTraitInfo(){ /* ... (existing logic for trait info popup) ... */ }
+  showTraitInfo(traitName){ const roleKey=this.elements.role.value; const styleName=this.elements.style.value; const roleData=bdsmData[roleKey]; let traitDef=null; if(roleData){if(styleName){const styleObj=roleData.styles?.find(s=>s.name===styleName); traitDef=styleObj?.traits?.find(t=>t.name===traitName);} if(!traitDef)traitDef=roleData.coreTraits?.find(t=>t.name===traitName); if(!traitDef&&roleKey==='switch')traitDef=bdsmData.switch?.coreTraits?.find(t=>t.name===traitName);} if(traitDef&&this.elements.traitInfoPopup&&this.elements.traitInfoTitle&&this.elements.traitInfoBody){const title=traitName.charAt(0).toUpperCase()+traitName.slice(1); this.elements.traitInfoTitle.textContent=`${this.getEmojiForScore(3)} ${title} Levels Explained`; let bodyHtml=''; for(let i=1;i<=5;i++){const score=String(i); const description=traitDef.desc?.[score]||`(No description for Level ${score})`; const emoji=this.getEmojiForScore(score); bodyHtml+=`<p><strong>${emoji} Level ${score}:</strong> ${this.escapeHTML(description)}</p>`;} this.elements.traitInfoBody.innerHTML=bodyHtml; this.elements.traitInfoPopup.style.display='block'; this.elements.traitInfoPopup.setAttribute('aria-hidden','false'); this.elements.traitInfoClose?.focus(); // this.elements.traitInfoPopup.scrollIntoView({behavior:'smooth',block:'nearest'}); // Might not be needed if popup overlays
+  } else {console.warn(`Could not find trait definition or popup elements for '${traitName}'`); this.hideTraitInfo();} }
+  hideTraitInfo(){if(this.elements.traitInfoPopup){this.elements.traitInfoPopup.style.display='none'; this.elements.traitInfoPopup.setAttribute('aria-hidden','true');}}
 
   // NEW: Show/Hide Generic Context Help Popup
   showContextHelp(helpKey) {
       const helpText = contextHelpTexts[helpKey];
       if (helpText && this.elements.contextHelpPopup && this.elements.contextHelpTitle && this.elements.contextHelpBody) {
-          const title = helpKey.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).replace(/ Info$/, ''); // Make title user-friendly
+          const title = helpKey.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).replace(/ Info$/, '');
           this.elements.contextHelpTitle.textContent = `💡 ${title} Explained`;
-          this.elements.contextHelpBody.innerHTML = `<p>${this.escapeHTML(helpText)}</p>`; // Simple text for now
+          this.elements.contextHelpBody.innerHTML = `<p>${this.escapeHTML(helpText)}</p>`;
           this.elements.contextHelpPopup.style.display = 'block';
           this.elements.contextHelpPopup.setAttribute('aria-hidden', 'false');
           this.elements.contextHelpClose?.focus();
-          // No scrollIntoView needed as it overlays
       } else {
           console.warn(`Could not find help text or popup elements for key '${helpKey}'`);
           this.hideContextHelp();
@@ -1290,89 +1320,107 @@ openModal(modalElement){
   }
 
   // --- Style Finder Methods ---
-  sfStart(){ /* ... (existing logic) ... */ this.sfShowDashboardDuringTraits = false; /* Reset dashboard toggle */}
-  sfClose(){ /* ... (existing logic) ... */ }
-  sfCalculateSteps(){ /* ... (existing logic) ... */ }
-
-  // MODIFIED: Style Finder Step Rendering - Add dashboard toggle, intro text
+  sfStart(){this.sfActive=true; this.sfStep=0; this.sfRole=null; this.sfIdentifiedRole=null; this.sfAnswers={rolePreference:null, traits:{}}; this.sfScores={}; this.sfHasRenderedDashboard=false; this.sfPreviousScores={}; this.sfTraitSet=[]; this.sfSteps=[]; if(this.elements.sfDashboard)this.elements.sfDashboard.style.display='none'; if(this.elements.sfFeedback)this.elements.sfFeedback.textContent=''; if(!this.elements.sfStepContent){console.error("SF step content element missing!"); alert("Error starting Style Finder."); return;} this.openModal(this.elements.sfModal); this.sfRenderStep(); this.sfShowFeedback("Let’s begin your journey!"); grantAchievement({},'style_finder_complete'); this.sfShowDashboardDuringTraits = false; } // Reset dashboard toggle on start
+  sfClose(){this.sfActive=false; this.closeModal(this.elements.sfModal); console.log("Style Finder closed.");}
+  sfCalculateSteps(){this.sfSteps=[]; this.sfSteps.push({type:'welcome'}); this.sfSteps.push({type:'roleIdentification'}); if(this.sfIdentifiedRole==='switch'){this.sfSteps.push({type:'switchClarification'});} if(this.sfRole){const baseTraitSet=(this.sfRole==='dominant'?this.sfDomFinderTraits:this.sfSubFinderTraits); if(this.sfTraitSet.length===0){this.sfTraitSet=[...baseTraitSet].sort(()=>0.5-Math.random());} this.sfTraitSet.forEach(trait=>this.sfSteps.push({type:'trait',trait:trait.name})); this.sfSteps.push({type:'roundSummary',round:'Traits'});} this.sfSteps.push({type:'result'});}
+  // MODIFIED: Style Finder Step Rendering
   sfRenderStep() {
       if (!this.sfActive || !this.elements.sfStepContent) return;
       this.sfCalculateSteps();
-      // ... (step index validation) ...
-      const step = this.sfSteps[this.sfStep];
-      if (!step) { /* ... error handling ... */ return; }
+      if (this.sfStep < 0 || this.sfStep >= this.sfSteps.length) { console.error(`Invalid SF step index: ${this.sfStep}. Resetting.`); this.sfStep=0; this.sfCalculateSteps(); if (this.sfSteps.length === 0){this.elements.sfStepContent.innerHTML="<p>Error calculating steps.</p>"; return;}}
 
-      console.log(`Rendering SF Step ${this.sfStep}:`, step);
-      let html = "";
-      // ... (progress tracker logic) ...
+      const step=this.sfSteps[this.sfStep];
+      if(!step){console.error(`No step data for index ${this.sfStep}`); this.elements.sfStepContent.innerHTML="<p>Error loading step.</p>"; return;}
+      console.log(`Rendering SF Step ${this.sfStep}:`,step);
 
-      switch (step.type) {
-          case 'welcome': /* ... */ break;
-          case 'roleIdentification': /* ... */ break;
-          case 'switchClarification': /* ... */ break;
+      let html="";
+      const progressTracker=this.elements.sfProgressTracker;
+      if(step.type==='trait'&&this.sfRole&&this.sfTraitSet.length>0){const currentTraitIndex=this.sfTraitSet.findIndex(t=>t.name===step.trait); if(currentTraitIndex!==-1&&progressTracker){const questionsLeft=this.sfTraitSet.length-(currentTraitIndex+1); progressTracker.style.display='block'; progressTracker.textContent=`Trait ${currentTraitIndex+1} / ${this.sfTraitSet.length} (${questionsLeft} more!)`;}else{if(progressTracker)progressTracker.style.display='none'; console.warn(`Trait '${step.trait}' not found for progress.`);}}else{if(progressTracker)progressTracker.style.display='none';}
+
+      switch(step.type){
+          case 'welcome':html=`<h2>Welcome, Brave Explorer!</h2><p>Dive into a quest to find your BDSM style!</p><div class="sf-button-container"><button data-action="next">Start the Journey! ✨</button></div>`; break;
+          case 'roleIdentification':html=`<h2>Your Core Inclination?</h2><p>When you think about dynamics, do you naturally gravitate towards:</p><div class="sf-button-container"><button data-action="identifyRole" data-identified-role="dominant">Leading / Guiding?</button><button data-action="identifyRole" data-identified-role="submissive">Following / Supporting?</button><button data-action="identifyRole" data-identified-role="switch">Both / It Depends?</button></div>`; break;
+          case 'switchClarification':html=`<h2>Switch Exploration!</h2><p>You indicated you enjoy both roles! For this quiz, which side do you want to explore *right now* to find related styles?</p><div class="sf-button-container"><button data-action="setRole" data-role="dominant">Explore my Dominant side</button><button data-action="setRole" data-role="submissive">Explore my Submissive side</button><button data-action="prev">Back to Role Choice</button></div>`; break;
           case 'trait':
-              const traitObj = this.sfTraitSet.find(t => t.name === step.trait);
-              if (!traitObj) { /* ... error loading trait ... */ break; }
-              const currentValue = this.sfAnswers.traits[traitObj.name] ?? 5; // Default to 5
-              // ... (footnote, sliderDesc logic) ...
-              const isFirstTraitStep = this.sfSteps.findIndex(s => s.type === 'trait') === this.sfStep;
+              const traitObj=this.sfTraitSet.find(t=>t.name===step.trait); if(!traitObj){html=`<p>Error loading trait: ${step.trait}.</p> <button data-action="prev">Back</button>`; break;}
+              const currentValue=this.sfAnswers.traits[traitObj.name]??5;
+              const footnoteSet=(this.sfRole==='dominant'?this.sfDomTraitFootnotes:this.sfSubTraitFootnotes);
+              const footnote=footnoteSet[traitObj.name]||"1: Least / 10: Most";
+              const isFirstTraitStep=this.sfSteps.findIndex(s=>s.type==='trait')===this.sfStep;
+              const sliderDescArray=this.sfSliderDescriptions?.[traitObj.name]??[];
+              const safeCurrentValue=Number(currentValue); let sliderDescText=`Level ${safeCurrentValue}`; const safeIndex=safeCurrentValue-1;
+              if(safeIndex>=0&&safeIndex<sliderDescArray.length){sliderDescText=sliderDescArray[safeIndex];}else{console.warn(`Slider desc OOB for '${traitObj.name}' at ${safeCurrentValue}`);}
 
-              html = `<h2>${this.escapeHTML(traitObj.desc)}<button class="sf-info-icon" data-trait="${traitObj.name}" data-action="showTraitInfo" aria-label="More info about ${traitObj.name}">ℹ️</button></h2>`;
-              // NEW: More explicit intro text
-              if (isFirstTraitStep) {
-                 html += `<p>Rate how much this resonates with you (1=Not at all, 10=Very much!). <strong>5 is neutral.</strong></p>`;
-              }
-              html += `<input type="range" min="1" max="10" value="${safeCurrentValue}" class="sf-trait-slider" data-trait="${traitObj.name}" aria-label="${traitObj.name} rating">
-                       <div id="sf-desc-${traitObj.name}" class="sf-slider-description">${this.escapeHTML(sliderDescText)}</div>
-                       <p class="sf-slider-footnote">${this.escapeHTML(footnote)}</p>
-                       <div class="sf-button-container">
-                           <button data-action="next" data-trait="${traitObj.name}">Next Step!</button>
-                           ${this.sfStep > 2 ? `<button data-action="prev">Back</button>` : ''}
-                           {/* NEW: Dashboard Toggle Button */}
-                           <button id="sf-dashboard-toggle" data-action="toggleDashboard">${this.sfShowDashboardDuringTraits ? 'Hide' : 'Show'} Live Vibes</button>
-                       </div>`;
+              html=`<h2>${this.escapeHTML(traitObj.desc)}<button class="sf-info-icon" data-trait="${traitObj.name}" data-action="showTraitInfo" aria-label="More info about ${traitObj.name}">ℹ️</button></h2>`;
+              if(isFirstTraitStep){html += `<p>Rate how much this resonates with you (1=Not at all, 10=Very much!). <strong>5 is neutral.</strong></p>`;}
+              html+=`<input type="range" min="1" max="10" value="${safeCurrentValue}" class="sf-trait-slider" data-trait="${traitObj.name}" aria-label="${traitObj.name} rating">
+                     <div id="sf-desc-${traitObj.name}" class="sf-slider-description">${this.escapeHTML(sliderDescText)}</div>
+                     <p class="sf-slider-footnote">${this.escapeHTML(footnote)}</p>
+                     <div class="sf-button-container">
+                         <button data-action="next" data-trait="${traitObj.name}">Next Step!</button>
+                         ${this.sfStep>2?`<button data-action="prev">Back</button>`:''}
+                         <button id="sf-dashboard-toggle" data-action="toggleDashboard">${this.sfShowDashboardDuringTraits ? 'Hide' : 'Show'} Live Vibes</button>
+                     </div>`;
               break;
-          case 'roundSummary': /* ... */ break;
-          case 'result': /* ... */ break;
-          default: /* ... */ break;
+          case 'roundSummary':html=`<h2>${step.round} Check-In!</h2><p>Here’s how your choices are shaping up:</p><div id="sf-summary-dashboard-placeholder">Loading Dashboard...</div><div class="sf-button-container"><button data-action="next">See Top Style!</button><button data-action="prev">Back</button></div>`; requestAnimationFrame(()=>this.sfUpdateDashboard(true)); break;
+          case 'result':
+              this.sfCalculateResult(); const sortedScores=Object.entries(this.sfScores).sort((a,b)=>b[1]-a[1]);
+              if(sortedScores.length===0||!sortedScores[0]||sortedScores[0][1]<=0){html=`<div class="sf-result-section sf-fade-in"><h2 class="sf-result-heading">Hmm... 🤔</h2><p>Not enough specific trait data for role '${this.sfRole}' to determine a top style. Your vibe is uniquely you!</p><div class="sf-result-buttons"><button data-action="startOver">Try Again?</button><button data-action="close">Close</button></div></div>`; break;}
+              const topStyle=sortedScores[0][0]; const matchData=this.sfDynamicMatches[topStyle]||{dynamic:"Unique",match:"Explorer",desc:"Find your perfect match!",longDesc:"Explore dynamics that resonate!"}; const descData=this.sfStyleDescriptions[topStyle]||{short:"A unique blend!",long:"Your combination of traits creates a special style.",tips:["Keep exploring!","Communicate your desires."]};
+
+              html=`<div class="sf-result-section sf-fade-in"><h2 class="sf-result-heading">🎉 Your Top Style (Exploring ${this.sfRole}): ${this.escapeHTML(topStyle)} 🎉</h2><p><strong>${this.escapeHTML(descData.short)}</strong></p><p>${this.escapeHTML(descData.long)}</p><h3>Potential Dynamic Match: ${this.escapeHTML(matchData.match)}</h3><p><em>${this.escapeHTML(matchData.dynamic)}</em> - ${this.escapeHTML(matchData.desc)}</p><p>${this.escapeHTML(matchData.longDesc)}</p><h3>Tips for You:</h3><ul style="text-align: left; margin: 10px auto; max-width: 350px; list-style: '✨ '; padding-left: 1.5em;">${descData.tips.map(tip=>`<li>${this.escapeHTML(tip)}</li>`).join('')}</ul>`;
+              if(this.sfIdentifiedRole==='switch'){html+=`<p><em>As a Switch, you might also resonate with styles from the other role. Feel free to run the finder again exploring your other side!</em></p>`;}
+              html+=`<div class="sf-result-buttons"><button data-action="applyStyle" data-role="${this.sfRole}" data-style="${this.escapeHTML(topStyle)}">📝 Track This Style!</button><button data-action="startOver">Try Again?</button><button data-action="showFullDetails" data-style="${this.escapeHTML(topStyle)}">More Details</button><button data-action="close">Close</button></div></div>`;
+              if(window.confetti){setTimeout(()=>confetti({particleCount:150,spread:80,origin:{y:0.6},colors:['#ff69b4','#ff85cb','#f4d4e4','#fff','#a0d8ef','#dcc1ff']}),300);}
+              break;
+          default:html="<p>Oops! Something went wrong.</p> <button data-action='prev'>Back</button>";
       }
 
       try {
-          if (!this.elements.sfStepContent) throw new Error("sfStepContent element missing");
-          this.elements.sfStepContent.innerHTML = html;
-          if (step.type === 'trait') {
-              this.sfUpdateDashboard(); // Update dashboard visibility based on state
-          } else if (step.type !== 'roundSummary') {
-              if (this.elements.sfDashboard) this.elements.sfDashboard.style.display = 'none';
-          }
+          if(!this.elements.sfStepContent)throw new Error("sfStepContent element missing");
+          this.elements.sfStepContent.innerHTML=html;
+          if(step.type==='trait'){ this.sfUpdateDashboard(); } // Always call, function decides visibility
+          else if(step.type!=='roundSummary'){ if(this.elements.sfDashboard)this.elements.sfDashboard.style.display='none'; }
           console.log(`SF Step ${this.sfStep} rendered successfully.`);
-      } catch (e) { /* ... error handling ... */ }
-  } // End sfRenderStep
+      } catch(e){console.error(`Render SF Step ${this.sfStep} Error:`,e); if(this.elements.sfStepContent){this.elements.sfStepContent.innerHTML=`<p>Error rendering step.</p> <button data-action="prev">Back</button>`;}}}
 
-  sfSetRole(role){ /* ... (existing logic) ... */ }
-  sfSetTrait(trait,value){ /* ... (existing logic) ... */ }
-  sfNextStep(){ /* ... (existing logic) ... */ }
-  sfPrevStep(){ /* ... (existing logic) ... */ }
-  sfStartOver(){ /* ... (existing logic) ... */ }
-  sfComputeScores(){ /* ... (existing logic) ... */ }
+  sfSetRole(role){if(this.sfRole!==role){this.sfRole=role; this.sfAnswers.traits={}; this.sfScores={}; this.sfPreviousScores={}; this.sfHasRenderedDashboard=false; this.sfTraitSet=[]; this.sfSteps=[];} this.sfNextStep();}
+  sfSetTrait(trait,value){this.sfAnswers.traits[trait]=parseInt(value,10); this.sfShowFeedback(`You vibe with ${trait} at ${value}!`);}
+  sfNextStep(){this.sfStep++; this.sfRenderStep();}
+  sfPrevStep(){if(this.sfStep>0){const stepWeAreLeaving=this.sfSteps[this.sfStep]; this.sfStep--; const stepWeAreGoingTo=this.sfSteps[this.sfStep]; if(stepWeAreLeaving?.type==='result'||stepWeAreLeaving?.type==='roundSummary'){console.log("Moving back, resetting scores."); this.sfScores={}; this.sfPreviousScores={}; this.sfHasRenderedDashboard=false;} if(stepWeAreGoingTo?.type==='roleIdentification'){this.sfIdentifiedRole=null; this.sfRole=null; this.sfTraitSet=[]; this.sfAnswers.traits={};} else if(stepWeAreGoingTo?.type==='switchClarification'){this.sfRole=null; this.sfTraitSet=[]; this.sfAnswers.traits={};} this.sfRenderStep();}}
+  sfStartOver(){this.sfStep=0; this.sfRole=null; this.sfIdentifiedRole=null; this.sfAnswers={rolePreference:null, traits:{}}; this.sfScores={}; this.sfPreviousScores={}; this.sfHasRenderedDashboard=false; this.sfTraitSet=[]; this.sfSteps=[]; if(this.elements.sfDashboard)this.elements.sfDashboard.style.display='none'; this.sfShowDashboardDuringTraits = false; this.sfRenderStep(); this.sfShowFeedback("Fresh start—here we go!");}
+  sfComputeScores(){let scores={}; if(!this.sfRole||!this.sfStyles[this.sfRole])return scores; const roleStyles=this.sfStyles[this.sfRole]; roleStyles.forEach(style=>{scores[style]=0;}); const traitAnswers=this.sfAnswers.traits; Object.keys(traitAnswers).forEach(trait=>{const rating=traitAnswers[trait]??0; roleStyles.forEach(style=>{const keyTraits=this.sfStyleKeyTraits[style]||[]; if(keyTraits.includes(trait)){let weight=1.5; scores[style]+=rating*weight;}});}); return scores;}
 
   // MODIFIED: Update dashboard based on toggle state
   sfUpdateDashboard(forceVisible = false) {
       if (!this.sfSteps || this.sfSteps.length === 0) this.sfCalculateSteps();
       const currentStep = this.sfSteps[this.sfStep];
       const currentStepType = currentStep?.type;
-
-      // Determine if dashboard should be shown
       const shouldShow = forceVisible || (this.sfRole && currentStepType === 'trait' && this.sfShowDashboardDuringTraits);
 
-      if (!this.elements.sfDashboard) { /* ... error handling ... */ return; }
+      if (!this.elements.sfDashboard) {console.error("Dashboard element missing!"); return;}
 
-      if (!shouldShow) {
-          this.elements.sfDashboard.style.display = 'none';
-          return;
-      }
+      if (!shouldShow) { this.elements.sfDashboard.style.display = 'none'; return; }
+
       this.elements.sfDashboard.style.display = 'block';
-      // ... (rest of dashboard rendering logic remains the same)
+      const scores=this.sfComputeScores();
+      const sortedScores=Object.entries(scores).filter(([_,score])=>score>0.1).sort((a,b)=>b[1]-a[1]).slice(0,7);
+      let dashboardHTML="<div class='sf-dashboard-header'>✨ Your Live Vibes! ✨</div>";
+      if(sortedScores.length===0){dashboardHTML+="<p class='muted-text' style='padding: 10px;'>Keep rating traits!</p>";}
+      else{
+          const previousPositions={}; if(this.sfPreviousScores){Object.entries(this.sfPreviousScores).filter(([_,score])=>score>0.1).sort((a,b)=>b[1]-a[1]).forEach(([style,_],index)=>{previousPositions[style]=index;});}
+          const isFirstRender=!this.sfHasRenderedDashboard;
+          const styleIcons=this.getStyleIcons();
+          sortedScores.forEach(([style,score],index)=>{
+              const prevPos=previousPositions[style]??index; const movement=prevPos-index;
+              let moveIndicator=''; if(!isFirstRender&&movement>0)moveIndicator='<span class="sf-move-up">↑</span>'; else if(!isFirstRender&&movement<0)moveIndicator='<span class="sf-move-down">↓</span>';
+              const prevScore=this.sfPreviousScores?(this.sfPreviousScores[style]||0):0; const delta=score-prevScore;
+              let deltaDisplay=''; if(!isFirstRender&&Math.abs(delta)>0.1){deltaDisplay=`<span class="sf-score-delta ${delta>0?'positive':'negative'}">${delta>0?'+':''}${delta.toFixed(1)}</span>`;}
+              const animationClass=isFirstRender?'sf-fade-in':'';
+              dashboardHTML+=`<div class="sf-dashboard-item ${animationClass}"><span class="sf-style-name">${styleIcons[style]||'🌟'} ${this.escapeHTML(style)}</span><span class="sf-dashboard-score">${score.toFixed(1)} ${deltaDisplay} ${moveIndicator}</span></div>`;
+          });
+      }
+      this.elements.sfDashboard.innerHTML=dashboardHTML;
       this.sfPreviousScores={...scores};
       this.sfHasRenderedDashboard=true;
   }
@@ -1380,49 +1428,40 @@ openModal(modalElement){
   // NEW: Toggle dashboard visibility state
   toggleStyleFinderDashboard() {
       this.sfShowDashboardDuringTraits = !this.sfShowDashboardDuringTraits;
-      // Update button text if it exists in the current step
       const toggleButton = this.elements.sfStepContent?.querySelector('#sf-dashboard-toggle');
       if (toggleButton) {
           toggleButton.textContent = `${this.sfShowDashboardDuringTraits ? 'Hide' : 'Show'} Live Vibes`;
       }
-      this.sfUpdateDashboard(); // Re-render dashboard based on new state
+      this.sfUpdateDashboard();
   }
 
-  sfCalculateResult(){ /* ... (existing logic) ... */ }
-  sfShowFeedback(message){ /* ... (existing logic) ... */ }
-  sfShowTraitInfo(traitName){ /* ... (existing logic) ... */ }
-  sfShowFullDetails(styleName){ /* ... (existing logic) ... */ }
-  getStyleIcons(){ /* ... (existing logic) ... */ }
+  sfCalculateResult(){this.sfScores=this.sfComputeScores(); const totalAnswers=Object.keys(this.sfAnswers.traits).length; if(totalAnswers===0)return; console.log("Final Scores Calculated:",this.sfScores);}
+  sfShowFeedback(message){if(!this.elements.sfFeedback)return; this.elements.sfFeedback.textContent=this.escapeHTML(message); this.elements.sfFeedback.classList.remove('sf-feedback-animation'); void this.elements.sfFeedback.offsetWidth; this.elements.sfFeedback.classList.add('sf-feedback-animation');}
+  sfShowTraitInfo(traitName){if(!traitName){console.error("Cannot show trait info: traitName missing."); return;} const explanation=this.sfTraitExplanations[traitName]||"No extra info available."; const popup=document.createElement('div'); popup.className='sf-style-info-popup'; popup.innerHTML=`<h3>${this.escapeHTML(traitName.charAt(0).toUpperCase()+traitName.slice(1))}</h3><p>${this.escapeHTML(explanation)}</p><button class="sf-close-btn" aria-label="Close trait info">×</button>`; document.body.appendChild(popup); popup.querySelector('.sf-close-btn')?.focus();}
+  sfShowFullDetails(styleName){if(!styleName){console.error("Cannot show full details: styleName missing."); return;} const descData=this.sfStyleDescriptions[styleName]; const matchData=this.sfDynamicMatches[styleName]; if(!descData||!matchData){alert(`Details for style "${styleName}" not found.`); return;} const popup=document.createElement('div'); popup.className='sf-style-info-popup wide-popup'; popup.innerHTML=`<h3>${this.escapeHTML(styleName)}</h3><p><strong>${this.escapeHTML(descData.short)}</strong></p><p>${this.escapeHTML(descData.long)}</p><h4>Potential Dynamic Match: ${this.escapeHTML(matchData.match)}</h4><p><em>${this.escapeHTML(matchData.dynamic)}</em> - ${this.escapeHTML(matchData.longDesc)}</p><h4>Tips for You:</h4><ul style="list-style: '✨ '; padding-left: 1.5em;">${descData.tips.map(tip=>`<li>${this.escapeHTML(tip)}</li>`).join('')}</ul><button class="sf-close-btn" aria-label="Close style details">×</button>`; document.body.appendChild(popup); popup.querySelector('.sf-close-btn')?.focus();}
+  getStyleIcons(){return{'Classic Submissive':'🙇‍♀️','Brat':'😈','Slave':'🔗','Pet':'🐾','Little':'🍼','Puppy':'🐶','Kitten':'🐱','Princess':'👑','Rope Bunny':'🪢','Masochist':'💥','Prey':'🏃‍♀️','Toy':'🎲','Doll':'🎎','Bunny':'🐰','Servant':'🧹','Playmate':'🎉','Babygirl':'🌸','Captive':'⛓️','Thrall':'🛐','Puppet':'🎭','Maid':'🧼','Painslut':'🔥','Bottom':'⬇️','Classic Dominant':'👑','Assertive':'💪','Nurturer':'🤗','Strict':'📏','Master':'🎓','Mistress':'👸','Daddy':'👨‍🏫','Mommy':'👩‍🏫','Owner':'🔑','Rigger':'🧵','Sadist':'😏','Hunter':'🏹','Trainer':'🏋️‍♂️','Puppeteer':'🕹️','Protector':'🛡️','Disciplinarian':'✋','Caretaker':'🧡','Sir':'🎩','Goddess':'🌟','Commander':'⚔️','Switch':'🔄', 'Fluid Switch':'🌊', 'Dominant-Leaning Switch':'👑↔️', 'Submissive-Leaning Switch':'🙇‍♀️↔️', 'Situational Switch':'🤔'};}
 
   // MODIFIED: Add confirmation before applying
   confirmApplyStyleFinderResult(r, s) {
-      // Use a simple confirm for now, replace with custom modal if desired
       const message = `Apply Style "${this.escapeHTML(s)}" to the form? This will overwrite current Role/Style selections.`;
-      // NEW: Offer more options - custom modal needed for this ideally
-      // Simple confirm first:
       if (confirm(message)) {
           this.applyStyleFinderResult(r, s);
       }
-      /* // Ideal Custom Modal Flow:
-      this.showConfirmationModal(message, [
-          { text: "Apply to Current", action: () => this.applyStyleFinderResult(r, s) },
-          { text: "Create New Persona", action: () => { this.resetForm(false); this.applyStyleFinderResult(r, s); } },
-          { text: "Cancel", action: () => {} } // No-op
-      ]);
-      */
   }
 
-  // MODIFIED: Actual application logic (separated from confirmation)
+  // MODIFIED: Actual application logic
   applyStyleFinderResult(r,s){
       console.log(`Applying SF Result: Role=${r}, Style=${s}`);
-      if(!r||!s||!this.elements.role||!this.elements.style){ /* ... error handling ... */ return;}
+      if(!r||!s||!this.elements.role||!this.elements.style){console.error("Cannot apply style - missing elements/args."); alert("Error applying style."); return;}
       this.elements.role.value=r;
       this.renderStyles(r);
       requestAnimationFrame(()=>{
-          // ... (logic to select style in dropdown) ...
+          const styleExists=Array.from(this.elements.style.options).some(option=>option.value===s);
+          if(styleExists){ this.elements.style.value=s; }
+          else { console.warn(`Style "${s}" not found in dropdown for role "${r}". Clearing selection.`); this.elements.style.value='';}
           this.renderTraits(r,this.elements.style.value);
           this.updateLivePreview();
-          this.updateStyleExploreLink(); // NEW: Update explore link
+          this.updateStyleExploreLink();
           this.sfClose();
           this.elements.formSection?.scrollIntoView({behavior:'smooth'});
           this.elements.name?.focus();
@@ -1431,27 +1470,42 @@ openModal(modalElement){
   }
 
   // --- Other Helper Functions ---
-  getFlairForScore(s){ /* ... */ }
-  getEmojiForScore(s){ /* ... */ }
-  escapeHTML(str){ /* ... */ }
-  openModal(modalElement){ /* ... */ }
-  closeModal(modalElement){ /* ... */ }
-  getIntroForStyle(styleName){ /* ... */ }
+  getFlairForScore(s){return parseInt(s,10)<=2?"🌱 Nurturing!":parseInt(s,10)===3?"⚖️ Balanced!":"🌟 Shining!";}
+  getEmojiForScore(s){return parseInt(s,10)<=2?"💧":parseInt(s,10)===3?"🌱":parseInt(s,10)===4?"✨":"🌟";}
+  escapeHTML(str){ const div=document.createElement('div'); div.appendChild(document.createTextNode(str ?? '')); return div.innerHTML; }
+  // MODIFIED: openModal with logging
+  openModal(modalElement){
+    console.log("--- Entering openModal --- Trying to open:", modalElement?.id);
+    if(!modalElement){
+         console.error("!!! openModal Error: modalElement is null or undefined!");
+         return;
+    }
+    modalElement.style.display='flex';
+    modalElement.setAttribute('aria-hidden', 'false');
+    console.log(`Set display='flex' for #${modalElement.id}. Current display:`, window.getComputedStyle(modalElement).display);
+
+    const focusable = modalElement.querySelector('button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])');
+    if(focusable) {
+        console.log(`Found focusable element in #${modalElement.id}:`, focusable);
+        requestAnimationFrame(()=> { try { focusable.focus(); } catch(e){ console.warn("Focus failed:", e)} });
+    } else {
+        console.warn(`No focusable element found in #${modalElement.id}.`);
+    }
+    console.log("--- Exiting openModal ---");
+}
+  closeModal(modalElement){if(!modalElement)return; modalElement.style.display='none'; modalElement.setAttribute('aria-hidden','true');}
+  getIntroForStyle(styleName){ const key=styleName?.toLowerCase().replace(/\(.*?\)/g,'').trim()||''; const intros={'classic submissive':'Trusting the lead...', brat:'Ready to play... or push?', slave:'In devoted service...', pet:'Eager for affection...', little:'Time for cuddles and rules!', puppy:'Ready to learn and play!', kitten:'Curious and coy...', princess:'Waiting to be adored...', 'rope bunny':'Anticipating the ties...', masochist:'Seeking the edge...', prey:'The chase begins...', toy:'Ready to be used...', doll:'Poised for perfection...', bunny:'Gentle heart awaits...', servant:'Duty calls...', playmate:'Let the games begin!', babygirl:'Needing care and charm...', captive:'Caught in the moment...', thrall:'Mind focused, will yielded...', puppet:'Waiting for direction...', maid:'Order and grace...', painslut:'Craving intensity...', bottom:'Open and ready...', 'classic dominant':'Taking the reins...', assertive:'Clear and direct...', nurturer:'Supporting the journey...', strict:'Order must prevail...', master:'Guiding with purpose...', mistress:'Commanding with elegance...', daddy:'Protecting and guiding...', mommy:'Nurturing with love...', owner:'Claiming what is mine...', rigger:'The canvas awaits...', sadist:'Exploring sensations...', hunter:'The pursuit is on...', trainer:'Cultivating potential...', puppeteer:'Strings at the ready...', protector:'Shields up...', disciplinarian:'Lessons will be learned...', caretaker:'Ensuring well-being...', sir:'Leading with honor...', goddess:'Accepting devotion...', commander:'Directing the action...', 'fluid switch': 'Flowing between roles...', 'dominant-leaning switch':'Leading, with flexibility', 'submissive-leaning switch':'Following, with flexibility', 'situational switch':'Adapting to the moment...'}; return intros[key]||"Explore your unique expression!";}
 
   // MODIFIED: Enhanced notification
-  // === PASTE THIS TO REPLACE YOUR EXISTING showNotification function ===
-
   showNotification(message, type = 'info', duration = 4000) {
-      const NOTIFICATION_ID = 'app-notification'; // Use a constant for the ID
+      const NOTIFICATION_ID = 'app-notification';
       let notification = document.getElementById(NOTIFICATION_ID);
 
-      // Phase 1: Ensure the element exists and is referenced
       if (!notification) {
           console.log(`Notification element #${NOTIFICATION_ID} NOT found, creating...`);
           try {
               notification = document.createElement('div');
-              notification.id = NOTIFICATION_ID; // Set ID right after creation
-              // Basic styles needed for visibility even before class/content
+              notification.id = NOTIFICATION_ID;
               notification.style.position = 'fixed';
               notification.style.top = '20px';
               notification.style.left = '50%';
@@ -1465,92 +1519,90 @@ openModal(modalElement){
               notification.style.fontSize = '0.95em';
               notification.style.textAlign = 'center';
               notification.style.pointerEvents = 'none';
-              notification.setAttribute('role', 'alert'); // Accessibility
-              notification.setAttribute('aria-live', 'assertive'); // Accessibility
+              notification.setAttribute('role', 'alert');
+              notification.setAttribute('aria-live', 'assertive');
 
               if (document.body) {
                   document.body.appendChild(notification);
                   console.log(`Notification element #${NOTIFICATION_ID} CREATED and APPENDED.`);
-                  // Double-check it's really there right after appending
                   if (!document.getElementById(NOTIFICATION_ID)) {
                       console.error(`!!! CRITICAL: Element #${NOTIFICATION_ID} not found immediately after appendChild!`);
                   }
               } else {
                   console.error(`Cannot append notification: document.body is not available!`);
-                  this.showNotification("Error displaying notification: Body not ready.", "error"); // Show error differently?
-                  return; // Stop if we can't append
+                  alert(`Notification Error: ${message}`); // Fallback alert
+                  return;
               }
           } catch (error) {
               console.error("Error creating notification element:", error);
-              // Optionally, try falling back to alert()
-              alert(`Error: ${message}`);
-              return; // Stop execution
+              alert(`Notification Error: ${message}`);
+              return;
           }
       } else {
           console.log(`Notification element #${NOTIFICATION_ID} FOUND.`);
       }
 
-      // Phase 2: Verify the 'notification' variable holds the element
       if (!notification || !(notification instanceof HTMLElement)) {
            console.error(`!!! CRITICAL: Notification variable is invalid (current value: ${notification}) before setting content!`);
-           // Attempt to re-fetch, just in case
            notification = document.getElementById(NOTIFICATION_ID);
            if (!notification) {
                console.error(`!!! CRITICAL: Re-fetching element #${NOTIFICATION_ID} also failed! Cannot show notification.`);
-                // Fallback or just return
-                alert(`Error: ${message}`); // Simple fallback
+                alert(`${type.toUpperCase()}: ${message}`);
                 return;
            }
            console.log("Re-fetched notification element:", notification);
       }
 
-      // Phase 3: Set content and styles (where the original error likely occurred)
       try {
           console.log(`Attempting to set innerHTML for notification element (ID: ${notification.id})`);
-          notification.className = `app-notification notification-${type}`; // Set class FIRST
+          notification.className = `app-notification notification-${type}`;
 
-          // Set background/color based on type
           switch (type) {
               case 'success':
                   notification.style.backgroundColor = 'var(--notification-success-bg, var(--success-color))';
                   notification.style.color = 'var(--notification-text-light, white)';
+                  notification.style.border = 'none'; // Reset border
+                  notification.style.fontWeight = 'normal'; // Reset font weight
                   break;
               case 'error':
                   notification.style.backgroundColor = 'var(--notification-error-bg, var(--danger-color))';
                   notification.style.color = 'var(--notification-text-light, white)';
+                  notification.style.border = 'none';
+                  notification.style.fontWeight = 'normal';
                   break;
               case 'warning':
                   notification.style.backgroundColor = 'var(--notification-warning-bg, #ff9800)';
                   notification.style.color = 'var(--notification-text-dark, black)';
-                  break;
-              case 'achievement': // Specific styling for achievement
+                   notification.style.border = 'none';
+                  notification.style.fontWeight = 'normal';
+                 break;
+              case 'achievement':
                   notification.style.backgroundColor = 'var(--notification-achievement-bg, gold)';
                   notification.style.color = 'var(--notification-text-dark, black)';
                   notification.style.fontWeight = 'bold';
                   notification.style.border = '2px solid darkgoldenrod';
-                  duration = 6000; // Show achievement notifications longer
+                  duration = 6000;
                   break;
               default: // Info
                   notification.style.backgroundColor = 'var(--notification-info-bg, var(--accent-color))';
                   notification.style.color = 'var(--notification-text-light, white)';
-                  break;
+                   notification.style.border = 'none';
+                  notification.style.fontWeight = 'normal';
+                 break;
           }
 
-          // Determine Icon
           let icon = '';
           switch(type) {
               case 'success': icon = '✅ '; break;
               case 'error':   icon = '❌ '; break;
               case 'warning': icon = '⚠️ '; break;
               case 'achievement': icon = '🏆 '; break;
-              default: icon = 'ℹ️ '; break; // Info icon for default
+              default: icon = 'ℹ️ '; break;
           }
 
-          // Set the content LAST
           notification.innerHTML = icon + this.escapeHTML(message);
           console.log(`Successfully set innerHTML for #${NOTIFICATION_ID}.`);
 
-          // Phase 4: Animation and Timer
           requestAnimationFrame(() => {
               notification.style.opacity = '1';
               notification.style.top = '35px';
@@ -1560,19 +1612,16 @@ openModal(modalElement){
           this.notificationTimer = setTimeout(() => {
               notification.style.opacity = '0';
               notification.style.top = '20px';
-              // Optional: Remove element after fade out?
-              // setTimeout(() => notification.remove(), 600);
           }, duration);
 
       } catch (error) {
           console.error(`Error setting content or animating notification #${NOTIFICATION_ID}:`, error);
-          // Fallback display if setting content fails
           alert(`${type.toUpperCase()}: ${message}`);
       }
   }
 
-// === END OF showNotification BLOCK ===
-  }
+} // --- END OF TrackerApp CLASS ---
+
 
 // --- Initialization ---
 try {
@@ -1581,6 +1630,5 @@ try {
     console.log("SCRIPT END: KinkCompass App Initialized Successfully.");
 } catch (error) {
     console.error("Fatal error during App initialization:", error);
-    // Display user-friendly error message in the body
-    document.body.innerHTML = `<div style='color: red; padding: 20px;'>${error.message}</div>`; // Simplified error display
+    document.body.innerHTML = `<div style='color: red; padding: 20px; border: 2px solid red; margin: 20px; background: white;'>Fatal Error: ${error.message}<br><pre>${error.stack || ''}</pre></div>`;
 }
