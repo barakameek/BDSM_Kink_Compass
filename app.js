@@ -1152,19 +1152,26 @@ class TrackerApp {
   getReadingDescriptor(traitName,score){score=parseInt(score,10); const highThreshold=4; const lowThreshold=2; const baseDescriptions={'obedience':'following guidance','trust':'opening up','service':'helping others','presentation':'how you appear','playful defiance':'pushing boundaries','mischief':'causing playful trouble','devotion':'deep loyalty','surrender':'letting go of control','affection seeking':'desiring closeness','playfulness':'engaging in fun','non-verbal expression':'communicating without words','age regression comfort':"embracing a younger mindset",'need for guidance':'relying on structure','boundless energy':'enthusiasm','trainability':'learning quickly','curiosity':'investigating','gracefulness':'poise','desire for pampering':'being spoiled','delegation tendency':'letting others help','rope enthusiasm':'enjoying bonds','patience during tying':'stillness','pain interpretation':'processing sensation','sensation seeking':'craving intensity','enjoyment of chase':'the thrill of pursuit','fear play comfort':'flirting with vulnerability','objectification comfort':'being a focus','responsiveness to control':'adapting to direction','aesthetic focus':'visual appeal','stillness / passivity':'calm inaction','shyness / skittishness':'gentle caution','gentle affection need':'soft interactions','task focus':'completing duties','anticipating needs':'proactive help','enthusiasm for games':'loving play','good sport':'playing fairly','vulnerability expression':'showing softness','coquettishness':'playful charm','struggle performance':'acting resistant','acceptance of fate':'inner yielding','mental focus':'deep concentration','suggestibility':'openness to influence','responsiveness to direction':'following commands','passivity in control':'waiting for direction','attention to detail':'precision','uniformity':'embracing attire','pain seeking':'desiring intensity','endurance display':'showing toughness','receptivity':'openness to receiving','power exchange focus':'enjoying the dynamic','authority':'taking charge','care':'nurturing others','leadership':'guiding','control':'managing details','direct communication':'clarity','boundary setting':'defining limits','emotional support':'comforting others','patience':'calm guidance','rule enforcement':'maintaining order','discipline focus':'using consequences','expectation setting':'defining standards','presence':'commanding aura','protective guidance':'fatherly care','affectionate authority':'warm firmness','nurturing comfort':'motherly care','gentle discipline':'kind correction','possessiveness':'claiming','behavioral training':'shaping actions','rope technique':'skill with knots','aesthetic vision':'visual artistry','sensation control':'precise delivery','psychological focus':"observing reactions",'pursuit drive':'instinct to chase','instinct reliance':'acting on gut feeling','skill development focus':'teaching ability','structured methodology':'using clear steps','fine motor control':'precise direction','objectification gaze':'viewing as object','vigilance':'watchfulness','defensive instinct':'shielding others','consequence delivery':'administering punishment','detachment during discipline':'objectivity','holistic well-being focus':'overall care','rule implementation for safety':'practical structure','formal demeanor':'respectful authority','service expectation':'requiring respect','worship seeking':'desiring adoration','effortless command':'innate authority','strategic direction':'planning actions','decisiveness':'firm choices',}; const defaultDesc=traitName; if(score>=highThreshold){return`a strong affinity for ${baseDescriptions[traitName]||defaultDesc}`;}else if(score<=lowThreshold){return`potential hesitation or less focus on ${baseDescriptions[traitName]||defaultDesc}`;}else{return`a balanced approach to ${baseDescriptions[traitName]||defaultDesc}`;}}
   getStyleEssence(styleName){const essences={'Classic Submissive':'trust and willingness','Brat':'playful challenge and connection','Slave':'profound devotion and service','Pet':'affectionate loyalty and play','Little':'innocent joy and secure dependence','Puppy':'boundless enthusiasm and eagerness to please','Kitten':'curious grace and affectionate independence','Princess':'being cherished and adored','Rope Bunny':'aesthetic surrender and sensation','Masochist':'transcending limits through sensation','Prey':'the exhilarating dance of pursuit','Toy':'delighting in being used and responsive','Doll':'embodying curated perfection and passivity','Bunny':'gentle connection and soft vulnerability','Servant':'finding purpose in meticulous duty','Playmate':'shared joy and adventurous fun','Babygirl':'charming vulnerability and needing care','Captive':'the dramatic tension of capture and surrender','Thrall':'deep mental connection and yielding','Puppet':'responsive surrender to direct control','Maid':'order, presentation, and respectful service','Painslut':'boldly embracing and seeking intensity','Bottom':'receptive strength and power exchange','Classic Dominant':'confident guidance and responsibility','Assertive':'clear communication and setting direction','Nurturer':'compassionate support and fostering growth','Strict':'structure, order, and clear expectations','Master':'profound authority and shaping potential','Mistress':'elegant command and creative control','Daddy':'protective guidance and affectionate firmness','Mommy':'warm nurturing and gentle structure','Owner':'possessive care and shaping behavior','Rigger':'the artful application of restraint','Sadist':'the controlled exploration of sensation','Hunter':'the primal thrill of the chase','Trainer':'patiently cultivating skills and discipline','Puppeteer':'precise control and creative direction','Protector':'steadfast vigilance and ensuring safety','Disciplinarian':'fair correction and maintaining standards','Caretaker':'holistic well-being and providing comfort','Sir':'dignified authority and earned respect','Goddess':'inspiring worship through presence','Commander':'strategic leadership and decisive action','Fluid Switch': 'versatility and dynamic flow', 'Dominant-Leaning Switch':'leading with flexibility', 'Submissive-Leaning Switch':'following with flexibility', 'Situational Switch':'adapting to the moment'}; const key=styleName?.replace(/\(.*?\)/g,'').trim()||''; return essences[key]||`your unique expression`;}
 
-  // MODIFIED: showGlossary with logging and test structure
+// MODIFIED: showGlossary with logic restored + logging
 showGlossary(termKeyToHighlight = null) {
     // Add logs INSIDE this function
-    console.log("--- Entering showGlossary (Testing Import) ---", termKeyToHighlight); // <<-- Log Entry
+    console.log("--- Entering showGlossary ---", termKeyToHighlight); // Log Entry
 
-    console.log("Imported glossaryTerms:", glossaryTerms); // <<-- FOCUS ON THIS LOG
+    console.log("Imported glossaryTerms:", glossaryTerms); // Log Imported Data
     // Check if it's an object and has keys
     if (typeof glossaryTerms !== 'object' || glossaryTerms === null || Object.keys(glossaryTerms).length === 0) {
          console.error("!!! glossaryTerms is empty or invalid!", glossaryTerms);
+         // Optionally show an error message to the user in the modal body
+         if (this.elements.glossaryBody) {
+            this.elements.glossaryBody.innerHTML = "<p class='error-text'>Glossary data is currently unavailable.</p>";
+         }
+         // Still try to open the modal to show the error
+         if (this.elements.glossaryModal) this.openModal(this.elements.glossaryModal);
+         return; // Exit if data is bad
     }
 
-    // --- >>> TEMPORARILY COMMENT OUT FROM HERE... <<< ---
-    
+    // --- >>> LOGIC IS NOW UNCOMMENTED <<< ---
+
     if (!this.elements.glossaryBody || !this.elements.glossaryModal) {
         console.error("!!! showGlossary Error: Missing glossaryBody or glossaryModal element!");
         return; // Stop if elements are missing
@@ -1181,7 +1188,7 @@ showGlossary(termKeyToHighlight = null) {
                  if (html === '<dl>') { // Log only once
                      console.log("Looping through glossary term:", key, termData);
                  }
-                 // --- Original HTML Generation Logic Would Be Here ---
+                 // --- HTML Generation Logic ---
                  const termId = `gloss-term-${key}`;
                  const isHighlighted = key === termKeyToHighlight;
                  html += `<dt id="${termId}" class="${isHighlighted ? 'highlighted-term' : ''}">${this.escapeHTML(termData.term)}</dt>`;
@@ -1195,14 +1202,14 @@ showGlossary(termKeyToHighlight = null) {
                      html += `</span>`;
                  }
                  html += `</dd>`;
-                 // --- End of original HTML Generation ---
+                 // --- End of HTML Generation ---
             });
         html += '</dl>';
-        console.log("Generated Glossary HTML (snippet):", html.substring(0, 200));
+        console.log("Generated Glossary HTML (snippet):", html.substring(0, 200)); // Check generated HTML
     } catch (htmlError) {
          console.error("!!! showGlossary Error: Failed to generate HTML!", htmlError);
          this.elements.glossaryBody.innerHTML = "<p class='error-text'>Error loading glossary content.</p>";
-         // this.openModal(this.elements.glossaryModal); // Don't open if HTML failed
+         this.openModal(this.elements.glossaryModal); // Still open modal to show error
          return;
     }
 
@@ -1218,14 +1225,12 @@ showGlossary(termKeyToHighlight = null) {
          requestAnimationFrame(() => { // Ensure element is visible before scrolling
             termElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
          });
+         console.log("Attempted to scroll to:", termKeyToHighlight);
     }
-   
-    // --- >>> ...TO HERE <<< ---
 
-    console.log("--- Exiting showGlossary (Testing Import) ---"); // <<-- Log Exit
-} // <--- This is the closing brace for the showGlossary function
-
-
+    console.log("--- Exiting showGlossary ---"); // Log Exit
+} // <--- End of showGlossary function
+  
   // MODIFIED: Show style discovery, potentially highlighting a style
   showStyleDiscovery(styleNameToHighlight = null) {
     grantAchievement({}, 'style_explorer');
