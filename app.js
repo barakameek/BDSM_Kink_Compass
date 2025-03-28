@@ -540,4 +540,3 @@ try {
     errorDiv.innerHTML = `<strong>Fatal Error: KinkCompass could not start.</strong><br>${error.message}<br><br>Stack Trace:<br>${error.stack || 'Not available'}`;
     document.body.prepend(errorDiv);
 }
-
