@@ -1534,6 +1534,7 @@ class TrackerApp {
   }
 
 // === END OF showNotification BLOCK ===
+  }
 
 // --- Initialization ---
 try {
