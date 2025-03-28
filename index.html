@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -8,8 +6,9 @@
     <title>🌟 KinkCompass Reimagined 🌟</title>
     <link rel="stylesheet" href="styles.css" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧭</text></svg>">
+    <!-- External Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 </head>
 <body>
     <header class="app-header">
@@ -17,6 +16,7 @@
         <nav class="header-nav">
             <button id="style-finder-trigger-btn" class="header-btn" title="Find Your Kink Style!">🧭 Style Finder</button>
             <button id="style-discovery-btn" class="header-btn" title="Explore All Styles">🔭 Explore Styles</button>
+            <button id="achievements-btn" class="header-btn" title="View Achievements">🏆 Achievements</button> <!-- NEW -->
             <button id="glossary-btn" class="header-btn" title="Kink Glossary">📚 Glossary</button>
             <button id="resources-btn" class="header-btn" title="Helpful Resources">🔗 Resources</button>
             <button id="themes-btn" class="header-btn" title="Change Theme">🎨 Themes</button>
@@ -37,6 +37,7 @@
                     <div class="avatar-picker">
                         <span id="avatar-display" aria-hidden="true">❓</span>
                         <input type="hidden" id="avatar-input" value="❓">
+                        <!-- Avatar buttons -->
                         <button class="avatar-btn" data-emoji="🎀" aria-label="Ribbon">🎀</button>
                         <button class="avatar-btn" data-emoji="✨" aria-label="Sparkles">✨</button>
                         <button class="avatar-btn" data-emoji="💖" aria-label="Sparkling Heart">💖</button>
@@ -61,7 +62,7 @@
                 <select id="role" autocomplete="off">
                     <option value="dominant">Dominant</option>
                     <option value="submissive" selected>Submissive</option>
-                     <option value="switch">Switch</option> {/* <!-- ADDED --> */}
+                     <option value="switch">Switch</option>
                 </select>
             </div>
             <div class="field-group">
@@ -69,23 +70,35 @@
                 <select id="style" autocomplete="off" required>
                     <option value="">-- Select Role First --</option>
                 </select>
-                 <p class="muted-text" style="margin-top: 0.3em;">Don't know? Use the <button type="button" id="form-style-finder-link" class="link-button">Style Finder</button>!</p>
+                 <div class="style-helpers">
+                     <button type="button" id="form-style-finder-link" class="link-button">Use Style Finder?</button>
+                     <a href="#" id="style-explore-link" class="explore-style-link" style="display: none;" aria-label="Explore selected style details">(Explore Details)</a> <!-- NEW -->
+                 </div>
             </div>
-            <div id="traits-container">
-               <p class="muted-text">Select Role & Style to see relevant traits...</p>
+
+            <!-- Traits Area -->
+            <div id="traits-message" class="muted-text" style="display: none; margin-top: 1.5em; text-align: center;">
+                Select Role & Style above to customize traits. <!-- JS Will update this text -->
             </div>
-              <div id="trait-info-popup" class="trait-info-popup card" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="trait-info-title">
-                <button id="trait-info-close" class="modal-close" aria-label="Close trait info">×</button>
+            <div id="traits-container" style="display: block;"> <!-- Initially block, JS hides if needed -->
+               <p class="muted-text" style="margin-top: 1.5em; text-align: center;">Select Role & Style to see relevant traits...</p> <!-- Default message if JS fails early -->
+            </div>
+
+            <!-- Trait Info Popup (inside form section for relative positioning) -->
+            <div id="trait-info-popup" class="trait-info-popup card" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="trait-info-title" aria-hidden="true">
+                <button id="trait-info-close" class="modal-close popup-close" aria-label="Close trait info">×</button>
                 <h4 id="trait-info-title">Trait Info</h4>
                 <div id="trait-info-body"></div>
             </div>
+
             <div class="form-actions">
                 <button id="save" class="save-btn">Save Persona! <span role="img" aria-label="Sparkles">💖</span></button>
                 <button type="button" id="clear-form" class="clear-btn">Clear Form <span role="img" aria-label="Broom">🧹</span></button>
             </div>
         </section>
 
-            <section class="list-section card">
+        <!-- Persona List -->
+        <section class="list-section card">
             <h2>🌟 Persona Crew 🌟</h2>
             <p class="muted-text">Click a persona to view details or edit.</p>
             <ul id="people-list" aria-live="polite">
@@ -93,7 +106,8 @@
             </ul>
         </section>
 
-          <section class="preview-section card">
+        <!-- Live Preview -->
+        <section class="preview-section card">
             <h2>🎈 Live Vibe Preview 🎈</h2>
             <div id="live-preview">
                 <p class="muted-text">Fill the form to see your persona's vibe! 🌈</p>
@@ -101,18 +115,32 @@
         </section>
     </main>
 
-       <div class="modal" id="detail-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="detail-modal-title">
+    <!-- MODALS -->
+
+    <!-- Persona Detail Modal -->
+    <div class="modal" id="detail-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="detail-modal-title" aria-hidden="true">
         <div class="modal-content card">
             <button class="modal-close" id="modal-close" aria-label="Close details">×</button>
-            {/* <!-- Modal title needed for aria-labelledby --> */}
-            <h2 class="modal-title" id="detail-modal-title" style="display: none;">Persona Details</h2>
+            <h2 class="modal-title" id="detail-modal-title">Persona Details</h2> <!-- Title for ARIA -->
+            <!-- Tabs -->
+            <div class="modal-tabs" id="modal-tabs" role="tablist" aria-orientation="horizontal">
+                <!-- Tabs generated by JS -->
+                <button class="tab-link active" role="tab" aria-selected="true" aria-controls="tab-goals" data-tab="tab-goals">🎯 Goals</button>
+                <button class="tab-link" role="tab" aria-selected="false" aria-controls="tab-traits" data-tab="tab-traits">🎨 Traits</button>
+                <!-- More tabs will be added here by JS -->
+            </div>
+            <!-- Tab Content Area -->
             <div id="modal-body">
-                {/* <!-- Content generated by JS --> */}
+                <!-- Tab content panes generated by JS -->
+                <div id="tab-goals" class="tab-content active" role="tabpanel" aria-labelledby="tab-goals"></div>
+                <div id="tab-traits" class="tab-content" role="tabpanel" aria-labelledby="tab-traits"></div>
+                <!-- More content panes will be added here by JS -->
             </div>
         </div>
     </div>
 
-     <div class="modal" id="resources-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="resources-modal-title">
+    <!-- Resources Modal -->
+    <div class="modal" id="resources-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="resources-modal-title" aria-hidden="true">
         <div class="modal-content card">
             <button class="modal-close" id="resources-close" aria-label="Close resources">×</button>
             <h2 id="resources-modal-title">🔗 Helpful Resources</h2>
@@ -120,34 +148,33 @@
                  <p>Here are some general resources. Always practice safety, consent, and communication (SSC/RACK/PRICK).</p>
                  <dl>
                     <dt>Consent & Communication</dt>
-                    <dd>Tools and articles on negotiation, safewords, and enthusiastic consent (e.g., FRIES model).</dd>
+                    <dd>Tools and articles on negotiation, safewords, and enthusiastic consent (e.g., FRIES model). Search online for "FRIES consent model".</dd>
                     <dt>Safety Information</dt>
-                    <dd>Guides on risk-aware practices for specific kinks (e.g., bondage safety, impact play zones, breath play dangers).</dd>
+                    <dd>Guides on risk-aware practices for specific kinks (e.g., bondage safety, impact play zones, breath play dangers). Reputable sources like the National Coalition for Sexual Freedom (NCSF) often have safety guidelines.</dd>
                     <dt>Community Links</dt>
-                    <dd>Connections to reputable online communities or educational platforms (vet carefully!).</dd>
+                    <dd>Connections to reputable online communities or educational platforms (e.g., FetLife, local Munch groups - vet carefully!).</dd>
                     <dt>Mental Health</dt>
-                    <dd>Resources for finding kink-aware therapists or support groups (e.g., Kink Aware Professionals directory).</dd>
+                    <dd>Resources for finding kink-aware therapists or support groups (e.g., Kink Aware Professionals directory - search Kapprofessionals).</dd>
                  </dl>
                  <hr>
-                 <p><em>Disclaimer: KinkCompass provides informational links only and does not endorse specific organizations or practices. Your safety, well-being, and choices are your own responsibility. Research thoroughly and practice responsibly.</em></p>
+                 <p><em>Disclaimer: KinkCompass provides informational pointers only and does not endorse specific organizations or practices. Your safety, well-being, and choices are your own responsibility. Research thoroughly and practice responsibly.</em></p>
             </div>
         </div>
     </div>
 
-    
-    <div class="modal" id="glossary-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="glossary-modal-title">
-        <div class="modal-content card wide-modal"> 
+    <!-- Glossary Modal -->
+    <div class="modal" id="glossary-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="glossary-modal-title" aria-hidden="true">
+        <div class="modal-content card wide-modal">
             <button class="modal-close" id="glossary-close" aria-label="Close glossary">×</button>
             <h2 id="glossary-modal-title">📚 Kink Glossary</h2>
             <div id="glossary-body">
                 <p class="muted-text">Loading glossary terms...</p>
-             
             </div>
         </div>
     </div>
 
-
-    <div class="modal" id="style-discovery-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="style-discovery-title">
+    <!-- Style Discovery Modal -->
+    <div class="modal" id="style-discovery-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="style-discovery-title" aria-hidden="true">
         <div class="modal-content card wide-modal">
             <button class="modal-close" id="style-discovery-close" aria-label="Close style discovery">×</button>
             <h2 id="style-discovery-title">🔭 Explore Styles</h2>
@@ -157,17 +184,17 @@
                     <option value="all">All Roles</option>
                     <option value="submissive">Submissive</option>
                     <option value="dominant">Dominant</option>
-                    <option value="switch">Switch</option> 
+                    <option value="switch">Switch</option>
                 </select>
             </div>
             <div id="style-discovery-body">
                 <p class="muted-text">Loading styles...</p>
-              
             </div>
         </div>
     </div>
 
-    <div class="modal" id="themes-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="themes-modal-title">
+    <!-- Themes Modal -->
+    <div class="modal" id="themes-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="themes-modal-title" aria-hidden="true">
         <div class="modal-content card">
             <button class="modal-close" id="themes-close" aria-label="Close themes">×</button>
             <h2 id="themes-modal-title">🎨 Select Theme</h2>
@@ -180,31 +207,70 @@
         </div>
     </div>
 
-   
-    <div class="modal sf-modal" id="style-finder-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="sf-modal-title">
+    <!-- Achievements Modal -->
+    <div class="modal" id="achievements-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="achievements-modal-title" aria-hidden="true">
+        <div class="modal-content card wide-modal">
+            <button class="modal-close" id="achievements-close" aria-label="Close achievements">×</button>
+            <h2 id="achievements-modal-title">🏆 Achievements Hub 🏆</h2>
+            <div id="achievements-body">
+                <p class="muted-text">Loading achievements status...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Welcome Modal -->
+    <div class="modal" id="welcome-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="welcome-modal-title" aria-hidden="true">
+        <div class="modal-content card">
+            <button class="modal-close" id="welcome-close" aria-label="Close welcome message">×</button>
+            <h2 id="welcome-modal-title">Welcome to KinkCompass! ✨🧭</h2>
+            <div id="welcome-body">
+                 <p>Your journey to understanding and tracking your desires starts here!</p>
+                 <p><strong>Quick Start:</strong></p>
+                 <ol>
+                    <li>Use the form on the left to <strong>Create a Persona</strong>.</li>
+                    <li>Explore the <strong>Style Finder</strong> (🧭 button in header) for guidance.</li>
+                    <li>Click personas in the list to view <strong>Details</strong> (Goals, Traits, History, Journal).</li>
+                    <li>Check out the <strong>Glossary</strong> (📚) & <strong>Resources</strong> (🔗) for learning.</li>
+                 </ol>
+                 <p>Ready to explore? Close this message to begin!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Style Finder Modal -->
+    <div class="modal sf-modal" id="style-finder-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="sf-modal-title" aria-hidden="true">
         <div class="modal-content sf-modal-content">
             <button class="modal-close" id="sf-close-style-finder" aria-label="Close Style Finder">×</button>
             <h3 id="sf-modal-title">🧭 Style Finder Quest 🧭</h3>
             <div id="sf-progress-tracker" class="sf-progress-tracker" aria-live="polite"></div>
             <div id="sf-step-content">
-             
                 <p>Loading your quest...</p>
+                 <!-- Button #sf-dashboard-toggle is added dynamically here by JS -->
             </div>
             <p id="sf-feedback" class="sf-feedback" aria-live="assertive"></p>
             <div id="sf-dashboard" class="sf-dashboard" style="display:none;">
-               
+                <!-- Dashboard content generated by JS -->
             </div>
         </div>
     </div>
 
-    
+     <!-- Generic Context Help Popup -->
+     <div id="context-help-popup" class="context-help-popup card" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="context-help-title" aria-hidden="true">
+        <button id="context-help-close" class="modal-close popup-close" aria-label="Close help">×</button>
+        <h4 id="context-help-title">Help</h4>
+        <div id="context-help-body"></div>
+    </div>
+
+    <!-- App Notification Area -->
+    <!-- (Notification div is created dynamically by JS if not present) -->
+    <!-- <div id="app-notification" style="display: none;"></div> -->
 
     <footer class="app-footer">
         <p>KinkCompass Reimagined - Navigate your desires with clarity & joy! ✨</p>
-        <p><small>Version 2.0 (Conceptual)</small></p>
+        <p><small>Version 2.1 (Conceptual)</small></p>
     </footer>
 
-    
+    <!-- SCRIPTS (Keep at the end) -->
     <script type="module" src="data.js"></script>
     <script type="module" src="glossary.js"></script>
     <script type="module" src="prompts.js"></script>
@@ -214,4 +280,3 @@
     <script type="module" src="app.js"></script>
 </body>
 </html>
-
