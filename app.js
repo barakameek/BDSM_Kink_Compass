@@ -1392,8 +1392,42 @@ showGlossary(termKeyToHighlight = null) {
   sfNextStep(){this.sfStep++; this.sfRenderStep();}
   sfPrevStep(){if(this.sfStep>0){const stepWeAreLeaving=this.sfSteps[this.sfStep]; this.sfStep--; const stepWeAreGoingTo=this.sfSteps[this.sfStep]; if(stepWeAreLeaving?.type==='result'||stepWeAreLeaving?.type==='roundSummary'){console.log("Moving back, resetting scores."); this.sfScores={}; this.sfPreviousScores={}; this.sfHasRenderedDashboard=false;} if(stepWeAreGoingTo?.type==='roleIdentification'){this.sfIdentifiedRole=null; this.sfRole=null; this.sfTraitSet=[]; this.sfAnswers.traits={};} else if(stepWeAreGoingTo?.type==='switchClarification'){this.sfRole=null; this.sfTraitSet=[]; this.sfAnswers.traits={};} this.sfRenderStep();}}
   sfStartOver(){this.sfStep=0; this.sfRole=null; this.sfIdentifiedRole=null; this.sfAnswers={rolePreference:null, traits:{}}; this.sfScores={}; this.sfPreviousScores={}; this.sfHasRenderedDashboard=false; this.sfTraitSet=[]; this.sfSteps=[]; if(this.elements.sfDashboard)this.elements.sfDashboard.style.display='none'; this.sfShowDashboardDuringTraits = false; this.sfRenderStep(); this.sfShowFeedback("Fresh start—here we go!");}
-  sfComputeScores(){let scores={}; if(!this.sfRole||!this.sfStyles[this.sfRole])return scores; const roleStyles=this.sfStyles[this.sfRole]; roleStyles.forEach(style=>{scores[style]=0;}); const traitAnswers=this.sfAnswers.traits; Object.keys(traitAnswers).forEach(trait=>{const rating=traitAnswers[trait]??0; roleStyles.forEach(style=>{const keyTraits=this.sfStyleKeyTraits[style]||[]; if(keyTraits.includes(trait)){let weight=1.5; scores[style]+=rating*weight;}});}); return scores;}
+ sfComputeScores() {
+    let scores = {};
+    // Check 1: Is sfRole correctly set?
+    console.log("sfComputeScores - Role:", this.sfRole);
+    if (!this.sfRole || !this.sfStyles[this.sfRole]) return scores;
 
+    const roleStyles = this.sfStyles[this.sfRole];
+    roleStyles.forEach(style => { scores[style] = 0; });
+
+    const traitAnswers = this.sfAnswers.traits;
+    console.log("sfComputeScores - Answers:", traitAnswers); // Check answers
+
+    Object.keys(traitAnswers).forEach(trait => {
+        const rating = traitAnswers[trait] ?? 0;
+        // Check 2: Does this loop run?
+        console.log(`sfComputeScores - Processing trait: ${trait}, Rating: ${rating}`);
+
+        roleStyles.forEach(style => {
+            // Check 3: Is sfStyleKeyTraits correct?
+            const keyTraits = this.sfStyleKeyTraits[style];
+             if (!keyTraits) {
+                 console.warn(`sfComputeScores - No keyTraits found for style: ${style}`);
+                 return; // Skip this style if no traits defined
+             }
+            // Check 4: Does the style include the current trait?
+            if (keyTraits.includes(trait)) {
+                let weight = 1.5; // You have a weight here
+                scores[style] += rating * weight;
+                // Check 5: Is the score actually increasing?
+                console.log(`sfComputeScores - Matched! Style: ${style}, Trait: ${trait}, Added: ${rating * weight}, New Score: ${scores[style]}`);
+            }
+        });
+    });
+    console.log("sfComputeScores - Final Scores:", scores); // Check final object
+    return scores;
+}
   // MODIFIED: Update dashboard based on toggle state
   sfUpdateDashboard(forceVisible = false) {
       if (!this.sfSteps || this.sfSteps.length === 0) this.sfCalculateSteps();
