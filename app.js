@@ -1401,61 +1401,139 @@ class TrackerApp {
   getIntroForStyle(styleName){ /* ... */ }
 
   // MODIFIED: Enhanced notification
+  // === PASTE THIS TO REPLACE YOUR EXISTING showNotification function ===
+
   showNotification(message, type = 'info', duration = 4000) {
-      let notification = document.getElementById('app-notification');
-      if (!notification) { /* ... create notification element ... */ }
+      const NOTIFICATION_ID = 'app-notification'; // Use a constant for the ID
+      let notification = document.getElementById(NOTIFICATION_ID);
 
-      notification.textContent = message;
-      notification.className = `app-notification notification-${type}`;
-      // ... (set styles based on type) ...
+      // Phase 1: Ensure the element exists and is referenced
+      if (!notification) {
+          console.log(`Notification element #${NOTIFICATION_ID} NOT found, creating...`);
+          try {
+              notification = document.createElement('div');
+              notification.id = NOTIFICATION_ID; // Set ID right after creation
+              // Basic styles needed for visibility even before class/content
+              notification.style.position = 'fixed';
+              notification.style.top = '20px';
+              notification.style.left = '50%';
+              notification.style.transform = 'translateX(-50%)';
+              notification.style.padding = '12px 25px';
+              notification.style.borderRadius = '8px';
+              notification.style.zIndex = '2000';
+              notification.style.opacity = '0';
+              notification.style.transition = 'opacity 0.5s ease, top 0.5s ease, background-color 0.3s ease, color 0.3s ease';
+              notification.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+              notification.style.fontSize = '0.95em';
+              notification.style.textAlign = 'center';
+              notification.style.pointerEvents = 'none';
+              notification.setAttribute('role', 'alert'); // Accessibility
+              notification.setAttribute('aria-live', 'assertive'); // Accessibility
 
-      // Add specific icons based on type
-      let icon = '';
-      switch(type) {
-          case 'success': icon = '✅ '; break;
-          case 'error':   icon = '❌ '; break;
-          case 'warning': icon = '⚠️ '; break;
-          case 'info':    icon = 'ℹ️ '; break;
-          // NEW: Achievement icon
-          case 'achievement': icon = '🏆 '; break;
+              if (document.body) {
+                  document.body.appendChild(notification);
+                  console.log(`Notification element #${NOTIFICATION_ID} CREATED and APPENDED.`);
+                  // Double-check it's really there right after appending
+                  if (!document.getElementById(NOTIFICATION_ID)) {
+                      console.error(`!!! CRITICAL: Element #${NOTIFICATION_ID} not found immediately after appendChild!`);
+                  }
+              } else {
+                  console.error(`Cannot append notification: document.body is not available!`);
+                  this.showNotification("Error displaying notification: Body not ready.", "error"); // Show error differently?
+                  return; // Stop if we can't append
+              }
+          } catch (error) {
+              console.error("Error creating notification element:", error);
+              // Optionally, try falling back to alert()
+              alert(`Error: ${message}`);
+              return; // Stop execution
+          }
+      } else {
+          console.log(`Notification element #${NOTIFICATION_ID} FOUND.`);
       }
-       if (type === 'achievement') {
-           notification.style.backgroundColor = 'gold';
-           notification.style.color = 'black';
-           notification.style.fontWeight = 'bold';
-           notification.style.border = '2px solid darkgoldenrod';
-           duration = 6000; // Show achievement notifications longer
-       }
 
+      // Phase 2: Verify the 'notification' variable holds the element
+      if (!notification || !(notification instanceof HTMLElement)) {
+           console.error(`!!! CRITICAL: Notification variable is invalid (current value: ${notification}) before setting content!`);
+           // Attempt to re-fetch, just in case
+           notification = document.getElementById(NOTIFICATION_ID);
+           if (!notification) {
+               console.error(`!!! CRITICAL: Re-fetching element #${NOTIFICATION_ID} also failed! Cannot show notification.`);
+                // Fallback or just return
+                alert(`Error: ${message}`); // Simple fallback
+                return;
+           }
+           console.log("Re-fetched notification element:", notification);
+      }
 
-      notification.innerHTML = icon + this.escapeHTML(message); // Prepend icon
+      // Phase 3: Set content and styles (where the original error likely occurred)
+      try {
+          console.log(`Attempting to set innerHTML for notification element (ID: ${notification.id})`);
+          notification.className = `app-notification notification-${type}`; // Set class FIRST
 
-      requestAnimationFrame(() => {
-          notification.style.opacity = '1';
-          notification.style.top = '35px';
-      });
+          // Set background/color based on type
+          switch (type) {
+              case 'success':
+                  notification.style.backgroundColor = 'var(--notification-success-bg, var(--success-color))';
+                  notification.style.color = 'var(--notification-text-light, white)';
+                  break;
+              case 'error':
+                  notification.style.backgroundColor = 'var(--notification-error-bg, var(--danger-color))';
+                  notification.style.color = 'var(--notification-text-light, white)';
+                  break;
+              case 'warning':
+                  notification.style.backgroundColor = 'var(--notification-warning-bg, #ff9800)';
+                  notification.style.color = 'var(--notification-text-dark, black)';
+                  break;
+              case 'achievement': // Specific styling for achievement
+                  notification.style.backgroundColor = 'var(--notification-achievement-bg, gold)';
+                  notification.style.color = 'var(--notification-text-dark, black)';
+                  notification.style.fontWeight = 'bold';
+                  notification.style.border = '2px solid darkgoldenrod';
+                  duration = 6000; // Show achievement notifications longer
+                  break;
+              default: // Info
+                  notification.style.backgroundColor = 'var(--notification-info-bg, var(--accent-color))';
+                  notification.style.color = 'var(--notification-text-light, white)';
+                  break;
+          }
 
-      if (this.notificationTimer) clearTimeout(this.notificationTimer);
-      this.notificationTimer = setTimeout(() => {
-          notification.style.opacity = '0';
-          notification.style.top = '20px';
-      }, duration); // Use dynamic duration
+          // Determine Icon
+          let icon = '';
+          switch(type) {
+              case 'success': icon = '✅ '; break;
+              case 'error':   icon = '❌ '; break;
+              case 'warning': icon = '⚠️ '; break;
+              case 'achievement': icon = '🏆 '; break;
+              default: icon = 'ℹ️ '; break; // Info icon for default
+          }
+
+          // Set the content LAST
+          notification.innerHTML = icon + this.escapeHTML(message);
+          console.log(`Successfully set innerHTML for #${NOTIFICATION_ID}.`);
+
+          // Phase 4: Animation and Timer
+          requestAnimationFrame(() => {
+              notification.style.opacity = '1';
+              notification.style.top = '35px';
+          });
+
+          if (this.notificationTimer) clearTimeout(this.notificationTimer);
+          this.notificationTimer = setTimeout(() => {
+              notification.style.opacity = '0';
+              notification.style.top = '20px';
+              // Optional: Remove element after fade out?
+              // setTimeout(() => notification.remove(), 600);
+          }, duration);
+
+      } catch (error) {
+          console.error(`Error setting content or animating notification #${NOTIFICATION_ID}:`, error);
+          // Fallback display if setting content fails
+          alert(`${type.toUpperCase()}: ${message}`);
+      }
   }
 
-   // NEW: Method to show a generic confirmation modal (Requires HTML/CSS)
-   /*
-   showConfirmationModal(message, buttons) {
-       // 1. Get confirmation modal elements (title, body, button container)
-       // 2. Set message
-       // 3. Clear existing buttons
-       // 4. Create buttons based on the 'buttons' array [{text: 'Yes', action: () => {...}}, ...]
-       // 5. Add event listeners to buttons that call action() and then closeModal()
-       // 6. Open the confirmation modal
-   }
-   */
-
-
-} // --- END OF TrackerApp CLASS ---
+// === END OF showNotification BLOCK ===
 
 // --- Initialization ---
 try {
