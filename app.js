@@ -30,7 +30,6 @@ class TrackerApp {
     this.activeDetailModalTab = 'tab-goals'; // NEW: Track active tab in detail modal
 
     // --- Style Finder State ---
-    // (Existing Style Finder State remains the same)
     this.sfActive = false;
     this.sfStep = 0;
     this.sfRole = null;
@@ -41,25 +40,23 @@ class TrackerApp {
     this.sfHasRenderedDashboard = false;
     this.sfTraitSet = [];
     this.sfSteps = [];
-    // NEW: Style Finder - Control dashboard visibility during trait questions
     this.sfShowDashboardDuringTraits = false;
 
 
     // --- Style Finder Data Structures ---
-    // (Existing Style Finder Data Structures remain the same)
-    this.sfStyles = { /* ... */ };
-    this.sfSubFinderTraits = [ /* ... */ ];
-    this.sfSubTraitFootnotes = { /* ... */ };
-    this.sfDomFinderTraits = [ /* ... */ ];
-    this.sfDomTraitFootnotes = { /* ... */ };
-    this.sfSliderDescriptions = { /* ... */ };
-    this.sfTraitExplanations = { /* ... */ };
-    this.sfStyleDescriptions = { /* ... */ };
-    this.sfDynamicMatches = { /* ... */ };
-    this.sfStyleKeyTraits = { /* ... */ };
+    // (Keep your existing data structures here)
+    this.sfStyles = { submissive: [ /*...*/ ], dominant: [ /*...*/ ] };
+    this.sfSubFinderTraits = [ /*...*/ ];
+    this.sfSubTraitFootnotes = { /*...*/ };
+    this.sfDomFinderTraits = [ /*...*/ ];
+    this.sfDomTraitFootnotes = { /*...*/ };
+    this.sfSliderDescriptions = { /*...*/ };
+    this.sfTraitExplanations = { /*...*/ };
+    this.sfStyleDescriptions = { /*...*/ };
+    this.sfDynamicMatches = { /*...*/ };
+    this.sfStyleKeyTraits = { /*...*/ };
 
     // --- Element Mapping ---
-    // MODIFIED: Added new elements for Achievements modal, welcome modal, etc.
     this.elements = {
       formSection: document.getElementById('form-section'),
       name: document.getElementById('name'),
@@ -68,25 +65,25 @@ class TrackerApp {
       avatarPicker: document.querySelector('.avatar-picker'),
       role: document.getElementById('role'),
       style: document.getElementById('style'),
-      styleExploreLink: document.getElementById('style-explore-link'), // NEW: Link next to style dropdown
+      styleExploreLink: document.getElementById('style-explore-link'),
       formStyleFinderLink: document.getElementById('form-style-finder-link'),
       traitsContainer: document.getElementById('traits-container'),
-      traitsMessage: document.getElementById('traits-message'), // NEW: Message area above traits
+      traitsMessage: document.getElementById('traits-message'),
       traitInfoPopup: document.getElementById('trait-info-popup'),
       traitInfoClose: document.getElementById('trait-info-close'),
       traitInfoTitle: document.getElementById('trait-info-title'),
       traitInfoBody: document.getElementById('trait-info-body'),
-      contextHelpPopup: document.getElementById('context-help-popup'), // NEW: Generic context help popup
-      contextHelpClose: document.getElementById('context-help-close'), // NEW:
-      contextHelpTitle: document.getElementById('context-help-title'), // NEW:
-      contextHelpBody: document.getElementById('context-help-body'), // NEW:
+      contextHelpPopup: document.getElementById('context-help-popup'),
+      contextHelpClose: document.getElementById('context-help-close'),
+      contextHelpTitle: document.getElementById('context-help-title'),
+      contextHelpBody: document.getElementById('context-help-body'),
       save: document.getElementById('save'),
       clearForm: document.getElementById('clear-form'),
       peopleList: document.getElementById('people-list'),
       livePreview: document.getElementById('live-preview'),
       modal: document.getElementById('detail-modal'),
       modalBody: document.getElementById('modal-body'),
-      modalTabs: document.getElementById('modal-tabs'), // NEW: Detail modal tab container
+      modalTabs: document.getElementById('modal-tabs'),
       modalClose: document.getElementById('modal-close'),
       resourcesBtn: document.getElementById('resources-btn'),
       resourcesModal: document.getElementById('resources-modal'),
@@ -105,12 +102,12 @@ class TrackerApp {
       themesModal: document.getElementById('themes-modal'),
       themesClose: document.getElementById('themes-close'),
       themesBody: document.getElementById('themes-body'),
-      achievementsBtn: document.getElementById('achievements-btn'), // NEW: Achievements button
-      achievementsModal: document.getElementById('achievements-modal'), // NEW: Achievements modal
-      achievementsClose: document.getElementById('achievements-close'), // NEW:
-      achievementsBody: document.getElementById('achievements-body'), // NEW:
-      welcomeModal: document.getElementById('welcome-modal'), // NEW: Welcome modal
-      welcomeClose: document.getElementById('welcome-close'), // NEW:
+      achievementsBtn: document.getElementById('achievements-btn'),
+      achievementsModal: document.getElementById('achievements-modal'),
+      achievementsClose: document.getElementById('achievements-close'),
+      achievementsBody: document.getElementById('achievements-body'),
+      welcomeModal: document.getElementById('welcome-modal'),
+      welcomeClose: document.getElementById('welcome-close'),
       exportBtn: document.getElementById('export-btn'),
       importBtn: document.getElementById('import-btn'),
       importFileInput: document.getElementById('import-file-input'),
@@ -122,40 +119,68 @@ class TrackerApp {
       sfStepContent: document.getElementById('sf-step-content'),
       sfFeedback: document.getElementById('sf-feedback'),
       sfDashboard: document.getElementById('sf-dashboard'),
-      sfDashboardToggle: document.getElementById('sf-dashboard-toggle'), // NEW: Button to toggle dashboard in finder
+      // sfDashboardToggle: document.getElementById('sf-dashboard-toggle'), // This is dynamically added, so don't map here
       detailModalTitle: document.getElementById('detail-modal-title'),
       resourcesModalTitle: document.getElementById('resources-modal-title'),
       glossaryModalTitle: document.getElementById('glossary-modal-title'),
       styleDiscoveryTitle: document.getElementById('style-discovery-title'),
       themesModalTitle: document.getElementById('themes-modal-title'),
-      achievementsModalTitle: document.getElementById('achievements-modal-title'), // NEW:
-      welcomeModalTitle: document.getElementById('welcome-modal-title'), // NEW:
+      achievementsModalTitle: document.getElementById('achievements-modal-title'),
+      welcomeModalTitle: document.getElementById('welcome-modal-title'),
       sfModalTitle: document.getElementById('sf-modal-title'),
       formTitle: document.getElementById('form-title'),
-      // Load indicators can be added here if dedicated elements are used,
-      // otherwise handled via class toggles on buttons/sections.
     };
 
-    // Critical element check (remains the same)
+    // --- >>> ADD DIAGNOSTIC LOGS HERE <<< ---
+    console.log("--- Element Check ---");
+    console.log("role:", !!this.elements.role, this.elements.role); // Log element itself too
+    console.log("style:", !!this.elements.style, this.elements.style);
+    console.log("achievementsBtn:", !!this.elements.achievementsBtn, this.elements.achievementsBtn);
+    console.log("glossaryBtn:", !!this.elements.glossaryBtn, this.elements.glossaryBtn);
+    console.log("resourcesBtn:", !!this.elements.resourcesBtn, this.elements.resourcesBtn);
+    console.log("themesBtn:", !!this.elements.themesBtn, this.elements.themesBtn);
+    console.log("styleFinderTriggerBtn:", !!this.elements.styleFinderTriggerBtn, this.elements.styleFinderTriggerBtn);
+    console.log("styleDiscoveryBtn:", !!this.elements.styleDiscoveryBtn, this.elements.styleDiscoveryBtn);
+    console.log("exportBtn:", !!this.elements.exportBtn, this.elements.exportBtn);
+    console.log("importBtn:", !!this.elements.importBtn, this.elements.importBtn);
+    console.log("themeToggle:", !!this.elements.themeToggle, this.elements.themeToggle);
+    console.log("modalTabs:", !!this.elements.modalTabs, this.elements.modalTabs); // Crucial for detail tabs
+    console.log("save:", !!this.elements.save, this.elements.save);
+    console.log("clearForm:", !!this.elements.clearForm, this.elements.clearForm);
+    console.log("formStyleFinderLink:", !!this.elements.formStyleFinderLink, this.elements.formStyleFinderLink);
+    console.log("--- End Element Check ---");
+    // --- >>> END DIAGNOSTIC LOGS <<< ---
+
+
+    // Critical element check
     const criticalElements = Object.keys(this.elements);
     const missingKeys = [];
     for (const key of criticalElements) {
+        // Skip sfDashboardToggle as it's dynamic
+        if (key === 'sfDashboardToggle') continue;
         if (!this.elements[key]) {
             missingKeys.push(key);
         }
     }
-    if (missingKeys.length > 0) { /* ... error handling ... */ }
+
+    if (missingKeys.length > 0) {
+        const errorMsg = `Initialization failed: Required HTML element(s) not found (IDs: ${missingKeys.join(', ')}). Check index.html.`;
+        console.error(errorMsg);
+        // Optionally display error to user more prominently
+        document.body.innerHTML = `<div style='color: red; padding: 20px;'>${errorMsg}</div>`;
+        throw new Error(errorMsg); // Stop execution
+    }
 
     console.log("CONSTRUCTOR: Elements found.");
-    this.addEventListeners(); // MODIFIED: Will add new listeners
+    this.addEventListeners();
     console.log("CONSTRUCTOR: Listeners added.");
-    this.loadFromLocalStorage(); // Load data first
+    this.loadFromLocalStorage();
     this.applySavedTheme();
-    this.renderStyles(this.elements.role.value);
-    this.renderTraits(this.elements.role.value, this.elements.style.value); // MODIFIED: Will handle initial state
+    this.renderStyles(this.elements.role?.value); // Use optional chaining just in case
+    this.renderTraits(this.elements.role?.value, this.elements.style?.value);
     this.renderList();
     this.updateLivePreview();
-    this.checkAndShowWelcome(); // NEW: Check for onboarding
+    this.checkAndShowWelcome();
     console.log("CONSTRUCTOR: Initial render complete.");
   } // --- End of constructor ---
 
@@ -208,56 +233,133 @@ class TrackerApp {
   // MODIFIED: Added listeners for new elements and features
   addEventListeners() {
     console.log("Attaching event listeners...");
-    this.elements.role?.addEventListener('change', (e) => { const selectedRole = e.target.value; this.renderStyles(selectedRole); this.elements.style.value = ''; this.renderTraits(selectedRole, ''); this.updateLivePreview(); this.updateStyleExploreLink(); });
-    this.elements.style?.addEventListener('change', (e) => { this.renderTraits(this.elements.role.value, e.target.value); this.updateLivePreview(); this.updateStyleExploreLink(); });
+
+    // Form Elements
+    this.elements.role?.addEventListener('change', (e) => {
+        console.log(">>> Role Dropdown Changed!"); // <<-- DEBUG LOG
+        const selectedRole = e.target.value;
+        this.renderStyles(selectedRole);
+        this.elements.style.value = '';
+        this.renderTraits(selectedRole, '');
+        this.updateLivePreview();
+        this.updateStyleExploreLink();
+    });
+    this.elements.style?.addEventListener('change', (e) => {
+        console.log(">>> Style Dropdown Changed!"); // <<-- DEBUG LOG
+        this.renderTraits(this.elements.role.value, e.target.value);
+        this.updateLivePreview();
+        this.updateStyleExploreLink();
+    });
     this.elements.name?.addEventListener('input', () => this.updateLivePreview());
     this.elements.avatarPicker?.addEventListener('click', (e) => { if (e.target.classList.contains('avatar-btn')) { /* ... avatar logic ... */ this.updateLivePreview(); } });
-    this.elements.save?.addEventListener('click', () => this.savePerson());
-    this.elements.clearForm?.addEventListener('click', () => this.resetForm(true));
-    this.elements.formStyleFinderLink?.addEventListener('click', () => this.sfStart());
+    this.elements.save?.addEventListener('click', () => {
+        console.log(">>> Save Button Clicked!"); // <<-- DEBUG LOG
+        this.savePerson();
+    });
+    this.elements.clearForm?.addEventListener('click', () => {
+        console.log(">>> Clear Form Button Clicked!"); // <<-- DEBUG LOG
+        this.resetForm(true);
+    });
+    this.elements.formStyleFinderLink?.addEventListener('click', () => {
+        console.log(">>> Form Style Finder Link Clicked!"); // <<-- DEBUG LOG
+        this.sfStart();
+    });
+    this.elements.styleExploreLink?.addEventListener('click', (e) => {
+        console.log(">>> Explore Style Link Clicked!"); // <<-- DEBUG LOG
+        this.handleExploreStyleLinkClick(e);
+    });
+
+    // Traits Interaction
     this.elements.traitsContainer?.addEventListener('input', (e) => { if (e.target.classList.contains('trait-slider')) { this.handleTraitSliderInput(e); } });
     this.elements.traitsContainer?.addEventListener('click', (e) => { if (e.target.classList.contains('trait-info-btn')) { this.handleTraitInfoClick(e); } });
     this.elements.traitInfoClose?.addEventListener('click', () => this.hideTraitInfo());
-    this.elements.contextHelpClose?.addEventListener('click', () => this.hideContextHelp()); // NEW
+    this.elements.contextHelpClose?.addEventListener('click', () => this.hideContextHelp());
+
+    // Persona List
     this.elements.peopleList?.addEventListener('click', (e) => this.handleListClick(e));
     this.elements.peopleList?.addEventListener('keydown', (e) => this.handleListKeydown(e));
-    this.elements.styleFinderTriggerBtn?.addEventListener('click', () => this.sfStart());
-    this.elements.sfCloseBtn?.addEventListener('click', () => this.sfClose());
-    this.elements.styleDiscoveryBtn?.addEventListener('click', () => this.showStyleDiscovery());
-    this.elements.styleDiscoveryClose?.addEventListener('click', () => this.closeModal(this.elements.styleDiscoveryModal));
-    this.elements.styleDiscoveryRoleFilter?.addEventListener('change', () => this.renderStyleDiscoveryContent());
-    this.elements.styleDiscoveryBody?.addEventListener('click', (e) => this.handleGlossaryLinkClick(e)); // NEW: Handle glossary links
-    this.elements.glossaryBtn?.addEventListener('click', () => this.showGlossary());
-    this.elements.glossaryClose?.addEventListener('click', () => this.closeModal(this.elements.glossaryModal));
-    this.elements.glossaryBody?.addEventListener('click', (e) => this.handleGlossaryLinkClick(e)); // NEW: Handle internal glossary links
-    this.elements.resourcesBtn?.addEventListener('click', () => this.openModal(this.elements.resourcesModal));
-    this.elements.resourcesClose?.addEventListener('click', () => this.closeModal(this.elements.resourcesModal));
-    this.elements.themesBtn?.addEventListener('click', () => this.openModal(this.elements.themesModal));
-    this.elements.themesClose?.addEventListener('click', () => this.closeModal(this.elements.themesModal));
-    this.elements.themesBody?.addEventListener('click', (e) => this.handleThemeSelection(e));
-    this.elements.achievementsBtn?.addEventListener('click', () => this.showAchievements()); // NEW
-    this.elements.achievementsClose?.addEventListener('click', () => this.closeModal(this.elements.achievementsModal)); // NEW
-    this.elements.welcomeClose?.addEventListener('click', () => this.closeModal(this.elements.welcomeModal)); // NEW (Also handled in checkAndShowWelcome)
-    this.elements.exportBtn?.addEventListener('click', () => this.exportData());
-    this.elements.importBtn?.addEventListener('click', () => this.elements.importFileInput?.click());
+
+    // Header Buttons / Main Triggers
+    this.elements.styleFinderTriggerBtn?.addEventListener('click', () => {
+        console.log(">>> Header Style Finder Button Clicked!"); // <<-- DEBUG LOG
+        this.sfStart();
+    });
+    this.elements.styleDiscoveryBtn?.addEventListener('click', () => {
+        console.log(">>> Explore Styles Button Clicked!"); // <<-- DEBUG LOG
+        this.showStyleDiscovery();
+    });
+    this.elements.achievementsBtn?.addEventListener('click', () => {
+        console.log(">>> Achievements Button Clicked!"); // <<-- DEBUG LOG
+        this.showAchievements();
+    });
+    this.elements.glossaryBtn?.addEventListener('click', () => {
+        console.log(">>> Glossary Button Clicked!"); // <<-- DEBUG LOG
+        this.showGlossary();
+    });
+    this.elements.resourcesBtn?.addEventListener('click', () => {
+        console.log(">>> Resources Button Clicked!"); // <<-- DEBUG LOG
+        this.openModal(this.elements.resourcesModal);
+    });
+    this.elements.themesBtn?.addEventListener('click', () => {
+        console.log(">>> Themes Button Clicked!"); // <<-- DEBUG LOG
+        this.openModal(this.elements.themesModal);
+    });
+    this.elements.exportBtn?.addEventListener('click', () => {
+        console.log(">>> Export Button Clicked!"); // <<-- DEBUG LOG
+        this.exportData();
+    });
+    this.elements.importBtn?.addEventListener('click', () => {
+        console.log(">>> Import Button Clicked!"); // <<-- DEBUG LOG
+        this.elements.importFileInput?.click();
+    });
+    this.elements.themeToggle?.addEventListener('click', () => {
+        console.log(">>> Theme Toggle Button Clicked!"); // <<-- DEBUG LOG
+        this.toggleTheme();
+    });
     this.elements.importFileInput?.addEventListener('change', (e) => this.importData(e));
-    this.elements.themeToggle?.addEventListener('click', () => this.toggleTheme());
-    this.elements.modalBody?.addEventListener('click', (e) => this.handleModalBodyClick(e)); // MODIFIED: Handles more actions
-    this.elements.modalTabs?.addEventListener('click', (e) => this.handleDetailTabClick(e)); // NEW
+
+
+    // Modal Closures & Interactions
     this.elements.modalClose?.addEventListener('click', () => this.closeModal(this.elements.modal));
-    this.elements.sfStepContent?.addEventListener('click', (e) => { // MODIFIED: Added dashboard toggle
+    this.elements.resourcesClose?.addEventListener('click', () => this.closeModal(this.elements.resourcesModal));
+    this.elements.glossaryClose?.addEventListener('click', () => this.closeModal(this.elements.glossaryModal));
+    this.elements.styleDiscoveryClose?.addEventListener('click', () => this.closeModal(this.elements.styleDiscoveryModal));
+    this.elements.themesClose?.addEventListener('click', () => this.closeModal(this.elements.themesModal));
+    this.elements.achievementsClose?.addEventListener('click', () => this.closeModal(this.elements.achievementsModal));
+    this.elements.welcomeClose?.addEventListener('click', () => this.closeModal(this.elements.welcomeModal)); // Note: Onboarding flag set elsewhere
+    this.elements.sfCloseBtn?.addEventListener('click', () => this.sfClose());
+
+    // Specific Modal Body Interactions
+    this.elements.modalBody?.addEventListener('click', (e) => this.handleModalBodyClick(e));
+    this.elements.modalTabs?.addEventListener('click', (e) => {
+        console.log(">>> Modal Tab Area Clicked!"); // <<-- DEBUG LOG
+        this.handleDetailTabClick(e);
+    });
+    this.elements.themesBody?.addEventListener('click', (e) => this.handleThemeSelection(e));
+    this.elements.styleDiscoveryRoleFilter?.addEventListener('change', () => this.renderStyleDiscoveryContent());
+    this.elements.styleDiscoveryBody?.addEventListener('click', (e) => this.handleGlossaryLinkClick(e));
+    this.elements.glossaryBody?.addEventListener('click', (e) => this.handleGlossaryLinkClick(e));
+
+    // Style Finder Specific Interactions
+    this.elements.sfStepContent?.addEventListener('click', (e) => {
         const button = e.target.closest('button[data-action]');
         if (button) { this.handleStyleFinderAction(button.dataset.action, button.dataset); return; }
         const icon = e.target.closest('.sf-info-icon[data-trait]');
         if (icon) { this.handleStyleFinderAction('showTraitInfo', icon.dataset); return; }
-        const toggle = e.target.closest('#sf-dashboard-toggle');
-        if (toggle) { this.toggleStyleFinderDashboard(); return; }
+        // Check specifically for the toggle button ID
+        if (e.target.id === 'sf-dashboard-toggle') {
+             console.log(">>> SF Dashboard Toggle Clicked!"); // <<-- DEBUG LOG
+             this.toggleStyleFinderDashboard();
+             return;
+        }
     });
     this.elements.sfStepContent?.addEventListener('input', (e) => { if (e.target.classList.contains('sf-trait-slider') && e.target.dataset.trait) { this.handleStyleFinderSliderInput(e.target); } });
-    this.elements.styleExploreLink?.addEventListener('click', (e) => this.handleExploreStyleLinkClick(e)); // NEW
+
+    // Global Listeners
     document.body.addEventListener('click', (e) => { if (e.target.classList.contains('sf-close-btn')) { e.target.closest('.sf-style-info-popup')?.remove(); } });
-    window.addEventListener('click', (e) => this.handleWindowClick(e)); // MODIFIED: Handles more modals
-    window.addEventListener('keydown', (e) => this.handleWindowKeydown(e)); // MODIFIED: Handles more modals
+    window.addEventListener('click', (e) => this.handleWindowClick(e));
+    window.addEventListener('keydown', (e) => this.handleWindowKeydown(e));
+
     console.log("Event listeners setup complete.");
   } // --- End addEventListeners ---
 
