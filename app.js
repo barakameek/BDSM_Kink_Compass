@@ -670,10 +670,9 @@ class TrackerApp {
   getEmojiForScore(s){ /* ... keep ... */ }
 escapeHTML(str){
     const div=document.createElement('div');
-    // Use textContent for safer assignment, prevents accidental HTML injection if str *was* undefined/null
     div.textContent = str ?? ''; // Use nullish coalescing for safety
-    // Check the result *before* returning innerHTML
-    console.log(`escapeHTML Input: "${str}", Output (textContent): "${div.textContent}", Output (innerHTML): "${div.innerHTML}"`); // <<-- ADD LOG
+    // Optional log (can keep or remove):
+    // console.log(`escapeHTML Input: "${str}", Output (textContent): "${div.textContent}", Output (innerHTML): "${div.innerHTML}"`);
     return div.innerHTML;
 }
         
