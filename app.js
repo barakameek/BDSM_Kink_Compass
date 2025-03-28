@@ -28,7 +28,8 @@ class TrackerApp {
     this.chartInstance = null;
     this.notificationTimer = null;
     this.activeDetailModalTab = 'tab-goals'; // NEW: Track active tab in detail modal
-
+    this.elementThatOpenedModal = null;
+    
     // --- Style Finder State ---
     this.sfActive = false;
     this.sfStep = 0;
@@ -1475,24 +1476,70 @@ showGlossary(termKeyToHighlight = null) {
   escapeHTML(str){ const div=document.createElement('div'); div.appendChild(document.createTextNode(str ?? '')); return div.innerHTML; }
   // MODIFIED: openModal with logging
   openModal(modalElement){
-    console.log("--- Entering openModal --- Trying to open:", modalElement?.id);
-    if(!modalElement){
-         console.error("!!! openModal Error: modalElement is null or undefined!");
-         return;
-    }
-    modalElement.style.display='flex';
-    modalElement.setAttribute('aria-hidden', 'false');
-    console.log(`Set display='flex' for #${modalElement.id}. Current display:`, window.getComputedStyle(modalElement).display);
+        console.log("--- Entering openModal --- Trying to open:", modalElement?.id);
+        if(!modalElement){
+             console.error("!!! openModal Error: modalElement is null or undefined!");
+             return;
+        }
 
-    const focusable = modalElement.querySelector('button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])');
-    if(focusable) {
-        console.log(`Found focusable element in #${modalElement.id}:`, focusable);
-        requestAnimationFrame(()=> { try { focusable.focus(); } catch(e){ console.warn("Focus failed:", e)} });
-    } else {
-        console.warn(`No focusable element found in #${modalElement.id}.`);
+        // ---> NEW: Store the currently focused element BEFORE opening
+        this.elementThatOpenedModal = document.activeElement;
+        console.log("Storing focused element before modal open:", this.elementThatOpenedModal);
+        // <--- END NEW
+
+        modalElement.style.display='flex';
+        modalElement.setAttribute('aria-hidden', 'false');
+        console.log(`Set display='flex' for #${modalElement.id}. Current display:`, window.getComputedStyle(modalElement).display);
+
+        const focusable = modalElement.querySelector('button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])');
+        if(focusable) {
+            console.log(`Found focusable element in #${modalElement.id}:`, focusable);
+             // Use setTimeout to ensure modal is fully rendered before focusing
+             setTimeout(() => {
+                 try { focusable.focus(); } catch(e){ console.warn("Focus failed:", e)}
+             }, 50); // Small delay
+        } else {
+            console.warn(`No focusable element found in #${modalElement.id}.`);
+             // If nothing focusable inside, maybe focus the modal container itself?
+             // setTimeout(() => modalElement.focus(), 50); // Requires modalElement to have tabindex="-1"
+        }
+        console.log("--- Exiting openModal ---");
     }
-    console.log("--- Exiting openModal ---");
-}
+
+    closeModal(modalElement){
+        if(!modalElement)return;
+        console.log(`--- Closing modal: #${modalElement.id} ---`); // <<-- ADD Log
+
+        modalElement.style.display='none';
+        modalElement.setAttribute('aria-hidden','true');
+
+        // ---> NEW: Restore focus to the element that opened the modal
+        console.log("Attempting to restore focus to:", this.elementThatOpenedModal);
+        if (this.elementThatOpenedModal && typeof this.elementThatOpenedModal.focus === 'function') {
+            try {
+                this.elementThatOpenedModal.focus();
+                console.log("Focus restored.");
+            } catch (e) {
+                console.warn("Could not restore focus:", e);
+                // Fallback: focus body or another sensible default if needed
+                // document.body.focus();
+            }
+        } else {
+            console.warn("No stored element to restore focus to, or it's not focusable.");
+            // Maybe focus the button that would logically follow? E.g., the 'Create Persona' name field?
+            // this.elements.name?.focus(); // Example fallback
+        }
+        this.elementThatOpenedModal = null; // Clear the stored element
+        // <--- END NEW
+    }
+
+    // Also update sfClose to handle focus restoration
+    sfClose(){
+        this.sfActive=false;
+        // Call closeModal *before* logging, so focus is restored first
+        this.closeModal(this.elements.sfModal);
+        console.log("Style Finder closed.");
+    }
   closeModal(modalElement){if(!modalElement)return; modalElement.style.display='none'; modalElement.setAttribute('aria-hidden','true');}
   getIntroForStyle(styleName){ const key=styleName?.toLowerCase().replace(/\(.*?\)/g,'').trim()||''; const intros={'classic submissive':'Trusting the lead...', brat:'Ready to play... or push?', slave:'In devoted service...', pet:'Eager for affection...', little:'Time for cuddles and rules!', puppy:'Ready to learn and play!', kitten:'Curious and coy...', princess:'Waiting to be adored...', 'rope bunny':'Anticipating the ties...', masochist:'Seeking the edge...', prey:'The chase begins...', toy:'Ready to be used...', doll:'Poised for perfection...', bunny:'Gentle heart awaits...', servant:'Duty calls...', playmate:'Let the games begin!', babygirl:'Needing care and charm...', captive:'Caught in the moment...', thrall:'Mind focused, will yielded...', puppet:'Waiting for direction...', maid:'Order and grace...', painslut:'Craving intensity...', bottom:'Open and ready...', 'classic dominant':'Taking the reins...', assertive:'Clear and direct...', nurturer:'Supporting the journey...', strict:'Order must prevail...', master:'Guiding with purpose...', mistress:'Commanding with elegance...', daddy:'Protecting and guiding...', mommy:'Nurturing with love...', owner:'Claiming what is mine...', rigger:'The canvas awaits...', sadist:'Exploring sensations...', hunter:'The pursuit is on...', trainer:'Cultivating potential...', puppeteer:'Strings at the ready...', protector:'Shields up...', disciplinarian:'Lessons will be learned...', caretaker:'Ensuring well-being...', sir:'Leading with honor...', goddess:'Accepting devotion...', commander:'Directing the action...', 'fluid switch': 'Flowing between roles...', 'dominant-leaning switch':'Leading, with flexibility', 'submissive-leaning switch':'Following, with flexibility', 'situational switch':'Adapting to the moment...'}; return intros[key]||"Explore your unique expression!";}
 
