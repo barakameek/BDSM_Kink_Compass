@@ -434,18 +434,21 @@ class TrackerApp {
       if (styles.length > 0) {
           try { // Add try-catch around the loop
               styles.sort((a, b) => a.name.localeCompare(b.name))
-                  .forEach((style, index) => {
-                      // Log the first style being added
-                      if (index === 0) {
-                          console.log(`Adding style option: Value='${style.name}', Text='${style.name}'`); // <<-- ADD Log
-                      }
-                      // Ensure style.name exists before using it
-                      if (style && style.name) {
-                         selectElement.innerHTML += `<option value="${this.escapeHTML(style.name)}">${this.escapeHTML(style.name)}</option>`;
-                      } else {
-                         console.warn(`Style object at index ${index} is invalid or missing name:`, style); // <<-- ADD Log
-                      }
-                  });
+                // Inside renderStyles loop:
+.forEach((style, index) => {
+    // Ensure style.name exists before using it
+    if (style && style.name) {
+       const nameToEscape = style.name; // Store it
+       const escapedName = this.escapeHTML(nameToEscape); // Call escapeHTML
+
+       // Log values *before* adding to innerHTML
+       console.log(`Loop Index ${index}: Raw Name='${nameToEscape}', Escaped Name='${escapedName}'`); // <<-- ADD LOG
+
+       selectElement.innerHTML += `<option value="${escapedName}">${escapedName}</option>`;
+    } else {
+       console.warn(`Style object at index ${index} is invalid or missing name:`, style);
+    }
+});
               selectElement.disabled = false;
               console.log("Finished adding style options."); // <<-- ADD Log
           } catch (loopError) {
@@ -665,16 +668,14 @@ class TrackerApp {
   // --- Other Helper Functions ---
   getFlairForScore(s){ /* ... keep ... */ }
   getEmojiForScore(s){ /* ... keep ... */ }
-  escapeHTML(str){ /* ... keep ... */ }
-
-  // MODIFIED: openModal with focus management & logging
-  openModal(modalElement){
-        console.log("--- Entering openModal --- Trying to open:", modalElement?.id);
-        if(!modalElement){
-             console.error("!!! openModal Error: modalElement is null or undefined!");
-             return;
-        }
-
+escapeHTML(str){
+    const div=document.createElement('div');
+    // Use textContent for safer assignment, prevents accidental HTML injection if str *was* undefined/null
+    div.textContent = str ?? ''; // Use nullish coalescing for safety
+    // Check the result *before* returning innerHTML
+    console.log(`escapeHTML Input: "${str}", Output (textContent): "${div.textContent}", Output (innerHTML): "${div.innerHTML}"`); // <<-- ADD LOG
+    return div.innerHTML;
+}
         this.elementThatOpenedModal = document.activeElement;
         console.log("Storing focused element before modal open:", this.elementThatOpenedModal);
 
