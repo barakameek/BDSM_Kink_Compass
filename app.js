@@ -1120,40 +1120,67 @@ class TrackerApp {
   getStyleEssence(styleName){ /* ... (existing logic) ... */ }
 
   // MODIFIED: Add optional termKey to highlight/scroll, add glossary links
-  showGlossary(termKeyToHighlight = null) {
-      if (!this.elements.glossaryBody || !this.elements.glossaryModal) return;
-      grantAchievement({}, 'glossary_user'); // Assuming achievement is global
+showGlossary(termKeyToHighlight = null) {
+    // Add logs INSIDE this function
+    console.log("--- Entering showGlossary ---", termKeyToHighlight); // <<-- ADD 1
 
-      let html = '<dl>';
-      Object.entries(glossaryTerms).sort((a, b) => a[1].term.localeCompare(b[1].term))
-          .forEach(([key, termData]) => {
-              const termId = `gloss-term-${key}`;
-              const isHighlighted = key === termKeyToHighlight;
-              html += `<dt id="${termId}" class="${isHighlighted ? 'highlighted-term' : ''}">${this.escapeHTML(termData.term)}</dt>`; // Add class if highlighted
-              html += `<dd>${this.escapeHTML(termData.definition)}`;
-              if (termData.related?.length) {
-                  html += `<br><span class="related-terms">See also: `;
-                  // NEW: Make related terms actual links
-                  html += termData.related.map(relKey => {
-                      const relatedTerm = glossaryTerms[relKey]?.term || relKey;
-                      return `<a href="#gloss-term-${relKey}" class="glossary-link" data-term-key="${relKey}">${this.escapeHTML(relatedTerm)}</a>`;
-                  }).join(', ');
-                  html += `</span>`;
-              }
-              html += `</dd>`;
-          });
-      html += '</dl>';
-      this.elements.glossaryBody.innerHTML = html;
-      this.openModal(this.elements.glossaryModal);
+    if (!this.elements.glossaryBody || !this.elements.glossaryModal) {
+        console.error("!!! showGlossary Error: Missing glossaryBody or glossaryModal element!"); // <<-- ADD 2
+        return; // Stop if elements are missing
+    }
+    console.log("Glossary elements found:", this.elements.glossaryBody, this.elements.glossaryModal); // <<-- ADD 3
 
-      // Scroll to highlighted term if provided
-      if (termKeyToHighlight) {
-          const termElement = this.elements.glossaryBody.querySelector(`#gloss-term-${termKeyToHighlight}`);
-          requestAnimationFrame(() => { // Ensure element is visible before scrolling
-             termElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          });
-      }
-  }
+    grantAchievement({}, 'glossary_user');
+
+    let html = '<dl>';
+    try { // Add try..catch around HTML generation
+        Object.entries(glossaryTerms).sort((a, b) => a[1].term.localeCompare(b[1].term))
+            .forEach(([key, termData]) => {
+                // ... (HTML generation logic) ...
+            });
+        html += '</dl>';
+        console.log("Generated Glossary HTML (snippet):", html.substring(0, 200)); // <<-- ADD 4
+    } catch (htmlError) {
+         console.error("!!! showGlossary Error: Failed to generate HTML!", htmlError); // <<-- ADD 5
+         this.elements.glossaryBody.innerHTML = "<p class='error-text'>Error loading glossary content.</p>";
+         this.openModal(this.elements.glossaryModal); // Still open modal to show error
+         return;
+    }
+
+    this.elements.glossaryBody.innerHTML = html;
+    console.log("Set glossaryBody innerHTML."); // <<-- ADD 6
+
+    // --- PROBLEM LIKELY HERE ---
+    this.openModal(this.elements.glossaryModal);
+    console.log("Called openModal for glossaryModal."); // <<-- ADD 7
+
+    // Scroll logic (should happen after modal is open)
+    if (termKeyToHighlight) {
+        // ... (scroll logic) ...
+    }
+    console.log("--- Exiting showGlossary ---"); // <<-- ADD 8
+}
+
+// Also add logs inside openModal
+openModal(modalElement){
+    console.log("--- Entering openModal --- Trying to open:", modalElement?.id); // <<-- ADD 9
+    if(!modalElement){
+         console.error("!!! openModal Error: modalElement is null or undefined!"); // <<-- ADD 10
+         return;
+    }
+    modalElement.style.display='flex';
+    modalElement.setAttribute('aria-hidden', 'false'); // Also set ARIA
+    console.log(`Set display='flex' for #${modalElement.id}. Current display:`, window.getComputedStyle(modalElement).display); // <<-- ADD 11
+
+    const focusable = modalElement.querySelector('button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])');
+    if(focusable) {
+        console.log(`Found focusable element in #${modalElement.id}:`, focusable); // <<-- ADD 12
+        requestAnimationFrame(()=> focusable.focus());
+    } else {
+        console.warn(`No focusable element found in #${modalElement.id}.`); // <<-- ADD 13
+    }
+    console.log("--- Exiting openModal ---"); // <<-- ADD 14
+}
 
 
   // MODIFIED: Show style discovery, potentially highlighting a style
