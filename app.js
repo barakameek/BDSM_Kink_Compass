@@ -1121,9 +1121,20 @@ class TrackerApp {
 
   // MODIFIED: Add optional termKey to highlight/scroll, add glossary links
 showGlossary(termKeyToHighlight = null) {
-    // Add logs INSIDE this function
-    console.log("--- Entering showGlossary ---", termKeyToHighlight); // <<-- ADD 1
-
+    console.log("--- Entering showGlossary (Simple Test) ---");
+    console.log("Imported glossaryTerms:", glossaryTerms); // <<-- FOCUS ON THIS LOG
+    // Comment out the rest of the function for now
+    /*
+    if (!this.elements.glossaryBody || !this.elements.glossaryModal) { ... }
+    grantAchievement(...);
+    let html = ...
+    try { ... } catch { ... }
+    this.elements.glossaryBody.innerHTML = html;
+    this.openModal(...);
+    if (termKeyToHighlight) { ... }
+    */
+    console.log("--- Exiting showGlossary (Simple Test) ---");
+}
     if (!this.elements.glossaryBody || !this.elements.glossaryModal) {
         console.error("!!! showGlossary Error: Missing glossaryBody or glossaryModal element!"); // <<-- ADD 2
         return; // Stop if elements are missing
