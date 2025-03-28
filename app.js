@@ -2910,3 +2910,29 @@ class TrackerApp {
 
 // --- Initialization ---
 try {
+     console.log("SCRIPT END: Initializing KinkCompass App...");
+    window.kinkCompassApp = new TrackerApp();
+    console.log("SCRIPT END: KinkCompass App Initialized Successfully.");
+} catch (error) {
+    console.error("Fatal error during App initialization:", error);
+    const errorDiv = document.createElement('div');
+    errorDiv.style.cssText = 'color: red; padding: 20px; border: 2px solid red; margin: 20px; background: white; font-family: monospace; white-space: pre-wrap; z-index: 9999; position: fixed; top: 10px; left: 10px; right: 10px;';
+    errorDiv.innerHTML = `<strong>Fatal Error: KinkCompass could not start.</strong><br>${error.message}<br><br>Stack Trace:<br>${error.stack || 'Not available'}`;
+    document.body.prepend(errorDiv);
+}
+
+// --- Re-include all the handle methods prototype definitions (Just definitions needed, bodies are in the class) ---
+TrackerApp.prototype.handleListClick = TrackerApp.prototype.handleListClick;
+TrackerApp.prototype.handleListKeydown = TrackerApp.prototype.handleListKeydown;
+TrackerApp.prototype.handleWindowClick = TrackerApp.prototype.handleWindowClick;
+TrackerApp.prototype.handleWindowKeydown = TrackerApp.prototype.handleWindowKeydown;
+TrackerApp.prototype.handleTraitSliderInput = TrackerApp.prototype.handleTraitSliderInput;
+TrackerApp.prototype.handleTraitInfoClick = TrackerApp.prototype.handleTraitInfoClick;
+TrackerApp.prototype.handleModalBodyClick = TrackerApp.prototype.handleModalBodyClick;
+TrackerApp.prototype.handleThemeSelection = TrackerApp.prototype.handleThemeSelection;
+TrackerApp.prototype.handleStyleFinderAction = TrackerApp.prototype.handleStyleFinderAction;
+TrackerApp.prototype.handleStyleFinderSliderInput = TrackerApp.prototype.handleStyleFinderSliderInput;
+TrackerApp.prototype.handleDetailTabClick = TrackerApp.prototype.handleDetailTabClick;
+TrackerApp.prototype.handleGlossaryLinkClick = TrackerApp.prototype.handleGlossaryLinkClick;
+TrackerApp.prototype.handleExploreStyleLinkClick = TrackerApp.prototype.handleExploreStyleLinkClick;
+
