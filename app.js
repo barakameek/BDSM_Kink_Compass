@@ -1,6 +1,3 @@
-// === app.js === (COMPLETE - With applySavedTheme Fix)
-
-// Import necessary modules
 import { bdsmData } from './data.js';
 import { getStyleBreakdown as getSubBreakdown } from './paraphrasing_sub.js';
 import { getStyleBreakdown as getDomBreakdown } from './paraphrasing_dom.js';
@@ -62,7 +59,6 @@ class TrackerApp {
     this.sfStyles = {
       submissive: [ 'Classic Submissive', 'Brat', 'Slave', 'Pet', 'Little', 'Puppy', 'Kitten', 'Princess', 'Rope Bunny', 'Masochist', 'Prey', 'Toy', 'Doll', 'Bunny', 'Servant', 'Playmate', 'Babygirl', 'Captive', 'Thrall', 'Puppet', 'Maid', 'Painslut', 'Bottom' ],
       dominant: [ 'Classic Dominant', 'Assertive', 'Nurturer', 'Strict', 'Master', 'Mistress', 'Daddy', 'Mommy', 'Owner', 'Rigger', 'Sadist', 'Hunter', 'Trainer', 'Puppeteer', 'Protector', 'Disciplinarian', 'Caretaker', 'Sir', 'Goddess', 'Commander' ],
-      // Add switch styles if they have specific scoring/definitions in the finder
       switch: [ 'Fluid Switch', 'Dominant-Leaning Switch', 'Submissive-Leaning Switch', 'Situational Switch']
     };
     this.sfSubFinderTraits = [
@@ -74,7 +70,7 @@ class TrackerApp {
     ];
     this.sfDomTraitFootnotes = { authority: "1: Gentle / 10: Very commanding", confidence: "1: Hesitant / 10: Rock-solid", discipline: "1: Relaxed / 10: Strict", boldness: "1: Cautious / 10: Fearless", care: "1: Detached / 10: Deeply caring", empathy: "1: Distant / 10: Highly intuitive", control: "1: Hands-off / 10: Total control", creativity: "1: Routine / 10: Very creative", precision: "1: Casual / 10: Meticulous", intensity: "1: Soft / 10: Intense", sadism: "1: Avoids giving pain / 10: Enjoys giving pain", leadership: "1: Follower / 10: Natural leader", possession: "1: Shares / 10: Very possessive", patience: "1: Impatient / 10: Very patient", dominanceDepth: "1: Light control / 10: Full dominance" };
 
-    this.sfSliderDescriptions = { // Copying the full list from previous step
+    this.sfSliderDescriptions = {
         obedience: [ "You dodge orders like a breeze!", "Rules? You’re too free for that!", "You’ll follow if it’s fun!", "A little “yes” slips out sometimes!", "You’re cool with gentle guidance!", "Following feels kinda nice!", "You like pleasing when asked!", "Obeying’s your quiet joy!", "You love a sweet “please”!", "You glow when you say “yes”!" ],
         rebellion: [ "You’re too sweet to say no!", "A tiny “nah” sneaks out!", "You nudge rules with a smile!", "Teasing’s your little game!", "Half yes, half no—cute!", "You push back with charm!", "Defiance is your sparkle!", "You love a playful “no”!", "Rebel vibes all the way!", "You’re a cheeky star!" ],
         service: [ "Helping? You’re too chill!", "A quick favor’s enough!", "You help if they’re sweet!", "You pitch in when it’s easy!", "Serving’s okay sometimes!", "You like making them smile!", "Helping’s your happy place!", "You love a kind task!", "You’re a service sweetie!", "Caring’s your superpower!" ],
@@ -111,11 +107,11 @@ class TrackerApp {
         dominanceDepth: [ "Light and free!", "A hold peeks out!", "You lead if easy!", "Half soft, half firm!", "You’re taking charge!", "Power’s your glow!", "You rule with ease!", "Control’s your core!", "You’re a power gem!", "Total ruler!" ]
     };
 
-    this.sfTraitExplanations = { // Copying from previous step
+    this.sfTraitExplanations = {
         obedience: "How much you enjoy following instructions or rules. High = loves obeying; Low = prefers independence.", rebellion: "How much you like playfully resisting or teasing. High = loves defiance; Low = compliant.", service: "Joy derived from helping or performing tasks for others. High = service-driven; Low = self-focused.", playfulness: "Love for silly games, humor, and lightheartedness. High = very playful; Low = serious.", sensuality: "Appreciation for physical sensations, textures, touch. High = very sensory; Low = less focused on touch.", exploration: "Eagerness to try new experiences or push boundaries. High = adventurous; Low = prefers familiarity.", devotion: "Depth of loyalty and commitment to a partner. High = deeply devoted; Low = more independent.", innocence: "Enjoyment of feeling carefree, childlike, or pure. High = embraces innocence; Low = more mature.", mischief: "Enjoyment of stirring things up, pranks, or playful trouble. High = loves mischief; Low = calm.", affection: "Need for physical closeness, cuddles, and reassurance. High = very affectionate; Low = prefers space.", painTolerance: "How you perceive and react to physical discomfort or pain. High = finds interest/pleasure; Low = avoids pain.", submissionDepth: "Willingness to yield control to a partner. High = enjoys total surrender; Low = prefers light guidance.", dependence: "Comfort level in relying on a partner for guidance or decisions. High = enjoys dependence; Low = self-reliant.", vulnerability: "Ease and willingness to show emotional softness or weakness. High = very open; Low = guarded.", adaptability: "Ability to switch between roles or adjust to changing dynamics. High = very flexible; Low = prefers consistency.", tidiness: "Satisfaction derived from neatness and order. High = very tidy; Low = comfortable with mess.", politeness: "Natural inclination towards courteous and respectful behavior. High = very polite; Low = more direct/casual.", craving: "Desire for intense, extreme, or peak sensations/experiences. High = seeks intensity; Low = prefers calm.", receptiveness: "Openness to receiving direction, input, or sensation. High = very receptive; Low = more closed off.", authority: "Natural inclination and comfort in taking charge or leading. High = commanding; Low = prefers following.", confidence: "Self-assuredness in decisions and actions within a dynamic. High = very confident; Low = hesitant.", discipline: "Enjoyment in setting and enforcing rules or structure. High = strict; Low = relaxed.", boldness: "Willingness to take risks or face challenges head-on. High = fearless; Low = cautious.", care: "Focus on supporting, protecting, and nurturing a partner. High = deeply caring; Low = more detached.", empathy: "Ability to understand and connect with a partner's feelings. High = very empathetic; Low = more analytical.", control: "Desire to manage details, actions, or the environment. High = loves control; Low = prefers flow.", creativity: "Enjoyment in crafting unique scenarios, tasks, or experiences. High = very inventive; Low = prefers routine.", precision: "Focus on executing actions or commands meticulously. High = very precise; Low = more casual.", intensity: "The level of emotional or physical energy brought to the dynamic. High = very intense; Low = gentle.", sadism: "Deriving pleasure from consensually inflicting pain or discomfort. High = enjoys inflicting; Low = avoids inflicting.", leadership: "Natural ability to guide, direct, and inspire others. High = strong leader; Low = follower.", possession: "Feeling of ownership or strong connection ('mine') towards a partner. High = very possessive; Low = less possessive.", patience: "Ability to remain calm while guiding, teaching, or waiting. High = very patient; Low = impatient.", dominanceDepth: "Desire for the level of influence or control over a partner. High = seeks total influence; Low = prefers light control."
     };
 
-    this.sfStyleKeyTraits = { // Copying from previous step
+    this.sfStyleKeyTraits = {
         // Submissive Styles
         'Classic Submissive': ['obedience', 'service', 'receptiveness', 'trust'],
         'Brat': ['rebellion', 'mischief', 'playfulness', 'painTolerance'],
@@ -163,15 +159,14 @@ class TrackerApp {
         'Goddess': ['authority', 'confidence', 'intensity', 'dominanceDepth'],
         'Commander': ['authority', 'leadership', 'control', 'discipline', 'boldness'],
 
-        // Switch Styles - Often based on adaptability or core traits of both sides
-        // Key traits for scoring *within* the finder might be less defined for Switches
-        'Fluid Switch': ['adaptability', 'empathy', 'playfulness'], // Example traits
-        'Dominant-Leaning Switch': ['adaptability', 'authority', 'confidence'], // Example
-        'Submissive-Leaning Switch': ['adaptability', 'receptiveness', 'obedience'], // Example
-        'Situational Switch': ['adaptability', 'communication', 'empathy'] // Example
+        // Switch Styles
+        'Fluid Switch': ['adaptability', 'empathy', 'playfulness'],
+        'Dominant-Leaning Switch': ['adaptability', 'authority', 'confidence'],
+        'Submissive-Leaning Switch': ['adaptability', 'receptiveness', 'obedience'],
+        'Situational Switch': ['adaptability', 'communication', 'empathy']
     };
 
-    this.sfStyleDescriptions = { // Copying from previous step, ensuring Switch styles are present
+    this.sfStyleDescriptions = {
       'Classic Submissive': { short: "Thrives on guidance and trust.", long: "Finds joy in yielding to a partner's direction, embracing vulnerability and structure.", tips: ["Communicate limits clearly.", "Find a respectful partner.", "Explore submission levels."] },
       'Brat': { short: "Cheeky, loves pushing buttons.", long: "Delights in playful resistance, turning rules into games. Enjoys the thrill of being 'tamed'.", tips: ["Keep it fun.", "Pair with someone who enjoys the chase.", "Know boundaries for defiance."] },
       'Slave': { short: "Finds fulfillment in total devotion/service.", long: "Deeply committed to serving, often embracing high control and structure within immense trust.", tips: ["Negotiate limits thoroughly.", "Ensure partner values your devotion.", "Prioritize self-care."] },
@@ -221,7 +216,7 @@ class TrackerApp {
       'Situational Switch': { short: "Role depends on context/partner.", long: "Adapts role based on specific situations, partner dynamics, or current mood.", tips: ["Be clear about what influences your role choice.", "Negotiate roles per scene.", "Check in frequently."] }
     };
 
-    this.sfDynamicMatches = { // Copying from previous step, ensuring Switch styles are present
+    this.sfDynamicMatches = {
       'Classic Submissive': { dynamic: "Power Exchange", match: "Classic Dominant", desc: "Classic trust/guidance.", longDesc: "Mutual respect, clear roles." },
       'Brat': { dynamic: "Taming Play", match: "Disciplinarian/Strict", desc: "Cheeky push-pull.", longDesc: "Resistance meets firm control." },
       'Slave': { dynamic: "Master/Slave (TPE)", match: "Master/Mistress", desc: "Deep devotion bond.", longDesc: "High power exchange, often 24/7 elements." },
@@ -352,19 +347,17 @@ class TrackerApp {
     console.log("style:", !!this.elements.style, this.elements.style);
     console.log("--- End Element Check ---");
 
-    // Critical element check - Ensure role and style dropdowns exist
     if (!this.elements.role || !this.elements.style) {
         console.error("CRITICAL ERROR: Role or Style dropdown element not found on page load. Form functionality will be broken.");
         document.body.insertAdjacentHTML('afterbegin', '<p style="color:red; background:white; padding:10px; border: 2px solid red;">Error: Core form elements missing. App cannot initialize correctly.</p>');
-        return; // Stop constructor if critical elements are missing
+        return;
     }
-
 
     console.log("CONSTRUCTOR: Elements found.");
     this.addEventListeners();
     console.log("CONSTRUCTOR: Listeners added.");
     this.loadFromLocalStorage();
-    this.applySavedTheme(); // <<<< THIS IS THE LINE CAUSING THE ERROR
+    this.applySavedTheme();
     this.renderStyles(this.elements.role?.value);
     this.renderTraits(this.elements.role?.value, this.elements.style?.value);
     this.renderList();
@@ -378,13 +371,12 @@ class TrackerApp {
   saveToLocalStorage(){try{localStorage.setItem('kinkProfiles',JSON.stringify(this.people));console.log(`Saved ${this.people.length} profiles.`);}catch(e){console.error("Failed to save profiles:",e);this.showNotification("Error saving data. Storage might be full or corrupted.", "error");}}
 
 
-  // NEW: Onboarding check
+  // --- Onboarding ---
   checkAndShowWelcome() {
     if (!localStorage.getItem('kinkCompassWelcomed')) {
       this.showWelcomeMessage();
     }
   }
-
   showWelcomeMessage() {
     if (this.elements.welcomeModal) {
       this.openModal(this.elements.welcomeModal);
@@ -399,7 +391,6 @@ class TrackerApp {
   addEventListeners() {
     console.log("Adding event listeners...");
 
-    // Form Interaction
     this.elements.role?.addEventListener('change', (e) => {
         console.log(">>> Role changed!");
         this.renderStyles(e.target.value);
@@ -436,24 +427,18 @@ class TrackerApp {
             this.updateLivePreview();
         }
     });
-
-     // Trait Sliders
     this.elements.traitsContainer?.addEventListener('input', (e) => {
         if (e.target.classList.contains('trait-slider')) {
             this.handleTraitSliderInput(e);
             this.updateLivePreview();
         }
     });
-
-    // Trait Info Buttons
     this.elements.traitsContainer?.addEventListener('click', (e) => {
         if (e.target.classList.contains('trait-info-btn')) {
             console.log(">>> Trait Info button clicked!");
             this.handleTraitInfoClick(e);
         }
     });
-
-    // Context Help Buttons
     document.body.addEventListener('click', (e) => {
         if (e.target.classList.contains('context-help-btn')) {
              console.log(">>> Context Help button clicked!");
@@ -465,24 +450,16 @@ class TrackerApp {
              }
         }
     });
-
-    // Trait Info Popup Close
     this.elements.traitInfoClose?.addEventListener('click', () => {
         console.log(">>> Trait Info Close clicked!");
         this.hideTraitInfo();
     });
-
-     // Context Help Popup Close
      this.elements.contextHelpClose?.addEventListener('click', () => {
         console.log(">>> Context Help Close clicked!");
         this.hideContextHelp();
     });
-
-    // List Interaction
     this.elements.peopleList?.addEventListener('click', (e) => this.handleListClick(e));
     this.elements.peopleList?.addEventListener('keydown', (e) => this.handleListKeydown(e));
-
-    // Modal Closures
     this.elements.modalClose?.addEventListener('click', () => {
         console.log(">>> Detail Modal Close clicked!");
         this.closeModal(this.elements.modal);
@@ -515,18 +492,16 @@ class TrackerApp {
          console.log(">>> Style Finder Modal Close clicked!");
          this.sfClose();
      });
-
-    // Header Buttons
     this.elements.resourcesBtn?.addEventListener('click', () => {
         console.log(">>> Resources button clicked!");
         grantAchievement({}, 'resource_reader');
-        localStorage.setItem('kinkCompass_resource_reader', 'true'); // Persist app achievement
+        localStorage.setItem('kinkCompass_resource_reader', 'true');
         this.openModal(this.elements.resourcesModal);
     });
     this.elements.glossaryBtn?.addEventListener('click', () => {
         console.log(">>> Glossary button clicked!");
         grantAchievement({}, 'glossary_user');
-        localStorage.setItem('kinkCompass_glossary_used', 'true'); // Persist app achievement
+        localStorage.setItem('kinkCompass_glossary_used', 'true');
         this.showGlossary();
     });
      this.elements.styleDiscoveryBtn?.addEventListener('click', () => {
@@ -562,37 +537,22 @@ class TrackerApp {
          console.log(">>> Style Finder Trigger button clicked!");
          this.sfStart();
      });
-
-     // Style Discovery Filter
      this.elements.styleDiscoveryRoleFilter?.addEventListener('change', () => {
          console.log(">>> Style Discovery Filter changed!");
          this.renderStyleDiscoveryContent();
      });
-
-    // Theme Selection Buttons
     this.elements.themesBody?.addEventListener('click', (e) => this.handleThemeSelection(e));
-
-     // Detail Modal Body
      this.elements.modalBody?.addEventListener('click', (e) => this.handleModalBodyClick(e));
-
-     // Detail Modal Tabs
      this.elements.modalTabs?.addEventListener('click', (e) => this.handleDetailTabClick(e));
-
-     // Glossary Link Navigation
      this.elements.glossaryBody?.addEventListener('click', (e) => this.handleGlossaryLinkClick(e));
-
-     // Style Explore Link
      this.elements.styleExploreLink?.addEventListener('click', (e) => this.handleExploreStyleLinkClick(e));
      this.elements.formStyleFinderLink?.addEventListener('click', () => {
          console.log(">>> Form Style Finder link clicked!");
          this.sfStart();
      });
-
-     // Style Finder Modal Content Interaction
      this.elements.sfStepContent?.addEventListener('click', (e) => {
          const button = e.target.closest('button');
          const infoIcon = e.target.closest('.sf-info-icon');
-
          if (button) {
              const action = button.dataset.action;
              const value = button.dataset.value;
@@ -604,255 +564,23 @@ class TrackerApp {
              if (traitName) this.sfShowTraitInfo(traitName);
          }
      });
-
-      // Style Finder Slider Input
       this.elements.sfStepContent?.addEventListener('input', (e) => {
         if (e.target.classList.contains('sf-trait-slider')) {
             this.handleStyleFinderSliderInput(e.target);
         }
      });
-
-    // Close modals/popups on Escape/Click outside
     window.addEventListener('keydown', (e) => this.handleWindowKeydown(e));
     window.addEventListener('click', (e) => this.handleWindowClick(e));
-
     console.log("Event listeners ADDED.");
   }
 
 
   // --- Event Handlers ---
-  // (Keep all handle... methods as they were in the previous correct version)
-  handleListClick(e) { /* ... */ }
-  handleListKeydown(e) { /* ... */ }
-  handleWindowClick(e) { /* ... */ }
-  handleWindowKeydown(e) { /* ... */ }
-  handleTraitSliderInput(e) { /* ... */ }
-  handleTraitInfoClick(e) { /* ... */ }
-  handleModalBodyClick(e) { /* ... */ }
-  handleThemeSelection(e) { /* ... */ }
-  handleStyleFinderAction(action, dataset = {}) { /* ... */ }
-  handleStyleFinderSliderInput(sliderElement){ /* ... */ }
-  handleDetailTabClick(e) { /* ... */ }
-  handleGlossaryLinkClick(e) { /* ... */ }
-  handleExploreStyleLinkClick(e) { /* ... */ }
-
-  // --- Core Rendering ---
-  // (Keep renderStyles, renderTraits, createTraitHTML, updateTraitDescription, renderList, createPersonListItemHTML, updateStyleExploreLink as they were)
-  renderStyles(roleKey) { /* ... */ }
-  renderTraits(roleKey, styleName) { /* ... */ }
-  createTraitHTML(trait){ /* ... */ }
-  updateTraitDescription(slider){ /* ... */ }
-  renderList(){ /* ... */ }
-  createPersonListItemHTML(person){ /* ... */ }
-  updateStyleExploreLink() { /* ... */ }
-
-  // --- CRUD ---
-  // (Keep savePerson, editPerson, deletePerson, resetForm as they were)
-  savePerson() { /* ... */ }
-  editPerson(personId){ /* ... */ }
-  deletePerson(personId){ /* ... */ }
-  resetForm(isManualClear=false){ /* ... */ }
-
-  // --- Live Preview ---
-  // (Keep updateLivePreview as it was)
-  updateLivePreview(){ /* ... */ }
-
-  // --- Modal Display ---
-  // (Keep showPersonDetails, renderDetailTabContent as they were)
-  showPersonDetails(personId) { /* ... */ }
-  renderDetailTabContent(person, tabId, contentElement) { /* ... */ }
-
-  // --- New Feature Logic ---
-  // (Keep addGoal, toggleGoalStatus, deleteGoal, renderGoalList, showJournalPrompt, saveReflections, addSnapshotToHistory, renderHistoryChart, toggleSnapshotInfo, renderAchievementsList, showAchievements, showKinkReading, getReadingDescriptor, getStyleEssence as they were)
-   addGoal(personId){ /* ... */ }
-  toggleGoalStatus(personId,goalId){ /* ... */ }
-  deleteGoal(personId,goalId){ /* ... */ }
-  renderGoalList(person){ /* ... */ }
-  showJournalPrompt(personId){ /* ... */ }
-  saveReflections(personId){ /* ... */ }
-  addSnapshotToHistory(personId){ /* ... */ }
-  renderHistoryChart(person, canvasId) { /* ... */ }
-  toggleSnapshotInfo(button){ /* ... */ }
-  renderAchievementsList(person, listElementId){ /* ... */ }
-  showAchievements() { /* ... */ }
-  showKinkReading(personId){ /* ... */ }
-  getReadingDescriptor(traitName,score){ /* ... */ }
-  getStyleEssence(styleName){ /* ... */ }
-
-  // --- Glossary, Style Discovery ---
-  // (Keep showGlossary, showStyleDiscovery, renderStyleDiscoveryContent as they were)
-  showGlossary(termKeyToHighlight = null) { /* ... */ }
-  showStyleDiscovery(styleNameToHighlight = null) { /* ... */ }
-  renderStyleDiscoveryContent(styleNameToHighlight = null) { /* ... */ }
-
-  // --- Data Import/Export ---
-  // (Keep exportData, importData as they were)
-  exportData(){ /* ... */ }
-  importData(event){ /* ... */ }
-
-  // --- Popups ---
-  // (Keep showTraitInfo, hideTraitInfo, showContextHelp, hideContextHelp as they were)
-   showTraitInfo(traitName){ /* ... */ }
-  hideTraitInfo(){ /* ... */ }
-  showContextHelp(helpKey) { /* ... */ }
-  hideContextHelp() { /* ... */ }
-
-  // --- Style Finder Methods ---
-  // (Keep sfStart, sfClose, sfCalculateSteps, sfRenderStep, sfSetRole, sfSetTrait, sfNextStep, sfPrevStep, sfStartOver, sfComputeScores, sfUpdateDashboard, toggleStyleFinderDashboard, sfCalculateResult, sfGenerateSummaryDashboard, sfShowFeedback, sfShowTraitInfo, sfShowFullDetails, getStyleIcons, confirmApplyStyleFinderResult, applyStyleFinderResult as they were)
-  sfStart(){ /* ... */ }
-  sfClose(){ /* ... */ }
-  sfCalculateSteps(){ /* ... */ }
-  sfRenderStep() { /* ... */ }
-  sfSetRole(role){ /* ... */ }
-  sfSetTrait(trait,value){ /* ... */ }
-  sfNextStep(currentTrait = null){ /* ... */ }
-  sfPrevStep(){ /* ... */ }
-  sfStartOver(){ /* ... */ }
-  sfComputeScores() { /* ... */ }
-  sfUpdateDashboard(forceVisible = false) { /* ... */ }
-  toggleStyleFinderDashboard() { /* ... */ }
-  sfCalculateResult(){ /* ... */ }
-  sfGenerateSummaryDashboard() { /* ... */ }
-  sfShowFeedback(message){ /* ... */ }
-  sfShowTraitInfo(traitName){ /* ... */ }
-  sfShowFullDetails(styleName){ /* ... */ }
-  getStyleIcons(){ /* ... */ }
-  confirmApplyStyleFinderResult(r, s) { /* ... */ }
-  applyStyleFinderResult(r,s){ /* ... */ }
-
-  // --- Other Helper Functions ---
-  // (Keep getFlairForScore, getEmojiForScore, escapeHTML, getIntroForStyle, showNotification as they were)
-  getFlairForScore(s){ /* ... */ }
-  getEmojiForScore(s){ /* ... */ }
-  escapeHTML(str){ /* ... */ }
-  getIntroForStyle(styleName){ /* ... */ }
-  showNotification(message, type = 'info', duration = 4000) { /* ... */ }
-
-  // --- Theme Management --- ADDED applySavedTheme ---
-    applySavedTheme() {
-        const savedTheme = localStorage.getItem('kinkCompassTheme');
-        if (savedTheme && ['light', 'dark', 'pastel', 'velvet'].includes(savedTheme)) { // Validate theme
-            console.log(`Applying saved theme: ${savedTheme}`);
-            this.setTheme(savedTheme); // Call the existing setTheme method
-        } else {
-            // Apply the default theme set in the HTML initially
-            const defaultTheme = document.documentElement.getAttribute('data-theme') || 'light';
-            console.log(`No valid saved theme found, applying default: ${defaultTheme}`);
-            // No need to call setTheme if it's already the default,
-            // but ensure the toggle button matches the initial state
-             this.elements.themeToggle.textContent = (defaultTheme === 'light' || defaultTheme === 'pastel') ? '🌙' : '☀️';
-             document.documentElement.setAttribute('data-theme', defaultTheme); // Ensure consistency
-             document.body.setAttribute('data-theme', defaultTheme);
-        }
-    }
-
-    setTheme(themeName){
-        console.log(`Setting theme to: ${themeName}`);
-        document.documentElement.setAttribute('data-theme', themeName); // Apply to html tag
-        document.body.setAttribute('data-theme', themeName); // Apply to body tag too
-        localStorage.setItem('kinkCompassTheme', themeName);
-
-        // Update toggle button text based on the new theme
-        this.elements.themeToggle.textContent = (themeName === 'light' || themeName === 'pastel') ? '🌙' : '☀️';
-
-        // Update chart if it exists and theme changed significantly (light vs dark base)
-        if (this.chartInstance) {
-             const isDark = themeName === 'dark' || themeName === 'velvet';
-             const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--chart-grid-color').trim();
-             const labelColor = getComputedStyle(document.documentElement).getPropertyValue('--chart-label-color').trim();
-             // Update chart options (simplified example)
-             this.chartInstance.options.scales.y.ticks.color = labelColor;
-             this.chartInstance.options.scales.y.grid.color = gridColor;
-             this.chartInstance.options.scales.x.ticks.color = labelColor;
-             this.chartInstance.options.scales.x.grid.color = gridColor;
-             this.chartInstance.options.plugins.legend.labels.color = labelColor;
-             this.chartInstance.update();
-        }
-         grantAchievement({}, 'theme_changer'); // Grant app-level achievement
-         // Store in local storage to remember it's been used
-         localStorage.setItem('kinkCompass_theme_changer', 'true');
-    }
-
-    toggleTheme(){
-        const currentTheme = document.body.getAttribute('data-theme') || 'light';
-        let newTheme;
-        // Simple toggle between light/dark for the button action
-        if (currentTheme === 'light' || currentTheme === 'pastel') {
-            newTheme = 'dark';
-        } else {
-            newTheme = 'light';
-        }
-        this.setTheme(newTheme);
-    }
-
-   // --- Modal Management ---
-   openModal(modalElement) {
-        if (!modalElement) return;
-        console.log(`Opening modal: #${modalElement.id}`);
-        this.elementThatOpenedModal = document.activeElement;
-        console.log("Element that opened modal:", this.elementThatOpenedModal);
-
-        modalElement.setAttribute('aria-hidden', 'false');
-        modalElement.style.display = 'flex';
-
-        requestAnimationFrame(() => {
-            const focusableElement = modalElement.querySelector('.modal-close, button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
-            if (focusableElement) {
-                focusableElement.focus();
-                console.log("Focused element inside modal:", focusableElement);
-            } else {
-                 modalElement.focus();
-                 console.log("Focused modal container.");
-            }
-        });
-    }
-
-   closeModal(modalElement) {
-        if (!modalElement) return;
-        console.log(`Closing modal: #${modalElement.id}`);
-        modalElement.setAttribute('aria-hidden', 'true');
-        modalElement.style.display = 'none';
-
-        console.log("Attempting to restore focus to:", this.elementThatOpenedModal);
-        if (this.elementThatOpenedModal && typeof this.elementThatOpenedModal.focus === 'function') {
-            try {
-                this.elementThatOpenedModal.focus();
-                console.log("Focus restored.");
-            } catch (e) {
-                console.warn("Could not restore focus to original element:", e);
-                try { document.body.focus(); console.log("Fell back to focusing body."); } catch (bodyErr) { console.warn("Could not focus body either.");}
-            }
-        } else {
-            console.warn("No stored element to restore focus to, or it's not focusable.");
-             try { document.body.focus(); console.log("Fell back to focusing body."); } catch (bodyErr) { console.warn("Could not focus body either.");}
-        }
-        this.elementThatOpenedModal = null;
-    }
-
-
-} // <<< FINAL, CORRECT CLOSING BRACE FOR THE TrackerApp CLASS
-// --- END OF TrackerApp CLASS ---
-
-
-// --- Initialization ---
-try {
-    console.log("SCRIPT END: Initializing KinkCompass App...");
-    window.kinkCompassApp = new TrackerApp();
-    console.log("SCRIPT END: KinkCompass App Initialized Successfully.");
-} catch (error) {
-    console.error("Fatal error during App initialization:", error);
-    const errorDiv = document.createElement('div');
-    errorDiv.style.cssText = 'color: red; padding: 20px; border: 2px solid red; margin: 20px; background: white; font-family: monospace; white-space: pre-wrap; z-index: 9999; position: fixed; top: 10px; left: 10px; right: 10px;';
-    errorDiv.innerHTML = `<strong>Fatal Error: KinkCompass could not start.</strong><br>${error.message}<br><br>Stack Trace:<br>${error.stack || 'Not available'}`;
-    document.body.prepend(errorDiv);
-}
-
-// --- Re-include all the handle methods ---
-TrackerApp.prototype.handleListClick = function(e) {
+  handleListClick(e) {
       const target = e.target;
       const listItem = target.closest('li');
       if (!listItem) return;
-      const personId = parseInt(listItem.dataset.id, 10); // Ensure ID is number if needed
+      const personId = parseInt(listItem.dataset.id, 10);
 
       if (target.classList.contains('edit-btn')) {
           console.log(`>>> Edit button clicked for ID: ${personId}`);
@@ -862,37 +590,33 @@ TrackerApp.prototype.handleListClick = function(e) {
           if (confirm(`Are you sure you want to delete ${listItem.querySelector('.person-name')?.textContent || 'this persona'}? This cannot be undone.`)) {
               this.deletePerson(personId);
           }
-      } else if (target.closest('.person-info')) { // Click anywhere else on the info part
+      } else if (target.closest('.person-info')) {
           console.log(`>>> Person info clicked for ID: ${personId}`);
           this.showPersonDetails(personId);
       }
-}
-TrackerApp.prototype.handleListKeydown = function(e) {
-      // Allow activating buttons with Enter/Space
+  }
+  handleListKeydown(e) {
       if ((e.key === 'Enter' || e.key === ' ') && (e.target.classList.contains('edit-btn') || e.target.classList.contains('delete-btn'))) {
-          e.preventDefault(); // Prevent default spacebar scroll or enter submit
+          e.preventDefault();
           e.target.click();
       }
-      // Allow opening details with Enter on the main info part
       else if (e.key === 'Enter' && e.target.closest('.person-info')) {
            e.preventDefault();
            const listItem = e.target.closest('li');
            const personId = parseInt(listItem?.dataset.id, 10);
-           if(personId) {
+           if(!isNaN(personId)) {
                this.showPersonDetails(personId);
            }
       }
-}
-TrackerApp.prototype.handleWindowClick = function(e) {
-     // Close Trait Info Popup if click is outside
+  }
+  handleWindowClick(e) {
      if (this.elements.traitInfoPopup && this.elements.traitInfoPopup.style.display !== 'none') {
-        const popupContent = this.elements.traitInfoPopup.querySelector('.card'); // Assuming content is in a card
-        const infoButton = document.querySelector(`.trait-info-btn[aria-expanded="true"]`); // Find the button that opened it
+        const popupContent = this.elements.traitInfoPopup.querySelector('.card');
+        const infoButton = document.querySelector(`.trait-info-btn[aria-expanded="true"]`);
         if (popupContent && !popupContent.contains(e.target) && e.target !== infoButton && !infoButton?.contains(e.target)) {
              this.hideTraitInfo();
         }
      }
-     // Close Context Help Popup if click is outside
       if (this.elements.contextHelpPopup && this.elements.contextHelpPopup.style.display !== 'none') {
         const popupContent = this.elements.contextHelpPopup.querySelector('.card');
         const helpButton = document.querySelector(`.context-help-btn[aria-expanded="true"]`);
@@ -900,23 +624,21 @@ TrackerApp.prototype.handleWindowClick = function(e) {
             this.hideContextHelp();
         }
       }
-     // Close SF Popups if click is outside
       const activeSFPopup = document.querySelector('.sf-style-info-popup');
       if(activeSFPopup) {
-         const triggerElement = document.querySelector('.sf-info-icon.active, button[data-action="showDetails"].active'); // Find what opened it
+         const triggerElement = document.querySelector('.sf-info-icon.active, button[data-action="showDetails"].active');
          if (!activeSFPopup.contains(e.target) && e.target !== triggerElement && !triggerElement?.contains(e.target)) {
              activeSFPopup.remove();
              triggerElement?.classList.remove('active');
          }
       }
-}
-TrackerApp.prototype.handleWindowKeydown = function(e) {
+  }
+  handleWindowKeydown(e) {
       if (e.key === 'Escape') {
-          console.log(">>> Escape key pressed!"); // Log: Listener Fired
-           // Close visible popups first
+          console.log(">>> Escape key pressed!");
            if (this.elements.traitInfoPopup && this.elements.traitInfoPopup.style.display !== 'none') {
              this.hideTraitInfo();
-             return; // Prioritize closing popups
+             return;
            }
             if (this.elements.contextHelpPopup && this.elements.contextHelpPopup.style.display !== 'none') {
                 this.hideContextHelp();
@@ -929,44 +651,40 @@ TrackerApp.prototype.handleWindowKeydown = function(e) {
                  triggerElement?.classList.remove('active');
                  return;
             }
-
-          // Then close modals
           if (this.elements.modal && this.elements.modal.style.display !== 'none') this.closeModal(this.elements.modal);
           else if (this.elements.resourcesModal && this.elements.resourcesModal.style.display !== 'none') this.closeModal(this.elements.resourcesModal);
           else if (this.elements.glossaryModal && this.elements.glossaryModal.style.display !== 'none') this.closeModal(this.elements.glossaryModal);
           else if (this.elements.styleDiscoveryModal && this.elements.styleDiscoveryModal.style.display !== 'none') this.closeModal(this.elements.styleDiscoveryModal);
           else if (this.elements.themesModal && this.elements.themesModal.style.display !== 'none') this.closeModal(this.elements.themesModal);
           else if (this.elements.welcomeModal && this.elements.welcomeModal.style.display !== 'none') this.closeModal(this.elements.welcomeModal);
-          else if (this.elements.achievementsModal && this.elements.achievementsModal.style.display !== 'none') this.closeModal(this.elements.achievementsModal); // NEW
-          else if (this.elements.sfModal && this.elements.sfModal.style.display !== 'none') this.sfClose(); // Style Finder close
+          else if (this.elements.achievementsModal && this.elements.achievementsModal.style.display !== 'none') this.closeModal(this.elements.achievementsModal);
+          else if (this.elements.sfModal && this.elements.sfModal.style.display !== 'none') this.sfClose();
       }
-}
-TrackerApp.prototype.handleTraitSliderInput = function(e) {
+  }
+  handleTraitSliderInput(e) {
      const slider = e.target;
      const display = slider.closest('.trait')?.querySelector('.trait-value');
      if (display) {
         display.textContent = slider.value;
      }
      this.updateTraitDescription(slider);
-}
-TrackerApp.prototype.handleTraitInfoClick = function(e) {
+  }
+  handleTraitInfoClick(e) {
      const button = e.target.closest('.trait-info-btn');
      if (!button) return;
      const traitName = button.dataset.trait;
      this.showTraitInfo(traitName);
-     // Mark button as expanded for focus/click-outside logic
      document.querySelectorAll('.trait-info-btn').forEach(btn => btn.setAttribute('aria-expanded', 'false'));
      button.setAttribute('aria-expanded', 'true');
-}
-TrackerApp.prototype.handleModalBodyClick = function(e) {
-    const personIdStr = this.elements.modal?.dataset.personId; // Get current person ID from modal as string
+  }
+  handleModalBodyClick(e) {
+    const personIdStr = this.elements.modal?.dataset.personId;
     if (!personIdStr) return;
-    const personId = parseInt(personIdStr, 10); // Convert to number
+    const personId = parseInt(personIdStr, 10);
     if (isNaN(personId)) return;
 
     const target = e.target;
 
-    // Goal Toggle/Delete
     if (target.classList.contains('toggle-goal-btn') || target.closest('.toggle-goal-btn')) {
         const button = target.closest('.toggle-goal-btn');
         const goalIdStr = button?.dataset.goalId;
@@ -990,51 +708,45 @@ TrackerApp.prototype.handleModalBodyClick = function(e) {
              }
         }
     }
-    // Add Goal
     else if (target.id === 'add-goal-btn') {
         console.log(`>>> Add Goal clicked for person ${personId}`);
         this.addGoal(personId);
     }
-    // Take Snapshot
     else if (target.id === 'snapshot-btn') {
          console.log(`>>> Snapshot button clicked for person ${personId}`);
          this.addSnapshotToHistory(personId);
     }
-    // Show Journal Prompt
     else if (target.id === 'journal-prompt-btn') {
          console.log(`>>> Journal Prompt button clicked for person ${personId}`);
          this.showJournalPrompt(personId);
     }
-    // Save Reflections
     else if (target.id === 'save-reflections-btn') {
          console.log(`>>> Save Reflections button clicked for person ${personId}`);
          this.saveReflections(personId);
     }
-     // Get Kink Reading
      else if (target.id === 'reading-btn') {
          console.log(`>>> Kink Reading button clicked for person ${personId}`);
          this.showKinkReading(personId);
      }
-}
-TrackerApp.prototype.handleThemeSelection = function(e) {
+  }
+  handleThemeSelection(e) {
         const button = e.target.closest('.theme-option-btn');
         if (button) {
-            console.log(">>> Theme Selection button clicked!"); // Log: Listener Fired
+            console.log(">>> Theme Selection button clicked!");
             const themeName = button.dataset.theme;
             this.setTheme(themeName);
-            // Optional: Close the themes modal after selection
             this.closeModal(this.elements.themesModal);
         }
-}
-TrackerApp.prototype.handleStyleFinderAction = function(action, dataset = {}) {
+    }
+  handleStyleFinderAction(action, dataset = {}) {
         switch(action) {
-            case 'start': // Actually step 1 (role preference)
+            case 'start':
                  this.sfStep = this.sfSteps.findIndex(s => s.type === 'rolePreference');
-                 if (this.sfStep === -1) this.sfStep = 1; // Fallback if calc fails
+                 if (this.sfStep === -1) this.sfStep = 1;
                  this.sfRenderStep();
                  break;
             case 'next':
-                const currentTrait = dataset.trait; // Check if we're on a trait step
+                const currentTrait = dataset.trait;
                 this.sfNextStep(currentTrait);
                 break;
             case 'prev':
@@ -1046,15 +758,14 @@ TrackerApp.prototype.handleStyleFinderAction = function(action, dataset = {}) {
             case 'startOver':
                 this.sfStartOver();
                 break;
-             case 'showDetails': // For result screen button
-                 this.sfShowFullDetails(dataset.value); // Value is the style name
-                 // Mark button as active for click-outside logic
+             case 'showDetails':
+                 this.sfShowFullDetails(dataset.value);
                  document.querySelectorAll('.sf-result-buttons button').forEach(b => b.classList.remove('active'));
                  const btn = this.elements.sfStepContent.querySelector(`button[data-action="showDetails"][data-value="${dataset.value}"]`);
                  btn?.classList.add('active');
                  break;
             case 'applyStyle':
-                this.confirmApplyStyleFinderResult(this.sfIdentifiedRole, dataset.value); // value is the style name
+                this.confirmApplyStyleFinderResult(this.sfIdentifiedRole, dataset.value);
                 break;
             case 'toggleDashboard':
                  this.toggleStyleFinderDashboard();
@@ -1062,12 +773,12 @@ TrackerApp.prototype.handleStyleFinderAction = function(action, dataset = {}) {
             default:
                 console.warn("Unknown Style Finder action:", action);
         }
-}
-TrackerApp.prototype.handleStyleFinderSliderInput = function(sliderElement) {
+    }
+  handleStyleFinderSliderInput(sliderElement){
         const traitName = sliderElement.dataset.trait;
         const value = sliderElement.value;
         const descriptionDiv = this.elements.sfStepContent.querySelector(`#sf-desc-${traitName}`);
-        const footnoteP = this.elements.sfStepContent.querySelector(`#sf-footnote-${traitName}`); // Assuming ID for footnote
+        const footnoteP = this.elements.sfStepContent.querySelector(`#sf-footnote-${traitName}`);
 
         if (traitName && value !== undefined && descriptionDiv && this.sfSliderDescriptions[traitName]) {
             const descriptions = this.sfSliderDescriptions[traitName];
@@ -1075,8 +786,8 @@ TrackerApp.prototype.handleStyleFinderSliderInput = function(sliderElement) {
                  const index = parseInt(value, 10) - 1;
                  if (index >= 0 && index < 10) {
                     descriptionDiv.textContent = descriptions[index];
-                    this.sfSetTrait(traitName, value); // Update the answer
-                    this.sfUpdateDashboard(); // Update dashboard live
+                    this.sfSetTrait(traitName, value);
+                    this.sfUpdateDashboard();
                  } else {
                      console.error(`Invalid slider index ${index} for trait ${traitName}`);
                      descriptionDiv.textContent = "Adjust the slider...";
@@ -1089,8 +800,8 @@ TrackerApp.prototype.handleStyleFinderSliderInput = function(sliderElement) {
         } else {
             console.warn("Missing elements for Style Finder slider update:", {traitName, value, descriptionDiv, footnoteP});
         }
-}
-TrackerApp.prototype.handleDetailTabClick = function(e) {
+    }
+  handleDetailTabClick(e) {
     const link = e.target.closest('.tab-link');
     if (link && !link.classList.contains('active')) {
         const tabId = link.dataset.tab;
@@ -1101,33 +812,29 @@ TrackerApp.prototype.handleDetailTabClick = function(e) {
 
         const person = this.people.find(p => p.id === personId);
 
-
         if (tabId && person) {
             console.log(`>>> Tab clicked: ${tabId} for person ${personId}`);
             this.activeDetailModalTab = tabId;
 
-            // Update tab appearance
             this.elements.modalTabs.querySelectorAll('.tab-link').forEach(t => {
                 t.classList.remove('active');
                 t.setAttribute('aria-selected', 'false');
-                t.setAttribute('tabindex', '-1'); // Make inactive tabs not tabbable
+                t.setAttribute('tabindex', '-1');
             });
             link.classList.add('active');
             link.setAttribute('aria-selected', 'true');
-            link.setAttribute('tabindex', '0'); // Make active tab tabbable
+            link.setAttribute('tabindex', '0');
 
-            // Update content visibility
             this.elements.modalBody.querySelectorAll('.tab-content').forEach(c => {
                 c.classList.remove('active');
-                c.style.display = 'none'; // Ensure it's hidden
+                c.style.display = 'none';
             });
 
             const contentPane = this.elements.modalBody.querySelector(`#${tabId}`);
             if (contentPane) {
-                this.renderDetailTabContent(person, tabId, contentPane); // Re-render content
+                this.renderDetailTabContent(person, tabId, contentPane);
                 contentPane.classList.add('active');
-                contentPane.style.display = 'block'; // Ensure it's visible
-                // Focus the content pane for accessibility
+                contentPane.style.display = 'block';
                 requestAnimationFrame(() => contentPane.focus({ preventScroll: true }));
             } else {
                 console.error(`Content pane not found for tab ID: ${tabId}`);
@@ -1136,36 +843,2070 @@ TrackerApp.prototype.handleDetailTabClick = function(e) {
             console.warn("Tab click ignored - missing tabId or person data", {tabId, personId});
         }
     }
-}
-TrackerApp.prototype.handleGlossaryLinkClick = function(e) {
+  }
+  handleGlossaryLinkClick(e) {
      const link = e.target.closest('a.glossary-link');
      if (link && this.elements.glossaryModal?.style.display !== 'none') {
-         e.preventDefault(); // Prevent default anchor jump
+         e.preventDefault();
          const termKey = link.dataset.termKey;
          const termElement = this.elements.glossaryBody?.querySelector(`#gloss-term-${termKey}`);
 
          if (termElement) {
              console.log(`>>> Glossary internal link clicked: ${termKey}`);
-             // Remove previous highlights
              this.elements.glossaryBody.querySelectorAll('.highlighted-term').forEach(el => el.classList.remove('highlighted-term'));
-             // Add highlight to target
              termElement.classList.add('highlighted-term');
-             // Scroll smoothly
              termElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-             termElement.focus(); // Focus for accessibility
+             termElement.focus();
          } else {
              console.warn(`Glossary term element not found for key: ${termKey}`);
          }
      }
-}
-TrackerApp.prototype.handleExploreStyleLinkClick = function(e) {
+  }
+  handleExploreStyleLinkClick(e) {
      e.preventDefault();
      const styleName = this.elements.style?.value;
      if (styleName) {
          console.log(`>>> Explore Style link clicked for: ${styleName}`);
-         this.showStyleDiscovery(styleName); // Open discovery modal and highlight
+         this.showStyleDiscovery(styleName);
      } else {
          console.warn("Explore Style link clicked but no style selected.");
      }
+  }
+
+  // --- Core Rendering ---
+  renderStyles(roleKey) {
+      console.log(`--- Entering renderStyles --- Role: ${roleKey}`);
+      const selectElement = this.elements.style;
+      if (!selectElement) {
+          console.error("!!! renderStyles Error: Style select element not found!");
+          return;
+      }
+      selectElement.innerHTML = '<option value="">-- Select a Style --</option>';
+
+      console.log("Checking bdsmData within renderStyles:", bdsmData);
+
+      const roleData = bdsmData ? bdsmData[roleKey] : null;
+      console.log(`Found roleData for '${roleKey}':`, roleData);
+
+      let styles = [];
+      if (roleData && Array.isArray(roleData.styles)) {
+          styles = roleData.styles;
+          console.log(`Found ${styles.length} styles for '${roleKey}'.`);
+      } else {
+          console.warn(`No valid 'styles' array found for role: '${roleKey}' in bdsmData.`);
+          if (!bdsmData) console.error("bdsmData object itself might be missing or invalid here!");
+          if (bdsmData && !roleData) console.warn(`Role key '${roleKey}' not found as a top-level key in bdsmData.`);
+          if (roleData && !Array.isArray(roleData.styles)) console.warn(`bdsmData['${roleKey}'].styles exists but is not an array.`);
+      }
+
+      if (styles.length > 0) {
+          try {
+              styles.sort((a, b) => a.name.localeCompare(b.name))
+                .forEach((style, index) => {
+                    if (style && style.name) {
+                       const nameToEscape = style.name;
+                       const escapedName = this.escapeHTML(nameToEscape);
+                       console.log(`Loop Index ${index}: Raw Name='${nameToEscape}', Escaped Name='${escapedName}'`);
+                       selectElement.innerHTML += `<option value="${escapedName}">${escapedName}</option>`;
+                    } else {
+                       console.warn(`Style object at index ${index} is invalid or missing name:`, style);
+                    }
+                });
+              selectElement.disabled = false;
+              console.log("Finished adding style options.");
+          } catch (loopError) {
+              console.error("!!! renderStyles Error: Failed during style option loop!", loopError);
+              selectElement.innerHTML = '<option value="">Error Loading Styles</option>';
+              selectElement.disabled = true;
+          }
+      } else {
+          selectElement.innerHTML = `<option value="">-- No Styles for ${roleKey} --</option>`;
+          selectElement.disabled = true;
+          console.log("No styles found, setting disabled state.");
+      }
+      this.updateStyleExploreLink();
+      console.log("--- Exiting renderStyles ---");
+  }
+  renderTraits(roleKey, styleName) {
+    console.log(`Rendering traits for Role: ${roleKey}, Style: ${styleName}`);
+    const container = this.elements.traitsContainer;
+    const messageDiv = this.elements.traitsMessage;
+    if (!container || !messageDiv) {
+        console.error("Traits container or message div not found.");
+        return;
+    }
+
+    container.innerHTML = '';
+    container.style.display = 'none';
+    messageDiv.style.display = 'block';
+    messageDiv.textContent = 'Select Role & Style above to customize traits.';
+
+    if (!roleKey || !styleName) {
+        console.log("Role or Style not selected, showing message.");
+        return;
+    }
+
+    if (!bdsmData || typeof bdsmData !== 'object') {
+         console.error("bdsmData is missing or invalid.");
+         messageDiv.textContent = 'Error: Core data definition missing.';
+         return;
+    }
+    const roleData = bdsmData[roleKey];
+     if (!roleData) {
+        console.error(`Data for role '${roleKey}' not found in bdsmData.`);
+        messageDiv.textContent = `Error: Data definition for role '${roleKey}' missing.`;
+        return;
+    }
+     if (!Array.isArray(roleData.coreTraits)) {
+        console.warn(`Core traits for role '${roleKey}' missing or not an array.`);
+    }
+     if (!Array.isArray(roleData.styles)) {
+        console.error(`Styles array for role '${roleKey}' missing or invalid.`);
+        messageDiv.textContent = `Error: Styles definition for role '${roleKey}' missing.`;
+        return;
+    }
+
+    const styleObj = roleData.styles.find(s => s.name === styleName);
+
+    if (!styleObj) {
+        console.warn(`Style object for '${styleName}' not found within role '${roleKey}'.`);
+        messageDiv.textContent = `Details for style '${styleName}' not found. Please select another.`;
+        return;
+    }
+
+    messageDiv.style.display = 'none';
+    container.style.display = 'block';
+
+    let traitsToRender = [];
+
+    if (roleData.coreTraits) {
+        traitsToRender = [...roleData.coreTraits];
+        console.log(`Added ${roleData.coreTraits.length} core traits.`);
+    } else {
+        console.log("No core traits found for this role.");
+    }
+
+    if (styleObj.traits && Array.isArray(styleObj.traits)) {
+        styleObj.traits.forEach(styleTrait => {
+            if (!traitsToRender.some(coreTrait => coreTrait.name === styleTrait.name)) {
+                traitsToRender.push(styleTrait);
+            }
+        });
+         console.log(`Added ${styleObj.traits.length} style-specific traits (after deduplication).`);
+    } else {
+         console.log(`No specific traits found for style '${styleName}'.`);
+    }
+
+    if (traitsToRender.length === 0) {
+        container.innerHTML = `<p class="muted-text">No specific traits defined for ${styleName}. Focus on your core role traits!</p>`;
+        console.log("No traits to render for this combination.");
+        return;
+    }
+
+    console.log(`Rendering ${traitsToRender.length} traits total.`);
+    traitsToRender.forEach(trait => {
+        container.innerHTML += this.createTraitHTML(trait);
+    });
+
+    if (this.currentEditId) {
+        const person = this.people.find(p => p.id === this.currentEditId);
+        if (person && person.traits) {
+            Object.entries(person.traits).forEach(([traitName, value]) => {
+                const slider = container.querySelector(`.trait-slider[data-trait="${traitName}"]`);
+                const display = container.querySelector(`.trait-value[data-trait="${traitName}"]`);
+                if (slider) slider.value = value;
+                if (display) display.textContent = value;
+                if(slider) this.updateTraitDescription(slider);
+            });
+        }
+    } else {
+         container.querySelectorAll('.trait-slider').forEach(slider => {
+             this.updateTraitDescription(slider);
+         });
+    }
+  }
+  createTraitHTML(trait) {
+    if (!trait || !trait.name || !trait.desc) {
+        console.warn("Attempted to create trait HTML with invalid data:", trait);
+        return '<p class="error-text">Error rendering trait.</p>';
+    }
+
+    const displayName = trait.name.charAt(0).toUpperCase() + trait.name.slice(1).replace(/([A-Z])/g, ' $1');
+    const defaultValue = 3;
+    const descriptionId = `desc-${trait.name}`;
+    const sliderId = `slider-${trait.name}`;
+    const labelId = `label-${trait.name}`;
+
+    let valueDescription = "Loading...";
+    const descriptionKey = String(defaultValue);
+    if (trait.desc && trait.desc[descriptionKey]) {
+       valueDescription = this.escapeHTML(trait.desc[descriptionKey]);
+    } else {
+       console.warn(`Missing description for trait ${trait.name} at level ${descriptionKey}`);
+       valueDescription = "Description unavailable";
+    }
+
+    return `
+      <div class="trait">
+        <label id="${labelId}" for="${sliderId}" class="trait-label">
+          ${this.escapeHTML(displayName)}
+          <button type="button" class="trait-info-btn small-btn" data-trait="${trait.name}" aria-label="More info about ${this.escapeHTML(displayName)}" aria-expanded="false" aria-controls="trait-info-popup">?</button>
+        </label>
+        <input type="range" id="${sliderId}" class="trait-slider"
+               min="1" max="5" value="${defaultValue}"
+               data-trait="${trait.name}"
+               aria-labelledby="${labelId}"
+               aria-describedby="${descriptionId}">
+        <span class="trait-value" data-trait="${trait.name}" aria-live="polite">${defaultValue}</span>
+        <p class="trait-desc muted-text" id="${descriptionId}">${valueDescription}</p>
+      </div>
+    `;
+  }
+  updateTraitDescription(slider) {
+        if (!slider) return;
+        const traitName = slider.dataset.trait;
+        const value = slider.value;
+        const descElement = slider.closest('.trait')?.querySelector('.trait-desc');
+
+        if (!traitName || !value || !descElement) {
+            console.warn("Missing data for trait description update:", { traitName, value, descElement });
+            if(descElement) descElement.textContent = "Error loading description.";
+            return;
+        }
+
+        const roleKey = this.elements.role?.value;
+        const styleName = this.elements.style?.value;
+        const roleData = bdsmData[roleKey];
+        let traitDefinition = null;
+
+        if (roleData) {
+            traitDefinition = roleData.coreTraits?.find(t => t.name === traitName);
+            if (!traitDefinition && styleName) {
+                 const styleObj = roleData.styles?.find(s => s.name === styleName);
+                 traitDefinition = styleObj?.traits?.find(t => t.name === traitName);
+            }
+        }
+
+        if (traitDefinition && traitDefinition.desc && traitDefinition.desc[value]) {
+            descElement.textContent = this.escapeHTML(traitDefinition.desc[value]);
+        } else {
+            console.warn(`Description not found for trait '${traitName}' at level ${value}.`);
+            descElement.textContent = "Description unavailable.";
+        }
+    }
+  renderList(){
+      const listElement = this.elements.peopleList;
+      if (!listElement) return;
+
+      if (this.people.length === 0) {
+          listElement.innerHTML = '<li>No personas created yet. Use the form to add one!</li>';
+          return;
+      }
+
+      listElement.innerHTML = this.people
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map(person => this.createPersonListItemHTML(person))
+          .join('');
+
+        if (this.lastSavedId) {
+            const newItem = listElement.querySelector(`li[data-id="${this.lastSavedId}"]`);
+            if (newItem) {
+                newItem.classList.add('item-just-saved');
+                setTimeout(() => newItem.classList.remove('item-just-saved'), 1500);
+            }
+            this.lastSavedId = null;
+        }
+  }
+  createPersonListItemHTML(person) {
+    const roleData = bdsmData[person.role];
+    const styleObj = roleData?.styles?.find(s => s.name === person.style);
+    const styleSummary = styleObj?.summary || 'Style details undefined';
+
+    let avgScore = 3;
+    if (person.traits && Object.keys(person.traits).length > 0) {
+        const scores = Object.values(person.traits).map(Number).filter(n => !isNaN(n));
+        if (scores.length > 0) {
+            avgScore = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+        }
+    }
+    const flair = this.getFlairForScore(avgScore);
+
+    const achievementIcons = person.achievements
+        ?.map(id => achievementList[id]?.name.match(/(\p{Emoji})/u)?.[0])
+        .filter(Boolean)
+        .slice(0, 3)
+        .join('') || '';
+
+    return `
+      <li data-id="${person.id}" tabindex="0">
+        <div class="person-info" role="button" aria-label="View details for ${this.escapeHTML(person.name)}">
+          <span class="person-avatar" aria-hidden="true">${person.avatar || '❓'}</span>
+          <div class="person-name-details">
+            <span class="person-name">${this.escapeHTML(person.name)} <span class="person-flair">${flair}</span></span>
+            <span class="person-details muted-text">
+                ${this.escapeHTML(person.style || 'No Style Selected')} (${this.escapeHTML(person.role)})
+                ${achievementIcons ? `<span class="person-achievements-preview" title="${person.achievements.length} achievements">${achievementIcons}</span>` : ''}
+            </span>
+          </div>
+        </div>
+        <div class="person-actions">
+          <button class="small-btn edit-btn" aria-label="Edit ${this.escapeHTML(person.name)}">Edit</button>
+          <button class="small-btn delete-btn" aria-label="Delete ${this.escapeHTML(person.name)}">Delete</button>
+        </div>
+      </li>
+    `;
+  }
+  updateStyleExploreLink() {
+        const selectedStyle = this.elements.style?.value;
+        const link = this.elements.styleExploreLink;
+        if (link) {
+            if (selectedStyle) {
+                link.textContent = `(Explore ${selectedStyle})`;
+                link.setAttribute('aria-label', `Explore details for the ${selectedStyle} style`);
+                link.style.display = 'inline';
+            } else {
+                link.style.display = 'none';
+            }
+        }
+    }
+
+  // --- CRUD ---
+  savePerson() {
+      const name = this.elements.name.value.trim();
+      const role = this.elements.role.value;
+      const style = this.elements.style.value;
+      const avatar = this.elements.avatarInput.value || '❓';
+
+      if (!name || !role || !style) {
+          this.showNotification("Please fill in Name, Role, and Style!", "warning");
+          return;
+      }
+
+      const traits = {};
+      this.elements.traitsContainer.querySelectorAll('.trait-slider').forEach(slider => {
+          traits[slider.dataset.trait] = parseInt(slider.value, 10);
+      });
+
+      const saveButton = this.elements.save;
+       saveButton.disabled = true;
+       saveButton.innerHTML = 'Saving... <span class="spinner"></span>'; // Show spinner
+
+       // Simulate save delay (remove in production if saving is instant)
+       setTimeout(() => {
+            if (this.currentEditId) {
+                const index = this.people.findIndex(p => p.id === this.currentEditId);
+                if (index > -1) {
+                    const existingPerson = this.people[index];
+                    this.people[index] = {
+                        ...existingPerson,
+                        name, avatar, role, style, traits
+                    };
+                    this.showNotification(`${name} updated successfully! ✨`, "success");
+                    grantAchievement(this.people[index], 'profile_edited');
+                    if(avatar !== existingPerson.avatar && avatar !== '❓') grantAchievement(this.people[index], 'avatar_chosen'); // Grant if changed
+                     if(Object.values(traits).some(s => s === 5)) grantAchievement(this.people[index], 'max_trait');
+                     if(Object.values(traits).some(s => s === 1)) grantAchievement(this.people[index], 'min_trait');
+                    this.lastSavedId = this.currentEditId;
+                } else {
+                     this.showNotification(`Error updating: Persona with ID ${this.currentEditId} not found.`, "error");
+                     this.currentEditId = null; // Reset if ID was invalid
+                }
+            } else {
+                const newPerson = {
+                    id: Date.now(), name, avatar, role, style, traits,
+                    goals: [], history: [], achievements: [], reflections: { text: '' }
+                };
+                this.people.push(newPerson);
+                this.showNotification(`${name} created successfully! 🎉`, "success");
+                grantAchievement(newPerson, 'profile_created');
+                if (avatar !== '❓') grantAchievement(newPerson, 'avatar_chosen');
+                if (this.people.length >= 5) grantAchievement(newPerson, 'five_profiles');
+                 if(Object.values(traits).some(s => s === 5)) grantAchievement(newPerson, 'max_trait');
+                 if(Object.values(traits).some(s => s === 1)) grantAchievement(newPerson, 'min_trait');
+                this.lastSavedId = newPerson.id;
+            }
+
+            this.saveToLocalStorage();
+            this.renderList();
+            this.resetForm();
+            this.updateLivePreview();
+            this.currentEditId = null;
+            this.elements.formTitle.textContent = '✨ Create New Persona ✨';
+            // Reset button state in resetForm or here
+            // saveButton.disabled = false;
+            // saveButton.innerHTML = 'Save Persona! <span role="img" aria-label="Sparkles">💖</span>';
+
+       }, 300); // Simulate 300ms save time
+  }
+  editPerson(personId) {
+      const person = this.people.find(p => p.id === personId);
+      if (!person) return;
+
+      this.currentEditId = personId;
+
+      this.elements.name.value = person.name;
+      this.elements.avatarInput.value = person.avatar || '❓';
+      this.elements.avatarDisplay.textContent = person.avatar || '❓';
+      this.elements.avatarPicker.querySelectorAll('.avatar-btn').forEach(btn => {
+         btn.classList.toggle('selected', btn.dataset.emoji === person.avatar);
+      });
+
+      this.elements.role.value = person.role;
+      this.renderStyles(person.role);
+      this.elements.style.value = person.style;
+      this.renderTraits(person.role, person.style);
+
+      this.elements.formTitle.textContent = `✏️ Editing ${person.name}`;
+      this.elements.save.textContent = 'Update Persona 💾';
+      this.elements.save.disabled = false; // Ensure save is enabled
+       saveButton.innerHTML = 'Update Persona 💾'; // Reset just in case
+
+      this.elements.formSection.scrollIntoView({ behavior: 'smooth' });
+      this.elements.name.focus();
+       this.updateLivePreview();
+  }
+  deletePerson(personId) {
+      const initialLength = this.people.length;
+      this.people = this.people.filter(p => p.id !== personId);
+
+      if (this.people.length < initialLength) {
+        this.saveToLocalStorage();
+        this.renderList();
+        if (this.currentEditId === personId) {
+            this.resetForm();
+        }
+        this.showNotification("Persona deleted successfully. 🗑️", "info");
+      } else {
+         console.warn(`Attempted to delete person with ID ${personId}, but they were not found.`);
+         this.showNotification("Could not delete persona.", "error");
+      }
+  }
+  resetForm(isManualClear = false) {
+      this.currentEditId = null;
+      this.elements.name.value = '';
+      this.elements.avatarInput.value = '❓';
+      this.elements.avatarDisplay.textContent = '❓';
+      this.elements.avatarPicker.querySelectorAll('.avatar-btn').forEach(btn => btn.classList.remove('selected'));
+      this.elements.role.value = 'submissive';
+      this.renderStyles('submissive');
+      this.elements.style.value = '';
+      this.renderTraits('submissive', '');
+      this.elements.formTitle.textContent = '✨ Create New Persona ✨';
+      this.elements.save.disabled = false;
+      this.elements.save.innerHTML = 'Save Persona! <span role="img" aria-label="Sparkles">💖</span>';
+      this.updateLivePreview();
+      this.updateStyleExploreLink();
+
+      if (isManualClear) {
+            console.log("Form manually cleared.");
+      }
+  }
+
+  // --- Live Preview ---
+  updateLivePreview() {
+    const name = this.elements.name.value.trim();
+    const role = this.elements.role.value;
+    const style = this.elements.style.value;
+    const avatar = this.elements.avatarInput.value || '❓';
+    const previewElement = this.elements.livePreview;
+
+    if (!name || !role || !style) {
+        previewElement.innerHTML = '<p class="muted-text">Fill the form to see your persona\'s vibe! 🌈</p>';
+        this.previewPerson = null;
+        return;
+    }
+
+    const currentTraits = {};
+    this.elements.traitsContainer.querySelectorAll('.trait-slider').forEach(slider => {
+        currentTraits[slider.dataset.trait] = parseInt(slider.value, 10);
+    });
+
+    this.previewPerson = { name, role, style, avatar, traits: currentTraits };
+
+    let html = `<div class="preview-title">${avatar} <strong>${this.escapeHTML(name)}</strong> (${this.escapeHTML(role)} - ${this.escapeHTML(style)})</div>`;
+
+    const getBreakdownFunc = role === 'dominant' ? getDomBreakdown : getSubBreakdown;
+    const breakdown = getBreakdownFunc(style, currentTraits);
+
+    html += `<div class="preview-breakdown">`;
+    html += `<div class="strengths"><h4>💪 Strengths / Vibes:</h4><p>${breakdown.strengths}</p></div>`;
+    html += `<div class="improvements"><h4>🎯 Growth / Focus:</h4><p>${breakdown.improvements}</p></div>`;
+    html += `</div>`;
+
+    previewElement.innerHTML = html;
+  }
+
+
+  // --- Modal Display ---
+  showPersonDetails(personId) {
+    const person = this.people.find(p => p.id === personId);
+    if (!person) {
+        console.error(`Person with ID ${personId} not found.`);
+        this.showNotification("Could not load persona details.", "error");
+        return;
+    }
+    console.log("Showing details for:", person.name, person);
+
+    if (!this.elements.modal || !this.elements.modalBody || !this.elements.modalTabs) {
+        console.error("Detail modal elements (modal, body, or tabs) not found.");
+        this.showNotification("UI Error: Cannot display details.", "error");
+        return;
+    }
+
+    this.elements.modal.dataset.personId = personId;
+
+    if(this.elements.detailModalTitle) {
+        this.elements.detailModalTitle.textContent = `${person.avatar} ${this.escapeHTML(person.name)} - Details`;
+    }
+
+     this.elements.modalBody.innerHTML = '';
+     this.elements.modalTabs.innerHTML = '';
+
+    const tabs = [
+        { id: 'tab-goals', label: 'Goals', icon: '🎯' },
+        { id: 'tab-traits', label: 'Traits', icon: '🎨' },
+        { id: 'tab-history', label: 'History', icon: '📈' },
+        { id: 'tab-journal', label: 'Journal', icon: '📝' },
+        { id: 'tab-achievements', label: 'Achievements', icon: '🏆' },
+        { id: 'tab-reading', label: 'Reading', icon: '🔮' },
+        { id: 'tab-breakdown', label: 'Breakdown', icon: '📊' },
+    ];
+
+    tabs.forEach((tab, index) => {
+        const isActive = tab.id === this.activeDetailModalTab;
+        const tabButton = document.createElement('button');
+        tabButton.className = `tab-link ${isActive ? 'active' : ''}`;
+        tabButton.setAttribute('role', 'tab');
+        tabButton.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        tabButton.setAttribute('aria-controls', tab.id);
+        tabButton.dataset.tab = tab.id;
+        tabButton.textContent = `${tab.icon} ${tab.label}`;
+         if (!isActive) tabButton.setAttribute('tabindex', '-1');
+        this.elements.modalTabs.appendChild(tabButton);
+
+        const contentPane = document.createElement('div');
+        contentPane.id = tab.id;
+        contentPane.className = `tab-content ${isActive ? 'active' : ''}`;
+        contentPane.setAttribute('role', 'tabpanel');
+        contentPane.setAttribute('aria-labelledby', tab.id);
+         if (!isActive) contentPane.style.display = 'none';
+        contentPane.innerHTML = `<p class="loading-text">Loading ${tab.label}...</p>`;
+        this.elements.modalBody.appendChild(contentPane);
+
+        if (isActive) {
+             this.renderDetailTabContent(person, tab.id, contentPane);
+        }
+    });
+
+    this.openModal(this.elements.modal);
+  }
+  renderDetailTabContent(person, tabId, contentElement) {
+    if (!person || !contentElement) return;
+     console.log(`Rendering content for tab: ${tabId}`);
+     contentElement.innerHTML = '';
+
+     try {
+        switch(tabId) {
+            case 'tab-goals':
+                contentElement.innerHTML = `
+                    <section class="goals-section">
+                         <h3>Goals <button class="context-help-btn small-btn" data-help-key="goalsSectionInfo" aria-label="Help with Goals Section">?</button></h3>
+                         <ul id="goal-list-${person.id}"></ul>
+                         <form class="add-goal-form" id="add-goal-form-${person.id}" onsubmit="event.preventDefault(); kinkCompassApp.addGoal(${person.id})">
+                              <label for="new-goal-${person.id}" class="sr-only">New Goal:</label>
+                              <input type="text" id="new-goal-${person.id}" placeholder="Add a new goal..." required>
+                              <button type="submit" id="add-goal-btn" class="small-btn">Add Goal</button>
+                         </form>
+                    </section>
+                `;
+                 const goalListUl = contentElement.querySelector(`#goal-list-${person.id}`);
+                 if (goalListUl) {
+                      goalListUl.innerHTML = this.renderGoalList(person);
+                 } else {
+                      console.error(`Could not find goal list UL element for person ${person.id}`);
+                      contentElement.innerHTML += '<p class="error-text">Error displaying goals.</p>';
+                 }
+                break;
+
+            case 'tab-traits':
+                contentElement.innerHTML = `
+                    <section class="trait-details-section">
+                         <h3>Trait Details <button class="context-help-btn small-btn" data-help-key="traitsSectionInfo" aria-label="Help with Traits Section">?</button></h3>
+                         <div class="trait-details-grid"></div>
+                    </section>`;
+                const grid = contentElement.querySelector('.trait-details-grid');
+                 if (!grid) {
+                     console.error("Trait details grid element not found.");
+                     contentElement.innerHTML += '<p class="error-text">Error displaying traits.</p>';
+                     break;
+                 }
+                const roleData = bdsmData[person.role];
+                 if (!roleData) {
+                     grid.innerHTML = `<p class="muted-text">Trait definitions not found for role: ${person.role}.</p>`;
+                     break;
+                 }
+                 let traitsToShow = [];
+                 if (roleData.coreTraits) traitsToShow.push(...roleData.coreTraits);
+                 const styleObj = roleData.styles?.find(s => s.name === person.style);
+                 if (styleObj?.traits) {
+                     styleObj.traits.forEach(styleTrait => {
+                         if (!traitsToShow.some(t => t.name === styleTrait.name)) {
+                             traitsToShow.push(styleTrait);
+                         }
+                     });
+                 }
+                if (traitsToShow.length === 0) {
+                    grid.innerHTML = `<p class="muted-text">No specific traits defined for ${person.style}.</p>`;
+                    break;
+                }
+                traitsToShow.sort((a, b) => a.name.localeCompare(b.name))
+                    .forEach(traitDef => {
+                        const score = person.traits[traitDef.name] ?? '-';
+                         const description = traitDef.desc && score !== '-' ? (traitDef.desc[String(score)] || 'N/A') : 'N/A';
+                         const displayName = traitDef.name.charAt(0).toUpperCase() + traitDef.name.slice(1).replace(/([A-Z])/g, ' $1');
+                        grid.innerHTML += `
+                            <div class="trait-detail-item">
+                                <h4>
+                                     <a href="#" class="glossary-link" data-term-key="${traitDef.name}" title="View '${displayName}' in Glossary">${this.escapeHTML(displayName)}</a>:
+                                     <span class="trait-score-badge">${score}/5 ${this.getEmojiForScore(score)}</span>
+                                </h4>
+                                <p>${this.escapeHTML(description)}</p>
+                           </div>
+                        `;
+                    });
+                break;
+
+             case 'tab-history':
+                contentElement.innerHTML = `
+                    <section class="history-section">
+                         <h3>
+                            History Snapshots
+                            <button class="context-help-btn small-btn" data-help-key="historyChartInfo" aria-label="Help with History Chart">?</button>
+                         </h3>
+                         <div class="history-chart-container" id="history-chart-container-${person.id}">
+                            <canvas id="history-chart-${person.id}"></canvas>
+                         </div>
+                         <div class="modal-actions">
+                            <button id="snapshot-btn" class="small-btn">Take Snapshot 📸</button>
+                         </div>
+                         <div class="snapshot-info" style="display: none;">
+                            <p><strong>Snapshot Taken:</strong> <span id="snapshot-timestamp"></span></p>
+                            <p>Includes current trait scores. View changes on the chart!</p>
+                         </div>
+                    </section>
+                `;
+                 this.renderHistoryChart(person, `history-chart-${person.id}`);
+                break;
+
+             case 'tab-journal':
+                 const currentReflection = person.reflections?.text || '';
+                 contentElement.innerHTML = `
+                    <section class="reflections-section">
+                         <h3>
+                            Personal Journal
+                            <button class="context-help-btn small-btn" data-help-key="journalSectionInfo" aria-label="Help with Journal Section">?</button>
+                        </h3>
+                         <div class="modal-actions">
+                            <button id="journal-prompt-btn" class="small-btn">Get Prompt 🤔</button>
+                         </div>
+                         <p id="journal-prompt-${person.id}" class="journal-prompt muted-text" style="display: none;"></p>
+                         <label for="reflections-text-${person.id}" class="sr-only">Journal Entry:</label>
+                         <textarea id="reflections-text-${person.id}" class="reflections-textarea" placeholder="Reflect on your persona, experiences, goals, or use a prompt...">${this.escapeHTML(currentReflection)}</textarea>
+                         <div class="modal-actions">
+                            <button id="save-reflections-btn" class="small-btn save-btn">Save Reflections 💾</button>
+                         </div>
+                    </section>
+                `;
+                break;
+
+             case 'tab-achievements':
+                 contentElement.innerHTML = `
+                     <section class="achievements-section">
+                         <h3>
+                            Achievements Unlocked
+                             <button class="context-help-btn small-btn" data-help-key="achievementsSectionInfo" aria-label="Help with Achievements Section">?</button>
+                         </h3>
+                         <ul id="achievements-list-${person.id}"></ul>
+                         <div class="modal-actions" style="margin-top: 1em;">
+                             <button class="small-btn" onclick="kinkCompassApp.showAchievements()">View All Achievements</button>
+                         </div>
+                     </section>
+                 `;
+                 this.renderAchievementsList(person, `achievements-list-${person.id}`);
+                 break;
+
+            case 'tab-reading':
+                contentElement.innerHTML = `
+                    <section class="kink-reading-section">
+                         <h3>Your Kink Compass Reading <button class="small-btn" id="reading-btn" style="margin-left: auto;">Get New Reading</button></h3>
+                         <div id="kink-reading-output-${person.id}" class="kink-reading-output muted-text">Click 'Get New Reading' to see your compass interpretation...</div>
+                    </section>
+                `;
+                 // this.showKinkReading(person.id); // Uncomment to load reading immediately
+                break;
+
+            case 'tab-breakdown':
+                const getBreakdown = person.role === 'dominant' ? getDomBreakdown : getSubBreakdown;
+                const breakdownData = getBreakdown(person.style, person.traits);
+                 const intro = this.getIntroForStyle(person.style);
+                 contentElement.innerHTML = `
+                     <section class="style-breakdown-section">
+                          <h3>Style Breakdown & Tips</h3>
+                           ${intro ? `<p class="modal-intro">${this.escapeHTML(intro)}</p>` : ''}
+                           <div class="style-breakdown">
+                               <div class="strengths">
+                                   <h4>🌟 Strengths / Current Vibe:</h4>
+                                   <p>${breakdownData.strengths}</p>
+                               </div>
+                               <hr>
+                               <div class="improvements">
+                                   <h4>🧭 Growth / Focus Areas:</h4>
+                                   <p>${breakdownData.improvements}</p>
+                               </div>
+                           </div>
+                     </section>`;
+                 break;
+
+            default:
+                contentElement.innerHTML = `<p>Content for tab "${tabId}" not yet implemented.</p>`;
+        }
+      } catch (error) {
+          console.error(`Error rendering content for tab ${tabId}:`, error);
+          contentElement.innerHTML = `<p class="error-text">Sorry, there was an error loading this section.</p>`;
+      }
+  }
+
+  // --- New Feature Logic ---
+  addGoal(personId) {
+    const inputElement = document.getElementById(`new-goal-${personId}`);
+    if (!inputElement) {
+         console.error(`Input element for adding goal not found for person ${personId}`);
+         this.showNotification("Error adding goal: UI element missing.", "error");
+         return;
+    }
+    const goalText = inputElement.value.trim();
+    if (!goalText) {
+        this.showNotification("Please enter goal text.", "warning");
+        return;
+    }
+    const person = this.people.find(p => p.id === personId);
+    if (!person) {
+        this.showNotification("Persona not found.", "error");
+        return;
+    }
+    if (!person.goals) person.goals = [];
+    const newGoal = { id: Date.now(), text: goalText, done: false };
+    person.goals.push(newGoal);
+    this.saveToLocalStorage();
+    const goalListUl = document.getElementById(`goal-list-${person.id}`);
+    if (goalListUl) {
+        goalListUl.innerHTML = this.renderGoalList(person);
+    } else {
+        console.warn(`Goal list UL element not found after adding goal for person ${personId}`);
+         this.renderDetailTabContent(person, 'tab-goals', document.getElementById('tab-goals'));
+    }
+    inputElement.value = '';
+    this.showNotification("Goal added! 🎉", "success", 2500);
+    grantAchievement(person, 'goal_added');
+  }
+  toggleGoalStatus(personId, goalId) {
+    const person = this.people.find(p => p.id === personId);
+    if (!person || !person.goals) return;
+    const goal = person.goals.find(g => g.id === goalId);
+    if (!goal) return;
+    goal.done = !goal.done;
+    this.saveToLocalStorage();
+     const goalListUl = document.getElementById(`goal-list-${person.id}`);
+    if (goalListUl) {
+        goalListUl.innerHTML = this.renderGoalList(person);
+    } else {
+        console.warn(`Goal list UL element not found after toggling goal for person ${personId}`);
+         this.renderDetailTabContent(person, 'tab-goals', document.getElementById('tab-goals'));
+    }
+    if (goal.done) {
+        grantAchievement(person, 'goal_completed');
+        const completedCount = this.people.reduce((count, p) => count + (p.goals?.filter(g => g.done).length || 0), 0);
+        if (completedCount >= 5) grantAchievement(person, 'five_goals_completed');
+        this.showNotification("Goal completed! ✔️", "success", 2000);
+    } else {
+        this.showNotification("Goal marked as not done.", "info", 2000);
+    }
+  }
+  deleteGoal(personId, goalId) {
+    const person = this.people.find(p => p.id === personId);
+    if (!person || !person.goals) return;
+    const initialLength = person.goals.length;
+    person.goals = person.goals.filter(g => g.id !== goalId);
+     if (person.goals.length < initialLength) {
+        this.saveToLocalStorage();
+        const goalListUl = document.getElementById(`goal-list-${person.id}`);
+        if (goalListUl) {
+             goalListUl.innerHTML = this.renderGoalList(person);
+         } else {
+             console.warn(`Goal list UL element not found after deleting goal for person ${personId}`);
+             this.renderDetailTabContent(person, 'tab-goals', document.getElementById('tab-goals'));
+        }
+        this.showNotification("Goal deleted. 🗑️", "info", 2000);
+    }
+  }
+  renderGoalList(person) {
+     if (!person.goals || person.goals.length === 0) {
+        return '<li class="muted-text">No goals added yet.</li>';
+    }
+    return person.goals.map(goal => `
+        <li class="${goal.done ? 'done' : ''}">
+            <span>${this.escapeHTML(goal.text)}</span>
+            <div class="goal-actions">
+                <button class="small-btn toggle-goal-btn" data-goal-id="${goal.id}" aria-label="${goal.done ? 'Mark as not done' : 'Mark as done'}">
+                    ${goal.done ? 'Undo' : 'Done'}
+                </button>
+                <button class="small-btn delete-btn delete-goal-btn" data-goal-id="${goal.id}" aria-label="Delete goal">
+                    Delete
+                </button>
+            </div>
+        </li>
+    `).join('');
+  }
+  showJournalPrompt(personId) {
+    const promptElement = document.getElementById(`journal-prompt-${personId}`);
+    if (promptElement) {
+        const prompt = getRandomPrompt();
+        promptElement.textContent = `💡 Prompt: ${prompt}`;
+        promptElement.style.display = 'block';
+        const person = this.people.find(p => p.id === personId);
+        if(person) grantAchievement(person, 'prompt_used');
+    }
+  }
+  saveReflections(personId) {
+    const textarea = document.getElementById(`reflections-text-${personId}`);
+    const saveButton = document.getElementById('save-reflections-btn');
+    if (!textarea || !saveButton) {
+         console.error(`Textarea or save button not found for reflections, person ID ${personId}`);
+         this.showNotification("Error saving reflections: UI element missing.", "error");
+         return;
+    }
+    const person = this.people.find(p => p.id === personId);
+    if (!person) {
+        this.showNotification("Persona not found.", "error");
+        return;
+    }
+    if (typeof person.reflections !== 'object' || person.reflections === null) {
+        person.reflections = {};
+    }
+    person.reflections.text = textarea.value;
+    this.saveToLocalStorage();
+    textarea.classList.add('input-just-saved');
+    saveButton.textContent = 'Saved! ✅';
+    saveButton.disabled = true;
+    setTimeout(() => {
+         textarea.classList.remove('input-just-saved');
+         saveButton.textContent = 'Save Reflections 💾';
+         saveButton.disabled = false;
+    }, 1500);
+    this.showNotification("Reflections saved.", "success", 2000);
+    grantAchievement(person, 'reflection_saved');
+    if ((person.reflections?.journalEntries?.length || (person.reflections.text ? 1: 0)) >= 5) {
+         grantAchievement(person, 'five_reflections');
+    }
+  }
+  addSnapshotToHistory(personId) {
+    const person = this.people.find(p => p.id === personId);
+    if (!person) {
+        this.showNotification("Persona not found.", "error");
+        return;
+    }
+    if (!person.history) person.history = [];
+    const timestamp = new Date().toISOString();
+    const snapshot = { timestamp: timestamp, traits: { ...person.traits } };
+    person.history.push(snapshot);
+     const MAX_SNAPSHOTS = 20;
+     if (person.history.length > MAX_SNAPSHOTS) {
+         person.history = person.history.slice(-MAX_SNAPSHOTS);
+         console.log(`History pruned to last ${MAX_SNAPSHOTS} snapshots for ${person.name}`);
+     }
+    this.saveToLocalStorage();
+     this.renderHistoryChart(person, `history-chart-${person.id}`);
+     const timestampDisplay = document.getElementById('snapshot-timestamp');
+     const infoDiv = document.querySelector(`#tab-history .snapshot-info`); // More specific selector
+     if(timestampDisplay && infoDiv) {
+         timestampDisplay.textContent = new Date(timestamp).toLocaleString();
+         this.toggleSnapshotInfo(document.getElementById('snapshot-btn'));
+     }
+    this.showNotification("Snapshot saved! 📸", "success", 2500);
+    grantAchievement(person, 'history_snapshot');
+    if (person.history.length >= 10) grantAchievement(person, 'ten_snapshots');
+  }
+  renderHistoryChart(person, canvasId) {
+    const canvasElement = document.getElementById(canvasId);
+    const containerElement = document.getElementById(`history-chart-container-${person.id}`);
+
+     if (!canvasElement || !containerElement) {
+         console.error(`Canvas or container not found for history chart: ${canvasId}`);
+         if (containerElement) containerElement.innerHTML = '<p class="error-text">Error: Chart cannot be displayed.</p>';
+         return;
+     }
+    containerElement.classList.add('chart-loading');
+
+    if (typeof Chart === 'undefined') {
+         console.error("Chart.js library is not loaded.");
+         containerElement.innerHTML = '<p class="error-text">Error: Chart library failed to load.</p>';
+         containerElement.classList.remove('chart-loading');
+         return;
+     }
+    if (this.chartInstance && this.chartInstance.canvas && this.chartInstance.canvas.id === canvasId) {
+        this.chartInstance.destroy();
+        console.log("Destroyed previous chart instance.");
+    }
+    if (!person.history || person.history.length === 0) {
+        console.log("No history data to display for chart.");
+        containerElement.innerHTML = '<p class="muted-text">No snapshots taken yet. Take a snapshot to start tracking history!</p>';
+         containerElement.classList.remove('chart-loading');
+        return;
+    }
+
+     const labels = person.history.map(snap => new Date(snap.timestamp).toLocaleDateString());
+     const allTraitNames = [...new Set(person.history.flatMap(snap => Object.keys(snap.traits)))].sort();
+     const isDark = document.body.dataset.theme === 'dark' || document.body.dataset.theme === 'velvet';
+     const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--chart-grid-color').trim() || (isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)');
+     const labelColor = getComputedStyle(document.documentElement).getPropertyValue('--chart-label-color').trim() || (isDark ? '#c49db1' : '#8a5a6d');
+     const tooltipBgColor = getComputedStyle(document.documentElement).getPropertyValue('--chart-tooltip-bg').trim() || (isDark ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.75)');
+     const tooltipTextColor = getComputedStyle(document.documentElement).getPropertyValue('--chart-tooltip-text').trim() || (isDark ? '#000' : '#fff');
+     const pointColor = getComputedStyle(document.documentElement).getPropertyValue('--chart-point-color').trim();
+     const lineColor = getComputedStyle(document.documentElement).getPropertyValue('--chart-line-color').trim();
+
+     const defaultColors = ['#ff69b4', '#1e90ff', '#3cb371', '#ffa500', '#9370db', '#ff7f50', '#f08080', '#20b2aa', '#dda0dd', '#ffcc00'];
+     const datasets = allTraitNames.map((traitName, index) => {
+         const data = person.history.map(snap => snap.traits[traitName] ?? null);
+         const color = defaultColors[index % defaultColors.length];
+         return {
+             label: traitName.charAt(0).toUpperCase() + traitName.slice(1).replace(/([A-Z])/g, ' $1'),
+             data: data,
+             borderColor: color,
+             backgroundColor: color + '33',
+             tension: 0.1,
+             fill: false,
+             pointBackgroundColor: pointColor || color,
+             pointRadius: 3,
+             pointHoverRadius: 5,
+         };
+     });
+
+     try {
+        this.chartInstance = new Chart(canvasElement, {
+            type: 'line',
+            data: { labels: labels, datasets: datasets },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, max: 5, ticks: { color: labelColor, stepSize: 1 }, grid: { color: gridColor } },
+                    x: { ticks: { color: labelColor }, grid: { color: gridColor } }
+                },
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: labelColor, boxWidth: 12, padding: 15, font: {size: 10} } },
+                    tooltip: { backgroundColor: tooltipBgColor, titleColor: tooltipTextColor, bodyColor: tooltipTextColor, boxPadding: 5 }
+                },
+                 interaction: { intersect: false, mode: 'index' },
+            }
+        });
+         console.log("Chart rendered successfully.");
+     } catch (chartError) {
+          console.error("Error creating Chart instance:", chartError);
+          containerElement.innerHTML = '<p class="error-text">Error rendering chart data.</p>';
+     } finally {
+         containerElement.classList.remove('chart-loading');
+     }
+  }
+  toggleSnapshotInfo(button) {
+        if(!button) return;
+        const section = button.closest('.history-section');
+        if(!section) return;
+        const infoDiv = section.querySelector('.snapshot-info');
+        if (!infoDiv) return;
+        infoDiv.style.display = 'block';
+        infoDiv.style.opacity = 1;
+        infoDiv.style.transition = 'opacity 0.5s ease';
+        setTimeout(() => {
+            infoDiv.style.opacity = 0;
+            setTimeout(() => { if (infoDiv) infoDiv.style.display = 'none'; }, 500);
+        }, 3000);
+    }
+  renderAchievementsList(person, listElementId) {
+     const listElement = document.getElementById(listElementId);
+     if (!listElement) {
+         console.error(`Achievement list element not found: ${listElementId}`);
+         return;
+     }
+    if (!person.achievements || person.achievements.length === 0) {
+        listElement.innerHTML = '<li class="muted-text">No achievements unlocked for this persona yet.</li>';
+        return;
+    }
+    listElement.innerHTML = person.achievements
+         .map(id => achievementList[id])
+         .filter(Boolean)
+         .sort((a, b) => a.name.localeCompare(b.name))
+         .map(ach => `
+            <li>
+                 <span class="achievement-icon" title="${this.escapeHTML(ach.desc)}">${ach.name.match(/(\p{Emoji})/u)?.[0] || '🏆'}</span>
+                 <span class="achievement-name">${this.escapeHTML(ach.name)}</span>
+            </li>
+        `).join('');
+  }
+  showAchievements() {
+     const body = this.elements.achievementsBody;
+     if (!body || !this.elements.achievementsModal) {
+          console.error("Achievements modal or body element not found.");
+          this.showNotification("UI Error: Cannot display achievements.", "error");
+          return;
+     }
+      let unlockedAppLevel = new Set();
+      let unlockedPersonaLevel = new Set();
+      this.people.forEach(p => {
+          p.achievements?.forEach(id => unlockedPersonaLevel.add(id));
+      });
+       if (localStorage.getItem('kinkCompass_glossary_used')) unlockedAppLevel.add('glossary_user');
+       if (localStorage.getItem('kinkCompass_resource_reader')) unlockedAppLevel.add('resource_reader');
+       if (localStorage.getItem('kinkCompass_theme_changer')) unlockedAppLevel.add('theme_changer');
+       if (localStorage.getItem('kinkCompass_data_exported')) unlockedAppLevel.add('data_exported');
+       if (localStorage.getItem('kinkCompass_data_imported')) unlockedAppLevel.add('data_imported');
+       const allUnlockedIds = new Set([...unlockedAppLevel, ...unlockedPersonaLevel]);
+
+      let html = `<p>Showing all possible achievements (${allUnlockedIds.size} / ${Object.keys(achievementList).length} unlocked). Unlocked achievements are highlighted!</p>`;
+      html += '<ul class="all-achievements-list">';
+      Object.entries(achievementList)
+          .sort((a, b) => a[1].name.localeCompare(b[1].name))
+          .forEach(([id, ach]) => {
+              const isUnlocked = allUnlockedIds.has(id);
+              html += `
+                  <li class="${isUnlocked ? 'unlocked' : 'locked'}">
+                      <span class="achievement-icon">${ach.name.match(/(\p{Emoji})/u)?.[0] || '🏆'}</span>
+                      <div class="achievement-details">
+                          <span class="achievement-name">${this.escapeHTML(ach.name)}</span>
+                          <span class="achievement-desc">${isUnlocked ? this.escapeHTML(ach.desc) : '???'}</span>
+                      </div>
+                  </li>
+              `;
+          });
+      html += '</ul>';
+      body.innerHTML = html;
+      this.openModal(this.elements.achievementsModal);
+  }
+  showKinkReading(personId) {
+     const outputElement = document.getElementById(`kink-reading-output-${personId}`);
+     const person = this.people.find(p => p.id === personId);
+     if (!outputElement || !person) {
+         console.error("Could not find output element or person for kink reading.");
+         this.showNotification("Error generating reading.", "error");
+         if(outputElement) outputElement.innerHTML = '<p class="error-text">Could not generate reading.</p>';
+         return;
+     }
+     outputElement.innerHTML = '<p class="loading-text">Consulting the compass...</p>';
+     try {
+         let reading = `<p>✨ <strong>${this.escapeHTML(person.name)}'s Compass Reading</strong> ✨</p>`;
+         reading += `<p>Your chosen path is <strong>${this.escapeHTML(person.style)}</strong> within the <strong>${this.escapeHTML(person.role)}</strong> role.</p>`;
+         const styleEssence = this.getStyleEssence(person.style);
+         if(styleEssence) reading += `<p><em>Essence: ${this.escapeHTML(styleEssence)}</em></p>`;
+         const sortedTraits = Object.entries(person.traits)
+             .map(([name, score]) => ({ name, score: parseInt(score, 10) }))
+             .filter(t => !isNaN(t.score))
+             .sort((a, b) => b.score - a.score);
+         if (sortedTraits.length > 0) {
+             reading += "<hr><h4>Key Traits:</h4><ul>";
+             sortedTraits.slice(0, 3).forEach(t => {
+                 const descriptor = this.getReadingDescriptor(t.name, t.score);
+                 const displayName = t.name.charAt(0).toUpperCase() + t.name.slice(1).replace(/([A-Z])/g, ' $1');
+                 reading += `<li><strong>${this.escapeHTML(displayName)} (${t.score}/5):</strong> ${this.escapeHTML(descriptor)}</li>`;
+             });
+             reading += "</ul>";
+             if (sortedTraits.length > 3) {
+                 reading += "<h4>Potential Growth Areas:</h4><ul>";
+                 sortedTraits.slice(-2).forEach(t => {
+                      const descriptor = this.getReadingDescriptor(t.name, t.score);
+                      const displayName = t.name.charAt(0).toUpperCase() + t.name.slice(1).replace(/([A-Z])/g, ' $1');
+                      reading += `<li><strong>${this.escapeHTML(displayName)} (${t.score}/5):</strong> ${this.escapeHTML(descriptor)}</li>`;
+                 });
+                 reading += "</ul>";
+             }
+         } else {
+              reading += "<p>No specific trait scores recorded yet for a detailed reading.</p>";
+         }
+         const possibilities = [
+             "Your journey is unique and unfolding beautifully.",
+             "Continue exploring with curiosity and open communication.",
+             "Trust your intuition as you navigate your desires.",
+             "Remember safety, consent, and self-awareness on your path.",
+             "The compass points towards exciting possibilities!"
+         ];
+         reading += `<hr><p><em>${possibilities[Math.floor(Math.random() * possibilities.length)]}</em></p>`;
+         outputElement.innerHTML = reading;
+         grantAchievement(person, 'kink_reading');
+     } catch (error) {
+          console.error("Error during kink reading generation:", error);
+          outputElement.innerHTML = '<p class="error-text">An error occurred while generating the reading.</p>';
+     }
+  }
+  getReadingDescriptor(traitName, score) {
+      const levels = {
+          1: ["Minimal expression of", "Low focus on", "Exploring the opposite of"],
+          2: ["Developing awareness of", "Cautiously exploring", "Building foundations in"],
+          3: ["Balanced approach to", "Comfortable with", "Finding footing in"],
+          4: ["Strongly embodies", "Confidently expresses", "Leaning heavily into"],
+          5: ["Mastery of", "Deeply integrated", "Exemplifies"]
+      };
+       const genericDescriptors = {
+            1: "a potential growth area.",
+            2: "an area of development.",
+            3: "a balanced aspect.",
+            4: "a defining characteristic.",
+            5: "a core strength."
+       };
+      const levelDesc = levels[score] ? levels[score][Math.floor(Math.random() * levels[score].length)] : "";
+       const genericDesc = genericDescriptors[score] || "";
+      return `${levelDesc} ${traitName} - ${genericDesc}`;
+  }
+  getStyleEssence(styleName) {
+       let styleData = null;
+       for (const roleKey in bdsmData) {
+           styleData = bdsmData[roleKey]?.styles?.find(s => s.name === styleName);
+           if (styleData) break;
+       }
+       return styleData?.summary || null;
+   }
+
+  // --- Glossary, Style Discovery ---
+  showGlossary(termKeyToHighlight = null) {
+      console.log("--- Entering showGlossary ---", termKeyToHighlight);
+      console.log("Imported glossaryTerms:", glossaryTerms);
+      if (typeof glossaryTerms !== 'object' || glossaryTerms === null || Object.keys(glossaryTerms).length === 0) {
+           console.error("!!! glossaryTerms is empty or invalid!", glossaryTerms);
+           if (this.elements.glossaryBody) {
+              this.elements.glossaryBody.innerHTML = "<p class='error-text'>Glossary data is currently unavailable.</p>";
+           }
+           if (this.elements.glossaryModal) this.openModal(this.elements.glossaryModal);
+           return;
+      }
+      if (!this.elements.glossaryBody || !this.elements.glossaryModal) {
+          console.error("!!! showGlossary Error: Missing glossaryBody or glossaryModal element!");
+          return;
+      }
+      console.log("Glossary elements found:", this.elements.glossaryBody, this.elements.glossaryModal);
+
+      let html = '<dl>';
+      try {
+          Object.entries(glossaryTerms).sort((a, b) => a[1].term.localeCompare(b[1].term))
+              .forEach(([key, termData]) => {
+                   const termId = `gloss-term-${key}`;
+                   const isHighlighted = key === termKeyToHighlight;
+                   html += `<dt id="${termId}" class="${isHighlighted ? 'highlighted-term' : ''}">${this.escapeHTML(termData.term)}</dt>`;
+                   html += `<dd>${this.escapeHTML(termData.definition)}`;
+                   if (termData.related?.length) {
+                       html += `<br><span class="related-terms">See also: `;
+                       html += termData.related.map(relKey => {
+                           const relatedTerm = glossaryTerms[relKey]?.term || relKey;
+                           return `<a href="#gloss-term-${relKey}" class="glossary-link" data-term-key="${relKey}">${this.escapeHTML(relatedTerm)}</a>`;
+                       }).join(', ');
+                       html += `</span>`;
+                   }
+                   html += `</dd>`;
+              });
+          html += '</dl>';
+          console.log("Generated Glossary HTML (snippet):", html.substring(0, 200));
+      } catch (htmlError) {
+           console.error("!!! showGlossary Error: Failed to generate HTML!", htmlError);
+           this.elements.glossaryBody.innerHTML = "<p class='error-text'>Error loading glossary content.</p>";
+           this.openModal(this.elements.glossaryModal);
+           return;
+      }
+      this.elements.glossaryBody.innerHTML = html;
+      console.log("Set glossaryBody innerHTML.");
+      this.openModal(this.elements.glossaryModal);
+      console.log("Called openModal for glossaryModal.");
+      if (termKeyToHighlight) {
+           const termElement = this.elements.glossaryBody.querySelector(`#gloss-term-${termKeyToHighlight}`);
+           requestAnimationFrame(() => {
+              termElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+           });
+           console.log("Attempted to scroll to:", termKeyToHighlight);
+      }
+      console.log("--- Exiting showGlossary ---");
+  }
+  showStyleDiscovery(styleNameToHighlight = null) {
+     console.log("--- Entering showStyleDiscovery ---", styleNameToHighlight);
+     if (!this.elements.styleDiscoveryModal || !this.elements.styleDiscoveryBody) {
+          console.error("Style Discovery modal elements not found.");
+          this.showNotification("UI Error: Cannot show Style Discovery.", "error");
+          return;
+     }
+     // Reset filter to 'all' when opening, unless highlighting specific style
+     if (this.elements.styleDiscoveryRoleFilter) {
+         this.elements.styleDiscoveryRoleFilter.value = styleNameToHighlight ? 'all' : 'all';
+     }
+     this.renderStyleDiscoveryContent(styleNameToHighlight); // Render content
+     this.openModal(this.elements.styleDiscoveryModal); // Open modal
+
+      // Scroll logic (needs to happen *after* modal is open and content rendered)
+      if (styleNameToHighlight) {
+           requestAnimationFrame(() => { // Wait for render
+                const styleElement = this.elements.styleDiscoveryBody.querySelector(`[data-style-name="${styleNameToHighlight}"]`);
+                 if (styleElement) {
+                     styleElement.classList.add('highlighted-style');
+                     styleElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                     styleElement.focus({ preventScroll: true }); // Focus for screen readers
+                     console.log("Scrolled to and highlighted style:", styleNameToHighlight);
+                      // Remove highlight after a delay
+                      setTimeout(() => styleElement.classList.remove('highlighted-style'), 2500);
+                 } else {
+                      console.warn(`Style element not found for highlighting: ${styleNameToHighlight}`);
+                 }
+           });
+      }
+     console.log("--- Exiting showStyleDiscovery ---");
+  }
+  renderStyleDiscoveryContent(styleNameToHighlight = null) {
+     const body = this.elements.styleDiscoveryBody;
+     const roleFilter = this.elements.styleDiscoveryRoleFilter?.value || 'all';
+     if (!body) return;
+
+     body.innerHTML = '<p class="loading-text">Loading styles...</p>'; // Loading state
+
+     let stylesToDisplay = [];
+     if (roleFilter === 'all' || roleFilter === 'submissive') stylesToDisplay.push(...(bdsmData.submissive?.styles || []));
+     if (roleFilter === 'all' || roleFilter === 'dominant') stylesToDisplay.push(...(bdsmData.dominant?.styles || []));
+     if (roleFilter === 'all' || roleFilter === 'switch') stylesToDisplay.push(...(bdsmData.switch?.styles || []));
+
+     if (stylesToDisplay.length === 0) {
+          body.innerHTML = '<p class="muted-text">No styles found matching the filter.</p>';
+          return;
+     }
+
+     // Add full description from sfStyleDescriptions
+     stylesToDisplay = stylesToDisplay.map(style => ({
+         ...style,
+         fullDesc: this.sfStyleDescriptions[style.name]?.long || "No detailed description available.",
+         tips: this.sfStyleDescriptions[style.name]?.tips || [],
+         match: this.sfDynamicMatches[style.name]?.match || "N/A",
+         dynamic: this.sfDynamicMatches[style.name]?.dynamic || "N/A"
+     }));
+
+
+     stylesToDisplay.sort((a, b) => a.name.localeCompare(b.name));
+
+     let html = stylesToDisplay.map(style => {
+          const isHighlighted = style.name === styleNameToHighlight;
+          const role = Object.keys(bdsmData).find(r => bdsmData[r].styles.some(s => s.name === style.name));
+          return `
+               <div class="style-discovery-item ${isHighlighted ? 'highlighted-style' : ''}" data-style-name="${this.escapeHTML(style.name)}" tabindex="-1">
+                    <h4>${this.escapeHTML(style.name)} <small>(${this.escapeHTML(role)})</small></h4>
+                    <p><em>${this.escapeHTML(style.summary || 'No summary.')}</em></p>
+                    <p>${this.escapeHTML(style.fullDesc)}</p>
+                     ${style.tips.length > 0 ? `
+                         <p><strong>Tips:</strong></p>
+                         <ul>${style.tips.map(tip => `<li>${this.escapeHTML(tip)}</li>`).join('')}</ul>
+                     ` : ''}
+                     <p><small><strong>Match:</strong> ${this.escapeHTML(style.match)} | <strong>Dynamic:</strong> ${this.escapeHTML(style.dynamic)}</small></p>
+               </div>
+               <hr>
+          `;
+     }).join('');
+
+     body.innerHTML = html || '<p class="muted-text">No styles loaded.</p>'; // Fallback
+  }
+
+  // --- Data Import/Export ---
+  exportData() {
+    if (this.people.length === 0) {
+        this.showNotification("No personas to export.", "warning");
+        return;
+    }
+    try {
+        const dataStr = JSON.stringify(this.people, null, 2); // Pretty print JSON
+        const dataBlob = new Blob([dataStr], { type: "application/json" });
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        const timestamp = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+        link.download = `kinkcompass_personas_${timestamp}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        this.showNotification("Personas exported successfully! 💾", "success");
+         grantAchievement({}, 'data_exported');
+         localStorage.setItem('kinkCompass_data_exported', 'true');
+    } catch (error) {
+        console.error("Export failed:", error);
+        this.showNotification("Export failed. See console for details.", "error");
+    }
+  }
+  importData(event) {
+    const file = event.target.files[0];
+    if (!file) {
+        console.log("No file selected for import.");
+        return;
+    }
+    if (!file.type.match('application/json')) {
+        this.showNotification("Import failed: Please select a valid JSON file.", "error");
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const importedData = JSON.parse(e.target.result);
+            if (!Array.isArray(importedData)) {
+                throw new Error("Imported data is not a valid array.");
+            }
+
+            // Basic validation of imported objects (optional but recommended)
+            const validatedPeople = importedData
+                .map(p => ({ // Ensure basic structure and defaults
+                    id: p.id ?? Date.now() + Math.random(), // Assign new ID if missing or use existing
+                    name: p.name?.trim() || "Imported Persona",
+                    avatar: p.avatar || '❓',
+                    role: ['dominant', 'submissive', 'switch'].includes(p.role) ? p.role : 'submissive',
+                    style: p.style || '', // Style validation is harder, leave as is or reset
+                    traits: typeof p.traits === 'object' && p.traits !== null ? p.traits : {},
+                    goals: Array.isArray(p.goals) ? p.goals : [],
+                    history: Array.isArray(p.history) ? p.history : [],
+                    achievements: Array.isArray(p.achievements) ? p.achievements : [],
+                    reflections: typeof p.reflections === 'object' && p.reflections !== null ? p.reflections : { text: p.reflections || '' }
+                }))
+                .filter(p => p.name); // Filter out any completely invalid entries
+
+            if (validatedPeople.length === 0 && importedData.length > 0) {
+                 throw new Error("Imported data contained invalid persona structures.");
+            }
+
+            if (confirm(`Import ${validatedPeople.length} personas? This will REPLACE your current personas.`)) {
+                this.people = validatedPeople;
+                this.saveToLocalStorage();
+                this.renderList();
+                this.resetForm(); // Clear form after import
+                this.showNotification(`Successfully imported ${validatedPeople.length} personas! 📁`, "success");
+                grantAchievement({}, 'data_imported');
+                localStorage.setItem('kinkCompass_data_imported', 'true');
+            } else {
+                 this.showNotification("Import cancelled.", "info");
+            }
+
+        } catch (error) {
+            console.error("Import failed:", error);
+            this.showNotification(`Import failed: ${error.message}. Check file format.`, "error");
+        } finally {
+            // Reset file input to allow importing the same file again if needed
+            event.target.value = null;
+        }
+    };
+    reader.onerror = (e) => {
+         console.error("File reading error:", e);
+         this.showNotification("Failed to read the selected file.", "error");
+         event.target.value = null; // Reset file input
+    };
+    reader.readAsText(file);
+  }
+
+
+  // --- Popups ---
+  showTraitInfo(traitName){
+      // Fetch explanation (You might need a more robust way to get this if traits vary by role/style)
+       let explanation = "No detailed explanation available.";
+       // Try finding in glossary first
+       if (glossaryTerms[traitName]) {
+           explanation = glossaryTerms[traitName].definition;
+       } else { // Fallback to sfTraitExplanations (may not cover all traits)
+            explanation = this.sfTraitExplanations[traitName] || `Details for trait '${traitName}' not found.`;
+       }
+
+
+      if (this.elements.traitInfoPopup && this.elements.traitInfoTitle && this.elements.traitInfoBody) {
+           const displayName = traitName.charAt(0).toUpperCase() + traitName.slice(1).replace(/([A-Z])/g, ' $1');
+           this.elements.traitInfoTitle.textContent = displayName;
+           this.elements.traitInfoBody.innerHTML = `<p>${this.escapeHTML(explanation)}</p>`; // Use innerHTML if explanation might contain links later
+           this.elements.traitInfoPopup.style.display = 'block';
+           this.elements.traitInfoPopup.setAttribute('aria-hidden', 'false');
+           // Focus the close button for accessibility
+            requestAnimationFrame(() => this.elements.traitInfoClose?.focus());
+           grantAchievement({}, 'trait_info_viewed'); // Consider granting per-persona?
+
+      } else {
+          console.error("Trait info popup elements not found.");
+      }
+  }
+  hideTraitInfo(){
+       if (this.elements.traitInfoPopup) {
+           this.elements.traitInfoPopup.style.display = 'none';
+           this.elements.traitInfoPopup.setAttribute('aria-hidden', 'true');
+           // Restore focus to the button that opened it
+           const triggerButton = document.querySelector('.trait-info-btn[aria-expanded="true"]');
+           triggerButton?.setAttribute('aria-expanded', 'false'); // Reset expanded state
+           triggerButton?.focus();
+       }
+  }
+  showContextHelp(helpKey) {
+      const helpText = contextHelpTexts[helpKey];
+      if (!helpText) {
+          console.warn(`Context help text not found for key: ${helpKey}`);
+          this.showNotification("Help information not available.", "warning");
+          return;
+      }
+
+      const popup = this.elements.contextHelpPopup;
+      const title = this.elements.contextHelpTitle;
+      const body = this.elements.contextHelpBody;
+      const triggerButton = document.querySelector(`.context-help-btn[data-help-key="${helpKey}"]`);
+
+
+      if (popup && title && body) {
+          // Determine a title (e.g., from the button's aria-label or a lookup)
+          const buttonLabel = triggerButton?.getAttribute('aria-label') || `Help`;
+          const simpleTitle = buttonLabel.replace('Help with ', '').replace(' Section', ''); // Basic title extraction
+          title.textContent = simpleTitle;
+          body.innerHTML = `<p>${this.escapeHTML(helpText)}</p>`; // Use innerHTML for potential formatting later
+
+          popup.style.display = 'block';
+          popup.setAttribute('aria-hidden', 'false');
+          // Mark button as expanded
+          triggerButton?.setAttribute('aria-expanded', 'true');
+
+           // Focus close button
+           requestAnimationFrame(() => this.elements.contextHelpClose?.focus());
+      } else {
+          console.error("Context help popup elements not found.");
+      }
+  }
+  hideContextHelp() {
+      const popup = this.elements.contextHelpPopup;
+      if (popup) {
+          popup.style.display = 'none';
+          popup.setAttribute('aria-hidden', 'true');
+          // Restore focus to the button that opened it
+           const triggerButton = document.querySelector('.context-help-btn[aria-expanded="true"]');
+           triggerButton?.setAttribute('aria-expanded', 'false'); // Reset expanded state
+           triggerButton?.focus();
+      }
+  }
+
+  // --- Style Finder Methods ---
+  sfStart() {
+    console.log("Starting Style Finder...");
+    this.sfActive = true;
+    this.sfStep = 0;
+    this.sfRole = null;
+    this.sfIdentifiedRole = null;
+    this.sfAnswers = { rolePreference: null, traits: {} };
+    this.sfScores = {};
+    this.sfPreviousScores = {};
+    this.sfHasRenderedDashboard = false;
+    this.sfTraitSet = [];
+    this.sfShowDashboardDuringTraits = false;
+    this.sfCalculateSteps();
+    this.openModal(this.elements.sfModal);
+    this.sfRenderStep();
+    this.sfShowFeedback("Let’s begin your style quest! ✨");
+  }
+  sfClose() {
+    console.log("Closing Style Finder...");
+    this.sfActive = false;
+    this.closeModal(this.elements.sfModal);
+  }
+  sfCalculateSteps() {
+    this.sfSteps = [];
+    this.sfSteps.push({ type: 'welcome' });
+    this.sfSteps.push({ type: 'rolePreference' });
+
+    if (this.sfAnswers.rolePreference) {
+        this.sfRole = this.sfAnswers.rolePreference;
+        if (this.sfRole === 'dominant') {
+            this.sfTraitSet = [...this.sfDomFinderTraits].sort(() => 0.5 - Math.random());
+        } else if (this.sfRole === 'submissive') {
+            this.sfTraitSet = [...this.sfSubFinderTraits].sort(() => 0.5 - Math.random());
+        } else { // Handle 'switch' - simplified to use submissive traits for now
+             console.warn("Style Finder: 'Switch' role selected, using Submissive traits for quiz scoring.");
+             this.sfTraitSet = [...this.sfSubFinderTraits].sort(() => 0.5 - Math.random());
+             this.sfRole = 'submissive'; // Temporarily use sub for scoring traits during quiz
+        }
+        if (this.sfTraitSet.length > 0) {
+            this.sfTraitSet.forEach(trait => this.sfSteps.push({ type: 'trait', trait: trait.name }));
+            this.sfSteps.push({ type: 'roundSummary', round: 'Traits' });
+        } else {
+            console.warn(`No traits found for role preference: ${this.sfAnswers.rolePreference}`);
+        }
+    }
+    this.sfSteps.push({ type: 'result' });
+    console.log("Calculated SF Steps:", this.sfSteps.map(s => s.type + (s.trait ? ` (${s.trait})` : '')));
+  }
+  sfRenderStep() {
+    if (!this.sfActive || !this.elements.sfStepContent) return;
+     const sfContent = this.elements.sfStepContent;
+     sfContent.classList.add('loading');
+
+     if (this.sfStep < 0) this.sfStep = 0;
+     if (this.sfStep >= this.sfSteps.length) this.sfStep = this.sfSteps.length - 1;
+     const step = this.sfSteps[this.sfStep];
+     if (!step) {
+         console.error("Invalid Style Finder step:", this.sfStep);
+         sfContent.innerHTML = '<p class="error-text">Error: Could not load this step.</p>';
+         sfContent.classList.remove('loading');
+         return;
+     }
+
+     let html = "";
+     const totalSteps = this.sfSteps.length;
+     const currentStepNum = this.sfStep + 1;
+     let questionsLeft = 0;
+
+     if (step.type === 'trait') {
+         const currentTraitIndex = this.sfTraitSet.findIndex(t => t.name === step.trait);
+         questionsLeft = this.sfTraitSet.length - currentTraitIndex;
+         this.elements.sfProgressTracker.textContent = `Question ${currentTraitIndex + 1} of ${this.sfTraitSet.length} | Step ${currentStepNum} of ${totalSteps}`;
+         this.elements.sfProgressTracker.style.display = 'block';
+     } else if (step.type === 'result' || step.type === 'welcome') {
+         this.elements.sfProgressTracker.style.display = 'none';
+     } else {
+         this.elements.sfProgressTracker.textContent = `Step ${currentStepNum} of ${totalSteps}`;
+         this.elements.sfProgressTracker.style.display = 'block';
+     }
+    console.log(`Rendering SF Step ${this.sfStep}: Type=${step.type}`, step);
+    sfContent.innerHTML = '';
+
+     try {
+        switch (step.type) {
+            case 'welcome':
+                html += `<h2>Welcome, Style Seeker!</h2><p>Ready to uncover your unique Kink Compass style? This quick quest will help guide you. ✨</p><div class="sf-button-container"><button data-action="start">Begin Quest!</button></div>`;
+                break;
+            case 'rolePreference':
+                html += `<h2>Choose Your Vibe!</h2><p>Do you generally prefer taking the lead, or following your partner's guidance? (You can explore both later!)</p><div class="sf-button-container"><button data-action="setRole" data-value="dominant">Lead (Dominant)</button><button data-action="setRole" data-value="submissive">Follow (Submissive)</button><button data-action="setRole" data-value="switch">Both/Fluid (Switch)</button></div><div class="sf-button-container" style="margin-top: 20px;"><button data-action="prev" class="secondary-btn">Back</button></div>`;
+                break;
+             case 'trait':
+                 if (!this.sfRole) {
+                     html = `<p class="error-text">Please go back and select a role preference first.</p>`;
+                     this.sfStep = this.sfSteps.findIndex(s => s.type === 'rolePreference');
+                     break;
+                 }
+                 const traitObj = this.sfTraitSet.find(t => t.name === step.trait);
+                 if (!traitObj) {
+                      html = `<p class="error-text">Error: Trait '${step.trait}' definition not found.</p>`;
+                      break;
+                 }
+                 const currentValue = this.sfAnswers.traits[traitObj.name] ?? 5;
+                 const footnoteSet = (this.sfAnswers.rolePreference === 'dominant' ? this.sfDomTraitFootnotes : this.sfSubTraitFootnotes); // Use original preference for footnotes
+                 const footnote = footnoteSet[traitObj.name] || "1: Low / 10: High";
+                 const sliderDescriptions = this.sfSliderDescriptions[traitObj.name];
+                 const currentDesc = (sliderDescriptions && sliderDescriptions[currentValue - 1]) ? sliderDescriptions[currentValue - 1] : "How does this resonate?";
+                 const isFirstTrait = this.sfTraitSet.findIndex(t => t.name === step.trait) === 0;
+                 html += `<h2>${this.escapeHTML(traitObj.desc)}<span class="sf-info-icon" data-trait="${traitObj.name}" title="More info about this trait" aria-label="More info about ${this.escapeHTML(traitObj.desc)}">ℹ️</span></h2> ${isFirstTrait ? '<p class="muted-text">Slide to rate how much this resonates (1 = Not Me, 10 = Totally Me).</p>' : ''}<input type="range" min="1" max="10" value="${currentValue}" class="sf-trait-slider" data-trait="${traitObj.name}" aria-label="${this.escapeHTML(traitObj.desc)}" aria-describedby="sf-desc-${traitObj.name} sf-footnote-${traitObj.name}"><div id="sf-desc-${traitObj.name}" class="sf-slider-description" aria-live="polite">${this.escapeHTML(currentDesc)}</div><p id="sf-footnote-${traitObj.name}" class="sf-slider-footnote">${this.escapeHTML(footnote)}</p><div class="sf-button-container" style="margin-top: 15px;"><button data-action="next" data-trait="${traitObj.name}">Next <span aria-hidden="true">&rarr;</span></button><button data-action="prev" class="secondary-btn"><span aria-hidden="true">&larr;</span> Back</button>${this.sfTraitSet.length > 3 ? `<button data-action="toggleDashboard" class="tertiary-btn" title="Show/Hide Live Vibe Scores" aria-label="Show or hide live vibe scores">${this.sfShowDashboardDuringTraits ? '📊 Hide' : '📊 Show'} Vibes</button>` : ''}</div>`;
+                 break;
+            case 'roundSummary':
+                 const topStyles = Object.entries(this.sfScores)
+                     .sort((a, b) => b[1] - a[1])
+                     .slice(0, 3)
+                     .map(([style]) => style);
+                 html += `<h2>Quick Check-In!</h2><p>Based on your answers, here are your top vibes so far:</p><div id="sf-summary-dashboard"> ${this.sfGenerateSummaryDashboard()} </div> ${topStyles.length ? `<p><em>Strongest Connections: ${topStyles.join(', ')}</em></p>` : ''}<div class="sf-button-container"><button data-action="next">See Your Result! 🎉</button><button data-action="prev" class="secondary-btn">Back</button></div>`;
+                 break;
+            case 'result':
+                this.sfCalculateResult();
+                 if (Object.keys(this.sfScores).length === 0) {
+                     html = `<h2>Hmm... Inconclusive! 🤔</h2><p>We couldn't determine a clear style based on your answers. This might happen if your answers were very neutral or if data is missing.</p><p>Consider exploring the <button class="link-button" onclick="kinkCompassApp.showStyleDiscovery()">Style Discovery</button> section or try the finder again!</p><div class="sf-button-container"><button data-action="startOver">Try Again?</button><button data-action="prev" class="secondary-btn">Back</button></div>`;
+                     break;
+                 }
+                const sortedScores = Object.entries(this.sfScores).sort((a, b) => b[1] - a[1]);
+                 const topStyleName = sortedScores[0][0];
+                 // Determine final role based on *preference* chosen at the start
+                 this.sfIdentifiedRole = this.sfAnswers.rolePreference; // Store the originally chosen preference
+                 // If preference was Switch, but top score is strongly Dom/Sub, we could potentially adjust sfIdentifiedRole here
+                 // Example: If preference 'switch' but top score is 'Master', set sfIdentifiedRole to 'dominant' for application?
+                 // Simplified: Keep sfIdentifiedRole as the user's stated preference for now.
+
+                const descData = this.sfStyleDescriptions[topStyleName];
+                 const matchData = this.sfDynamicMatches[topStyleName];
+                 if (!descData || !matchData) {
+                     console.error(`Missing description or match data for result style: ${topStyleName}`);
+                     html = `<p class="error-text">Error: Could not load details for style '${topStyleName}'.</p><div class="sf-button-container"><button data-action="startOver">Start Over</button><button data-action="prev" class="secondary-btn">Back</button></div>`;
+                     break;
+                 }
+                 html += `<div class="sf-result-section sfFadeIn"><h2 class="sf-result-heading">🎉 Your Kink Compass Style: ${this.escapeHTML(topStyleName)} 🎉</h2><p><strong>${this.escapeHTML(descData.short)}</strong></p><p>${this.escapeHTML(descData.long)}</p><h3>Likely Dynamic Match: ${this.escapeHTML(matchData.match)}</h3><p><em>Dynamic Type: ${this.escapeHTML(matchData.dynamic)}</em> - ${this.escapeHTML(matchData.desc)}</p><p>${this.escapeHTML(matchData.longDesc)}</p><h3>🧭 Exploration Tips:</h3><ul style="text-align: left; margin: 10px auto; max-width: 90%; list-style: '✧ '; padding-left: 1.5em;">${descData.tips.map(tip => `<li>${this.escapeHTML(tip)}</li>`).join('')}</ul><div class="sf-result-buttons"><button data-action="applyStyle" data-value="${this.escapeHTML(topStyleName)}">Apply to Form?</button><button data-action="showDetails" data-value="${this.escapeHTML(topStyleName)}">More Details</button><button data-action="startOver" class="secondary-btn">Start Over</button><button data-action="prev" class="tertiary-btn">Back</button></div></div>`;
+                 setTimeout(() => { if(typeof confetti === 'function') { confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } }); } }, 300);
+                 grantAchievement({}, 'style_finder_complete');
+                 localStorage.setItem('kinkCompass_style_finder_complete', 'true');
+                break;
+            default:
+                html = `<p>Unknown step type: ${step.type}</p>`;
+        }
+       } catch (renderError) {
+          console.error(`Error generating HTML for SF step type ${step.type}:`, renderError);
+          html = `<p class="error-text">Sorry, an error occurred while loading this step.</p><div class="sf-button-container"><button data-action="prev" class="secondary-btn">Back</button></div>`;
+       }
+     this.elements.sfStepContent.innerHTML = html;
+    this.sfUpdateDashboard(step.type === 'result' || step.type === 'roundSummary');
+     sfContent.classList.remove('loading');
+      requestAnimationFrame(() => {
+        const firstFocusable = sfContent.querySelector('button, input[type="range"]');
+        firstFocusable?.focus();
+      });
+  }
+  sfSetRole(role) {
+    console.log(`SF Role Preference Set: ${role}`);
+    this.sfAnswers.rolePreference = role;
+    this.sfCalculateSteps();
+    this.sfNextStep();
+  }
+  sfSetTrait(trait, value) {
+    const intValue = parseInt(value, 10);
+    if (isNaN(intValue)) {
+        console.warn(`Invalid value for trait ${trait}: ${value}`);
+        return;
+    }
+    this.sfAnswers.traits[trait] = intValue;
+  }
+  sfNextStep(currentTrait = null) {
+    const currentStepConfig = this.sfSteps[this.sfStep];
+     if (currentStepConfig?.type === 'trait') {
+         const traitName = currentStepConfig.trait;
+         if (this.sfAnswers.traits[traitName] === undefined) {
+             console.warn(`No answer found for trait ${traitName} when moving next, defaulting to 5.`);
+             this.sfSetTrait(traitName, 5);
+         }
+     }
+    if (this.sfStep < this.sfSteps.length - 1) {
+        this.sfStep++;
+        console.log("Moving to SF Step:", this.sfStep);
+        this.sfRenderStep();
+    } else {
+        console.log("Already at the last SF step.");
+        if (currentStepConfig?.type === 'result') {
+             this.sfRenderStep();
+        }
+    }
+  }
+  sfPrevStep() {
+    if (this.sfStep > 0) {
+      this.sfStep--;
+      console.log("Moving back to SF Step:", this.sfStep);
+        if(this.sfSteps[this.sfStep]?.type === 'rolePreference') {
+             console.log("Resetting role preference and trait answers.");
+             this.sfAnswers.rolePreference = null;
+             this.sfRole = null;
+             this.sfAnswers.traits = {};
+             this.sfTraitSet = [];
+             this.sfScores = {};
+             this.sfPreviousScores = {};
+             this.sfCalculateSteps();
+        }
+      this.sfRenderStep();
+    } else {
+        console.log("Already at the first SF step.");
+    }
+  }
+  sfStartOver() {
+    console.log("SF Starting Over...");
+    this.sfStep = 0;
+    this.sfRole = null;
+    this.sfIdentifiedRole = null;
+    this.sfAnswers = { rolePreference: null, traits: {} };
+    this.sfScores = {};
+    this.sfPreviousScores = {};
+    this.sfHasRenderedDashboard = false;
+    this.sfTraitSet = [];
+     this.sfShowDashboardDuringTraits = false;
+    this.sfCalculateSteps();
+    this.sfRenderStep();
+    this.sfShowFeedback("Fresh start! Let's find your style. ✨");
+     this.elements.sfDashboard.style.display = 'none';
+  }
+  sfComputeScores() {
+      let scores = {};
+      console.log("sfComputeScores - Role (for scoring):", this.sfRole); // Role used for trait set
+      if (!this.sfRole || !this.sfStyles[this.sfRole]) {
+           console.warn("sfComputeScores - Invalid scoring role or sfStyles missing for role.");
+           return scores;
+       }
+
+      // Score based on the styles AVAILABLE to the chosen role for traits (e.g., sub traits score sub styles)
+      const stylesToScore = this.sfStyles[this.sfRole];
+      stylesToScore.forEach(style => { scores[style] = 0; });
+
+      const traitAnswers = this.sfAnswers.traits;
+      console.log("sfComputeScores - Answers:", traitAnswers);
+      if (!this.sfStyleKeyTraits || typeof this.sfStyleKeyTraits !== 'object') {
+           console.error("!!! sfComputeScores Error: this.sfStyleKeyTraits is missing or invalid!");
+           return scores;
+      }
+      const traitCount = Object.keys(traitAnswers).length;
+      if (traitCount === 0) {
+          console.warn("sfComputeScores - No trait answers available to compute scores.");
+          return scores;
+      }
+      Object.keys(traitAnswers).forEach(trait => {
+          const rating = traitAnswers[trait] ?? 0;
+          stylesToScore.forEach(style => {
+              const keyTraits = this.sfStyleKeyTraits[style];
+               if (!keyTraits || !Array.isArray(keyTraits)) return;
+              if (keyTraits.includes(trait)) {
+                  let scoreContribution = rating * 1.5;
+                  scores[style] += scoreContribution;
+              }
+          });
+      });
+      Object.keys(scores).forEach(style => {
+           scores[style] = parseFloat(scores[style].toFixed(1)) || 0;
+      });
+      console.log("sfComputeScores - Final Scores:", scores);
+      return scores;
+  }
+  sfUpdateDashboard(forceVisible = false) {
+    const dashboardElement = this.elements.sfDashboard;
+    if (!dashboardElement) return;
+    const currentStepConfig = this.sfSteps[this.sfStep];
+     const isTraitStep = currentStepConfig?.type === 'trait';
+     const shouldShow = forceVisible || (isTraitStep && this.sfShowDashboardDuringTraits) || (!isTraitStep && currentStepConfig?.type !== 'welcome' && currentStepConfig?.type !== 'rolePreference');
+
+     if (!this.sfRole || Object.keys(this.sfAnswers.traits).length === 0 || !shouldShow) {
+         dashboardElement.style.display = 'none';
+         dashboardElement.innerHTML = '';
+         this.sfHasRenderedDashboard = false;
+         return;
+     }
+     dashboardElement.style.display = 'block';
+     const currentScores = this.sfComputeScores();
+     const sortedScores = Object.entries(currentScores)
+         .filter(([, score]) => score > 0)
+         .sort((a, b) => b[1] - a[1])
+         .slice(0, 7);
+     if (sortedScores.length === 0 && !this.sfHasRenderedDashboard) {
+          dashboardElement.style.display = 'none';
+          return;
+     }
+     let dashboardHTML = `<div class='sf-dashboard-header'>✨ Your Live Vibes ✨</div>`;
+     const styleIcons = this.getStyleIcons();
+     const previousPositions = {};
+     Object.entries(this.sfPreviousScores)
+         .sort((a, b) => b[1] - a[1])
+         .forEach(([style], index) => { previousPositions[style] = index; });
+     const isFirstRender = !this.sfHasRenderedDashboard;
+     if (sortedScores.length === 0) {
+          dashboardHTML += `<p class="muted-text">Keep rating to see your vibes emerge...</p>`;
+     } else {
+        sortedScores.forEach(([style, score], index) => {
+            const prevPos = previousPositions[style] ?? index;
+            const movement = prevPos - index;
+            let moveIndicator = '';
+            if (!isFirstRender && movement > 0) moveIndicator = '<span class="sf-move-up" aria-label="Moved up">↑</span>';
+            else if (!isFirstRender && movement < 0) moveIndicator = '<span class="sf-move-down" aria-label="Moved down">↓</span>';
+            const prevScore = this.sfPreviousScores[style] ?? 0;
+            const delta = score - prevScore;
+            let deltaSpan = '';
+            if (!isFirstRender && Math.abs(delta) > 0.1) {
+                 deltaSpan = `<span class="sf-score-delta ${delta > 0 ? 'positive' : 'negative'}">${delta > 0 ? '+' : ''}${delta.toFixed(1)}</span>`;
+            }
+            const animationStyle = isFirstRender ? 'style="animation: sfSlideIn 0.3s ease forwards;"' : '';
+            const icon = styleIcons[style] || '🌟';
+            dashboardHTML += `<div class="sf-dashboard-item" ${animationStyle}><span class="sf-style-name" title="${style}">${icon} ${style.length > 18 ? style.substring(0, 16) + '...' : style}</span><span class="sf-dashboard-score">${score.toFixed(1)}${deltaSpan}${moveIndicator}</span></div>`;
+        });
+     }
+     dashboardElement.innerHTML = dashboardHTML;
+     this.sfPreviousScores = { ...currentScores };
+     this.sfHasRenderedDashboard = true;
 }
-// --- End of Re-included handle methods ---
+  toggleStyleFinderDashboard() {
+        this.sfShowDashboardDuringTraits = !this.sfShowDashboardDuringTraits;
+        console.log("SF Dashboard Visibility Toggled:", this.sfShowDashboardDuringTraits);
+        this.sfRenderStep();
+    }
+  sfCalculateResult() {
+    console.log("Calculating SF Final Result...");
+    const rawScores = this.sfComputeScores();
+      Object.keys(rawScores).forEach(style => {
+          this.sfScores[style] = parseFloat(rawScores[style].toFixed(1)) || 0;
+      });
+    console.log("SF Final Processed Scores:", this.sfScores);
+  }
+  sfGenerateSummaryDashboard() {
+     const scores = this.sfComputeScores();
+     const sortedScores = Object.entries(scores)
+         .filter(([, score]) => score > 0)
+         .sort((a, b) => b[1] - a[1])
+         .slice(0, 5);
+     if (sortedScores.length === 0) {
+         return '<p class="muted-text">Rate some traits to see vibes...</p>';
+     }
+     const styleIcons = this.getStyleIcons();
+     let html = '';
+     sortedScores.forEach(([style, score]) => {
+         const icon = styleIcons[style] || '🌟';
+         html += `<div class="sf-dashboard-item"><span class="sf-style-name">${icon} ${this.escapeHTML(style)}</span><span class="sf-dashboard-score">${score.toFixed(1)}</span></div>`;
+     });
+     return html;
+  }
+  sfShowFeedback(message) {
+    if (!this.elements.sfFeedback) return;
+    this.elements.sfFeedback.textContent = message;
+    this.elements.sfFeedback.classList.remove('sfBounce');
+    void this.elements.sfFeedback.offsetWidth;
+    this.elements.sfFeedback.classList.add('sfBounce');
+  }
+  sfShowTraitInfo(traitName) {
+    const explanation = this.sfTraitExplanations[traitName] || "No extra info available for this trait.";
+    const displayName = traitName.charAt(0).toUpperCase() + traitName.slice(1).replace(/([A-Z])/g, ' $1');
+    document.querySelectorAll('.sf-style-info-popup').forEach(p => p.remove());
+    const popup = document.createElement('div');
+    popup.className = 'sf-style-info-popup sfFadeIn';
+    popup.setAttribute('role', 'dialog');
+    popup.setAttribute('aria-modal', 'true');
+    popup.setAttribute('aria-labelledby', 'sf-popup-title');
+    popup.innerHTML = `<h3 id="sf-popup-title">${this.escapeHTML(displayName)}</h3><p>${this.escapeHTML(explanation)}</p><button class="sf-close-btn" aria-label="Close trait info" onclick="this.closest('.sf-style-info-popup').remove()">×</button>`;
+    document.body.appendChild(popup);
+     popup.querySelector('.sf-close-btn')?.focus();
+     document.querySelectorAll('.sf-info-icon').forEach(i => i.classList.remove('active'));
+     this.elements.sfStepContent.querySelector(`.sf-info-icon[data-trait="${traitName}"]`)?.classList.add('active');
+  }
+  sfShowFullDetails(styleName) {
+    const descData = this.sfStyleDescriptions[styleName];
+    const matchData = this.sfDynamicMatches[styleName];
+    if (!descData || !matchData) {
+        this.sfShowFeedback(`Error: Details for ${styleName} unavailable.`);
+        return;
+    }
+    document.querySelectorAll('.sf-style-info-popup').forEach(p => p.remove());
+    const popup = document.createElement('div');
+    popup.className = 'sf-style-info-popup wide-popup sfFadeIn';
+    popup.setAttribute('role', 'dialog');
+    popup.setAttribute('aria-modal', 'true');
+    popup.setAttribute('aria-labelledby', 'sf-popup-title');
+    popup.innerHTML = `<h3 id="sf-popup-title">${this.escapeHTML(styleName)}</h3><p><strong>${this.escapeHTML(descData.short)}</strong></p><p>${this.escapeHTML(descData.long)}</p><h4>Dynamic Match: ${this.escapeHTML(matchData.match)}</h4><p><em>Type: ${this.escapeHTML(matchData.dynamic)}</em></p><p>${this.escapeHTML(matchData.longDesc || matchData.desc)}</p><h4>Tips & Considerations:</h4><ul style="text-align: left; margin-top: 0.5em; padding-left: 1.5em; list-style: '✧ ';">${descData.tips.map(tip => `<li>${this.escapeHTML(tip)}</li>`).join('')}</ul><button class="sf-close-btn" aria-label="Close style details" onclick="this.closest('.sf-style-info-popup').remove()">×</button>`;
+    document.body.appendChild(popup);
+     popup.querySelector('.sf-close-btn')?.focus();
+  }
+  getStyleIcons() {
+        const icons = {};
+         Object.values(this.sfStyles).flat().forEach(styleName => {
+            const emojiMatch = styleName.match(/(\p{Emoji})/u);
+            if (emojiMatch) {
+                // Use the style name *without* emoji as the key
+                 const key = styleName.replace(/(\p{Emoji})/u, '').trim();
+                 icons[key] = emojiMatch[0]; // Store Key: Emoji
+            } else {
+                // Fallback icon based on role maybe?
+                const key = styleName.trim(); // Key is the name itself
+                if (this.sfStyles.dominant.includes(styleName)) icons[key] = '👑';
+                else if (this.sfStyles.submissive.includes(styleName)) icons[key] = '💖';
+                else if (this.sfStyles.switch.includes(styleName)) icons[key] = '🔄';
+                else icons[key] = '🌟'; // Default fallback
+            }
+        });
+         // Add Switch specific icons if not picked up by emoji match
+        if (!icons['Fluid Switch']) icons['Fluid Switch'] = '🌊';
+        if (!icons['Dominant-Leaning Switch']) icons['Dominant-Leaning Switch'] = '👑↔️';
+        if (!icons['Submissive-Leaning Switch']) icons['Submissive-Leaning Switch'] = '💖↔️'; // Changed emoji
+        if (!icons['Situational Switch']) icons['Situational Switch'] = '🤔';
+
+        // Ensure classic styles have icons if emojis were removed from names
+        if (!icons['Classic Submissive']) icons['Classic Submissive'] = '🙇‍♀️';
+        if (!icons['Classic Dominant']) icons['Classic Dominant'] = '👑';
+
+
+        console.log("Generated Style Icons:", icons); // Debug log
+        return icons;
+   }
+   confirmApplyStyleFinderResult(role, style) {
+       // Use the *originally chosen preference* for the role prompt
+       const finalRole = this.sfAnswers.rolePreference;
+       if (!finalRole || !style) {
+           this.showNotification("Cannot apply style: Role preference or Style missing from result.", "error");
+           return;
+       }
+       const msg = `Apply Role '${finalRole}' and Style '${style}' to the main form?\n\nThis will overwrite current form selections.`;
+       if (confirm(msg)) {
+           this.applyStyleFinderResult(finalRole, style);
+           this.sfClose();
+       }
+   }
+   applyStyleFinderResult(role, style) {
+        if (!this.elements.role || !this.elements.style) {
+            this.showNotification("Cannot apply style: Form elements missing.", "error");
+            return;
+        }
+        console.log(`Applying SF Result: Role=${role}, Style=${style}`);
+        this.elements.role.value = role;
+        this.elements.role.dispatchEvent(new Event('change'));
+        requestAnimationFrame(() => {
+            // Clean the style name (remove emoji) before setting value, as options are cleaned
+             const cleanStyleName = style.replace(/(\p{Emoji})/u, '').trim();
+             this.elements.style.value = cleanStyleName; // Use cleaned name
+             if (this.elements.style.value !== cleanStyleName) { // Check if setting worked
+                 console.warn(`Could not select style "${cleanStyleName}". It might be missing from the dropdown options for role "${role}". Available options:`, Array.from(this.elements.style.options).map(o=>o.value));
+                 this.showNotification(`Could not apply style "${cleanStyleName}". Please select manually.`, "warning");
+             } else {
+                  this.elements.style.dispatchEvent(new Event('change'));
+                  this.showNotification(`Style '${cleanStyleName}' and Role '${role}' applied to form!`, "success");
+             }
+            this.updateLivePreview();
+            this.elements.name?.focus();
+        });
+   }
+
+  // --- Other Helper Functions ---
+  getFlairForScore(s) {
+    const score = Number(s);
+    if (isNaN(score)) return '';
+    if (score >= 5) return '🌟';
+    if (score >= 4) return '✨';
+    if (score >= 3) return '👍';
+    if (score >= 2) return '🌱';
+    return '🤔';
+   }
+  getEmojiForScore(s) {
+    const score = Number(s);
+    if (isNaN(score)) return '❔';
+    if (score >= 5) return '🔥';
+    if (score >= 4) return '💪';
+    if (score >= 3) return '😊';
+    if (score >= 2) return '👀';
+    return '💧';
+  }
+  escapeHTML(str){
+      const div=document.createElement('div');
+      div.textContent = str ?? '';
+      return div.innerHTML;
+  }
+  getIntroForStyle(styleName){
+      // Clean name before lookup
+      const cleanStyleName = styleName.replace(/(\p{Emoji})/u, '').trim();
+      const descData = this.sfStyleDescriptions[cleanStyleName]; // Use cleaned name for lookup
+      return descData ? `"${descData.short}" - ${descData.long.split('.')[0]}.` : null;
+  }
+  showNotification(message, type = 'info', duration = 4000) {
+    let notificationElement = document.getElementById('app-notification');
+    if (!notificationElement) {
+        notificationElement = document.createElement('div');
+        notificationElement.id = 'app-notification';
+        document.body.appendChild(notificationElement);
+    }
+    if (this.notificationTimer) {
+        clearTimeout(this.notificationTimer);
+    }
+    notificationElement.className = `notification-${type}`;
+    notificationElement.textContent = message;
+    notificationElement.style.display = 'block';
+    notificationElement.style.top = '-50px';
+    notificationElement.style.opacity = '0';
+    void notificationElement.offsetWidth;
+    notificationElement.style.top = '20px';
+    notificationElement.style.opacity = '1';
+     if (type === 'achievement') {
+         notificationElement.classList.add('notification-achievement');
+     } else {
+         notificationElement.classList.remove('notification-achievement');
+     }
+    this.notificationTimer = setTimeout(() => {
+        notificationElement.style.top = '-50px';
+        notificationElement.style.opacity = '0';
+        setTimeout(() => {
+            if(notificationElement) notificationElement.style.display = 'none';
+             this.notificationTimer = null;
+        }, 500);
+    }, duration);
+  }
+
+  // --- Theme Management ---
+    applySavedTheme() {
+        const savedTheme = localStorage.getItem('kinkCompassTheme');
+        if (savedTheme && ['light', 'dark', 'pastel', 'velvet'].includes(savedTheme)) {
+            console.log(`Applying saved theme: ${savedTheme}`);
+            this.setTheme(savedTheme);
+        } else {
+            const defaultTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            console.log(`No valid saved theme found, applying default: ${defaultTheme}`);
+             this.elements.themeToggle.textContent = (defaultTheme === 'light' || defaultTheme === 'pastel') ? '🌙' : '☀️';
+             document.documentElement.setAttribute('data-theme', defaultTheme);
+             document.body.setAttribute('data-theme', defaultTheme);
+        }
+    }
+    setTheme(themeName){
+        console.log(`Setting theme to: ${themeName}`);
+        document.documentElement.setAttribute('data-theme', themeName);
+        document.body.setAttribute('data-theme', themeName);
+        localStorage.setItem('kinkCompassTheme', themeName);
+        this.elements.themeToggle.textContent = (themeName === 'light' || themeName === 'pastel') ? '🌙' : '☀️';
+        if (this.chartInstance) {
+             const isDark = themeName === 'dark' || themeName === 'velvet';
+             const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--chart-grid-color').trim();
+             const labelColor = getComputedStyle(document.documentElement).getPropertyValue('--chart-label-color').trim();
+             this.chartInstance.options.scales.y.ticks.color = labelColor;
+             this.chartInstance.options.scales.y.grid.color = gridColor;
+             this.chartInstance.options.scales.x.ticks.color = labelColor;
+             this.chartInstance.options.scales.x.grid.color = gridColor;
+             this.chartInstance.options.plugins.legend.labels.color = labelColor;
+             this.chartInstance.update();
+        }
+         grantAchievement({}, 'theme_changer');
+         localStorage.setItem('kinkCompass_theme_changer', 'true');
+    }
+    toggleTheme(){
+        const currentTheme = document.body.getAttribute('data-theme') || 'light';
+        let newTheme;
+        if (currentTheme === 'light' || currentTheme === 'pastel') {
+            newTheme = 'dark';
+        } else {
+            newTheme = 'light';
+        }
+        this.setTheme(newTheme);
+    }
+
+   // --- Modal Management --- // MODIFIED closeModal
+   openModal(modalElement) {
+        if (!modalElement) return;
+        console.log(`Opening modal: #${modalElement.id}`);
+        this.elementThatOpenedModal = document.activeElement;
+        console.log("Element that opened modal:", this.elementThatOpenedModal);
+        modalElement.setAttribute('aria-hidden', 'false');
+        modalElement.style.display = 'flex';
+        requestAnimationFrame(() => {
+            const focusableElement = modalElement.querySelector('.modal-close, button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            if (focusableElement) {
+                focusableElement.focus();
+                console.log("Focused element inside modal:", focusableElement);
+            } else {
+                 modalElement.focus();
+                 console.log("Focused modal container.");
+            }
+        });
+    }
+   closeModal(modalElement) {
+        if (!modalElement) return;
+        console.log(`Closing modal: #${modalElement.id}`);
+        console.log("Attempting to restore focus to:", this.elementThatOpenedModal);
+        let focusRestored = false;
+        if (this.elementThatOpenedModal && typeof this.elementThatOpenedModal.focus === 'function') {
+            try {
+                if (document.body.contains(this.elementThatOpenedModal)) {
+                    this.elementThatOpenedModal.focus();
+                    console.log("Focus restored successfully.");
+                    focusRestored = true;
+                } else {
+                     console.warn("Original element to restore focus to is no longer in the DOM.");
+                     try { document.body.focus(); console.log("Fell back to focusing body."); focusRestored = true; }
+                     catch (bodyErr) { console.warn("Could not focus body either."); }
+                }
+            } catch (e) {
+                console.warn("Could not restore focus to original element:", e);
+                try { document.body.focus(); console.log("Fell back to focusing body."); focusRestored = true; }
+                catch (bodyErr) { console.warn("Could not focus body either."); }
+            }
+        } else {
+            console.warn("No stored element to restore focus to, or it's not focusable.");
+             try { document.body.focus(); console.log("Fell back to focusing body."); focusRestored = true; }
+             catch (bodyErr) { console.warn("Could not focus body either."); }
+        }
+        modalElement.setAttribute('aria-hidden', 'true');
+        modalElement.style.display = 'none';
+        this.elementThatOpenedModal = null;
+         if (!focusRestored) {
+             console.error("Accessibility Warning: Focus may still be trapped within the hidden modal.");
+         }
+    }
+
+} // <<< FINAL, CORRECT CLOSING BRACE FOR THE TrackerApp CLASS
+// --- END OF TrackerApp CLASS ---
+
+
+// --- Initialization ---
+try {
