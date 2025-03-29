@@ -609,7 +609,7 @@ class TrackerApp {
             this.showGlossary(termKey); // Then open glossary scrolled
         }
         return; // Handled
-    }
+   
 
     // If click was within modal body but didn't match any specific action
     // console.log("handleModalBodyClick: Click inside modal body did not trigger specific action.");
