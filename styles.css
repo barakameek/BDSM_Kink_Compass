@@ -606,4 +606,31 @@ button.loading .spinner { border: 3px solid rgba(255,255,255,0.3); border-top-co
     transition: background-color 0.1s ease-in;
     background-color: var(--accent-color-lighter) !important; /* Flash color */
 }
-/* --- END OF FILE styles.css --- */
+/* Inside styles.css */
+
+/* Style Finder Summary Dashboard Item Specifics */
+#summary-dashboard .sf-dashboard-item {
+    display: flex;          /* Use flexbox */
+    justify-content: space-between; /* Space out children */
+    align-items: center;     /* Vertically align items */
+    flex-wrap: nowrap;       /* Prevent wrapping which might cause overlap */
+    gap: 10px;               /* Add some space between elements */
+}
+
+#summary-dashboard .sf-style-name {
+    flex-grow: 1;          /* Allow name to take up space */
+    flex-shrink: 1;        /* Allow name to shrink if needed */
+    overflow: hidden;        /* Hide overflow */
+    text-overflow: ellipsis; /* Add ellipsis (...) if name is too long */
+    white-space: nowrap;     /* Prevent name from wrapping */
+}
+
+#summary-dashboard .sf-dashboard-score {
+    flex-shrink: 0;        /* Prevent score from shrinking */
+    white-space: nowrap;     /* Prevent score from wrapping */
+}
+
+#summary-dashboard .sf-dashboard-item div { /* Style the score bar if used */
+     flex-shrink: 0;
+     min-width: 50px; /* Give the bar some minimum width */
+}/* --- END OF FILE styles.css --- */
