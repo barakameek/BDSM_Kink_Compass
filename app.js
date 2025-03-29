@@ -1,3 +1,5 @@
+
+// --- Core Imports ---
 import { bdsmData } from './data.js';
 import { getStyleBreakdown as getSubBreakdown } from './paraphrasing_sub.js';
 import { getStyleBreakdown as getDomBreakdown } from './paraphrasing_dom.js';
@@ -450,173 +452,61 @@ class TrackerApp {
   }
 
   // --- Event Handlers (Mostly unchanged, check handleModalBodyClick) ---
-   // --- Event Handlers ---
-  handleListClick(e) {
-    const target = e.target;
-    const listItem = target.closest('li');
-    if (!listItem) { return; }
-    const personIdStr = listItem.dataset.id; // Get ID as string first
-    const personId = parseInt(personIdStr, 10);
-
-    if (isNaN(personId)) {
-      console.warn("Could not parse valid person ID from list item dataset:", listItem.dataset);
-      return;
-    }
-
-    if (target.classList.contains('edit-btn')) {
-      console.log(`>>> Edit button clicked for ID: ${personId}`);
-      this.editPerson(personId);
-    } else if (target.classList.contains('delete-btn')) {
-      console.log(`>>> Delete button clicked for ID: ${personId}`);
-      const personaName = listItem.querySelector('.person-name')?.textContent || 'this persona';
-      if (confirm(`Are you sure you want to delete ${personaName}? This cannot be undone.`)) {
-        this.deletePerson(personId);
-      }
-    } else if (target.closest('.person-info')) {
-      console.log(`>>> Person info clicked for ID: ${personId}`);
-      this.showPersonDetails(personId);
-    }
-  } // End handleListClick
-
-  // <<< START REPLACEMENT handleListKeydown >>>
-  handleListKeydown(e) {
-      // Only handle Enter or Space keys
-      if (e.key !== 'Enter' && e.key !== ' ') {
-          return;
-      }
-
-      const target = e.target;
-      const listItem = target.closest('li'); // Find the parent LI if the target is inside it
-
-      if (!listItem) {
-           // If the focused element isn't inside an LI, ignore
-           return;
-      }
-
-      // Check if the event originated from within the actions div (buttons)
-      if (target.closest('.person-actions')) {
-          // Handle activation of Edit/Delete buttons
-          if (target.classList.contains('edit-btn') || target.classList.contains('delete-btn')) {
-              e.preventDefault(); // Prevent default spacebar scroll or enter submission
-              target.click(); // Simulate a click on the button
-          }
-      }
-      // Check if the event originated from the main info part of the LI
-      else if (target.closest('.person-info')) {
-          if (e.key === 'Enter') { // Only Enter should trigger details view
-              e.preventDefault();
-              const personIdStr = listItem.dataset.id;
-              const personId = parseInt(personIdStr, 10);
-              if (!isNaN(personId)) {
-                  this.showPersonDetails(personId);
-              } else {
-                   console.warn("Could not parse person ID for keydown details view:", listItem.dataset);
-              }
-          }
-      }
-      // Explicitly do nothing if the keypress was on the LI itself but not handled above
-  } // <<< END REPLACEMENT handleListKeydown >>>
-
-  handleWindowClick(e) {
-    // ... rest of handleWindowClick ... /* ... (keep existing logic for popups) ... */ if (this.elements.traitInfoPopup && this.elements.traitInfoPopup.style.display !== 'none') { const popupContent = this.elements.traitInfoPopup.querySelector('.card'); const infoButton = document.querySelector(`.trait-info-btn[aria-expanded="true"]`); if (popupContent && !popupContent.contains(e.target) && e.target !== infoButton && !infoButton?.contains(e.target)) { this.hideTraitInfo(); } } if (this.elements.contextHelpPopup && this.elements.contextHelpPopup.style.display !== 'none') { const popupContent = this.elements.contextHelpPopup.querySelector('.card'); const helpButton = document.querySelector(`.context-help-btn[aria-expanded="true"]`); if (popupContent && !popupContent.contains(e.target) && e.target !== helpButton && !helpButton?.contains(e.target)) { this.hideContextHelp(); } } const activeSFPopup = document.querySelector('.sf-style-info-popup'); if(activeSFPopup) { const triggerElement = document.querySelector('.sf-info-icon.active, button[data-action="showDetails"].active'); if (!activeSFPopup.contains(e.target) && e.target !== triggerElement && !triggerElement?.contains(e.target)) { activeSFPopup.remove(); triggerElement?.classList.remove('active'); } } }
+  handleListClick(e) { const target = e.target; const listItem = target.closest('li'); if (!listItem) return; const personId = parseInt(listItem.dataset.id, 10); if (target.classList.contains('edit-btn')) { this.editPerson(personId); } else if (target.classList.contains('delete-btn')) { if (confirm(`Are you sure you want to delete ${listItem.querySelector('.person-name')?.textContent || 'this persona'}? This cannot be undone.`)) { this.deletePerson(personId); } } else if (target.closest('.person-info')) { this.showPersonDetails(personId); } }
+  handleListKeydown(e) { if ((e.key === 'Enter' || e.key === ' ') && (e.target.classList.contains('edit-btn') || e.target.classList.contains('delete-btn'))) { e.preventDefault(); e.target.click(); } else if (e.key === 'Enter' && e.target.closest('.person-info')) { e.preventDefault(); const listItem = e.target.closest('li'); const personId = parseInt(listItem?.dataset.id, 10); if(!isNaN(personId)) { this.showPersonDetails(personId); } } }
+  handleWindowClick(e) { /* ... (keep existing logic for popups) ... */ if (this.elements.traitInfoPopup && this.elements.traitInfoPopup.style.display !== 'none') { const popupContent = this.elements.traitInfoPopup.querySelector('.card'); const infoButton = document.querySelector(`.trait-info-btn[aria-expanded="true"]`); if (popupContent && !popupContent.contains(e.target) && e.target !== infoButton && !infoButton?.contains(e.target)) { this.hideTraitInfo(); } } if (this.elements.contextHelpPopup && this.elements.contextHelpPopup.style.display !== 'none') { const popupContent = this.elements.contextHelpPopup.querySelector('.card'); const helpButton = document.querySelector(`.context-help-btn[aria-expanded="true"]`); if (popupContent && !popupContent.contains(e.target) && e.target !== helpButton && !helpButton?.contains(e.target)) { this.hideContextHelp(); } } const activeSFPopup = document.querySelector('.sf-style-info-popup'); if(activeSFPopup) { const triggerElement = document.querySelector('.sf-info-icon.active, button[data-action="showDetails"].active'); if (!activeSFPopup.contains(e.target) && e.target !== triggerElement && !triggerElement?.contains(e.target)) { activeSFPopup.remove(); triggerElement?.classList.remove('active'); } } }
   handleWindowKeydown(e) { if (e.key === 'Escape') { if (this.elements.traitInfoPopup?.style.display !== 'none') { this.hideTraitInfo(); return; } if (this.elements.contextHelpPopup?.style.display !== 'none') { this.hideContextHelp(); return; } const activeSFPopup = document.querySelector('.sf-style-info-popup'); if(activeSFPopup) { activeSFPopup.remove(); document.querySelector('.sf-info-icon.active, button[data-action="showDetails"].active')?.classList.remove('active'); return; } // Close other modals... if (this.elements.modal?.style.display !== 'none') this.closeModal(this.elements.modal); else if (this.elements.resourcesModal?.style.display !== 'none') this.closeModal(this.elements.resourcesModal); else if (this.elements.glossaryModal?.style.display !== 'none') this.closeModal(this.elements.glossaryModal); else if (this.elements.styleDiscoveryModal?.style.display !== 'none') this.closeModal(this.elements.styleDiscoveryModal); else if (this.elements.themesModal?.style.display !== 'none') this.closeModal(this.elements.themesModal); else if (this.elements.welcomeModal?.style.display !== 'none') this.closeModal(this.elements.welcomeModal); else if (this.elements.achievementsModal?.style.display !== 'none') this.closeModal(this.elements.achievementsModal); else if (this.elements.sfModal?.style.display !== 'none') this.sfClose(); } }
   handleTraitSliderInput(e) { const slider = e.target; const display = slider.closest('.trait')?.querySelector('.trait-value'); if (display) { display.textContent = slider.value; } this.updateTraitDescription(slider); }
   handleTraitInfoClick(e) { const button = e.target.closest('.trait-info-btn'); if (!button) return; const traitName = button.dataset.trait; this.showTraitInfo(traitName); document.querySelectorAll('.trait-info-btn').forEach(btn => btn.setAttribute('aria-expanded', 'false')); button.setAttribute('aria-expanded', 'true'); }
-    handleModalBodyClick(e) { // Consolidated handler
+  handleModalBodyClick(e) { // Consolidated handler
     const personIdStr = this.elements.modal?.dataset.personId;
-    // Exit early if we are not inside a modal with a person ID
-    if (!personIdStr) {
-        // This might happen if the click is elsewhere while the modal is technically open but lost focus,
-        // or if the dataset attribute is missing.
-        // console.log("handleModalBodyClick: Click detected outside of expected modal context or missing personId.");
-        return;
-    }
-
+    if (!personIdStr) return;
     const personId = parseInt(personIdStr, 10);
-    // Exit if the person ID is not a valid number
-    if (isNaN(personId)) {
-        console.warn("handleModalBodyClick: Invalid personId in modal dataset:", personIdStr);
-        return;
-    }
-
+    if (isNaN(personId)) return;
     const target = e.target;
-    const button = target.closest('button'); // Find the closest button ancestor
+    const button = target.closest('button'); // Get the button if the click was inside it
 
-    // --- Action Handlers based on button ID or class ---
-
-    // Goal Actions (Check button first for efficiency)
-    if (button) {
-        if (button.classList.contains('toggle-goal-btn')) {
-            const goalIdStr = button.dataset.goalId;
-            if (goalIdStr) {
-                const goalId = parseInt(goalIdStr, 10);
-                if (!isNaN(goalId)) {
-                    console.log(`>>> Toggle Goal clicked for person ${personId}, goal ${goalId}`);
-                    this.toggleGoalStatus(personId, goalId, button.closest('li')); // Pass li for animation
-                } else {
-                    console.warn("Invalid goalId on toggle button:", goalIdStr);
-                }
-            }
-            return; // Handled
-        }
-
-        if (button.classList.contains('delete-goal-btn')) {
-            const goalIdStr = button.dataset.goalId;
-            if (goalIdStr) {
-                const goalId = parseInt(goalIdStr, 10);
-                if (!isNaN(goalId)) {
-                    console.log(`>>> Delete Goal clicked for person ${personId}, goal ${goalId}`);
-                     if (confirm("Delete this goal?")) {
-                         this.deleteGoal(personId, goalId);
-                     }
-                } else {
-                    console.warn("Invalid goalId on delete button:", goalIdStr);
-                }
-            }
-            return; // Handled
-        }
-
-         // Specific Button IDs
-         switch (button.id) {
-            case 'snapshot-btn':
-                console.log(`>>> Snapshot button clicked for person ${personId}`);
-                this.addSnapshotToHistory(personId);
-                return; // Handled
-            case 'journal-prompt-btn':
-                console.log(`>>> Journal Prompt button clicked for person ${personId}`);
-                this.showJournalPrompt(personId);
-                return; // Handled
-            case 'save-reflections-btn':
-                 console.log(`>>> Save Reflections button clicked for person ${personId}`);
-                this.saveReflections(personId);
-                return; // Handled
-            case 'oracle-btn': // Changed from reading-btn
-                 console.log(`>>> Oracle button clicked for person ${personId}`);
-                this.showKinkOracle(personId);
-                return; // Handled
-            // Note: add-goal-btn is handled by the form's onsubmit
-         }
-    } // End if(button) check
-
-
-    // Glossary Link Action (Check target class directly)
-    if (target.classList.contains('glossary-link') && target.closest('#detail-modal')) {
+    // Goal Actions
+    if (button?.classList.contains('toggle-goal-btn')) {
+      const goalIdStr = button.dataset.goalId;
+      if (goalIdStr) {
+        const goalId = parseInt(goalIdStr, 10);
+        if (!isNaN(goalId)) this.toggleGoalStatus(personId, goalId, button.closest('li')); // Pass li for animation
+      }
+    } else if (button?.classList.contains('delete-goal-btn')) {
+      const goalIdStr = button.dataset.goalId;
+      if (goalIdStr) {
+        const goalId = parseInt(goalIdStr, 10);
+        if (!isNaN(goalId) && confirm("Delete this goal?")) this.deleteGoal(personId, goalId);
+      }
+    } else if (target.id === 'add-goal-btn') { // Check target ID directly for form submission button
+      // Form submission handles addGoal via onsubmit handler in HTML now
+      // this.addGoal(personId); // Keep this if you remove the onsubmit
+    }
+    // History Action
+    else if (target.id === 'snapshot-btn') {
+      this.addSnapshotToHistory(personId);
+    }
+    // Journal Actions
+    else if (target.id === 'journal-prompt-btn') {
+      this.showJournalPrompt(personId);
+    } else if (target.id === 'save-reflections-btn') {
+      this.saveReflections(personId);
+    }
+     // <<< Oracle Action >>>
+     else if (target.id === 'oracle-btn') { // Changed from reading-btn
+        this.showKinkOracle(personId);
+    }
+    // Glossary Link Action
+    else if (target.classList.contains('glossary-link')) {
         e.preventDefault();
         const termKey = target.dataset.termKey;
         if (termKey) {
-            console.log(`>>> Glossary link clicked inside modal for term: ${termKey}`);
             this.closeModal(this.elements.modal); // Close details modal first
             this.showGlossary(termKey); // Then open glossary scrolled
         }
-        return; // Handled
-   
-
-    // If click was within modal body but didn't match any specific action
-    // console.log("handleModalBodyClick: Click inside modal body did not trigger specific action.");
-
-  } // <<< ****** ENSURE THIS IS THE FINAL CLOSING BRACE for handleModalBodyClick ******
-
-  // --- The next function starts below ---
+    }
+  }
   handleThemeSelection(e) { const button = e.target.closest('.theme-option-btn'); if (button) { const themeName = button.dataset.theme; this.setTheme(themeName); this.closeModal(this.elements.themesModal); } }
   handleStyleFinderAction(action, dataset = {}) { /* ... Keep existing Style Finder logic ... */ switch(action) { case 'start': this.sfStep = this.sfSteps.findIndex(s => s.type === 'rolePreference'); if (this.sfStep === -1) this.sfStep = 1; this.sfRenderStep(); break; case 'next': this.sfNextStep(dataset.trait); break; case 'prev': this.sfPrevStep(); break; case 'setRole': this.sfSetRole(dataset.value); break; case 'startOver': this.sfStartOver(); break; case 'showDetails': this.sfShowFullDetails(dataset.value); document.querySelectorAll('.sf-result-buttons button').forEach(b => b.classList.remove('active')); const btn = this.elements.sfStepContent.querySelector(`button[data-action="showDetails"][data-value="${dataset.value}"]`); btn?.classList.add('active'); break; case 'applyStyle': this.confirmApplyStyleFinderResult(this.sfIdentifiedRole, dataset.value); break; case 'toggleDashboard': this.toggleStyleFinderDashboard(); break; default: console.warn("Unknown Style Finder action:", action); } }
   handleStyleFinderSliderInput(sliderElement){ /* ... Keep existing Style Finder logic ... */ const traitName = sliderElement.dataset.trait; const value = sliderElement.value; const descriptionDiv = this.elements.sfStepContent.querySelector(`#sf-desc-${traitName}`); if (traitName && value !== undefined && descriptionDiv && this.sfSliderDescriptions[traitName]) { const descriptions = this.sfSliderDescriptions[traitName]; if (descriptions && descriptions.length === 10) { const index = parseInt(value, 10) - 1; if (index >= 0 && index < 10) { descriptionDiv.textContent = descriptions[index]; this.sfSetTrait(traitName, value); this.sfUpdateDashboard(); } else { console.error(`Invalid slider index ${index} for trait ${traitName}`); descriptionDiv.textContent = "Adjust the slider..."; } } else { console.error(`Slider descriptions missing or incomplete for trait: ${traitName}`); descriptionDiv.textContent = "How does this feel?"; } } else { console.warn("Missing elements for Style Finder slider update:", {traitName, value, descriptionDiv}); } }
@@ -862,22 +752,18 @@ class TrackerApp {
       this.openModal(this.elements.modal);
   }
 
-    renderDetailTabContent(person, tabId, contentElement) {
-      if (!person || !contentElement) {
-          console.error("renderDetailTabContent: Missing person or contentElement.");
-          return;
-      }
-      console.log(`Rendering content for tab: ${tabId} for person ID: ${person.id}`);
-      contentElement.innerHTML = ''; // Clear loading message or previous content
+  renderDetailTabContent(person, tabId, contentElement) {
+      if (!person || !contentElement) return;
+      console.log(`Rendering content for tab: ${tabId}`);
+      contentElement.innerHTML = ''; // Clear loading message
 
       try {
           switch (tabId) {
 
               case 'tab-goals':
-                  // --- Goals Tab ---
                   contentElement.innerHTML = `
                     <section class="goals-section">
-                      <h3>Goals <button type="button" class="context-help-btn small-btn" data-help-key="goalsSectionInfo" aria-label="Help with Goals Section">?</button></h3>
+                      <h3>Goals <button class="context-help-btn small-btn" data-help-key="goalsSectionInfo" aria-label="Help with Goals Section">?</button></h3>
                       <ul id="goal-list-${person.id}"></ul>
                       <form class="add-goal-form" id="add-goal-form-${person.id}" onsubmit="event.preventDefault(); kinkCompassApp.addGoal(${person.id}, this);">
                         <label for="new-goal-${person.id}" class="sr-only">New Goal:</label>
@@ -894,7 +780,6 @@ class TrackerApp {
                       goalListUl.innerHTML = this.renderGoalList(person);
                   } else {
                       console.error(`Could not find goal list UL element for person ${person.id}`);
-                      contentElement.innerHTML += '<p class="error-text">Error displaying goals list.</p>';
                   }
                   // Render Goal Alignment Hints
                   const alignmentHints = this.getGoalAlignmentHints(person);
@@ -905,18 +790,14 @@ class TrackerApp {
                       } else {
                           hintsContainer.innerHTML = `<p class="muted-text">Add some active goals to see alignment insights!</p>`;
                       }
-                  } else {
-                       console.error(`Could not find goal hints container for person ${person.id}`);
-                       contentElement.innerHTML += '<p class="error-text">Error displaying goal hints.</p>';
                   }
                   break; // End of case 'tab-goals'
 
 
               case 'tab-traits':
-                   // --- Traits Tab ---
                   contentElement.innerHTML = `
                       <section class="trait-details-section">
-                        <h3>Trait Details <button type="button" class="context-help-btn small-btn" data-help-key="traitsSectionInfo" aria-label="Help with Traits Section">?</button></h3>
+                        <h3>Trait Details <button class="context-help-btn small-btn" data-help-key="traitsSectionInfo" aria-label="Help with Traits Section">?</button></h3>
                         <div class="trait-details-grid"></div>
                         <p class="muted-text" style="margin-top:1em;">Check the 'Breakdown' tab for trait synergies and focus ideas!</p>
                       </section>`;
@@ -973,11 +854,10 @@ class TrackerApp {
                                         ? (traitDef.desc[String(score)])
                                         : 'N/A';
                                     const displayName = traitDef.name.charAt(0).toUpperCase() + traitDef.name.slice(1).replace(/([A-Z])/g, ' $1');
-                                    // Use button for glossary link for better accessibility/event handling
                                     return `
                                       <div class="trait-detail-item">
                                         <h4>
-                                           <button type="button" class="link-button glossary-link" data-term-key="${traitDef.name}" title="View '${this.escapeHTML(displayName)}' in Glossary">${this.escapeHTML(displayName)}</button>:
+                                           <button class="link-button glossary-link" data-term-key="${traitDef.name}" title="View '${this.escapeHTML(displayName)}' in Glossary">${this.escapeHTML(displayName)}</button>:
                                            <span class="trait-score-badge">${score}/5 ${this.getEmojiForScore(score)}</span>
                                          </h4>
                                         <p>${this.escapeHTML(description)}</p>
@@ -990,16 +870,13 @@ class TrackerApp {
                   } // End else (grid exists)
                   break; // End of case 'tab-traits'
 
-
               case 'tab-breakdown':
-                   // --- Breakdown Tab ---
                   const getBreakdown = person.role === 'dominant' ? getDomBreakdown : getSubBreakdown;
+                  // Need to handle potential errors if style/traits are missing
                   let breakdownData = { strengths: "N/A", improvements: "N/A" };
-                  let couldGetBreakdown = false; // Flag to check if we even attempted
-
-                  if (person.style && person.traits && Object.keys(person.traits).length > 0) { // Check traits exist
-                     couldGetBreakdown = true;
+                  if (person.style && person.traits) {
                      try {
+                         // Ensure traits are passed correctly (assuming person.traits is {traitName: score})
                          const traitsForBreakdown = person.traits || {};
                          breakdownData = getBreakdown(person.style, traitsForBreakdown);
                      } catch (e) {
@@ -1018,49 +895,50 @@ class TrackerApp {
                   if (synergyHintsResult.length > 0) {
                       synergyHTML += `<h4>✨ Trait Synergies & Dynamics:</h4><ul>`;
                       synergyHintsResult.forEach(hint => {
+                           // Ensure hint.text exists before escaping
                            synergyHTML += `<li class="${hint.type}-hint">${this.escapeHTML(hint.text || '')}</li>`;
                       });
                       synergyHTML += `</ul><hr>`;
-                  } else if (couldGetBreakdown) { // Only show if we had traits to check
-                      synergyHTML = `<p class="muted-text">No specific trait synergies noted based on current scores.</p><hr>`;
+                  }
+                  // Get Proactive Suggestions
+                  let suggestionHTML = '';
+                  const lowTraits = Object.entries(person.traits || {})
+                      .filter(([, score]) => parseInt(score, 10) <= 2)
+                      .sort((a, b) => a[1] - b[1])
+                      .slice(0, 2);
+
+                  if (lowTraits.length > 0) {
+                       suggestionHTML += `<h4>🌱 Focus Ideas for Growth:</h4><ul>`;
+                       lowTraits.forEach(([traitName, score]) => {
+                            let suggestionText = `Consider focusing on ${traitName}.`; // Fallback
+                            try {
+                                // Use the breakdown data we already fetched
+                                if (breakdownData && breakdownData.improvements) {
+                                     // Attempt to parse the suggestion from the improvements string
+                                    const improvementsMatch = breakdownData.improvements.match(/🎯 \*\*(.*?)\*\* (.*)/);
+                                    if (improvementsMatch && improvementsMatch[2]) {
+                                        // Check if this specific improvement relates to the current low trait
+                                        // This is heuristic - might need refinement based on how paraphrasing_*.js formats output
+                                        if (breakdownData.improvements.toLowerCase().includes(traitName.toLowerCase())) {
+                                            suggestionText = improvementsMatch[2];
+                                        } else {
+                                             suggestionText = `Explore ways to nurture your ${traitName} (currently ${score}/5). See general tips above.`;
+                                        }
+                                    } else {
+                                        suggestionText = `Explore ways to nurture your ${traitName} (currently ${score}/5).`;
+                                    }
+                                } else {
+                                     suggestionText = `Explore ways to nurture your ${traitName} (currently ${score}/5).`;
+                                }
+                            } catch (suggestionError) {
+                                console.warn("Error processing proactive suggestion:", suggestionError);
+                                suggestionText = `Explore ways to nurture your ${traitName} (currently ${score}/5).`;
+                            }
+                           suggestionHTML += `<li>${this.escapeHTML(suggestionText)}</li>`;
+                       });
+                       suggestionHTML += `</ul><hr>`;
                   }
 
-                  // Get Proactive Suggestions (Simplified - relies on breakdown string parsing)
-                  let suggestionHTML = '';
-                  if (couldGetBreakdown) { // Only suggest if we have traits
-                      const lowTraits = Object.entries(person.traits || {})
-                          .filter(([, score]) => parseInt(score, 10) <= 2)
-                          .sort((a, b) => a[1] - b[1])
-                          .slice(0, 2);
-
-                      if (lowTraits.length > 0 && breakdownData.improvements && breakdownData.improvements !== 'N/A' && !breakdownData.improvements.startsWith("Error")) {
-                           suggestionHTML += `<h4>🌱 Focus Ideas for Growth:</h4><ul>`;
-                           let suggestionsFound = 0;
-                           lowTraits.forEach(([traitName, score]) => {
-                                // Attempt to find suggestion from the breakdown text
-                                const regex = new RegExp(`🎯 \\*\\*(.*?)\\*\\* (.*?)`); // More robust regex might be needed
-                                const match = breakdownData.improvements.match(regex);
-                                let suggestionText = `Explore ways to nurture your ${traitName} (currently ${score}/5).`; // Default
-
-                                if (match && match[2] && breakdownData.improvements.toLowerCase().includes(traitName.toLowerCase())) {
-                                    suggestionText = match[2]; // Use the parsed suggestion if relevant
-                                    suggestionsFound++;
-                                } else {
-                                    // If no direct match, try getting L1/L2 suggestions (Needs rework of paraphrasing files)
-                                    // Placeholder:
-                                     console.warn(`Could not extract specific suggestion for low trait '${traitName}' from breakdown.`);
-                                }
-
-                                suggestionHTML += `<li>${this.escapeHTML(suggestionText)}</li>`;
-                           });
-                           suggestionHTML += `</ul><hr>`;
-                            if (suggestionsFound === 0) { // If loop ran but no suggestions extracted
-                                suggestionHTML = `<h4>🌱 Focus Ideas for Growth:</h4><p class="muted-text">Consider the general growth tips above, focusing on traits rated 1 or 2.</p><hr>`;
-                            }
-                      } else if (lowTraits.length > 0) { // Low traits exist but no breakdown improvements available
-                           suggestionHTML = `<h4>🌱 Focus Ideas for Growth:</h4><p class="muted-text">Consider exploring traits you rated 1 or 2.</p><hr>`;
-                      }
-                  } // End if(couldGetBreakdown) for suggestions
 
                   contentElement.innerHTML = `
                     <section class="style-breakdown-section">
@@ -1085,15 +963,14 @@ class TrackerApp {
 
 
               case 'tab-history':
-                  // --- History Tab ---
                   contentElement.innerHTML = `
                     <section class="history-section">
-                      <h3> History Snapshots <button type="button" class="context-help-btn small-btn" data-help-key="historyChartInfo" aria-label="Help with History Chart">?</button> </h3>
+                      <h3> History Snapshots <button class="context-help-btn small-btn" data-help-key="historyChartInfo" aria-label="Help with History Chart">?</button> </h3>
                       <div class="history-chart-container" id="history-chart-container-${person.id}">
                         <canvas id="history-chart-${person.id}"></canvas>
                       </div>
                       <div class="modal-actions">
-                        <button type="button" id="snapshot-btn" class="small-btn">Take Snapshot 📸</button>
+                        <button id="snapshot-btn" class="small-btn">Take Snapshot 📸</button>
                       </div>
                       <div class="snapshot-info" style="display: none;">
                          <p><strong>Snapshot Taken:</strong> <span id="snapshot-timestamp-${person.id}"></span></p>
@@ -1105,32 +982,30 @@ class TrackerApp {
                   break; // End of case 'tab-history'
 
                case 'tab-journal':
-                   // --- Journal Tab ---
                   const currentReflection = person.reflections?.text || '';
                   contentElement.innerHTML = `
                     <section class="reflections-section">
-                      <h3> Personal Journal <button type="button" class="context-help-btn small-btn" data-help-key="journalSectionInfo" aria-label="Help with Journal Section">?</button> </h3>
+                      <h3> Personal Journal <button class="context-help-btn small-btn" data-help-key="journalSectionInfo" aria-label="Help with Journal Section">?</button> </h3>
                       <div class="modal-actions">
-                        <button type="button" id="journal-prompt-btn" class="small-btn">Get Prompt 🤔</button>
+                        <button id="journal-prompt-btn" class="small-btn">Get Prompt 🤔</button>
                       </div>
                       <p id="journal-prompt-${person.id}" class="journal-prompt muted-text" style="display: none;"></p>
                       <label for="reflections-text-${person.id}" class="sr-only">Journal Entry:</label>
                       <textarea id="reflections-text-${person.id}" class="reflections-textarea" placeholder="Reflect on your persona, experiences, goals, or use a prompt...">${this.escapeHTML(currentReflection)}</textarea>
                       <div class="modal-actions">
-                        <button type="button" id="save-reflections-btn" class="small-btn save-btn">Save Reflections 💾</button>
+                        <button id="save-reflections-btn" class="small-btn save-btn">Save Reflections 💾</button>
                       </div>
                     </section>
                   `;
                   break; // End of case 'tab-journal'
 
                case 'tab-achievements':
-                   // --- Achievements Tab ---
                   contentElement.innerHTML = `
                     <section class="achievements-section">
-                      <h3> Achievements Unlocked <button type="button" class="context-help-btn small-btn" data-help-key="achievementsSectionInfo" aria-label="Help with Achievements Section">?</button> </h3>
+                      <h3> Achievements Unlocked <button class="context-help-btn small-btn" data-help-key="achievementsSectionInfo" aria-label="Help with Achievements Section">?</button> </h3>
                       <ul id="achievements-list-${person.id}"></ul>
                       <div class="modal-actions" style="margin-top: 1em;">
-                        <button type="button" class="small-btn" onclick="kinkCompassApp.showAchievements()">View All Achievements</button>
+                        <button class="small-btn" onclick="kinkCompassApp.showAchievements()">View All Achievements</button>
                       </div>
                     </section>
                   `;
@@ -1138,10 +1013,9 @@ class TrackerApp {
                   break; // End of case 'tab-achievements'
 
                case 'tab-oracle':
-                    // --- Oracle Tab ---
                     contentElement.innerHTML = `
                         <section class="kink-oracle-section">
-                          <h3>Your Kink Compass Oracle <button type="button" class="small-btn" id="oracle-btn" style="margin-left: auto;">Consult Oracle</button></h3>
+                          <h3>Your Kink Compass Oracle <button class="small-btn" id="oracle-btn" style="margin-left: auto;">Consult Oracle</button></h3>
                           <div id="kink-oracle-output-${person.id}" class="kink-oracle-output muted-text">
                               Click 'Consult Oracle' to receive your daily vibe reading...
                           </div>
