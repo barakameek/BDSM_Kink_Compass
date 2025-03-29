@@ -522,55 +522,101 @@ class TrackerApp {
   handleWindowKeydown(e) { if (e.key === 'Escape') { if (this.elements.traitInfoPopup?.style.display !== 'none') { this.hideTraitInfo(); return; } if (this.elements.contextHelpPopup?.style.display !== 'none') { this.hideContextHelp(); return; } const activeSFPopup = document.querySelector('.sf-style-info-popup'); if(activeSFPopup) { activeSFPopup.remove(); document.querySelector('.sf-info-icon.active, button[data-action="showDetails"].active')?.classList.remove('active'); return; } // Close other modals... if (this.elements.modal?.style.display !== 'none') this.closeModal(this.elements.modal); else if (this.elements.resourcesModal?.style.display !== 'none') this.closeModal(this.elements.resourcesModal); else if (this.elements.glossaryModal?.style.display !== 'none') this.closeModal(this.elements.glossaryModal); else if (this.elements.styleDiscoveryModal?.style.display !== 'none') this.closeModal(this.elements.styleDiscoveryModal); else if (this.elements.themesModal?.style.display !== 'none') this.closeModal(this.elements.themesModal); else if (this.elements.welcomeModal?.style.display !== 'none') this.closeModal(this.elements.welcomeModal); else if (this.elements.achievementsModal?.style.display !== 'none') this.closeModal(this.elements.achievementsModal); else if (this.elements.sfModal?.style.display !== 'none') this.sfClose(); } }
   handleTraitSliderInput(e) { const slider = e.target; const display = slider.closest('.trait')?.querySelector('.trait-value'); if (display) { display.textContent = slider.value; } this.updateTraitDescription(slider); }
   handleTraitInfoClick(e) { const button = e.target.closest('.trait-info-btn'); if (!button) return; const traitName = button.dataset.trait; this.showTraitInfo(traitName); document.querySelectorAll('.trait-info-btn').forEach(btn => btn.setAttribute('aria-expanded', 'false')); button.setAttribute('aria-expanded', 'true'); }
-  handleModalBodyClick(e) { // Consolidated handler
+    handleModalBodyClick(e) { // Consolidated handler
     const personIdStr = this.elements.modal?.dataset.personId;
-    if (!personIdStr) return;
-    const personId = parseInt(personIdStr, 10);
-    if (isNaN(personId)) return;
-    const target = e.target;
-    const button = target.closest('button'); // Get the button if the click was inside it
+    // Exit early if we are not inside a modal with a person ID
+    if (!personIdStr) {
+        // This might happen if the click is elsewhere while the modal is technically open but lost focus,
+        // or if the dataset attribute is missing.
+        // console.log("handleModalBodyClick: Click detected outside of expected modal context or missing personId.");
+        return;
+    }
 
-    // Goal Actions
-    if (button?.classList.contains('toggle-goal-btn')) {
-      const goalIdStr = button.dataset.goalId;
-      if (goalIdStr) {
-        const goalId = parseInt(goalIdStr, 10);
-        if (!isNaN(goalId)) this.toggleGoalStatus(personId, goalId, button.closest('li')); // Pass li for animation
-      }
-    } else if (button?.classList.contains('delete-goal-btn')) {
-      const goalIdStr = button.dataset.goalId;
-      if (goalIdStr) {
-        const goalId = parseInt(goalIdStr, 10);
-        if (!isNaN(goalId) && confirm("Delete this goal?")) this.deleteGoal(personId, goalId);
-      }
-    } else if (target.id === 'add-goal-btn') { // Check target ID directly for form submission button
-      // Form submission handles addGoal via onsubmit handler in HTML now
-      // this.addGoal(personId); // Keep this if you remove the onsubmit
+    const personId = parseInt(personIdStr, 10);
+    // Exit if the person ID is not a valid number
+    if (isNaN(personId)) {
+        console.warn("handleModalBodyClick: Invalid personId in modal dataset:", personIdStr);
+        return;
     }
-    // History Action
-    else if (target.id === 'snapshot-btn') {
-      this.addSnapshotToHistory(personId);
-    }
-    // Journal Actions
-    else if (target.id === 'journal-prompt-btn') {
-      this.showJournalPrompt(personId);
-    } else if (target.id === 'save-reflections-btn') {
-      this.saveReflections(personId);
-    }
-     // <<< Oracle Action >>>
-     else if (target.id === 'oracle-btn') { // Changed from reading-btn
-        this.showKinkOracle(personId);
-    }
-    // Glossary Link Action
-    else if (target.classList.contains('glossary-link')) {
+
+    const target = e.target;
+    const button = target.closest('button'); // Find the closest button ancestor
+
+    // --- Action Handlers based on button ID or class ---
+
+    // Goal Actions (Check button first for efficiency)
+    if (button) {
+        if (button.classList.contains('toggle-goal-btn')) {
+            const goalIdStr = button.dataset.goalId;
+            if (goalIdStr) {
+                const goalId = parseInt(goalIdStr, 10);
+                if (!isNaN(goalId)) {
+                    console.log(`>>> Toggle Goal clicked for person ${personId}, goal ${goalId}`);
+                    this.toggleGoalStatus(personId, goalId, button.closest('li')); // Pass li for animation
+                } else {
+                    console.warn("Invalid goalId on toggle button:", goalIdStr);
+                }
+            }
+            return; // Handled
+        }
+
+        if (button.classList.contains('delete-goal-btn')) {
+            const goalIdStr = button.dataset.goalId;
+            if (goalIdStr) {
+                const goalId = parseInt(goalIdStr, 10);
+                if (!isNaN(goalId)) {
+                    console.log(`>>> Delete Goal clicked for person ${personId}, goal ${goalId}`);
+                     if (confirm("Delete this goal?")) {
+                         this.deleteGoal(personId, goalId);
+                     }
+                } else {
+                    console.warn("Invalid goalId on delete button:", goalIdStr);
+                }
+            }
+            return; // Handled
+        }
+
+         // Specific Button IDs
+         switch (button.id) {
+            case 'snapshot-btn':
+                console.log(`>>> Snapshot button clicked for person ${personId}`);
+                this.addSnapshotToHistory(personId);
+                return; // Handled
+            case 'journal-prompt-btn':
+                console.log(`>>> Journal Prompt button clicked for person ${personId}`);
+                this.showJournalPrompt(personId);
+                return; // Handled
+            case 'save-reflections-btn':
+                 console.log(`>>> Save Reflections button clicked for person ${personId}`);
+                this.saveReflections(personId);
+                return; // Handled
+            case 'oracle-btn': // Changed from reading-btn
+                 console.log(`>>> Oracle button clicked for person ${personId}`);
+                this.showKinkOracle(personId);
+                return; // Handled
+            // Note: add-goal-btn is handled by the form's onsubmit
+         }
+    } // End if(button) check
+
+
+    // Glossary Link Action (Check target class directly)
+    if (target.classList.contains('glossary-link') && target.closest('#detail-modal')) {
         e.preventDefault();
         const termKey = target.dataset.termKey;
         if (termKey) {
+            console.log(`>>> Glossary link clicked inside modal for term: ${termKey}`);
             this.closeModal(this.elements.modal); // Close details modal first
             this.showGlossary(termKey); // Then open glossary scrolled
         }
+        return; // Handled
     }
-  }
+
+    // If click was within modal body but didn't match any specific action
+    // console.log("handleModalBodyClick: Click inside modal body did not trigger specific action.");
+
+  } // <<< ****** ENSURE THIS IS THE FINAL CLOSING BRACE for handleModalBodyClick ******
+
+  // --- The next function starts below ---
   handleThemeSelection(e) { const button = e.target.closest('.theme-option-btn'); if (button) { const themeName = button.dataset.theme; this.setTheme(themeName); this.closeModal(this.elements.themesModal); } }
   handleStyleFinderAction(action, dataset = {}) { /* ... Keep existing Style Finder logic ... */ switch(action) { case 'start': this.sfStep = this.sfSteps.findIndex(s => s.type === 'rolePreference'); if (this.sfStep === -1) this.sfStep = 1; this.sfRenderStep(); break; case 'next': this.sfNextStep(dataset.trait); break; case 'prev': this.sfPrevStep(); break; case 'setRole': this.sfSetRole(dataset.value); break; case 'startOver': this.sfStartOver(); break; case 'showDetails': this.sfShowFullDetails(dataset.value); document.querySelectorAll('.sf-result-buttons button').forEach(b => b.classList.remove('active')); const btn = this.elements.sfStepContent.querySelector(`button[data-action="showDetails"][data-value="${dataset.value}"]`); btn?.classList.add('active'); break; case 'applyStyle': this.confirmApplyStyleFinderResult(this.sfIdentifiedRole, dataset.value); break; case 'toggleDashboard': this.toggleStyleFinderDashboard(); break; default: console.warn("Unknown Style Finder action:", action); } }
   handleStyleFinderSliderInput(sliderElement){ /* ... Keep existing Style Finder logic ... */ const traitName = sliderElement.dataset.trait; const value = sliderElement.value; const descriptionDiv = this.elements.sfStepContent.querySelector(`#sf-desc-${traitName}`); if (traitName && value !== undefined && descriptionDiv && this.sfSliderDescriptions[traitName]) { const descriptions = this.sfSliderDescriptions[traitName]; if (descriptions && descriptions.length === 10) { const index = parseInt(value, 10) - 1; if (index >= 0 && index < 10) { descriptionDiv.textContent = descriptions[index]; this.sfSetTrait(traitName, value); this.sfUpdateDashboard(); } else { console.error(`Invalid slider index ${index} for trait ${traitName}`); descriptionDiv.textContent = "Adjust the slider..."; } } else { console.error(`Slider descriptions missing or incomplete for trait: ${traitName}`); descriptionDiv.textContent = "How does this feel?"; } } else { console.warn("Missing elements for Style Finder slider update:", {traitName, value, descriptionDiv}); } }
