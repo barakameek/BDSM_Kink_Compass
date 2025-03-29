@@ -790,50 +790,73 @@ class TrackerApp {
 
 
               case 'tab-traits':
-                    contentElement.innerHTML = `
-                        <section class="trait-details-section">
-                          <h3>Trait Details <button class="context-help-btn small-btn" data-help-key="traitsSectionInfo" aria-label="Help with Traits Section">?</button></h3>
-                          <div class="trait-details-grid"></div>
-                          <p class="muted-text" style="margin-top:1em;">Check the 'Breakdown' tab for trait synergies and focus ideas!</p>
-                        </section>`;
-                    const grid = contentElement.querySelector('.trait-details-grid');
-                    if (!grid) { console.error("Trait details grid element not found."); break; }
+                  contentElement.innerHTML = `
+                      <section class="trait-details-section">
+                        <h3>Trait Details <button class="context-help-btn small-btn" data-help-key="traitsSectionInfo" aria-label="Help with Traits Section">?</button></h3>
+                        <div class="trait-details-grid"></div>
+                        <p class="muted-text" style="margin-top:1em;">Check the 'Breakdown' tab for trait synergies and focus ideas!</p>
+                      </section>`;
+                  const grid = contentElement.querySelector('.trait-details-grid');
 
-                    const roleData = bdsmData[person.role];
-                    if (!roleData) { grid.innerHTML = `<p class="muted-text">Trait definitions not found.</p>`; break; }
+                  // <<< START OF CORRECTED BLOCK >>>
+                  if (!grid) {
+                      console.error("Trait details grid element not found.");
+                      // IMPORTANT: Ensure no stray characters or incomplete statements here.
+                      // Add the closing brace for the IF statement BEFORE the break.
+                  } else { // <<< ADDED ELSE >>> Only proceed if grid exists
+                      const roleData = bdsmData[person.role];
+                      if (!roleData) {
+                          grid.innerHTML = `<p class="muted-text">Trait definitions not found for role: ${this.escapeHTML(person.role || 'N/A')}.</p>`;
+                      } else { // <<< ADDED ELSE >>> Only proceed if roleData exists
+                          let traitsToShow = [];
+                          if (roleData.coreTraits && Array.isArray(roleData.coreTraits)) { // Check if coreTraits is array
+                              traitsToShow.push(...roleData.coreTraits);
+                          } else {
+                              console.warn(`No valid coreTraits found for role: ${person.role}`);
+                          }
 
-                    let traitsToShow = [];
-                    if (roleData.coreTraits) traitsToShow.push(...roleData.coreTraits);
-                    const cleanStyleName = person.style?.replace(/(\p{Emoji})/gu, '').trim() || '';
-                    const styleObj = roleData.styles?.find(s => s.name.replace(/(\p{Emoji})/gu, '').trim() === cleanStyleName);
-                    if (styleObj?.traits) {
-                        styleObj.traits.forEach(styleTrait => {
-                            if (!traitsToShow.some(t => t.name === styleTrait.name)) {
-                                traitsToShow.push(styleTrait);
-                            }
-                        });
-                    }
+                          const cleanStyleName = person.style?.replace(/(\p{Emoji})/gu, '').trim() || '';
+                          const styleObj = roleData.styles?.find(s => s.name.replace(/(\p{Emoji})/gu, '').trim() === cleanStyleName);
 
-                    if (traitsToShow.length === 0) {
-                        grid.innerHTML = `<p class="muted-text">No specific traits defined for ${this.escapeHTML(person.style || 'this style')}.</p>`;
-                        break;
-                    }
+                          if (styleObj?.traits && Array.isArray(styleObj.traits)) { // Check if style traits is array
+                              styleObj.traits.forEach(styleTrait => {
+                                  if (!traitsToShow.some(t => t.name === styleTrait.name)) {
+                                      traitsToShow.push(styleTrait);
+                                  }
+                              });
+                          } else if (cleanStyleName) { // Only warn if a style was actually selected
+                               console.warn(`No valid specific traits found for style: ${cleanStyleName}`);
+                          }
 
-                    traitsToShow.sort((a, b) => a.name.localeCompare(b.name)).forEach(traitDef => {
-                        const score = person.traits[traitDef.name] ?? '-';
-                        const description = traitDef.desc && score !== '-' ? (traitDef.desc[String(score)] || 'N/A') : 'N/A';
-                        const displayName = traitDef.name.charAt(0).toUpperCase() + traitDef.name.slice(1).replace(/([A-Z])/g, ' $1');
-                        grid.innerHTML += `
-                          <div class="trait-detail-item">
-                            <h4>
-                               <button class="link-button glossary-link" data-term-key="${traitDef.name}" title="View '${this.escapeHTML(displayName)}' in Glossary">${this.escapeHTML(displayName)}</button>:
-                               <span class="trait-score-badge">${score}/5 ${this.getEmojiForScore(score)}</span>
-                             </h4>
-                            <p>${this.escapeHTML(description)}</p>
-                          </div>
-                        `;
-                    });
-                    break;
+
+                          if (traitsToShow.length === 0) {
+                              grid.innerHTML = `<p class="muted-text">No specific traits defined for ${this.escapeHTML(person.style || 'this style')}. Check core role traits or select a different style.</p>`;
+                          } else {
+                              // Sort and render traits
+                              traitsToShow.sort((a, b) => (a.name || '').localeCompare(b.name || '')).forEach(traitDef => {
+                                  if (!traitDef || !traitDef.name) {
+                                      console.warn("Skipping invalid trait definition:", traitDef);
+                                      return; // Skip this iteration if traitDef is invalid
+                                  }
+                                  const score = person.traits[traitDef.name] ?? '-';
+                                  const description = traitDef.desc && score !== '-' && traitDef.desc[String(score)]
+                                      ? (traitDef.desc[String(score)])
+                                      : 'N/A';
+                                  const displayName = traitDef.name.charAt(0).toUpperCase() + traitDef.name.slice(1).replace(/([A-Z])/g, ' $1');
+                                  grid.innerHTML += `
+                                    <div class="trait-detail-item">
+                                      <h4>
+                                         <button class="link-button glossary-link" data-term-key="${traitDef.name}" title="View '${this.escapeHTML(displayName)}' in Glossary">${this.escapeHTML(displayName)}</button>:
+                                         <span class="trait-score-badge">${score}/5 ${this.getEmojiForScore(score)}</span>
+                                       </h4>
+                                      <p>${this.escapeHTML(description)}</p>
+                                    </div>
+                                  `;
+                              }); // End forEach loop
+                          } // End else (traitsToShow.length > 0)
+                      } // End else (roleData exists)
+                  } // <<< END OF CORRECTED BLOCK (Closing brace for the initial if (!grid) else) >>>
+                  break; // End of case 'tab-traits'
 
               case 'tab-breakdown':
                   const getBreakdown = person.role === 'dominant' ? getDomBreakdown : getSubBreakdown;
