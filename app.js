@@ -93,7 +93,13 @@ class TrackerApp {
     };
 
     // Form Elements
-    safeAddListener(this.elements.role, 'change', (e) => { this.renderStyles(e.target.value); this.renderTraits(e.target.value, ''); this.elements.style.value = ''; this.updateLivePreview(); }, 'role');
+    safeAddListener(this.elements.role, 'change', (e) => {
+    console.log("CHANGE EVENT FIRED: Role dropdown"); // <<< ADD THIS LINE
+    this.renderStyles(e.target.value);
+    this.renderTraits(e.target.value, '');
+    this.elements.style.value = '';
+    this.updateLivePreview();
+}, 'role');
     safeAddListener(this.elements.style, 'change', (e) => { this.renderTraits(this.elements.role.value, e.target.value); this.updateLivePreview(); this.updateStyleExploreLink(); }, 'style');
     safeAddListener(this.elements.name, 'input', () => { this.updateLivePreview(); }, 'name');
     safeAddListener(this.elements.save, 'click', () => { this.savePerson(); }, 'save');
@@ -190,7 +196,15 @@ class TrackerApp {
   handleExploreStyleLinkClick(e) { /* ... Verified logic ... */ }
 
   // --- Core Rendering ---
-  renderStyles(roleKey) { /* ... Verified logic ... */ }
+  renderStyles(roleKey) {
+    console.log(`RENDERSTYLES: roleKey = ${roleKey}`); // <<< ADD THIS LINE
+    if (!roleKey) {
+        console.warn("RENDERSTYLES: No role key provided. Skipping.");
+        this.elements.style.innerHTML = '<option value="">-- Select Role First --</option>';
+        return;
+    }
+    // ... rest of your renderStyles function ...
+}
   renderTraits(roleKey, styleName) { /* ... Verified logic ... */ }
   createTraitHTML(trait) { /* ... Verified logic ... */ }
   updateTraitDescription(slider) { /* ... Verified logic ... */ }
