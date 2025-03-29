@@ -1,15 +1,4 @@
 
-1.  The fixes for `resetForm` and the History Chart rendering.
-2.  The integrated Style Finder logic, adapted to work within the `TrackerApp` class.
-3.  The adjusted Daily Challenge placement within the Live Preview.
-4.  The extensive logging previously added.
-
-**ACTION REQUIRED BY YOU:**
-
-1.  **Modify `index.html`:** Before using this code, **ensure you have moved** the `<div id="daily-challenge-area">...</div>` block *inside* the `<section id="live-preview" ...>` section in your `index.html` file, and **delete** the old, separate `<section id="daily-challenge-section" ...>`.
-2.  **Populate `this.sfTraitData`:** In the code below, find the `this.sfTraitData = { ... };` block in the constructor (around line 70). You **MUST** replace the placeholder comments (e.g., `// PASTE subFinderTraits array content here...`) with the actual data arrays and objects from the `scriptbdsmfinderjs.js` file you provided earlier. **This is absolutely essential for the Style Finder to work.**
-
-```javascript
 // === app.js === (Version 2.8.2 - Full Integration, SF Data Needed, Fixes, Layout Adjust) ===
 
 // --- Core Imports ---
