@@ -634,3 +634,134 @@ button.loading .spinner { border: 3px solid rgba(255,255,255,0.3); border-top-co
      flex-shrink: 0;
      min-width: 50px; /* Give the bar some minimum width */
 }/* --- END OF FILE styles.css --- */
+/* === UI/UX Refinement CSS === */
+
+/* Goal Strikethrough Fix */
+.goals-section li.done > span:first-child {
+    text-decoration: line-through;
+    opacity: 0.7; /* Keep it slightly faded */
+    font-style: italic;
+}
+
+/* Style Finder Summary Dashboard Layout */
+#summary-dashboard .sf-dashboard-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap; /* Important to prevent wrap/overlap */
+    gap: 10px;
+    padding: 0.5em 0.8em; /* Adjust padding if needed */
+    margin: 0.3em 0;
+}
+
+#summary-dashboard .sf-style-name {
+    flex-grow: 1;
+    flex-shrink: 1; /* Allow name to shrink */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; /* Prevent name wrapping */
+    margin-right: 10px; /* Space before score */
+}
+
+#summary-dashboard .sf-dashboard-score {
+    flex-shrink: 0; /* Prevent score from shrinking */
+    white-space: nowrap;
+    font-weight: bold;
+}
+
+/* Optional score bar styling in summary */
+#summary-dashboard .sf-dashboard-item div[style*="background"] {
+     flex-shrink: 0;
+     min-width: 40px; /* Give bar some width */
+     height: 6px !important; /* Ensure consistent height */
+}
+
+
+/* Achievements Panel Polish */
+.all-achievements-list li {
+    transition: background-color 0.3s ease, border-color 0.3s ease; /* Smooth transition */
+    border-left-width: 6px; /* Make the status border more prominent */
+    margin-bottom: 0.8em; /* Slightly more space */
+}
+
+.all-achievements-list li.unlocked {
+    border-left-color: gold; /* Ensure high contrast */
+    background-color: color-mix(in srgb, gold 10%, var(--bg-color)); /* Subtle gold tint */
+}
+body[data-theme="dark"] .all-achievements-list li.unlocked,
+body[data-theme="velvet"] .all-achievements-list li.unlocked {
+    border-left-color: #f4d03f;
+    background-color: color-mix(in srgb, #f4d03f 12%, var(--bg-color)); /* Adjust tint for dark */
+}
+
+.all-achievements-list li.locked {
+    border-left-color: color-mix(in srgb, var(--muted-text-color) 50%, transparent);
+    opacity: 0.65; /* Slightly increase visibility */
+}
+.all-achievements-list li.locked .achievement-desc {
+    color: var(--muted-text-color); /* Ensure description is muted */
+}
+
+/* Oracle Panel Enhancement */
+.oracle-tab-content { /* Style the section containing the oracle */
+   /* Add a subtle background gradient or image if desired */
+   /* background: linear-gradient(to bottom, rgba(var(--card-bg-color-rgb), 0.9), rgba(var(--card-bg-color-rgb), 0.7)), url('path/to/subtle-pattern.png'); */
+   border-radius: var(--border-radius-small);
+   padding: 1em; /* Add padding around the content */
+}
+
+#oracle-reading-output {
+    font-family: 'Georgia', serif; /* Suggest a slightly more evocative font */
+    line-height: 1.7;
+    text-align: center;
+    border: 1px dashed var(--accent-color-light);
+    padding: 1.5em;
+    border-radius: var(--border-radius-small);
+    background-color: color-mix(in srgb, var(--accent-color) 5%, transparent);
+    margin-bottom: 1em;
+}
+#oracle-reading-output p:first-child { /* Opening line */
+    font-style: italic;
+    color: var(--muted-text-color);
+}
+#oracle-reading-output p:nth-child(2) strong { /* "Focus:" */
+    color: var(--accent-color-darker);
+    font-weight: bold;
+    display: block; /* Put Focus on its own line */
+    margin-bottom: 0.3em;
+}
+#oracle-reading-output p:nth-child(3) { /* Encouragement */
+    font-style: italic;
+    font-size: 1.05em;
+    margin: 1em 0;
+}
+#oracle-reading-output p:last-child { /* Closing line */
+     font-style: italic;
+     color: var(--muted-text-color);
+     margin-top: 1em;
+}
+
+
+/* Live Preview Synergy Hint */
+.preview-synergy-hint {
+    margin-top: 1.5em;
+    padding: 0.8em;
+    background-color: var(--highlight-bg-color);
+    border: 1px dashed var(--highlight-border-color);
+    border-radius: var(--border-radius-small);
+    font-size: 0.9em;
+    text-align: center;
+}
+.preview-synergy-hint strong {
+    color: var(--accent-color-darker);
+}
+
+/* Shake animation for SF slider validation */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+.shake-animation {
+  animation: shake 0.5s ease-in-out;
+}
