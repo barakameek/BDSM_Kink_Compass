@@ -450,9 +450,45 @@ class TrackerApp {
   }
 
   // --- Event Handlers (Mostly unchanged, check handleModalBodyClick) ---
-  handleListClick(e) { const target = e.target; const listItem = target.closest('li'); if (!listItem) return; const personId = parseInt(listItem.dataset.id, 10); if (target.classList.contains('edit-btn')) { this.editPerson(personId); } else if (target.classList.contains('delete-btn')) { if (confirm(`Are you sure you want to delete ${listItem.querySelector('.person-name')?.textContent || 'this persona'}? This cannot be undone.`)) { this.deletePerson(personId); } } else if (target.closest('.person-info')) { this.showPersonDetails(personId); } }
-  handleListKeydown(e) { if ((e.key === 'Enter' || e.key === ' ') && (e.target.classList.contains('edit-btn') || e.target.classList.contains('delete-btn'))) { e.preventDefault(); e.target.click(); } else if (e.key === 'Enter' && e.target.closest('.person-info')) { e.preventDefault(); const listItem = e.target.closest('li'); const personId = parseInt(listItem?.dataset.id, 10); if(!isNaN(personId)) { this.showPersonDetails(personId); } } }
-  handleWindowClick(e) { /* ... (keep existing logic for popups) ... */ if (this.elements.traitInfoPopup && this.elements.traitInfoPopup.style.display !== 'none') { const popupContent = this.elements.traitInfoPopup.querySelector('.card'); const infoButton = document.querySelector(`.trait-info-btn[aria-expanded="true"]`); if (popupContent && !popupContent.contains(e.target) && e.target !== infoButton && !infoButton?.contains(e.target)) { this.hideTraitInfo(); } } if (this.elements.contextHelpPopup && this.elements.contextHelpPopup.style.display !== 'none') { const popupContent = this.elements.contextHelpPopup.querySelector('.card'); const helpButton = document.querySelector(`.context-help-btn[aria-expanded="true"]`); if (popupContent && !popupContent.contains(e.target) && e.target !== helpButton && !helpButton?.contains(e.target)) { this.hideContextHelp(); } } const activeSFPopup = document.querySelector('.sf-style-info-popup'); if(activeSFPopup) { const triggerElement = document.querySelector('.sf-info-icon.active, button[data-action="showDetails"].active'); if (!activeSFPopup.contains(e.target) && e.target !== triggerElement && !triggerElement?.contains(e.target)) { activeSFPopup.remove(); triggerElement?.classList.remove('active'); } } }
+  handleListClick(e) {
+    const target = e.target;
+    const listItem = target.closest('li');
+    if (!listItem) return;
+    const personId = parseInt(listItem.dataset.id, 10);
+    if (isNaN(personId)) { // Added check for NaN personId
+      console.warn("Could not parse person ID from list item:", listItem);
+      return;
+    }
+
+    if (target.classList.contains('edit-btn')) {
+      console.log(`>>> Edit button clicked for ID: ${personId}`);
+      this.editPerson(personId);
+    } else if (target.classList.contains('delete-btn')) {
+      console.log(`>>> Delete button clicked for ID: ${personId}`);
+      if (confirm(`Are you sure you want to delete ${listItem.querySelector('.person-name')?.textContent || 'this persona'}? This cannot be undone.`)) {
+        this.deletePerson(personId);
+      }
+    } else if (target.closest('.person-info')) {
+      console.log(`>>> Person info clicked for ID: ${personId}`);
+      this.showPersonDetails(personId);
+    }
+    // NO MORE CODE INSIDE THIS FUNCTION AFTER THIS POINT
+  } // <<< ****** ENSURE THIS CLOSING BRACE IS PRESENT ******
+
+  handleListKeydown(e) { // <<< The error points here, meaning the problem is LIKELY the missing brace above
+    if ((e.key === 'Enter' || e.key === ' ') && (e.target.classList.contains('edit-btn') || e.target.classList.contains('delete-btn'))) {
+      e.preventDefault();
+      e.target.click();
+    } else if (e.key === 'Enter' && e.target.closest('.person-info')) {
+      e.preventDefault();
+      const listItem = e.target.closest('li');
+      const personId = parseInt(listItem?.dataset.id, 10);
+      if(!isNaN(personId)) {
+        this.showPersonDetails(personId);
+      }
+    }
+  } // Closing brace for handleListKeydown
+handleWindowClick(e) { /* ... (keep existing logic for popups) ... */ if (this.elements.traitInfoPopup && this.elements.traitInfoPopup.style.display !== 'none') { const popupContent = this.elements.traitInfoPopup.querySelector('.card'); const infoButton = document.querySelector(`.trait-info-btn[aria-expanded="true"]`); if (popupContent && !popupContent.contains(e.target) && e.target !== infoButton && !infoButton?.contains(e.target)) { this.hideTraitInfo(); } } if (this.elements.contextHelpPopup && this.elements.contextHelpPopup.style.display !== 'none') { const popupContent = this.elements.contextHelpPopup.querySelector('.card'); const helpButton = document.querySelector(`.context-help-btn[aria-expanded="true"]`); if (popupContent && !popupContent.contains(e.target) && e.target !== helpButton && !helpButton?.contains(e.target)) { this.hideContextHelp(); } } const activeSFPopup = document.querySelector('.sf-style-info-popup'); if(activeSFPopup) { const triggerElement = document.querySelector('.sf-info-icon.active, button[data-action="showDetails"].active'); if (!activeSFPopup.contains(e.target) && e.target !== triggerElement && !triggerElement?.contains(e.target)) { activeSFPopup.remove(); triggerElement?.classList.remove('active'); } } }
   handleWindowKeydown(e) { if (e.key === 'Escape') { if (this.elements.traitInfoPopup?.style.display !== 'none') { this.hideTraitInfo(); return; } if (this.elements.contextHelpPopup?.style.display !== 'none') { this.hideContextHelp(); return; } const activeSFPopup = document.querySelector('.sf-style-info-popup'); if(activeSFPopup) { activeSFPopup.remove(); document.querySelector('.sf-info-icon.active, button[data-action="showDetails"].active')?.classList.remove('active'); return; } // Close other modals... if (this.elements.modal?.style.display !== 'none') this.closeModal(this.elements.modal); else if (this.elements.resourcesModal?.style.display !== 'none') this.closeModal(this.elements.resourcesModal); else if (this.elements.glossaryModal?.style.display !== 'none') this.closeModal(this.elements.glossaryModal); else if (this.elements.styleDiscoveryModal?.style.display !== 'none') this.closeModal(this.elements.styleDiscoveryModal); else if (this.elements.themesModal?.style.display !== 'none') this.closeModal(this.elements.themesModal); else if (this.elements.welcomeModal?.style.display !== 'none') this.closeModal(this.elements.welcomeModal); else if (this.elements.achievementsModal?.style.display !== 'none') this.closeModal(this.elements.achievementsModal); else if (this.elements.sfModal?.style.display !== 'none') this.sfClose(); } }
   handleTraitSliderInput(e) { const slider = e.target; const display = slider.closest('.trait')?.querySelector('.trait-value'); if (display) { display.textContent = slider.value; } this.updateTraitDescription(slider); }
   handleTraitInfoClick(e) { const button = e.target.closest('.trait-info-btn'); if (!button) return; const traitName = button.dataset.trait; this.showTraitInfo(traitName); document.querySelectorAll('.trait-info-btn').forEach(btn => btn.setAttribute('aria-expanded', 'false')); button.setAttribute('aria-expanded', 'true'); }
