@@ -2231,19 +2231,31 @@ class TrackerApp {
         else { console.warn(`[SF_SET_TRAIT] Invalid value "${value}" for ${trait}.`); }
     } // End sfSetTrait
 
-     sfNextStep(currentTrait = null) {
+         sfNextStep(currentTrait = null) {
         console.log(`[SF_NEXT_STEP] From step ${this.styleFinderStep}. Current trait: ${currentTrait}`);
+
+        // *** FIX: Calculate current step data HERE ***
+        const steps = this.sfCalculateSteps();
+        const currentStepData = steps[this.styleFinderStep]; // Get data for the *current* step we are leaving
+
         // Validation: Ensure slider has been interacted with if on a trait step
-        if (step.type === 'trait' && currentTrait && this.styleFinderAnswers.traits[currentTrait] === undefined) { // Check if value exists for this trait
+        // Check the *type* of the step we are currently on
+        if (currentStepData && currentStepData.type === 'trait' && currentTrait && this.styleFinderAnswers.traits[currentTrait] === undefined) {
             this.sfShowFeedback("Move the slider first!"); console.warn("[SF_NEXT_STEP] Fail: Slider not interacted with for", currentTrait);
             const slider = this.elements.sfStepContent?.querySelector(`input[data-trait="${currentTrait}"]`);
              if(slider) { slider.classList.add('shake-animation'); setTimeout(() => slider.classList.remove('shake-animation'), 500); }
             return;
         }
-        const totalSteps = this.sfCalculateSteps().length;
-        if (this.styleFinderStep < totalSteps - 1) { this.styleFinderStep++; console.log(`[SF_NEXT_STEP] To step ${this.styleFinderStep}`); this.sfRenderStep(); }
-        else { console.log("[SF_NEXT_STEP] Last step."); }
-    } // End sfNextStep
+
+        const totalSteps = steps.length; // Use the calculated steps length
+        if (this.styleFinderStep < totalSteps - 1) {
+            this.styleFinderStep++;
+            console.log(`[SF_NEXT_STEP] To step ${this.styleFinderStep}`);
+            this.sfRenderStep();
+        } else {
+             console.log("[SF_NEXT_STEP] Last step.");
+        }
+   
 
     sfPrevStep() {
         console.log(`[SF_PREV_STEP] Back from step ${this.styleFinderStep}`);
