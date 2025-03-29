@@ -2004,12 +2004,13 @@ class TrackerApp {
         this.sfShowFeedback("Fresh start!");
     } // End sfStartOver
 
-    sfComputeScores(temporary = false) {
+      sfComputeScores(temporary = false) {
         // if(!temporary) console.log("[SF_COMPUTE_SCORES] Calculating final scores."); // Noisy
         let scores = {}; if (!this.styleFinderRole) return scores;
         const relevantStyles = this.sfTraitData.styles[this.styleFinderRole]; if (!relevantStyles) return scores;
         relevantStyles.forEach(style => { scores[style] = 0; });
         const styleKeyTraits = { /* ... PASTE YOUR styleKeyTraits HERE ... */
+             // (Make sure this is populated correctly)
             'Submissive': ['obedience', 'submissionDepth', 'vulnerability'], 'Brat': ['rebellion', 'mischief', 'playfulness'], 'Slave': ['service', 'devotion', 'submissionDepth'], 'Switch': ['adaptability', 'exploration', 'playfulness'], 'Pet': ['affection', 'playfulness', 'devotion'], 'Little': ['innocence', 'dependence', 'affection'], 'Puppy': ['playfulness', 'devotion', 'affection'], 'Kitten': ['sensuality', 'mischief', 'affection'], 'Princess': ['sensuality', 'innocence', 'dependence'], 'Rope Bunny': ['sensuality', 'exploration', 'submissionDepth'], 'Masochist': ['painTolerance', 'submissionDepth', 'vulnerability'], 'Prey': ['exploration', 'vulnerability', 'rebellion'], 'Toy': ['submissionDepth', 'adaptability', 'service'], 'Doll': ['vulnerability', 'dependence', 'sensuality'], 'Bunny': ['playfulness', 'innocence', 'affection'], 'Servant': ['service', 'obedience', 'devotion'], 'Playmate': ['playfulness', 'mischief', 'exploration'], 'Babygirl': ['dependence', 'innocence', 'affection'], 'Captive': ['submissionDepth', 'vulnerability', 'exploration'], 'Thrall': ['devotion', 'submissionDepth', 'dependence'], 'Puppet': ['receptiveness', 'adaptability'], 'Maid': ['tidiness', 'politeness'], 'Painslut': ['painTolerance', 'craving'], 'Bottom': ['receptiveness', 'painTolerance'],
             'Dominant': ['authority', 'confidence', 'leadership'], 'Assertive': ['boldness', 'intensity', 'authority'], 'Nurturer': ['care', 'empathy', 'patience'], 'Strict': ['discipline', 'control', 'precision'], 'Master': ['authority', 'possession', 'dominanceDepth'], 'Mistress': ['confidence', 'creativity', 'dominanceDepth'], 'Daddy': ['care', 'possession', 'empathy'], 'Mommy': ['care', 'patience', 'empathy'], 'Owner': ['possession', 'control', 'dominanceDepth'], 'Rigger': ['creativity', 'precision', 'control'], 'Sadist': ['sadism', 'intensity', 'control'], 'Hunter': ['boldness', 'leadership', 'intensity'], 'Trainer': ['patience', 'discipline', 'leadership'], 'Puppeteer': ['control', 'creativity', 'precision'], 'Protector': ['care', 'authority', 'possession'], 'Disciplinarian': ['discipline', 'authority', 'precision'], 'Caretaker': ['care', 'empathy', 'patience'], 'Sir': ['authority', 'confidence', 'leadership'], 'Goddess': ['confidence', 'intensity', 'dominanceDepth'], 'Commander': ['authority', 'intensity', 'dominanceDepth']
         };
@@ -2020,9 +2021,23 @@ class TrackerApp {
                  if (keyTraitsForStyle.includes(trait)) { scores[style] += rating; if (rating >= 9) scores[style] += 2; else if (rating <= 2) scores[style] -= 1; }
              });
         });
-        // if (!temporary) console.log("[SF_COMPUTE_SCORES] Raw:", scores); // Noisy
-        let highestScore = 0; Object.values(scores).forEach(score => { if (score > highestScore) highestScore = score; });
-        if (highestScore > 0 && !temporary) { /* console.log("[SF_COMPUTE_SCORES] Normalizing. High:", highestScore); */ Object.keys(scores).forEach(style => { scores[style] = Math.max(0, (scores[style] / highestScore) * 100); }); /* console.log("[SF_COMPUTE_SCORES] Normalized:", scores); */ } // Noisy
+        // *** REMOVED maxPossibleScorePerStyle line ***
+
+          let highestScore = 0;
+          Object.values(scores).forEach(score => {
+              if (score > highestScore) highestScore = score;
+          });
+
+         if (highestScore > 0 && !temporary) {
+             // console.log("[SF_COMPUTE_SCORES] Normalizing scores based on highest score:", highestScore); // Noisy
+             Object.keys(scores).forEach(style => {
+                 scores[style] = Math.max(0, (scores[style] / highestScore) * 100);
+             });
+             // console.log("[SF_COMPUTE_SCORES] Normalized scores:", scores); // Noisy
+         } else if (!temporary) {
+              // console.log("[SF_COMPUTE_SCORES] No normalization applied."); // Noisy
+         }
+
         return scores;
     } // End sfComputeScores
 
