@@ -757,36 +757,37 @@ class TrackerApp {
 
       try {
           switch (tabId) {
-              case 'tab-goals':
-                  contentElement.innerHTML = `
-                    <section class="goals-section">
-                      <h3>Goals <button class="context-help-btn small-btn" data-help-key="goalsSectionInfo" aria-label="Help with Goals Section">?</button></h3>
-                      <ul id="goal-list-${person.id}"></ul>
-                      <form class="add-goal-form" id="add-goal-form-${person.id}" onsubmit="event.preventDefault(); kinkCompassApp.addGoal(${person.id}, this);">
-                        <label for="new-goal-${person.id}" class="sr-only">New Goal:</label>
-                        <input type="text" id="new-goal-${person.id}" placeholder="Add a new goal..." required>
-                        <button type="submit" id="add-goal-btn" class="small-btn">Add Goal</button>
-                      </form>
-                      <div id="goal-alignment-hints-${person.id}" class="alignment-hints">
-                        <!-- Goal Alignment Hints Area -->
-                      </div>
-                    </section>
-                  `;
-                  const goalListUl = contentElement.querySelector(`#goal-list-${person.id}`);
-                  if (goalListUl) {
-                      goalListUl.innerHTML = this.renderGoalList(person);
-                  } else { console.error(`Could not find goal list UL element for person ${person.id}`); }
-                  // <<< Render Goal Alignment Hints >>>
-                  const alignmentHints = this.getGoalAlignmentHints(person);
-                  const hintsContainer = contentElement.querySelector(`#goal-alignment-hints-${person.id}`);
-                  if (hintsContainer) {
-                      if (alignmentHints.length > 0) {
-                          hintsContainer.innerHTML = `<h4>🎯 Alignment Insights:</h4><ul>${alignmentHints.map(hint => `<li>${this.escapeHTML(hint)}</li>`).join('')}</ul>`;
-                      } else {
-                         hintsContainer.innerHTML = `<p class="muted-text">Add some goals to see alignment insights!</p>`;
-                      }
+               case 'tab-goals':
+              contentElement.innerHTML = `
+                <section class="goals-section">
+                  <h3>Goals <button class="context-help-btn small-btn" data-help-key="goalsSectionInfo" aria-label="Help with Goals Section">?</button></h3>
+                  <ul id="goal-list-${person.id}"></ul>
+                  <form class="add-goal-form" id="add-goal-form-${person.id}" onsubmit="event.preventDefault(); kinkCompassApp.addGoal(${person.id}, this);">
+                    <label for="new-goal-${person.id}" class="sr-only">New Goal:</label>
+                    <input type="text" id="new-goal-${person.id}" placeholder="Add a new goal..." required>
+                    <button type="submit" id="add-goal-btn" class="small-btn">Add Goal</button>
+                  </form>
+                  <div id="goal-alignment-hints-${person.id}" class="alignment-hints">
+                    <!-- Goal Alignment Hints Area -->
+                  </div>
+                </section>
+              `;
+              const goalListUl = contentElement.querySelector(`#goal-list-${person.id}`);
+              if (goalListUl) {
+                  goalListUl.innerHTML = this.renderGoalList(person);
+              } else { console.error(`Could not find goal list UL element for person ${person.id}`); }
+              // <<< Render Goal Alignment Hints >>>
+              const alignmentHints = this.getGoalAlignmentHints(person);
+              const hintsContainer = contentElement.querySelector(`#goal-alignment-hints-${person.id}`);
+              if (hintsContainer) {
+                  if (alignmentHints.length > 0) {
+                      hintsContainer.innerHTML = `<h4>🎯 Alignment Insights:</h4><ul>${alignmentHints.map(hint => `<li>${this.escapeHTML(hint)}</li>`).join('')}</ul>`;
+                  } else {
+                     hintsContainer.innerHTML = `<p class="muted-text">Add some active goals to see alignment insights!</p>`;
                   }
-                  break;
+              } // <<< --- THIS IS THE MISSING CLOSING BRACE --- >>> }
+              break; // End of case 'tab-goals'
+
 
               case 'tab-traits':
                     contentElement.innerHTML = `
