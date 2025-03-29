@@ -1,4 +1,4 @@
-// === utils.js === (Corrected)
+// === utils.js === (Corrected Again)
 // Contains helper functions for KinkCompass, separated from core app logic and data.
 
 // Import needed DATA structures from appData.js
@@ -22,18 +22,12 @@ import {
  */
 function normalizeStyleKey(name) {
     if (!name) return '';
-    // 1. Convert to lowercase
-    // 2. Remove emojis (using a broader Unicode range)
-    // 3. Remove anything in parentheses (like P/E)
-    // 4. Trim whitespace
     const cleanedName = name
         .toLowerCase()
-        // Remove common emojis and symbols - adjust range if needed
         .replace(/([\u{1F300}-\u{1F5FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1FA70}-\u{1FAFF}\u{FE00}-\u{FE0F}\u{1F900}-\u{1F9FF}]+)/gu, '')
-        .replace(/\(.*?\)/g, '') // Remove content in parentheses
-        .replace(/ \/ /g, '/')   // Keep slashes if intended (like switch styles)
+        .replace(/\(.*?\)/g, '')
+        .replace(/ \/ /g, '/')
         .trim();
-    // console.log(`Normalized "${name}" to "${cleanedName}"`); // DEBUG
     return cleanedName;
 }
 
@@ -46,30 +40,24 @@ function normalizeStyleKey(name) {
 export function getSubStyleBreakdown(styleName, traits) {
   if (!styleName || !traits) { console.warn("getSubStyleBreakdown called with invalid args:", styleName, traits); return { strengths: "Select a style first!", improvements: "Choose your path to get tips!" }; }
   const styleKey = normalizeStyleKey(styleName);
-  const styleData = subStyleSuggestions[styleKey]; // Use imported suggestions from appData.js
+  const styleData = subStyleSuggestions[styleKey];
   if (!styleData) { console.warn(`No suggestions found for submissive style key: ${styleKey}`); return { strengths: `You're crafting your unique ${styleName} sparkle! Keep exploring. 💕`, improvements: "Continue defining what this style means to you! 😸" }; }
 
-  const roleData = bdsmData.submissive; // Use imported bdsmData from appData.js
+  const roleData = bdsmData.submissive;
   if (!roleData || !roleData.styles) { console.error("bdsmData.submissive or its styles are missing!"); return { strengths: "Error loading style data.", improvements: "Please check data source." }; }
 
   const styleObj = roleData.styles.find(s => normalizeStyleKey(s.name) === styleKey);
   let traitScores = [];
-  // Add scores from style-specific traits
   if (styleObj?.traits) { styleObj.traits.forEach(traitDef => { const score = parseInt(traits[traitDef.name], 10); if (!isNaN(score)) { traitScores.push(score); } }); }
-  // Add scores from core traits
   if (roleData.coreTraits) { roleData.coreTraits.forEach(coreTrait => { const score = parseInt(traits[coreTrait.name], 10); if (!isNaN(score)) { traitScores.push(score); } }); }
 
-  // Calculate average score, default to 3 if no scores found
   const avgScore = traitScores.length > 0 ? Math.round(traitScores.reduce((a, b) => a + b, 0) / traitScores.length) : 3;
-  // Clamp score index between 1 and 5
   const scoreIndex = Math.max(1, Math.min(5, avgScore));
   const levelData = styleData[scoreIndex];
 
-  // Fallback if specific level data is missing
   if(!levelData) { console.warn(`No paraphrase/suggestion found for style ${styleKey} at level ${scoreIndex}`); if (scoreIndex >= 4) { return { strengths: `You're strongly embodying ${styleName}! ✨ Keep shining!`, improvements: `Explore nuances or teach others your ways! 🚀` }; } else if (scoreIndex <= 2) { return { strengths: `Exploring the foundations of ${styleName}! 🌱`, improvements: `Focus on communication and small steps! 🎯` }; } else { return { strengths: `Developing a balanced ${styleName} approach! 👍`, improvements: `Consider which aspects to lean into! 🤔` }; } }
 
   const { paraphrase, suggestion } = levelData;
-  // Determine if the score represents a strength or an area for growth
   const isStrength = scoreIndex >= 4;
   const strengthsText = isStrength ? `✨ **${paraphrase}** ${suggestion}` : `🌱 Cultivating skills in ${styleName}! Keep growing!`;
   const improvementsText = isStrength ? `🚀 Explore the depths of ${styleName}! What's next?` : `🎯 **${paraphrase}** ${suggestion}`;
@@ -85,30 +73,24 @@ export function getSubStyleBreakdown(styleName, traits) {
 export function getDomStyleBreakdown(styleName, traits) {
   if (!styleName || !traits) { console.warn("getDomStyleBreakdown called with invalid args:", styleName, traits); return { strengths: "Select a style first!", improvements: "Choose your path to get tips!" }; }
   const styleKey = normalizeStyleKey(styleName);
-  const styleData = domStyleSuggestions[styleKey]; // Use imported suggestions from appData.js
+  const styleData = domStyleSuggestions[styleKey];
   if (!styleData) { console.warn(`No suggestions found for dominant style key: ${styleKey}`); return { strengths: `You're forging your own unique ${styleName} path! Keep exploring, Commander! 💪`, improvements: "Continue defining what this style means to you! 🔍" }; }
 
-  const roleData = bdsmData.dominant; // Use imported bdsmData from appData.js
+  const roleData = bdsmData.dominant;
   if (!roleData || !roleData.styles) { console.error("bdsmData.dominant or its styles are missing!"); return { strengths: "Error loading style data.", improvements: "Please check data source." }; }
 
   const styleObj = roleData.styles.find(s => normalizeStyleKey(s.name) === styleKey);
   let traitScores = [];
-  // Add scores from style-specific traits
   if (styleObj?.traits) { styleObj.traits.forEach(traitDef => { const score = parseInt(traits[traitDef.name], 10); if (!isNaN(score)) { traitScores.push(score); } }); }
-  // Add scores from core traits
   if (roleData.coreTraits) { roleData.coreTraits.forEach(coreTrait => { const score = parseInt(traits[coreTrait.name], 10); if (!isNaN(score)) { traitScores.push(score); } }); }
 
-  // Calculate average score, default to 3 if no scores found
   const avgScore = traitScores.length > 0 ? Math.round(traitScores.reduce((a, b) => a + b, 0) / traitScores.length) : 3;
-  // Clamp score index between 1 and 5
   const scoreIndex = Math.max(1, Math.min(5, avgScore));
   const levelData = styleData[scoreIndex];
 
-  // Fallback if specific level data is missing
    if(!levelData) { console.warn(`No paraphrase/suggestion found for style ${styleKey} at level ${scoreIndex}`); if (scoreIndex >= 4) { return { strengths: `You powerfully embody ${styleName}! 🔥`, improvements: `Refine your command! 🚀` }; } else if (scoreIndex <= 2) { return { strengths: `Exploring ${styleName} leadership! 🌱`, improvements: `Focus on communication! 🎯` }; } else { return { strengths: `Developing a balanced ${styleName} approach! 👍`, improvements: `Consider focus areas! 🤔` }; } }
 
   const { paraphrase, suggestion } = levelData;
-  // Determine if the score represents a strength or an area for growth
   const isStrength = scoreIndex >= 4;
   const strengthsText = isStrength ? `✨ **${paraphrase}** ${suggestion}` : `🌱 Cultivating powerful skills in ${styleName}! Keep honing command!`;
   const improvementsText = isStrength ? `🚀 Expand the horizons of ${styleName} style! Conquer new challenges!` : `🎯 **${paraphrase}** ${suggestion}`;
@@ -124,7 +106,6 @@ export function getDomStyleBreakdown(styleName, traits) {
  * @returns {boolean} True if the persona has the achievement, false otherwise.
  */
 export function hasAchievement(person, achievementId) {
-    // Ensure person and achievements array exist using optional chaining
     return person?.achievements?.includes(achievementId) ?? false;
 }
 
@@ -138,7 +119,6 @@ export function hasAchievement(person, achievementId) {
  * @returns {boolean} True if a NEW achievement was granted, false otherwise.
  */
 export function grantAchievement(person, achievementId, showNotificationCallback, saveCallback) {
-    // Validate achievement ID against the imported list
     if (!achievementId || !achievementList[achievementId]) {
         console.warn(`[GRANT_ACHIEVEMENT] Invalid or unknown achievement ID: ${achievementId}`);
         return false;
@@ -146,49 +126,37 @@ export function grantAchievement(person, achievementId, showNotificationCallback
 
     const details = achievementList[achievementId];
 
-    // --- Handle Global Achievements (Not tied to a specific persona) ---
-    // Check if person object is null, undefined, or empty
+    // --- Handle Global Achievements ---
     if (!person || Object.keys(person).length === 0) {
         const storageKey = `kinkCompass_achievement_${achievementId}`;
-        // Check if the achievement is already granted globally
         if (!localStorage.getItem(storageKey)) {
-            localStorage.setItem(storageKey, 'true'); // Mark as granted
+            localStorage.setItem(storageKey, 'true');
             console.log(`🏆 Global Achievement Unlocked: ${details.name}`);
-            // Show notification if callback provided
             if (showNotificationCallback && typeof showNotificationCallback === 'function') {
                 showNotificationCallback(`Achieved: ${details.name}`, "achievement");
             }
-            // No persona object to save here, localStorage is the persistence mechanism
-            return true; // New global achievement granted
+            return true;
         }
-        // Already had the global achievement
         return false;
     }
 
     // --- Handle Persona-Specific Achievements ---
-    // Initialize achievements array if it's missing on the person object
     if (!person.achievements) {
         person.achievements = [];
     }
 
-    // Check if the persona already has this achievement
     if (!hasAchievement(person, achievementId)) {
-        // Grant the achievement
         person.achievements.push(achievementId);
         console.log(`🏆 Achievement Unlocked for ${person.name || 'Persona'}: ${details.name}`);
 
-        // Show notification if callback provided
         if (showNotificationCallback && typeof showNotificationCallback === 'function') {
              showNotificationCallback(`Achieved: ${details.name}`, "achievement");
         }
-        // Trigger save mechanism if callback provided (e.g., saveToLocalStorage)
         if (saveCallback && typeof saveCallback === 'function') {
             saveCallback();
         }
-        return true; // Indicate a new achievement was granted
+        return true;
     }
-
-    // Persona already had this achievement
     return false;
 }
 
@@ -199,7 +167,6 @@ export function grantAchievement(person, achievementId, showNotificationCallback
  * @returns {object | null} The achievement details object or null if not found.
  */
 export function getAchievementDetails(achievementId) {
-    // Return the details from the imported list, or null if the ID doesn't exist
     return achievementList[achievementId] || null;
 }
 
@@ -212,13 +179,11 @@ export function getAchievementDetails(achievementId) {
  */
 export function findHintsForTraits(traitScores) {
   const hints = [];
-  // Check if necessary data structures exist
   if (!traitScores || typeof synergyHints !== 'object' || !synergyHints.highPositive || !synergyHints.interestingDynamics) {
       console.warn("[findHintsForTraits] Missing traitScores or synergyHints data.");
-      return hints; // Return empty array if data is missing
+      return hints;
   }
 
-  // Filter traits into high (>= 4) and low (<= 2) categories
   const highTraits = Object.entries(traitScores)
     .filter(([, score]) => score >= 4)
     .map(([name]) => name);
@@ -226,9 +191,7 @@ export function findHintsForTraits(traitScores) {
     .filter(([, score]) => score <= 2)
     .map(([name]) => name);
 
-  // --- Check Positive Synergies (High + High) ---
   synergyHints.highPositive.forEach((synergy) => {
-    // Check if all required traits for this synergy are present in the highTraits list
     if (
       synergy.traits?.every((trait) => highTraits.includes(trait))
     ) {
@@ -236,9 +199,7 @@ export function findHintsForTraits(traitScores) {
     }
   });
 
-  // --- Check Interesting Dynamics (High + Low) ---
   synergyHints.interestingDynamics.forEach((dynamic) => {
-    // Check if the specific high trait and low trait are present in their respective lists
     if (
       dynamic.traits?.high && dynamic.traits?.low &&
       highTraits.includes(dynamic.traits.high) &&
@@ -246,8 +207,6 @@ export function findHintsForTraits(traitScores) {
     ) {
       hints.push({ type: 'dynamic', text: dynamic.hint });
     }
-     // Optional: Check for reverse dynamics if needed (e.g., low Authority + high Care)
-     // Currently, the logic assumes the defined 'high' and 'low' cover the intended dynamic.
   });
 
   return hints;
@@ -261,12 +220,10 @@ export function findHintsForTraits(traitScores) {
  * @returns {string} A random journal prompt or a fallback message.
  */
 export function getRandomPrompt() {
-    // Use the imported journalPrompts array
     if (!journalPrompts || journalPrompts.length === 0) {
         console.warn("[getRandomPrompt] Journal prompts data is missing or empty.");
-        return "Reflect on your journey today..."; // Fallback message
+        return "Reflect on your journey today...";
     }
-    // Select a random index
     const randomIndex = Math.floor(Math.random() * journalPrompts.length);
     return journalPrompts[randomIndex];
 }
@@ -282,11 +239,11 @@ export function getRandomPrompt() {
 export function escapeHTML(str) {
   // Ensure input is a string before attempting to replace
   if (typeof str !== 'string') return '';
-  return str.replace(/&/g, '&')
+  return str.replace(/&/g, '&')      // Replace & first
             .replace(/</g, '<')
             .replace(/>/g, '>')
             .replace(/"/g, '"')
-            .replace(/'/g, '''); // Corrected line
+            .replace(/'/g, ''');   // CORRECTED: Use the HTML entity for single quote
 }
 
 /**
@@ -295,14 +252,12 @@ export function escapeHTML(str) {
  * @returns {string} An emoji string or empty string if score is invalid.
  */
 export function getFlairForScore(score) {
-    const s = parseInt(score); // Ensure score is treated as a number
-    // Check if the parsed score is a valid number
+    const s = parseInt(score);
     if(isNaN(s)) return '';
-    // Return emoji based on the score value
-    if(s === 5) return '🌟'; // Max score
-    if(s === 4) return '✨'; // High score
-    if(s === 3) return '👍'; // Medium score
-    if(s === 2) return '🌱'; // Low score
-    if(s === 1) return '💧'; // Min score
-    return ''; // Return empty string if score is outside the 1-5 range
+    if(s === 5) return '🌟';
+    if(s === 4) return '✨';
+    if(s === 3) return '👍';
+    if(s === 2) return '🌱';
+    if(s === 1) return '💧';
+    return '';
 }
