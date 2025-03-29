@@ -1,4 +1,4 @@
-// === challenges.js ===
+// === challenges.js === (CORRECTED)
 
 export const challenges = {
   // Communication Challenges
@@ -12,7 +12,8 @@ export const challenges = {
       desc: "During one conversation today, focus *only* on understanding the other person. Ask clarifying questions. Resist the urge to interrupt or plan your response while they speak.",
     },
     {
-      title: " boundaries_reaffirm": "🛡️ Revisit a Boundary",
+      // CORRECTED Line: Removed the extra "boundaries_reaffirm": part
+      title: "🛡️ Revisit a Boundary",
       desc: "Think of one boundary (hard or soft). Mentally (or verbally, if appropriate) reaffirm it to yourself or your partner. Remind yourself why it's important.",
     },
      {
@@ -52,7 +53,8 @@ export const challenges = {
       desc: "Find one moment where you feel impatient with your partner's progress or response. Consciously pause, take 3 deep breaths, and offer encouragement instead of pressure.",
     },
      {
-        title: " caring_check_in": "❤️ Proactive Care Check",
+        // CORRECTED Line: Removed extra key-like string before colon
+        title: "❤️ Proactive Care Check",
         desc: "Beyond basic safety, proactively check on one aspect of your partner's well-being *before* they mention it (Hydrated? Comfortable temperature? Feeling emotionally secure?)."
      }
   ],
@@ -82,33 +84,3 @@ export const challenges = {
   ]
   // Add more categories and challenges!
 };
-
-// Helper function (in app.js)
-/*
-function getDailyChallenge(persona) {
-  const today = new Date().toDateString();
-  const storedChallenge = JSON.parse(localStorage.getItem('kinkCompassDailyChallenge') || '{}');
-
-  if (storedChallenge.date === today && storedChallenge.challenge) {
-    return storedChallenge.challenge;
-  }
-
-  // Select a new challenge
-  let possibleChallenges = [...challenges.communication, ...challenges.exploration];
-  if (persona?.role === 'dominant' && challenges.dominant_challenges) {
-      possibleChallenges.push(...challenges.dominant_challenges);
-  } else if (persona?.role === 'submissive' && challenges.submissive_challenges) {
-      possibleChallenges.push(...challenges.submissive_challenges);
-  } else if (persona?.role === 'switch' && challenges.switch_challenges) {
-      possibleChallenges.push(...challenges.switch_challenges);
-  }
-
-  if (possibleChallenges.length === 0) return null; // No challenges available
-
-  const newChallenge = possibleChallenges[Math.floor(Math.random() * possibleChallenges.length)];
-
-  // Store for today
-  localStorage.setItem('kinkCompassDailyChallenge', JSON.stringify({ date: today, challenge: newChallenge }));
-  return newChallenge;
-}
-*/
