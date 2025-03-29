@@ -35,6 +35,39 @@ export const achievementList = {
 
     // Fun / Meta
     "first_anniversary": { name: "Compass Companion! 🎉", desc: "Used KinkCompass for one year (Conceptual)." },
+    // Feature Engagement
+    "style_finder_complete": { name: "Quest Complete! 🧭", desc: "Completed the Style Finder." },
+    "style_discovery": { name: "Curious Explorer! 🔭", desc: "Opened the Style Discovery feature." },
+    "glossary_user": { name: "Knowledge Seeker! 📚", desc: "Opened the Kink Glossary." },
+    "resource_reader": { name: "Wise Owl! 🦉", desc: "Viewed the Resources section." },
+    "theme_changer": { name: "Style Maven! 🎨", desc: "Changed the application theme." }, // Moved here
+
+    // Persona Details & Growth
+    "goal_added": { name: "Setting Sights! 🎯", desc: "Added a goal to a persona." },
+    "goal_completed": { name: "Goal Getter! ✔️", desc: "Completed a goal for a persona." },
+    "five_goals_completed": { name: "Milestone Achiever! 🏆", desc: "Completed five goals across all personas." },
+    "history_snapshot": { name: "Memory Lane! 📸", desc: "Saved your first persona history snapshot." },
+    "ten_snapshots": { name: "Chronicler! 📜", desc: "Saved ten history snapshots for one persona." },
+    "reflection_saved": { name: "Deep Thoughts! 📝", desc: "Saved your first journal reflection." },
+    "five_reflections": { name: "Introspective! 🧐", desc: "Saved five journal reflections for one persona." }, // Renamed from ten_reflections
+    "prompt_used": { name: "Spark Seeker! 💡", desc: "Used a journal prompt." },
+    "kink_reading_oracle": { name: "Oracle Consulted! 🔮", desc: "Received a Kink Compass Oracle reading." }, // Replaced kink_reading
+
+    // Trait Interaction
+    "max_trait": { name: "Peak Performer! 🌟", desc: "Maxed out a trait score to 5 in the main form!" },
+    "min_trait": { name: "Room to Bloom! 🌱", desc: "Rated a trait score as 1 in the main form (It's okay!)." }, // Changed emoji
+    "trait_info_viewed": { name: "Detail Detective! 🕵️‍♀️", desc: "Viewed detailed info about a trait." },
+
+    // Dynamic / Consistency Achievements (NEW)
+    "journal_journeyman": { name: "Journal Journeyman! ✍️", desc: "Saved 10 journal entries for one persona." },
+    "consistent_snapper": { name: "Consistent Chronicler! 📅", desc: "Took snapshots at least 3 days apart." }, // Example consistency
+    "trait_transformer": { name: "Trait Transformer! ✨", desc: "Increased a trait score by 2+ points between snapshots." },
+    "goal_streak_3": { name: "Goal Streak! 🔥", desc: "Completed 3 goals within 7 days." }, // Example streak
+    "challenge_accepted": { name: "Challenge Accepted! 💪", desc: "Engaged with a Daily Challenge (conceptual tracking)." }, // Needs tracking logic if implemented
+
+    // Fun / Meta
+    "first_anniversary": { name: "Compass Companion! 🎉", desc: "Used KinkCompass for one year (Conceptual)." },
+    "all_styles_discovered": { name: "Style Scholar! 🧐", desc: "Viewed every style in Style Discovery (Conceptual)." }, // Example meta
     // Add more as desired
 };
 
