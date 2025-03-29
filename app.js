@@ -615,7 +615,7 @@ class TrackerApp {
     // console.log("handleModalBodyClick: Click inside modal body did not trigger specific action.");
 
   } // <<< ****** ENSURE THIS IS THE FINAL CLOSING BRACE for handleModalBodyClick ******
-}
+
   // --- The next function starts below ---
   handleThemeSelection(e) { const button = e.target.closest('.theme-option-btn'); if (button) { const themeName = button.dataset.theme; this.setTheme(themeName); this.closeModal(this.elements.themesModal); } }
   handleStyleFinderAction(action, dataset = {}) { /* ... Keep existing Style Finder logic ... */ switch(action) { case 'start': this.sfStep = this.sfSteps.findIndex(s => s.type === 'rolePreference'); if (this.sfStep === -1) this.sfStep = 1; this.sfRenderStep(); break; case 'next': this.sfNextStep(dataset.trait); break; case 'prev': this.sfPrevStep(); break; case 'setRole': this.sfSetRole(dataset.value); break; case 'startOver': this.sfStartOver(); break; case 'showDetails': this.sfShowFullDetails(dataset.value); document.querySelectorAll('.sf-result-buttons button').forEach(b => b.classList.remove('active')); const btn = this.elements.sfStepContent.querySelector(`button[data-action="showDetails"][data-value="${dataset.value}"]`); btn?.classList.add('active'); break; case 'applyStyle': this.confirmApplyStyleFinderResult(this.sfIdentifiedRole, dataset.value); break; case 'toggleDashboard': this.toggleStyleFinderDashboard(); break; default: console.warn("Unknown Style Finder action:", action); } }
