@@ -2359,17 +2359,35 @@ class TrackerApp {
     } // End sfShowTraitInfo
 
     sfShowFullDetails(styleNameWithEmoji, triggerElement = null) {
-         console.log(`[SF_SHOW_FULL_DETAILS] SF Style: ${styleNameWithEmoji}`);
-         const styleName = styleNameWithEmoji.replace(/([\u{1F300}-\u{1F5FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1FA70}-\u{1FAFF}\u{FE00}-\u{FE0F}\u{1F900}-\u{1F9FF}]+)/gu, '').trim();
-         const descData = this.sfTraitData.styleDescriptions[styleName]; const matchData = this.sfTraitData.dynamicMatches[styleName];
-         if (!descData || !matchData) { console.error(`[SF_SHOW_FULL_DETAILS] Data missing for: ${styleName}`); this.sfShowFeedback("Cannot load details.", "error"); return; }
-         const existingPopup = document.querySelector('.sf-style-info-popup'); if(existingPopup) existingPopup.remove();
-         const popup = document.createElement('div'); popup.className = 'sf-style-info-popup card wide-popup';
-         popup.innerHTML = `<button class="sf-close-btn" onclick="this.parentElement.remove()" aria-label="Close">×</button><h3>${styleNameWithEmoji} Details</h3><h4>Summary</h4><p><strong>${this.escapeHTML(descData.short)}</strong></p><p>${this.escapeHTML(descData.long)}</p><h4>Match: ${this.getStyleIcons()[matchData.match] || ''} ${this.escapeHTML(matchData.match)}</h4><p><em>Dynamic: ${this.escapeHTML(matchData.dynamic)}</em></p><p>${this.escapeHTML(matchData.longDesc)}</p><h4>Tips:</h4><ul>${descData.tips.map(tip => `<li>${this.escapeHTML(tip)}</li>`).join('')}</ul>`;
-         document.body.appendChild(popup); popup.querySelector('.sf-close-btn')?.focus();
-         if (triggerElement) triggerElement.classList.add('active');
-         console.log("[SF_SHOW_FULL_DETAILS] Popup displayed.");
-     } // End sfShowFullDetails
+     console.log(`[SF_SHOW_FULL_DETAILS] SF Style: ${styleNameWithEmoji}`);
+
+     // --- FIX: More aggressive cleaning ---
+     // 1. Remove known emojis (using broad Unicode ranges)
+     let styleName = styleNameWithEmoji.replace(/([\u{1F300}-\u{1F5FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1FA70}-\u{1FAFF}\u{FE00}-\u{FE0F}\u{1F900}-\u{1F9FF}\u{E0000}-\u{E007F}]+)/gu, '');
+     // 2. Trim whitespace aggressively
+     styleName = styleName.trim();
+     // 3. Remove potential leading non-letter characters (like ZWJ) - might need adjustment if style names *start* with symbols intentionally
+     // styleName = styleName.replace(/^[^a-zA-Z]+/, ''); // This might be too aggressive if names can start with symbols. Let's rely on trim and emoji removal first.
+
+     console.log(`[SF_SHOW_FULL_DETAILS] Cleaned style name for lookup: "${styleName}"`);
+     // --- End FIX ---
+
+     const descData = this.sfTraitData.styleDescriptions[styleName];
+     const matchData = this.sfTraitData.dynamicMatches[styleName];
+
+     if (!descData || !matchData) {
+          console.error(`[SF_SHOW_FULL_DETAILS] Data missing for cleaned style: "${styleName}"`); // Log cleaned name
+          this.sfShowFeedback("Error: Could not load style details.", "error");
+          return;
+     }
+     // ... rest of the function remains the same ...
+     const existingPopup = document.querySelector('.sf-style-info-popup'); if(existingPopup) existingPopup.remove();
+     const popup = document.createElement('div'); popup.className = 'sf-style-info-popup card wide-popup';
+     popup.innerHTML = `<button class="sf-close-btn" onclick="this.parentElement.remove()" aria-label="Close">×</button><h3>${styleNameWithEmoji} Details</h3><h4>Summary</h4><p><strong>${this.escapeHTML(descData.short)}</strong></p><p>${this.escapeHTML(descData.long)}</p><h4>Match: ${this.getStyleIcons()[matchData.match] || ''} ${this.escapeHTML(matchData.match)}</h4><p><em>Dynamic: ${this.escapeHTML(matchData.dynamic)}</em></p><p>${this.escapeHTML(matchData.longDesc)}</p><h4>Tips:</h4><ul>${descData.tips.map(tip => `<li>${this.escapeHTML(tip)}</li>`).join('')}</ul>`;
+     document.body.appendChild(popup); popup.querySelector('.sf-close-btn')?.focus();
+     if (triggerElement) triggerElement.classList.add('active');
+     console.log("[SF_SHOW_FULL_DETAILS] Popup displayed.");
+ } // End sfShowFullDetails
 
     getStyleIcons() { return { 'Submissive': '🙇', 'Brat': '😈', 'Slave': '🔗', 'Switch': '🔄', 'Pet': '🐾', 'Little': '🍼', 'Puppy': '🐶', 'Kitten': '🐱', 'Princess': '👑', 'Rope Bunny': '🪢', 'Masochist': '💥', 'Prey': '🏃', 'Toy': '🎲', 'Doll': '🎎', 'Bunny': '🐰', 'Servant': '🧹', 'Playmate': '🎉', 'Babygirl': '🌸', 'Captive': '⛓️', 'Thrall': '🛐', 'Puppet': '🎭', 'Maid': '🧼', 'Painslut': '🔥', 'Bottom': '⬇️', 'Dominant': '👤', 'Assertive': '💪', 'Nurturer': '🤗', 'Strict': '📏', 'Master': '🎓', 'Mistress': '👸', 'Daddy': '👨‍🏫', 'Mommy': '👩‍🏫', 'Owner': '🔑', 'Rigger': '🧵', 'Sadist': '😏', 'Hunter': '🏹', 'Trainer': '🏋️', 'Puppeteer': '🕹️', 'Protector': '🛡️', 'Disciplinarian': '✋', 'Caretaker': '🧡', 'Sir': '🎩', 'Goddess': '🌟', 'Commander': '⚔️' }; }
 
