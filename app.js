@@ -758,38 +758,41 @@ class TrackerApp {
       try {
           switch (tabId) {
                case 'tab-goals':
-              contentElement.innerHTML = `
-                <section class="goals-section">
-                  <h3>Goals <button class="context-help-btn small-btn" data-help-key="goalsSectionInfo" aria-label="Help with Goals Section">?</button></h3>
-                  <ul id="goal-list-${person.id}"></ul>
-                  <form class="add-goal-form" id="add-goal-form-${person.id}" onsubmit="event.preventDefault(); kinkCompassApp.addGoal(${person.id}, this);">
-                    <label for="new-goal-${person.id}" class="sr-only">New Goal:</label>
-                    <input type="text" id="new-goal-${person.id}" placeholder="Add a new goal..." required>
-                    <button type="submit" id="add-goal-btn" class="small-btn">Add Goal</button>
-                  </form>
-                  <div id="goal-alignment-hints-${person.id}" class="alignment-hints">
-                    <!-- Goal Alignment Hints Area -->
-                  </div>
-                </section>
-              `;
-              const goalListUl = contentElement.querySelector(`#goal-list-${person.id}`);
-              if (goalListUl) {
-                  goalListUl.innerHTML = this.renderGoalList(person);
-              } else { console.error(`Could not find goal list UL element for person ${person.id}`); }
-              // <<< Render Goal Alignment Hints >>>
-              const alignmentHints = this.getGoalAlignmentHints(person);
-              const hintsContainer = contentElement.querySelector(`#goal-alignment-hints-${person.id}`);
-              if (hintsContainer) {
-                  if (alignmentHints.length > 0) {
-                      hintsContainer.innerHTML = `<h4>🎯 Alignment Insights:</h4><ul>${alignmentHints.map(hint => `<li>${this.escapeHTML(hint)}</li>`).join('')}</ul>`;
-                  } else {
-                     hintsContainer.innerHTML = `<p class="muted-text">Add some active goals to see alignment insights!</p>`;
-                  }
-              } // <<< --- THIS IS THE MISSING CLOSING BRACE --- >>> }
-              break; // End of case 'tab-goals'
+                contentElement.innerHTML = `
+                  <section class="goals-section">
+                    <h3>Goals <button class="context-help-btn small-btn" data-help-key="goalsSectionInfo" aria-label="Help with Goals Section">?</button></h3>
+                    <ul id="goal-list-${person.id}"></ul>
+                    <form class="add-goal-form" id="add-goal-form-${person.id}" onsubmit="event.preventDefault(); kinkCompassApp.addGoal(${person.id}, this);">
+                      <label for="new-goal-${person.id}" class="sr-only">New Goal:</label>
+                      <input type="text" id="new-goal-${person.id}" placeholder="Add a new goal..." required>
+                      <button type="submit" id="add-goal-btn" class="small-btn">Add Goal</button>
+                    </form>
+                    <div id="goal-alignment-hints-${person.id}" class="alignment-hints">
+                      <!-- Goal Alignment Hints Area -->
+                    </div>
+                  </section>
+                `;
+                const goalListUl = contentElement.querySelector(`#goal-list-${person.id}`);
+                if (goalListUl) {
+                    goalListUl.innerHTML = this.renderGoalList(person);
+                } else {
+                    console.error(`Could not find goal list UL element for person ${person.id}`);
+                }
+                // Render Goal Alignment Hints
+                const alignmentHints = this.getGoalAlignmentHints(person);
+                const hintsContainer = contentElement.querySelector(`#goal-alignment-hints-${person.id}`);
+                if (hintsContainer) {
+                    if (alignmentHints.length > 0) {
+                        hintsContainer.innerHTML = `<h4>🎯 Alignment Insights:</h4><ul>${alignmentHints.map(hint => `<li>${this.escapeHTML(hint)}</li>`).join('')}</ul>`;
+                    } else {
+                       hintsContainer.innerHTML = `<p class="muted-text">Add some active goals to see alignment insights!</p>`;
+                    }
+                }
+                // NO extra brace should be here.
+                break; // End of case 'tab-goals'
 
 
-              case 'tab-traits':
+            case 'tab-traits':
                   contentElement.innerHTML = `
                       <section class="trait-details-section">
                         <h3>Trait Details <button class="context-help-btn small-btn" data-help-key="traitsSectionInfo" aria-label="Help with Traits Section">?</button></h3>
@@ -798,33 +801,36 @@ class TrackerApp {
                       </section>`;
                   const grid = contentElement.querySelector('.trait-details-grid');
 
-                  // <<< START OF CORRECTED BLOCK >>>
                   if (!grid) {
                       console.error("Trait details grid element not found.");
-                      // IMPORTANT: Ensure no stray characters or incomplete statements here.
-                      // Add the closing brace for the IF statement BEFORE the break.
-                  } else { // <<< ADDED ELSE >>> Only proceed if grid exists
+                      // Ensure the error message doesn't break structure
+                      contentElement.innerHTML += '<p class="error-text">Error displaying traits.</p>';
+                  } else { // Only proceed if grid exists
                       const roleData = bdsmData[person.role];
                       if (!roleData) {
                           grid.innerHTML = `<p class="muted-text">Trait definitions not found for role: ${this.escapeHTML(person.role || 'N/A')}.</p>`;
-                      } else { // <<< ADDED ELSE >>> Only proceed if roleData exists
+                      } else { // Only proceed if roleData exists
                           let traitsToShow = [];
-                          if (roleData.coreTraits && Array.isArray(roleData.coreTraits)) { // Check if coreTraits is array
+                          // Safely add core traits if they exist and are an array
+                          if (roleData.coreTraits && Array.isArray(roleData.coreTraits)) {
                               traitsToShow.push(...roleData.coreTraits);
                           } else {
                               console.warn(`No valid coreTraits found for role: ${person.role}`);
                           }
 
                           const cleanStyleName = person.style?.replace(/(\p{Emoji})/gu, '').trim() || '';
+                          // Find style object safely
                           const styleObj = roleData.styles?.find(s => s.name.replace(/(\p{Emoji})/gu, '').trim() === cleanStyleName);
 
-                          if (styleObj?.traits && Array.isArray(styleObj.traits)) { // Check if style traits is array
+                          // Safely add style-specific traits if they exist and are an array
+                          if (styleObj?.traits && Array.isArray(styleObj.traits)) {
                               styleObj.traits.forEach(styleTrait => {
-                                  if (!traitsToShow.some(t => t.name === styleTrait.name)) {
+                                  // Ensure styleTrait and its name exist before comparison
+                                  if (styleTrait && styleTrait.name && !traitsToShow.some(t => t.name === styleTrait.name)) {
                                       traitsToShow.push(styleTrait);
                                   }
                               });
-                          } else if (cleanStyleName) { // Only warn if a style was actually selected
+                          } else if (cleanStyleName) { // Only warn if a style was actually selected but traits are missing/invalid
                                console.warn(`No valid specific traits found for style: ${cleanStyleName}`);
                           }
 
@@ -833,29 +839,34 @@ class TrackerApp {
                               grid.innerHTML = `<p class="muted-text">No specific traits defined for ${this.escapeHTML(person.style || 'this style')}. Check core role traits or select a different style.</p>`;
                           } else {
                               // Sort and render traits
-                              traitsToShow.sort((a, b) => (a.name || '').localeCompare(b.name || '')).forEach(traitDef => {
-                                  if (!traitDef || !traitDef.name) {
-                                      console.warn("Skipping invalid trait definition:", traitDef);
-                                      return; // Skip this iteration if traitDef is invalid
-                                  }
-                                  const score = person.traits[traitDef.name] ?? '-';
-                                  const description = traitDef.desc && score !== '-' && traitDef.desc[String(score)]
-                                      ? (traitDef.desc[String(score)])
-                                      : 'N/A';
-                                  const displayName = traitDef.name.charAt(0).toUpperCase() + traitDef.name.slice(1).replace(/([A-Z])/g, ' $1');
-                                  grid.innerHTML += `
-                                    <div class="trait-detail-item">
-                                      <h4>
-                                         <button class="link-button glossary-link" data-term-key="${traitDef.name}" title="View '${this.escapeHTML(displayName)}' in Glossary">${this.escapeHTML(displayName)}</button>:
-                                         <span class="trait-score-badge">${score}/5 ${this.getEmojiForScore(score)}</span>
-                                       </h4>
-                                      <p>${this.escapeHTML(description)}</p>
-                                    </div>
-                                  `;
-                              }); // End forEach loop
+                              grid.innerHTML = traitsToShow
+                                .sort((a, b) => (a?.name || '').localeCompare(b?.name || '')) // Safer sort
+                                .map(traitDef => {
+                                    // Check if traitDef and traitDef.name are valid before proceeding
+                                    if (!traitDef || !traitDef.name) {
+                                        console.warn("Skipping invalid trait definition:", traitDef);
+                                        return ''; // Return empty string for invalid traits
+                                    }
+                                    const score = person.traits[traitDef.name] ?? '-';
+                                    // Safely access nested description
+                                    const description = traitDef.desc && score !== '-' && traitDef.desc[String(score)]
+                                        ? (traitDef.desc[String(score)])
+                                        : 'N/A';
+                                    const displayName = traitDef.name.charAt(0).toUpperCase() + traitDef.name.slice(1).replace(/([A-Z])/g, ' $1');
+                                    return `
+                                      <div class="trait-detail-item">
+                                        <h4>
+                                           <button class="link-button glossary-link" data-term-key="${traitDef.name}" title="View '${this.escapeHTML(displayName)}' in Glossary">${this.escapeHTML(displayName)}</button>:
+                                           <span class="trait-score-badge">${score}/5 ${this.getEmojiForScore(score)}</span>
+                                         </h4>
+                                        <p>${this.escapeHTML(description)}</p>
+                                      </div>
+                                    `;
+                                })
+                                .join(''); // Join the generated HTML strings
                           } // End else (traitsToShow.length > 0)
                       } // End else (roleData exists)
-                  } // <<< END OF CORRECTED BLOCK (Closing brace for the initial if (!grid) else) >>>
+                  } // End else (grid exists)
                   break; // End of case 'tab-traits'
 
               case 'tab-breakdown':
