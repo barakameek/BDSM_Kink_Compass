@@ -1,9 +1,7 @@
-// === utils.js ===
+// === utils.js === (Corrected)
 // Contains helper functions for KinkCompass, separated from core app logic and data.
 
 // Import needed DATA structures from appData.js
-// Note: We need bdsmData for the breakdown functions and achievementList for achievement helpers.
-// We also need the style suggestion data for the breakdown functions.
 import {
     bdsmData,
     achievementList,
@@ -288,7 +286,7 @@ export function escapeHTML(str) {
             .replace(/</g, '<')
             .replace(/>/g, '>')
             .replace(/"/g, '"')
-            .replace(/'/g, ''');
+            .replace(/'/g, '''); // Corrected line
 }
 
 /**
