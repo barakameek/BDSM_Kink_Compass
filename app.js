@@ -47,14 +47,14 @@ const contextHelpTexts = {
 };
 
 class TrackerApp {
- constructor() {
-    console.log("[CONSTRUCTOR] STARTING KinkCompass App (v2.8.3)..."); // Version updated
+constructor() {
+    console.log("[CONSTRUCTOR] STARTING KinkCompass App (v2.8.4 - UI Refinements)..."); // Updated version
     this.people = [];
     this.previewPerson = null;
     this.currentEditId = null;
     this.chartInstance = null;
     this.notificationTimer = null;
-    this.activeDetailModalTab = 'tab-goals';
+    this.activeDetailModalTab = 'tab-goals-journal'; // Default merged tab
     this.elementThatOpenedModal = null;
     this.lastSavedId = null;
 
@@ -69,28 +69,35 @@ class TrackerApp {
     this.styleFinderTraits = [];
     this.traitFootnotes = {};
     this.sliderDescriptions = {};
-    this.sfSliderInteracted = false; // <<< ADD THIS LINE
+    this.sfSliderInteracted = false;
 
     // --- Style Finder Data Structures (Integrated) ---
     // !!! CRITICAL: PASTE YOUR SF DATA BELOW !!!
-    this.sfTraitData = {
-        styles: { /* PASTE styles object here */
+     this.sfTraitData = {
+        styles: {
+            // PASTE the 'styles' object content from scriptbdsmfinderjs.js here
+            // Example: submissive: [ 'Style1', 'Style2', ... ], dominant: [ ... ]
              submissive: [ 'Submissive', 'Brat', 'Slave', 'Switch', 'Pet', 'Little', 'Puppy', 'Kitten', 'Princess', 'Rope Bunny', 'Masochist', 'Prey', 'Toy', 'Doll', 'Bunny', 'Servant', 'Playmate', 'Babygirl', 'Captive', 'Thrall', 'Puppet', 'Maid', 'Painslut', 'Bottom' ],
              dominant: [ 'Dominant', 'Assertive', 'Nurturer', 'Strict', 'Master', 'Mistress', 'Daddy', 'Mommy', 'Owner', 'Rigger', 'Sadist', 'Hunter', 'Trainer', 'Puppeteer', 'Protector', 'Disciplinarian', 'Caretaker', 'Sir', 'Goddess', 'Commander' ]
         },
-        subFinderTraits: [ /* PASTE subFinderTraits array content here */
+        subFinderTraits: [
+            // PASTE the *content* of the 'subFinderTraits' array here (the objects inside [])
              { name: 'obedience', desc: 'How much do you enjoy following instructions or rules given by someone you trust?' }, { name: 'rebellion', desc: 'Do you find it fun to playfully resist or tease when someone tries to guide you?' }, { name: 'service', desc: 'Does it feel rewarding to assist or do tasks that make someone else happy?' }, { name: 'playfulness', desc: 'How much do you love engaging in silly games or lighthearted mischief?' }, { name: 'sensuality', desc: 'Do soft touches, textures, or physical sensations light up your senses?' }, { name: 'exploration', desc: 'Are you excited by the idea of trying new experiences or stepping into the unknown?' }, { name: 'devotion', desc: 'Does being deeply loyal and committed to someone bring you a sense of fulfillment?' }, { name: 'innocence', desc: 'Do you enjoy feeling carefree, pure, or even a bit childlike in your interactions?' }, { name: 'mischief', desc: 'How much do you like stirring things up with a cheeky prank or playful trouble?' }, { name: 'affection', desc: 'Do you crave physical closeness, like hugs or cuddles, to feel connected?' }, { name: 'painTolerance', desc: 'Does a little sting or discomfort excite you, or do you prefer to avoid it?' }, { name: 'submissionDepth', desc: 'How much do you enjoy letting go completely and giving someone full control?' }, { name: 'dependence', desc: 'Do you feel comforted and secure when you can rely on someone else to guide you?' }, { name: 'vulnerability', desc: 'Does opening up emotionally and being exposed feel natural and right to you?' }, { name: 'adaptability', desc: 'How easily can you switch between different roles or adjust to new expectations?' }, { name: 'tidiness', desc: 'Do you take pride in keeping things neat, clean, and perfectly organized for someone?' }, { name: 'politeness', desc: 'Does being courteous and respectful in your actions come naturally to you?' }, { name: 'craving', desc: 'Do you actively seek out intense sensations or experiences that push your limits?' }, { name: 'receptiveness', desc: 'How open are you to receiving direction, sensations, or guidance from someone else?' }
         ],
-        subTraitFootnotes: { /* PASTE subTraitFootnotes object content here */
+        subTraitFootnotes: {
+            // PASTE the *content* of the 'subTraitFootnotes' object here (the key:value pairs inside {})
              obedience: "1: Rarely follows / 10: Always obeys", rebellion: "1: Very compliant / 10: Loves to resist", service: "1: Self-focused / 10: Service-driven", playfulness: "1: Serious / 10: Super playful", sensuality: "1: Not sensory / 10: Highly sensual", exploration: "1: Stays safe / 10: Seeks adventure", devotion: "1: Independent / 10: Deeply devoted", innocence: "1: Mature / 10: Very innocent", mischief: "1: Calm / 10: Mischievous", affection: "1: Distant / 10: Super affectionate", painTolerance: "1: Avoids pain / 10: Loves pain", submissionDepth: "1: Light submission / 10: Total surrender", dependence: "1: Self-reliant / 10: Loves guidance", vulnerability: "1: Guarded / 10: Fully open", adaptability: "1: Fixed role / 10: Very versatile", tidiness: "1: Messy and carefree / 10: Obsessed with order", politeness: "1: Casual and blunt / 10: Always courteous", craving: "1: Avoids intensity / 10: Seeks extreme thrills", receptiveness: "1: Closed off / 10: Fully open to input"
         },
-        domFinderTraits: [ /* PASTE domFinderTraits array content here */
+        domFinderTraits: [
+            // PASTE the *content* of the 'domFinderTraits' array here
             { name: 'authority', desc: 'Do you feel strong when you take charge?' }, { name: 'confidence', desc: 'Are you sure of your decisions?' }, { name: 'discipline', desc: 'Do you enjoy setting firm rules?' }, { name: 'boldness', desc: 'Do you dive into challenges fearlessly?' }, { name: 'care', desc: 'Do you love supporting and protecting others?' }, { name: 'empathy', desc: 'Do you tune into others’ feelings easily?' }, { name: 'control', desc: 'Do you thrive on directing every detail?' }, { name: 'creativity', desc: 'Do you enjoy crafting unique scenes?' }, { name: 'precision', desc: 'Are you careful with every step you take?' }, { name: 'intensity', desc: 'Do you bring fierce energy to what you do?' }, { name: 'sadism', desc: 'Does giving a little pain excite you?' }, { name: 'leadership', desc: 'Do you naturally guide others forward?' }, { name: 'possession', desc: 'Do you feel pride in owning what’s yours?' }, { name: 'patience', desc: 'Are you calm while teaching or training?' }, { name: 'dominanceDepth', desc: 'Do you crave total power in a scene?' }
         ],
-        domTraitFootnotes: { /* PASTE domTraitFootnotes object content here */
+        domTraitFootnotes: {
+            // PASTE the *content* of the 'domTraitFootnotes' object here
              authority: "1: Gentle / 10: Very commanding", confidence: "1: Hesitant / 10: Rock-solid", discipline: "1: Relaxed / 10: Strict", boldness: "1: Cautious / 10: Fearless", care: "1: Detached / 10: Deeply caring", empathy: "1: Distant / 10: Highly intuitive", control: "1: Hands-off / 10: Total control", creativity: "1: Routine / 10: Very creative", precision: "1: Casual / 10: Meticulous", intensity: "1: Soft / 10: Intense", sadism: "1: Avoids pain / 10: Enjoys giving pain", leadership: "1: Follower / 10: Natural leader", possession: "1: Shares / 10: Very possessive", patience: "1: Impatient / 10: Very patient", dominanceDepth: "1: Light control / 10: Full dominance"
         },
-        sliderDescriptions: { /* PASTE sliderDescriptions object content here */
+        sliderDescriptions: {
+            // PASTE the *content* of the 'sliderDescriptions' object here
             obedience: [ "You dodge orders like a breeze!", "Rules? You’re too free for that!", "You’ll follow if it’s fun!", "A little “yes” slips out sometimes!", "You’re cool with gentle guidance!", "Following feels kinda nice!", "You like pleasing when asked!", "Obeying’s your quiet joy!", "You love a sweet “please”!", "You glow when you say “yes”!" ], rebellion: [ "You’re too sweet to say no!", "A tiny “nah” sneaks out!", "You nudge rules with a smile!", "Teasing’s your little game!", "Half yes, half no—cute!", "You push back with charm!", "Defiance is your sparkle!", "You love a playful “no”!", "Rebel vibes all the way!", "You’re a cheeky star!" ], service: [ "Helping? You’re too chill!", "A quick favor’s enough!", "You help if they’re sweet!", "You pitch in when it’s easy!", "Serving’s okay sometimes!", "You like making them smile!", "Helping’s your happy place!", "You love a kind task!", "You’re a service sweetie!", "Caring’s your superpower!" ], playfulness: [ "Serious is your vibe!", "A giggle slips out!", "You play if it’s light!", "Half serious, half silly!", "You’re warming up to fun!", "Playtime’s your joy!", "You bounce with glee!", "Silly’s your middle name!", "You’re a playful whirlwind!", "Games are your world!" ], sensuality: [ "Touch? Not your thing!", "A soft pat’s okay!", "You like a little feel!", "Textures are kinda neat!", "You’re into soft vibes!", "Silk makes you happy!", "You love a sensory tickle!", "Touch is your bliss!", "You’re all about feels!", "Sensory queen!" ], exploration: [ "Safe is your spot!", "A tiny step out—shy!", "You peek at new stuff!", "You’ll try if it’s safe!", "Half cozy, half curious!", "New things excite you!", "You chase the unknown!", "Adventure’s your jam!", "You’re a bold explorer!", "Nothing stops you!" ], devotion: [ "Free and solo!", "A bit of heart shows!", "You care if they’re near!", "Half free, half true!", "You’re warming up!", "Devotion’s your glow!", "You’re all in soft!", "Loyalty’s your core!", "You’re a devotion gem!", "Total soulmate!" ], innocence: [ "Wise beyond your years!", "A bit of wonder peeks out!", "You’re half grown, half kid!", "Silly feels nice sometimes!", "You’re dipping into cute!", "Innocence is your vibe!", "You’re a sweet dreamer!", "Giggles are your song!", "You’re pure sunshine!", "Total kid at heart!" ], mischief: [ "Too good for tricks!", "A tiny prank slips!", "You stir if it’s safe!", "Half calm, half cheeky!", "You’re a sneaky spark!", "Mischief’s your game!", "You love a little chaos!", "Trouble’s your friend!", "You’re a mischief pro!", "Chaos queen!" ], affection: [ "Hugs? Not really!", "A quick cuddle’s fine!", "You like a soft touch!", "Half aloof, half warm!", "You’re into snuggles!", "Cuddles are your joy!", "You love closeness!", "Affection’s your glow!", "You’re a hug star!", "Total love bug!" ], painTolerance: [ "You tire out quick!", "A little push is enough!", "You last if it’s fun!", "You’re steady for a bit!", "Halfway there—nice!", "You keep going strong!", "Endurance is your thing!", "You’re tough and ready!", "You never stop—wow!", "Marathon champ!" ], submissionDepth: [ "You’re free as a bird!", "A little give peeks out!", "You bend if it’s chill!", "Half you, half them!", "You’re easing in!", "Surrender’s kinda fun!", "You dive in soft!", "Control’s theirs—yay!", "You’re all theirs!", "Total trust star!" ], dependence: [ "Solo’s your jam!", "A lean slips in!", "You lean if they’re nice!", "Half free, half clingy!", "You’re okay with help!", "Relying feels good!", "You love their lead!", "They’re your rock!", "You’re a lean-in pro!", "Total trust buddy!" ], vulnerability: [ "Walls up high!", "A peek slips out!", "You share if safe!", "Half guarded, half open!", "You’re softening up!", "Open’s your vibe!", "You bare it soft!", "Heart’s wide open!", "You’re a trust gem!", "Total soul sharer!" ], adaptability: [ "One way—you’re set!", "A tiny switch is fine!", "You bend a little!", "Half fixed, half fluid!", "You’re okay with change!", "Switching’s easy!", "You roll with it!", "Flex is your strength!", "You flip like a pro!", "Total chameleon!" ], tidiness: [ "Chaos is your friend!", "A little mess is fine!", "You tidy if asked nicely!", "Order’s okay sometimes!", "You like things neat-ish!", "Cleanliness feels good!", "You love a tidy space!", "Order is your joy!", "Spotless is your vibe!", "Perfection in every corner!" ], politeness: [ "You’re blunt and bold!", "A bit gruff but sweet!", "Polite if it’s easy!", "You’re nice when needed!", "Courtesy’s your thing!", "You’re a polite gem!", "Manners shine bright!", "Respect is your core!", "You’re super courteous!", "Politeness queen!" ], craving: [ "Calm is your zone!", "A tiny thrill is enough!", "You dip into intensity!", "Half chill, half wild!", "You like a strong spark!", "Intensity calls you!", "You chase the edge!", "Thrills are your fuel!", "You crave the extreme!", "Limitless seeker!" ], receptiveness: [ "You’re your own guide!", "A bit open if safe!", "You listen if it’s clear!", "Half closed, half open!", "You’re warming up!", "Openness feels right!", "You take it all in!", "Guidance is welcome!", "You’re a receiver pro!", "Totally in tune!" ], authority: [ "Soft and shy!", "A little lead peeks!", "You guide if asked!", "Half gentle, half firm!", "You’re stepping up!", "Authority’s your vibe!", "You lead with ease!", "You’re a strong guide!", "Boss mode on!", "Total commander!" ], confidence: [ "Quiet and unsure!", "A bit of bold shows!", "You’re sure if it’s easy!", "Half shy, half steady!", "You’re growing bold!", "Confidence shines!", "You trust your gut!", "You’re rock solid!", "Bold and bright!", "Total powerhouse!" ], discipline: [ "Free and wild!", "A rule slips in!", "You set soft lines!", "Half loose, half tight!", "You’re liking order!", "Discipline’s your jam!", "You keep it firm!", "Rules are your strength!", "You’re super strict!", "Total control!" ], boldness: [ "Careful and calm!", "A risk peeks out!", "You leap if safe!", "Half shy, half daring!", "You’re getting brave!", "Boldness is you!", "You dive right in!", "Fearless vibes!", "You’re a bold star!", "Total daredevil!" ], care: [ "Cool and aloof!", "A care slips out!", "You help if asked!", "Half chill, half warm!", "You’re a soft guide!", "Nurturing’s your glow!", "You protect with love!", "Care is your core!", "You’re a warm star!", "Total nurturer!" ], empathy: [ "Distant and chill!", "A feel peeks out!", "You get it if clear!", "Half aloof, half tuned!", "You’re sensing more!", "Empathy’s your gift!", "You feel it all!", "You’re in sync!", "You’re a heart reader!", "Total intuitive!" ], control: [ "Free and open!", "A claim slips out!", "You hold if sweet!", "Half share, half mine!", "You’re liking it!", "Control’s your vibe!", "You claim with pride!", "Yours is yours!", "You’re a keeper!", "Total owner!" ], creativity: [ "Simple’s your way!", "A spark pops up!", "You craft if quick!", "Half plain, half wild!", "You’re sparking up!", "Creativity flows!", "You make magic!", "Ideas are your joy!", "You’re a vision star!", "Total creator!" ], precision: [ "Loose and free!", "A bit neat’s fine!", "You care if fast!", "Half sloppy, half sharp!", "You’re getting exact!", "Precision’s your thing!", "You nail it all!", "Every step’s perfect!", "You’re a detail whiz!", "Total master!" ], intensity: [ "Soft and mellow!", "A flare sneaks out!", "You heat if safe!", "Half calm, half fierce!", "You’re turning up!", "Intensity’s your spark!", "You bring the blaze!", "Fierce is your vibe!", "You’re a fire star!", "Total storm!" ], sadism: [ "Soft and sweet!", "A tease slips in!", "You push a little!", "Half gentle, half wild!", "You’re testing it!", "Pain’s your play!", "You love the sting!", "Thrill’s your game!", "You’re a spicy star!", "Total edge master!" ], leadership: [ "Soft and shy!", "A lead peeks out!", "You guide if asked!", "Half gentle, half firm!", "You’re stepping up!", "Leading’s your vibe!", "You steer with ease!", "You’re a bold guide!", "Leader mode on!", "Total captain!" ], possession: [ "Free and open!", "A claim slips out!", "You hold if sweet!", "Half share, half mine!", "You’re liking it!", "Possession’s your vibe!", "You claim with pride!", "Yours is yours!", "You’re a keeper!", "Total owner!" ], patience: [ "Fast and now!", "A wait slips in!", "You chill if quick!", "Half rush, half calm!", "You’re cooling down!", "Patience is you!", "You wait with grace!", "Calm’s your strength!", "You’re a zen star!", "Total peace!" ], dominanceDepth: [ "Light and free!", "A hold peeks out!", "You lead if easy!", "Half soft, half firm!", "You’re taking charge!", "Power’s your glow!", "You rule with ease!", "Control’s your core!", "You’re a power gem!", "Total ruler!" ]
         },
         traitExplanations: { /* PASTE traitExplanations object content here */
@@ -104,79 +111,15 @@ class TrackerApp {
         }
     };
      // Apply randomization after pasting the array content
-     this.sfTraitData.subFinderTraits.sort(() => 0.5 - Math.random());
-     this.sfTraitData.domFinderTraits.sort(() => 0.5 - Math.random());
+    if (this.sfTraitData.subFinderTraits) this.sfTraitData.subFinderTraits.sort(() => 0.5 - Math.random());
+    if (this.sfTraitData.domFinderTraits) this.sfTraitData.domFinderTraits.sort(() => 0.5 - Math.random());
 
     console.log("[CONSTRUCTOR] Integrated Style Finder data structures.");
 
-
     // --- Element Mapping ---
     console.log("[CONSTRUCTOR] Mapping elements...");
-    this.elements = {
-      formSection: document.getElementById('form-section'),
-      name: document.getElementById('name'),
-      avatarDisplay: document.getElementById('avatar-display'),
-      avatarInput: document.getElementById('avatar-input'),
-      avatarPicker: document.querySelector('.avatar-picker'),
-      role: document.getElementById('role'),
-      style: document.getElementById('style'),
-      styleExploreLink: document.getElementById('style-explore-link'),
-      formStyleFinderLink: document.getElementById('form-style-finder-link'),
-      traitsContainer: document.getElementById('traits-container'),
-      traitsMessage: document.getElementById('traits-message'),
-      traitInfoPopup: document.getElementById('trait-info-popup'),
-      traitInfoClose: document.getElementById('trait-info-close'),
-      traitInfoTitle: document.getElementById('trait-info-title'),
-      traitInfoBody: document.getElementById('trait-info-body'),
-      contextHelpPopup: document.getElementById('context-help-popup'),
-      contextHelpClose: document.getElementById('context-help-close'),
-      contextHelpTitle: document.getElementById('context-help-title'),
-      contextHelpBody: document.getElementById('context-help-body'),
-      save: document.getElementById('save'),
-      clearForm: document.getElementById('clear-form'),
-      peopleList: document.getElementById('people-list'),
-      livePreview: document.getElementById('live-preview'),
-      modal: document.getElementById('detail-modal'),
-      modalBody: document.getElementById('modal-body'),
-      modalTabs: document.getElementById('modal-tabs'),
-      modalClose: document.getElementById('modal-close'),
-      resourcesBtn: document.getElementById('resources-btn'),
-      resourcesModal: document.getElementById('resources-modal'),
-      resourcesClose: document.getElementById('resources-close'),
-      resourcesBody: document.getElementById('resources-body'),
-      glossaryBtn: document.getElementById('glossary-btn'),
-      glossaryModal: document.getElementById('glossary-modal'),
-      glossaryClose: document.getElementById('glossary-close'),
-      glossaryBody: document.getElementById('glossary-body'),
-      styleDiscoveryBtn: document.getElementById('style-discovery-btn'),
-      styleDiscoveryModal: document.getElementById('style-discovery-modal'),
-      styleDiscoveryClose: document.getElementById('style-discovery-close'),
-      styleDiscoveryRoleFilter: document.getElementById('style-discovery-role'),
-      styleDiscoveryBody: document.getElementById('style-discovery-body'),
-      themesBtn: document.getElementById('themes-btn'),
-      themesModal: document.getElementById('themes-modal'),
-      themesClose: document.getElementById('themes-close'),
-      themesBody: document.getElementById('themes-body'),
-      achievementsBtn: document.getElementById('achievements-btn'),
-      achievementsModal: document.getElementById('achievements-modal'),
-      achievementsClose: document.getElementById('achievements-close'),
-      achievementsBody: document.getElementById('achievements-body'),
-      welcomeModal: document.getElementById('welcome-modal'),
-      welcomeClose: document.getElementById('welcome-close'),
-      exportBtn: document.getElementById('export-btn'),
-      importBtn: document.getElementById('import-btn'),
-      importFileInput: document.getElementById('import-file-input'),
-      themeToggle: document.getElementById('theme-toggle'),
-      styleFinderTriggerBtn: document.getElementById('style-finder-trigger-btn'),
-      sfModal: document.getElementById('style-finder-modal'),
-      sfCloseBtn: document.getElementById('sf-close-style-finder'),
-      sfProgressTracker: document.getElementById('sf-progress-tracker'),
-      sfStepContent: document.getElementById('sf-step-content'),
-      sfFeedback: document.getElementById('sf-feedback'),
-      sfDashboard: document.getElementById('sf-dashboard'),
-      detailModalTitle: document.getElementById('detail-modal-title'),
-      formTitle: document.getElementById('form-title'),
-      dailyChallengeArea: document.getElementById('daily-challenge-area'),
+    this.elements = { /* ... (Same as before, ensure all IDs match HTML) ... */
+        formSection: document.getElementById('form-section'), name: document.getElementById('name'), avatarDisplay: document.getElementById('avatar-display'), avatarInput: document.getElementById('avatar-input'), avatarPicker: document.querySelector('.avatar-picker'), role: document.getElementById('role'), style: document.getElementById('style'), styleExploreLink: document.getElementById('style-explore-link'), formStyleFinderLink: document.getElementById('form-style-finder-link'), traitsContainer: document.getElementById('traits-container'), traitsMessage: document.getElementById('traits-message'), traitInfoPopup: document.getElementById('trait-info-popup'), traitInfoClose: document.getElementById('trait-info-close'), traitInfoTitle: document.getElementById('trait-info-title'), traitInfoBody: document.getElementById('trait-info-body'), contextHelpPopup: document.getElementById('context-help-popup'), contextHelpClose: document.getElementById('context-help-close'), contextHelpTitle: document.getElementById('context-help-title'), contextHelpBody: document.getElementById('context-help-body'), save: document.getElementById('save'), clearForm: document.getElementById('clear-form'), peopleList: document.getElementById('people-list'), livePreview: document.getElementById('live-preview'), modal: document.getElementById('detail-modal'), modalBody: document.getElementById('modal-body'), modalTabs: document.getElementById('modal-tabs'), modalClose: document.getElementById('modal-close'), resourcesBtn: document.getElementById('resources-btn'), resourcesModal: document.getElementById('resources-modal'), resourcesClose: document.getElementById('resources-close'), resourcesBody: document.getElementById('resources-body'), glossaryBtn: document.getElementById('glossary-btn'), glossaryModal: document.getElementById('glossary-modal'), glossaryClose: document.getElementById('glossary-close'), glossaryBody: document.getElementById('glossary-body'), styleDiscoveryBtn: document.getElementById('style-discovery-btn'), styleDiscoveryModal: document.getElementById('style-discovery-modal'), styleDiscoveryClose: document.getElementById('style-discovery-close'), styleDiscoveryRoleFilter: document.getElementById('style-discovery-role'), styleDiscoveryBody: document.getElementById('style-discovery-body'), themesBtn: document.getElementById('themes-btn'), themesModal: document.getElementById('themes-modal'), themesClose: document.getElementById('themes-close'), themesBody: document.getElementById('themes-body'), achievementsBtn: document.getElementById('achievements-btn'), achievementsModal: document.getElementById('achievements-modal'), achievementsClose: document.getElementById('achievements-close'), achievementsBody: document.getElementById('achievements-body'), welcomeModal: document.getElementById('welcome-modal'), welcomeClose: document.getElementById('welcome-close'), exportBtn: document.getElementById('export-btn'), importBtn: document.getElementById('import-btn'), importFileInput: document.getElementById('import-file-input'), themeToggle: document.getElementById('theme-toggle'), styleFinderTriggerBtn: document.getElementById('style-finder-trigger-btn'), sfModal: document.getElementById('style-finder-modal'), sfCloseBtn: document.getElementById('sf-close-style-finder'), sfProgressTracker: document.getElementById('sf-progress-tracker'), sfStepContent: document.getElementById('sf-step-content'), sfFeedback: document.getElementById('sf-feedback'), sfDashboard: document.getElementById('sf-dashboard'), detailModalTitle: document.getElementById('detail-modal-title'), formTitle: document.getElementById('form-title'), dailyChallengeArea: document.getElementById('daily-challenge-area')
     };
     console.log(`[CONSTRUCTOR] Elements mapped. Basic check: peopleList found = ${!!this.elements.peopleList}, role dropdown found = ${!!this.elements.role}`);
 
@@ -1187,35 +1130,58 @@ class TrackerApp {
     } // End sfStartOver
 
       sfComputeScores(temporary = false) {
-        // if(!temporary) console.log("[SF_COMPUTE_SCORES] Calculating final scores."); // Noisy
-        let scores = {}; if (!this.styleFinderRole) { console.warn("[SF_COMPUTE_SCORES] Role not set."); return scores;}
-        const relevantStyles = this.sfTraitData.styles[this.styleFinderRole]; if (!relevantStyles) { console.error(`[SF_COMPUTE_SCORES] Style list missing for role ${this.styleFinderRole}.`); return scores; }
-        relevantStyles.forEach(style => { scores[style] = 0; });
+        if(!temporary) console.log("[SF_COMPUTE_SCORES] Calculating final scores.");
+        let scores = {};
+        if (!this.styleFinderRole) {
+            console.warn("[SF_COMPUTE_SCORES] Cannot compute scores, role not set.");
+            return scores;
+        }
+
+        const relevantStyles = this.sfTraitData.styles[this.styleFinderRole];
+        if (!relevantStyles) {
+             console.error(`[SF_COMPUTE_SCORES] Style list not found for role: ${this.styleFinderRole}`);
+             return scores;
+        }
+
+        relevantStyles.forEach(style => { scores[style] = 0; }); // Initialize scores
 
         // !!! CRITICAL: Ensure this object is correctly populated !!!
         const styleKeyTraits = {
-            'Submissive': ['obedience', 'submissionDepth', 'vulnerability'], 'Brat': ['rebellion', 'mischief', 'playfulness'], 'Slave': ['service', 'devotion', 'submissionDepth'], 'Switch': ['adaptability', 'exploration', 'playfulness'], 'Pet': ['affection', 'playfulness', 'devotion'], 'Little': ['innocence', 'dependence', 'affection'], 'Puppy': ['playfulness', 'devotion', 'affection'], 'Kitten': ['sensuality', 'mischief', 'affection'], 'Princess': ['sensuality', 'innocence', 'dependence'], 'Rope Bunny': ['sensuality', 'exploration', 'submissionDepth'], 'Masochist': ['painTolerance', 'submissionDepth', 'vulnerability'], 'Prey': ['exploration', 'vulnerability', 'rebellion'], 'Toy': ['submissionDepth', 'adaptability', 'service'], 'Doll': ['vulnerability', 'dependence', 'sensuality'], 'Bunny': ['playfulness', 'innocence', 'affection'], 'Servant': ['service', 'obedience', 'devotion'], 'Playmate': ['playfulness', 'mischief', 'exploration'], 'Babygirl': ['dependence', 'innocence', 'affection'], 'Captive': ['submissionDepth', 'vulnerability', 'exploration'], 'Thrall': ['devotion', 'submissionDepth', 'dependence'], 'Puppet': ['receptiveness', 'adaptability'], 'Maid': ['tidiness', 'politeness'], 'Painslut': ['painTolerance', 'craving'], 'Bottom': ['receptiveness', 'painTolerance'],
-            'Dominant': ['authority', 'confidence', 'leadership'], 'Assertive': ['boldness', 'intensity', 'authority'], 'Nurturer': ['care', 'empathy', 'patience'], 'Strict': ['discipline', 'control', 'precision'], 'Master': ['authority', 'possession', 'dominanceDepth'], 'Mistress': ['confidence', 'creativity', 'dominanceDepth'], 'Daddy': ['care', 'possession', 'empathy'], 'Mommy': ['care', 'patience', 'empathy'], 'Owner': ['possession', 'control', 'dominanceDepth'], 'Rigger': ['creativity', 'precision', 'control'], 'Sadist': ['sadism', 'intensity', 'control'], 'Hunter': ['boldness', 'leadership', 'intensity'], 'Trainer': ['patience', 'discipline', 'leadership'], 'Puppeteer': ['control', 'creativity', 'precision'], 'Protector': ['care', 'authority', 'possession'], 'Disciplinarian': ['discipline', 'authority', 'precision'], 'Caretaker': ['care', 'empathy', 'patience'], 'Sir': ['authority', 'confidence', 'leadership'], 'Goddess': ['confidence', 'intensity', 'dominanceDepth'], 'Commander': ['authority', 'intensity', 'dominanceDepth']
+             'Submissive': ['obedience', 'submissionDepth', 'vulnerability'], 'Brat': ['rebellion', 'mischief', 'playfulness'], 'Slave': ['service', 'devotion', 'submissionDepth'], 'Switch': ['adaptability', 'exploration', 'playfulness'], 'Pet': ['affection', 'playfulness', 'devotion'], 'Little': ['innocence', 'dependence', 'affection'], 'Puppy': ['playfulness', 'devotion', 'affection'], 'Kitten': ['sensuality', 'mischief', 'affection'], 'Princess': ['sensuality', 'innocence', 'dependence'], 'Rope Bunny': ['sensuality', 'exploration', 'submissionDepth'], 'Masochist': ['painTolerance', 'submissionDepth', 'vulnerability'], 'Prey': ['exploration', 'vulnerability', 'rebellion'], 'Toy': ['submissionDepth', 'adaptability', 'service'], 'Doll': ['vulnerability', 'dependence', 'sensuality'], 'Bunny': ['playfulness', 'innocence', 'affection'], 'Servant': ['service', 'obedience', 'devotion'], 'Playmate': ['playfulness', 'mischief', 'exploration'], 'Babygirl': ['dependence', 'innocence', 'affection'], 'Captive': ['submissionDepth', 'vulnerability', 'exploration'], 'Thrall': ['devotion', 'submissionDepth', 'dependence'], 'Puppet': ['receptiveness', 'adaptability'], 'Maid': ['tidiness', 'politeness'], 'Painslut': ['painTolerance', 'craving'], 'Bottom': ['receptiveness', 'painTolerance'],
+             'Dominant': ['authority', 'confidence', 'leadership'], 'Assertive': ['boldness', 'intensity', 'authority'], 'Nurturer': ['care', 'empathy', 'patience'], 'Strict': ['discipline', 'control', 'precision'], 'Master': ['authority', 'possession', 'dominanceDepth'], 'Mistress': ['confidence', 'creativity', 'dominanceDepth'], 'Daddy': ['care', 'possession', 'empathy'], 'Mommy': ['care', 'patience', 'empathy'], 'Owner': ['possession', 'control', 'dominanceDepth'], 'Rigger': ['creativity', 'precision', 'control'], 'Sadist': ['sadism', 'intensity', 'control'], 'Hunter': ['boldness', 'leadership', 'intensity'], 'Trainer': ['patience', 'discipline', 'leadership'], 'Puppeteer': ['control', 'creativity', 'precision'], 'Protector': ['care', 'authority', 'possession'], 'Disciplinarian': ['discipline', 'authority', 'precision'], 'Caretaker': ['care', 'empathy', 'patience'], 'Sir': ['authority', 'confidence', 'leadership'], 'Goddess': ['confidence', 'intensity', 'dominanceDepth'], 'Commander': ['authority', 'intensity', 'dominanceDepth']
         };
 
+        let answeredTraitsCount = 0;
         Object.keys(this.styleFinderAnswers.traits).forEach(trait => {
             const rating = this.styleFinderAnswers.traits[trait] || 0;
+             if (rating > 0) answeredTraitsCount++;
+
              relevantStyles.forEach(style => {
                  const keyTraitsForStyle = styleKeyTraits[style] || [];
-                 if (!keyTraitsForStyle) console.warn(`[SF_COMPUTE_SCORES] Missing key traits definition for style: ${style}`);
-                 if (keyTraitsForStyle.includes(trait)) { scores[style] += rating; if (rating >= 9) scores[style] += 2; else if (rating <= 2) scores[style] -= 1; }
+                  if (!keyTraitsForStyle && !temporary) console.warn(`[SF_COMPUTE_SCORES] Missing key traits definition for style: ${style}`); // Log only on final calculation
+                 if (keyTraitsForStyle.includes(trait)) {
+                     scores[style] += rating;
+                     if (rating >= 9) scores[style] += 2;
+                     else if (rating <= 2) scores[style] -= 1;
+                 }
              });
         });
 
-          let highestScore = 0;
-          Object.values(scores).forEach(score => {
-              if (score > highestScore) highestScore = score;
-          });
+        if (!temporary) console.log("[SF_COMPUTE_SCORES] Raw scores:", scores);
 
-         if (highestScore > 0 && !temporary) {
+        let highestScore = 0;
+        Object.values(scores).forEach(score => {
+            if (score > highestScore) highestScore = score;
+        });
+
+        if (highestScore > 0 && !temporary) {
+             console.log("[SF_COMPUTE_SCORES] Normalizing scores based on highest score:", highestScore);
              Object.keys(scores).forEach(style => {
                  scores[style] = Math.max(0, (scores[style] / highestScore) * 100);
              });
+             console.log("[SF_COMPUTE_SCORES] Normalized scores:", scores);
+         } else if (!temporary) {
+              console.log("[SF_COMPUTE_SCORES] No normalization applied (highest score is 0 or temporary calculation).");
          }
         return scores;
     } // End sfComputeScores
