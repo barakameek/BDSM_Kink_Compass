@@ -750,18 +750,22 @@ class TrackerApp {
       this.openModal(this.elements.modal);
   }
 
-  renderDetailTabContent(person, tabId, contentElement) {
-      if (!person || !contentElement) return;
-      console.log(`Rendering content for tab: ${tabId}`);
-      contentElement.innerHTML = ''; // Clear loading message
+    renderDetailTabContent(person, tabId, contentElement) {
+      if (!person || !contentElement) {
+          console.error("renderDetailTabContent: Missing person or contentElement.");
+          return;
+      }
+      console.log(`Rendering content for tab: ${tabId} for person ID: ${person.id}`);
+      contentElement.innerHTML = ''; // Clear loading message or previous content
 
       try {
           switch (tabId) {
 
               case 'tab-goals':
+                  // --- Goals Tab ---
                   contentElement.innerHTML = `
                     <section class="goals-section">
-                      <h3>Goals <button class="context-help-btn small-btn" data-help-key="goalsSectionInfo" aria-label="Help with Goals Section">?</button></h3>
+                      <h3>Goals <button type="button" class="context-help-btn small-btn" data-help-key="goalsSectionInfo" aria-label="Help with Goals Section">?</button></h3>
                       <ul id="goal-list-${person.id}"></ul>
                       <form class="add-goal-form" id="add-goal-form-${person.id}" onsubmit="event.preventDefault(); kinkCompassApp.addGoal(${person.id}, this);">
                         <label for="new-goal-${person.id}" class="sr-only">New Goal:</label>
@@ -778,6 +782,7 @@ class TrackerApp {
                       goalListUl.innerHTML = this.renderGoalList(person);
                   } else {
                       console.error(`Could not find goal list UL element for person ${person.id}`);
+                      contentElement.innerHTML += '<p class="error-text">Error displaying goals list.</p>';
                   }
                   // Render Goal Alignment Hints
                   const alignmentHints = this.getGoalAlignmentHints(person);
@@ -788,14 +793,18 @@ class TrackerApp {
                       } else {
                           hintsContainer.innerHTML = `<p class="muted-text">Add some active goals to see alignment insights!</p>`;
                       }
+                  } else {
+                       console.error(`Could not find goal hints container for person ${person.id}`);
+                       contentElement.innerHTML += '<p class="error-text">Error displaying goal hints.</p>';
                   }
                   break; // End of case 'tab-goals'
 
 
               case 'tab-traits':
+                   // --- Traits Tab ---
                   contentElement.innerHTML = `
                       <section class="trait-details-section">
-                        <h3>Trait Details <button class="context-help-btn small-btn" data-help-key="traitsSectionInfo" aria-label="Help with Traits Section">?</button></h3>
+                        <h3>Trait Details <button type="button" class="context-help-btn small-btn" data-help-key="traitsSectionInfo" aria-label="Help with Traits Section">?</button></h3>
                         <div class="trait-details-grid"></div>
                         <p class="muted-text" style="margin-top:1em;">Check the 'Breakdown' tab for trait synergies and focus ideas!</p>
                       </section>`;
@@ -852,10 +861,11 @@ class TrackerApp {
                                         ? (traitDef.desc[String(score)])
                                         : 'N/A';
                                     const displayName = traitDef.name.charAt(0).toUpperCase() + traitDef.name.slice(1).replace(/([A-Z])/g, ' $1');
+                                    // Use button for glossary link for better accessibility/event handling
                                     return `
                                       <div class="trait-detail-item">
                                         <h4>
-                                           <button class="link-button glossary-link" data-term-key="${traitDef.name}" title="View '${this.escapeHTML(displayName)}' in Glossary">${this.escapeHTML(displayName)}</button>:
+                                           <button type="button" class="link-button glossary-link" data-term-key="${traitDef.name}" title="View '${this.escapeHTML(displayName)}' in Glossary">${this.escapeHTML(displayName)}</button>:
                                            <span class="trait-score-badge">${score}/5 ${this.getEmojiForScore(score)}</span>
                                          </h4>
                                         <p>${this.escapeHTML(description)}</p>
@@ -868,13 +878,16 @@ class TrackerApp {
                   } // End else (grid exists)
                   break; // End of case 'tab-traits'
 
+
               case 'tab-breakdown':
+                   // --- Breakdown Tab ---
                   const getBreakdown = person.role === 'dominant' ? getDomBreakdown : getSubBreakdown;
-                  // Need to handle potential errors if style/traits are missing
                   let breakdownData = { strengths: "N/A", improvements: "N/A" };
-                  if (person.style && person.traits) {
+                  let couldGetBreakdown = false; // Flag to check if we even attempted
+
+                  if (person.style && person.traits && Object.keys(person.traits).length > 0) { // Check traits exist
+                     couldGetBreakdown = true;
                      try {
-                         // Ensure traits are passed correctly (assuming person.traits is {traitName: score})
                          const traitsForBreakdown = person.traits || {};
                          breakdownData = getBreakdown(person.style, traitsForBreakdown);
                      } catch (e) {
@@ -893,50 +906,49 @@ class TrackerApp {
                   if (synergyHintsResult.length > 0) {
                       synergyHTML += `<h4>✨ Trait Synergies & Dynamics:</h4><ul>`;
                       synergyHintsResult.forEach(hint => {
-                           // Ensure hint.text exists before escaping
                            synergyHTML += `<li class="${hint.type}-hint">${this.escapeHTML(hint.text || '')}</li>`;
                       });
                       synergyHTML += `</ul><hr>`;
+                  } else if (couldGetBreakdown) { // Only show if we had traits to check
+                      synergyHTML = `<p class="muted-text">No specific trait synergies noted based on current scores.</p><hr>`;
                   }
-                  // Get Proactive Suggestions
+
+                  // Get Proactive Suggestions (Simplified - relies on breakdown string parsing)
                   let suggestionHTML = '';
-                  const lowTraits = Object.entries(person.traits || {})
-                      .filter(([, score]) => parseInt(score, 10) <= 2)
-                      .sort((a, b) => a[1] - b[1])
-                      .slice(0, 2);
+                  if (couldGetBreakdown) { // Only suggest if we have traits
+                      const lowTraits = Object.entries(person.traits || {})
+                          .filter(([, score]) => parseInt(score, 10) <= 2)
+                          .sort((a, b) => a[1] - b[1])
+                          .slice(0, 2);
 
-                  if (lowTraits.length > 0) {
-                       suggestionHTML += `<h4>🌱 Focus Ideas for Growth:</h4><ul>`;
-                       lowTraits.forEach(([traitName, score]) => {
-                            let suggestionText = `Consider focusing on ${traitName}.`; // Fallback
-                            try {
-                                // Use the breakdown data we already fetched
-                                if (breakdownData && breakdownData.improvements) {
-                                     // Attempt to parse the suggestion from the improvements string
-                                    const improvementsMatch = breakdownData.improvements.match(/🎯 \*\*(.*?)\*\* (.*)/);
-                                    if (improvementsMatch && improvementsMatch[2]) {
-                                        // Check if this specific improvement relates to the current low trait
-                                        // This is heuristic - might need refinement based on how paraphrasing_*.js formats output
-                                        if (breakdownData.improvements.toLowerCase().includes(traitName.toLowerCase())) {
-                                            suggestionText = improvementsMatch[2];
-                                        } else {
-                                             suggestionText = `Explore ways to nurture your ${traitName} (currently ${score}/5). See general tips above.`;
-                                        }
-                                    } else {
-                                        suggestionText = `Explore ways to nurture your ${traitName} (currently ${score}/5).`;
-                                    }
+                      if (lowTraits.length > 0 && breakdownData.improvements && breakdownData.improvements !== 'N/A' && !breakdownData.improvements.startsWith("Error")) {
+                           suggestionHTML += `<h4>🌱 Focus Ideas for Growth:</h4><ul>`;
+                           let suggestionsFound = 0;
+                           lowTraits.forEach(([traitName, score]) => {
+                                // Attempt to find suggestion from the breakdown text
+                                const regex = new RegExp(`🎯 \\*\\*(.*?)\\*\\* (.*?)`); // More robust regex might be needed
+                                const match = breakdownData.improvements.match(regex);
+                                let suggestionText = `Explore ways to nurture your ${traitName} (currently ${score}/5).`; // Default
+
+                                if (match && match[2] && breakdownData.improvements.toLowerCase().includes(traitName.toLowerCase())) {
+                                    suggestionText = match[2]; // Use the parsed suggestion if relevant
+                                    suggestionsFound++;
                                 } else {
-                                     suggestionText = `Explore ways to nurture your ${traitName} (currently ${score}/5).`;
+                                    // If no direct match, try getting L1/L2 suggestions (Needs rework of paraphrasing files)
+                                    // Placeholder:
+                                     console.warn(`Could not extract specific suggestion for low trait '${traitName}' from breakdown.`);
                                 }
-                            } catch (suggestionError) {
-                                console.warn("Error processing proactive suggestion:", suggestionError);
-                                suggestionText = `Explore ways to nurture your ${traitName} (currently ${score}/5).`;
-                            }
-                           suggestionHTML += `<li>${this.escapeHTML(suggestionText)}</li>`;
-                       });
-                       suggestionHTML += `</ul><hr>`;
-                  }
 
+                                suggestionHTML += `<li>${this.escapeHTML(suggestionText)}</li>`;
+                           });
+                           suggestionHTML += `</ul><hr>`;
+                            if (suggestionsFound === 0) { // If loop ran but no suggestions extracted
+                                suggestionHTML = `<h4>🌱 Focus Ideas for Growth:</h4><p class="muted-text">Consider the general growth tips above, focusing on traits rated 1 or 2.</p><hr>`;
+                            }
+                      } else if (lowTraits.length > 0) { // Low traits exist but no breakdown improvements available
+                           suggestionHTML = `<h4>🌱 Focus Ideas for Growth:</h4><p class="muted-text">Consider exploring traits you rated 1 or 2.</p><hr>`;
+                      }
+                  } // End if(couldGetBreakdown) for suggestions
 
                   contentElement.innerHTML = `
                     <section class="style-breakdown-section">
@@ -961,14 +973,15 @@ class TrackerApp {
 
 
               case 'tab-history':
+                  // --- History Tab ---
                   contentElement.innerHTML = `
                     <section class="history-section">
-                      <h3> History Snapshots <button class="context-help-btn small-btn" data-help-key="historyChartInfo" aria-label="Help with History Chart">?</button> </h3>
+                      <h3> History Snapshots <button type="button" class="context-help-btn small-btn" data-help-key="historyChartInfo" aria-label="Help with History Chart">?</button> </h3>
                       <div class="history-chart-container" id="history-chart-container-${person.id}">
                         <canvas id="history-chart-${person.id}"></canvas>
                       </div>
                       <div class="modal-actions">
-                        <button id="snapshot-btn" class="small-btn">Take Snapshot 📸</button>
+                        <button type="button" id="snapshot-btn" class="small-btn">Take Snapshot 📸</button>
                       </div>
                       <div class="snapshot-info" style="display: none;">
                          <p><strong>Snapshot Taken:</strong> <span id="snapshot-timestamp-${person.id}"></span></p>
@@ -980,30 +993,32 @@ class TrackerApp {
                   break; // End of case 'tab-history'
 
                case 'tab-journal':
+                   // --- Journal Tab ---
                   const currentReflection = person.reflections?.text || '';
                   contentElement.innerHTML = `
                     <section class="reflections-section">
-                      <h3> Personal Journal <button class="context-help-btn small-btn" data-help-key="journalSectionInfo" aria-label="Help with Journal Section">?</button> </h3>
+                      <h3> Personal Journal <button type="button" class="context-help-btn small-btn" data-help-key="journalSectionInfo" aria-label="Help with Journal Section">?</button> </h3>
                       <div class="modal-actions">
-                        <button id="journal-prompt-btn" class="small-btn">Get Prompt 🤔</button>
+                        <button type="button" id="journal-prompt-btn" class="small-btn">Get Prompt 🤔</button>
                       </div>
                       <p id="journal-prompt-${person.id}" class="journal-prompt muted-text" style="display: none;"></p>
                       <label for="reflections-text-${person.id}" class="sr-only">Journal Entry:</label>
                       <textarea id="reflections-text-${person.id}" class="reflections-textarea" placeholder="Reflect on your persona, experiences, goals, or use a prompt...">${this.escapeHTML(currentReflection)}</textarea>
                       <div class="modal-actions">
-                        <button id="save-reflections-btn" class="small-btn save-btn">Save Reflections 💾</button>
+                        <button type="button" id="save-reflections-btn" class="small-btn save-btn">Save Reflections 💾</button>
                       </div>
                     </section>
                   `;
                   break; // End of case 'tab-journal'
 
                case 'tab-achievements':
+                   // --- Achievements Tab ---
                   contentElement.innerHTML = `
                     <section class="achievements-section">
-                      <h3> Achievements Unlocked <button class="context-help-btn small-btn" data-help-key="achievementsSectionInfo" aria-label="Help with Achievements Section">?</button> </h3>
+                      <h3> Achievements Unlocked <button type="button" class="context-help-btn small-btn" data-help-key="achievementsSectionInfo" aria-label="Help with Achievements Section">?</button> </h3>
                       <ul id="achievements-list-${person.id}"></ul>
                       <div class="modal-actions" style="margin-top: 1em;">
-                        <button class="small-btn" onclick="kinkCompassApp.showAchievements()">View All Achievements</button>
+                        <button type="button" class="small-btn" onclick="kinkCompassApp.showAchievements()">View All Achievements</button>
                       </div>
                     </section>
                   `;
@@ -1011,9 +1026,10 @@ class TrackerApp {
                   break; // End of case 'tab-achievements'
 
                case 'tab-oracle':
+                    // --- Oracle Tab ---
                     contentElement.innerHTML = `
                         <section class="kink-oracle-section">
-                          <h3>Your Kink Compass Oracle <button class="small-btn" id="oracle-btn" style="margin-left: auto;">Consult Oracle</button></h3>
+                          <h3>Your Kink Compass Oracle <button type="button" class="small-btn" id="oracle-btn" style="margin-left: auto;">Consult Oracle</button></h3>
                           <div id="kink-oracle-output-${person.id}" class="kink-oracle-output muted-text">
                               Click 'Consult Oracle' to receive your daily vibe reading...
                           </div>
