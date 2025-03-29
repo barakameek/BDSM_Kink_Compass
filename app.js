@@ -196,7 +196,7 @@ class TrackerApp {
   handleExploreStyleLinkClick(e) { /* ... Verified logic ... */ }
 
   // --- Core Rendering ---
- renderStyles(roleKey) {
+renderStyles(roleKey) {
     console.log(`RENDERSTYLES: roleKey = ${roleKey}`);
     if (!roleKey) {
         console.warn("RENDERSTYLES: No role key provided. Skipping.");
@@ -204,14 +204,26 @@ class TrackerApp {
         return;
     }
 
-    console.log(`RENDERSTYLES: bdsmData[${roleKey}].styles =`, bdsmData[roleKey].styles); // <<< ADD THIS LINE
+    console.log(`RENDERSTYLES: bdsmData[${roleKey}].styles =`, bdsmData[roleKey].styles);
 
     if (!bdsmData[roleKey] || !bdsmData[roleKey].styles) {
         console.warn(`RENDERSTYLES: No styles found for role ${roleKey}.`);
         this.elements.style.innerHTML = '<option value="">-- No Styles Available --</option>';
         return;
     }
-    // ... rest of your renderStyles function ...
+
+    const styleSelect = this.elements.style;
+    styleSelect.innerHTML = '<option value="">-- Select a Style --</option>';
+
+    for (const style of bdsmData[roleKey].styles) {
+        const option = document.createElement('option');
+        option.value = style.name;
+        option.textContent = style.name;
+
+        console.log(`RENDERSTYLES LOOP: Creating option - value: ${style.name}, text: ${style.name}`);
+		console.log(`RENDERSTYLES LOOP: styleSelect =`, styleSelect);
+        styleSelect.appendChild(option);
+    }
 }
   renderTraits(roleKey, styleName) { /* ... Verified logic ... */ }
   createTraitHTML(trait) { /* ... Verified logic ... */ }
