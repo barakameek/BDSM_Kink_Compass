@@ -32,70 +32,72 @@
         <!-- Profile Creation/Editing Form -->
         <section id="form-section" class="form-section card">
             <h2 id="form-title">✨ Create New Persona ✨</h2>
-            <div class="field-group avatar-group">
-                <fieldset class="avatar-picker-fieldset">
-                    <legend>Avatar:</legend>
-                    <div class="avatar-picker">
-                        <span id="avatar-display" aria-hidden="true">❓</span>
-                        <input type="hidden" id="avatar-input" value="❓">
-                        <!-- Avatar buttons -->
-                        <button type="button" class="avatar-btn" data-emoji="🎀" aria-label="Ribbon">🎀</button>
-                        <button type="button" class="avatar-btn" data-emoji="✨" aria-label="Sparkles">✨</button>
-                        <button type="button" class="avatar-btn" data-emoji="💖" aria-label="Sparkling Heart">💖</button>
-                        <button type="button" class="avatar-btn" data-emoji="🔥" aria-label="Fire">🔥</button>
-                        <button type="button" class="avatar-btn" data-emoji="😈" aria-label="Devil">😈</button>
-                        <button type="button" class="avatar-btn" data-emoji="😇" aria-label="Angel">😇</button>
-                        <button type="button" class="avatar-btn" data-emoji="🐶" aria-label="Dog">🐶</button>
-                        <button type="button" class="avatar-btn" data-emoji="🦊" aria-label="Fox">🦊</button>
-                        <button type="button" class="avatar-btn" data-emoji="👑" aria-label="Crown">👑</button>
-                        <button type="button" class="avatar-btn" data-emoji="🎭" aria-label="Masks">🎭</button>
-                        <button type="button" class="avatar-btn" data-emoji="⛓️" aria-label="Chains">⛓️</button>
-                        <button type="button" class="avatar-btn" data-emoji="🗝️" aria-label="Key">🗝️</button>
+            <form action="#" onsubmit="event.preventDefault();"> <!-- Add form wrapper to potentially help reset/submission -->
+                <div class="field-group avatar-group">
+                    <fieldset class="avatar-picker-fieldset">
+                        <legend>Avatar:</legend>
+                        <div class="avatar-picker">
+                            <span id="avatar-display" aria-hidden="true">❓</span>
+                            <input type="hidden" id="avatar-input" value="❓">
+                            <!-- Avatar buttons -->
+                            <button type="button" class="avatar-btn" data-emoji="🎀" aria-label="Ribbon">🎀</button>
+                            <button type="button" class="avatar-btn" data-emoji="✨" aria-label="Sparkles">✨</button>
+                            <button type="button" class="avatar-btn" data-emoji="💖" aria-label="Sparkling Heart">💖</button>
+                            <button type="button" class="avatar-btn" data-emoji="🔥" aria-label="Fire">🔥</button>
+                            <button type="button" class="avatar-btn" data-emoji="😈" aria-label="Devil">😈</button>
+                            <button type="button" class="avatar-btn" data-emoji="😇" aria-label="Angel">😇</button>
+                            <button type="button" class="avatar-btn" data-emoji="🐶" aria-label="Dog">🐶</button>
+                            <button type="button" class="avatar-btn" data-emoji="🦊" aria-label="Fox">🦊</button>
+                            <button type="button" class="avatar-btn" data-emoji="👑" aria-label="Crown">👑</button>
+                            <button type="button" class="avatar-btn" data-emoji="🎭" aria-label="Masks">🎭</button>
+                            <button type="button" class="avatar-btn" data-emoji="⛓️" aria-label="Chains">⛓️</button>
+                            <button type="button" class="avatar-btn" data-emoji="🗝️" aria-label="Key">🗝️</button>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="field-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" placeholder="Persona Name (e.g., Playful Kitten)" autocomplete="off" required />
+                </div>
+                <div class="field-group">
+                    <label for="role">Primary Role</label>
+                    <select id="role" autocomplete="off">
+                        <option value="dominant">Dominant</option>
+                        <option value="submissive" selected>Submissive</option>
+                        <option value="switch">Switch</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label for="style">Primary Style</label>
+                    <select id="style" autocomplete="off" required>
+                        <option value="">-- Select Role First --</option>
+                    </select>
+                    <div class="style-helpers">
+                        <button type="button" id="form-style-finder-link" class="link-button">Use Style Finder?</button>
+                        <a href="#" id="style-explore-link" class="explore-style-link" style="display: none;" aria-label="Explore selected style details">(Explore Details)</a>
                     </div>
-                </fieldset>
-            </div>
-            <div class="field-group">
-                <label for="name">Name</label>
-                <input type="text" id="name" placeholder="Persona Name (e.g., Playful Kitten)" autocomplete="off" required />
-            </div>
-            <div class="field-group">
-                <label for="role">Primary Role</label>
-                <select id="role" autocomplete="off">
-                    <option value="dominant">Dominant</option>
-                    <option value="submissive" selected>Submissive</option>
-                     <option value="switch">Switch</option>
-                </select>
-            </div>
-            <div class="field-group">
-                <label for="style">Primary Style</label>
-                <select id="style" autocomplete="off" required>
-                    <option value="">-- Select Role First --</option>
-                </select>
-                 <div class="style-helpers">
-                     <button type="button" id="form-style-finder-link" class="link-button">Use Style Finder?</button>
-                     <a href="#" id="style-explore-link" class="explore-style-link" style="display: none;" aria-label="Explore selected style details">(Explore Details)</a>
-                 </div>
-            </div>
+                </div>
 
-            <!-- Traits Area -->
-            <div id="traits-message" class="muted-text" style="display: none; margin-top: 1.5em; text-align: center;">
-                Select Role & Style above to customize traits.
-            </div>
-            <div id="traits-container" style="display: block;">
-               <p class="muted-text" style="margin-top: 1.5em; text-align: center;">Select Role & Style to see relevant traits...</p>
-            </div>
+                <!-- Traits Area -->
+                <div id="traits-message" class="muted-text" style="display: none; margin-top: 1.5em; text-align: center;">
+                    Select Role & Style above to customize traits.
+                </div>
+                <div id="traits-container" style="display: block;">
+                    <p class="muted-text" style="margin-top: 1.5em; text-align: center;">Select Role & Style to see relevant traits...</p>
+                </div>
 
-            <!-- Trait Info Popup (inside form section for relative positioning if needed) -->
-            <div id="trait-info-popup" class="trait-info-popup card" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="trait-info-title" aria-hidden="true">
-                <button type="button" id="trait-info-close" class="modal-close popup-close" aria-label="Close trait info">×</button>
-                <h4 id="trait-info-title">Trait Info</h4>
-                <div id="trait-info-body"></div>
-            </div>
+                <!-- Trait Info Popup (can remain here or move outside form) -->
+                <div id="trait-info-popup" class="trait-info-popup card" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="trait-info-title" aria-hidden="true">
+                    <button type="button" id="trait-info-close" class="modal-close popup-close" aria-label="Close trait info">×</button>
+                    <h4 id="trait-info-title">Trait Info</h4>
+                    <div id="trait-info-body"></div>
+                </div>
 
-            <div class="form-actions">
-                <button type="button" id="save" class="save-btn">Save Persona! <span role="img" aria-label="Sparkles">💖</span></button>
-                <button type="button" id="clear-form" class="clear-btn">Clear Form <span role="img" aria-label="Broom">🧹</span></button>
-            </div>
+                <div class="form-actions">
+                    <button type="button" id="save" class="save-btn">Save Persona! <span role="img" aria-label="Sparkles">💖</span></button>
+                    <button type="button" id="clear-form" class="clear-btn">Clear Form <span role="img" aria-label="Broom">🧹</span></button>
+                </div>
+            </form> <!-- End of form wrapper -->
         </section>
 
         <!-- Persona List -->
@@ -114,6 +116,7 @@
                 <p class="muted-text">Fill the form to see your persona's vibe! 🌈</p>
                 <!-- Moved Daily Challenge Area Here -->
                 <div id="daily-challenge-area" style="margin-top: 1.5em; padding-top: 1em; border-top: 1px dashed var(--border-color); display: none;">
+                    <!-- JS will populate this -->
                     <p class="muted-text">Loading today's focus...</p>
                 </div>
             </div>
@@ -257,12 +260,13 @@
         <div id="context-help-body"></div>
     </div>
 
-    <!-- App Notification Area (JS will create if needed) -->
-    <!-- <div id="app-notification" style="display: none;" aria-live="assertive" role="alert"></div> -->
+    <!-- App Notification Area -->
+     <div id="app-notification" style="opacity: 0; top: 20px;" aria-live="assertive" aria-hidden="true"></div>
+
 
     <footer class="app-footer">
         <p>KinkCompass Reimagined - Navigate your desires with clarity & joy! ✨</p>
-        <p><small>Version 2.8.3 (Integrated SF)</small></p>
+        <p><small>Version 2.8.4 (UI Refinements)</small></p>
     </footer>
 
     <!-- SCRIPTS (Keep at the end) -->
