@@ -1737,7 +1737,7 @@ class TrackerApp {
             console.log("[TOGGLE_GOAL] Updating UI directly.");
             listItemElement.classList.toggle('done', isDone);
             listItemElement.querySelector('.toggle-goal-btn')?.textContent = isDone ? 'Undo' : 'Done';
-            if (isDone) { const span = listItemElement.querySelector('span:first-child'); if(span) { span.classList.add('goal-completed-animation'); setTimeout(() => span.classList.remove('goal-completed-animation'), 600); } }
+            if (isDone) { const span = listItemElement.querySelector('span:first-child'); if(span) { span.classList.add('goal-completed-animation'); setTimeout(() => span.classList.remove('goal-completed-animation'), 600); } 
         } else {
              console.log("[TOGGLE_GOAL] No list item. Full re-render needed if visible.");
              const goalListContainer = document.querySelector('#tab-goals-content #goal-list-container');
