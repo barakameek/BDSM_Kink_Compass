@@ -196,11 +196,19 @@ class TrackerApp {
   handleExploreStyleLinkClick(e) { /* ... Verified logic ... */ }
 
   // --- Core Rendering ---
-  renderStyles(roleKey) {
-    console.log(`RENDERSTYLES: roleKey = ${roleKey}`); // <<< ADD THIS LINE
+ renderStyles(roleKey) {
+    console.log(`RENDERSTYLES: roleKey = ${roleKey}`);
     if (!roleKey) {
         console.warn("RENDERSTYLES: No role key provided. Skipping.");
         this.elements.style.innerHTML = '<option value="">-- Select Role First --</option>';
+        return;
+    }
+
+    console.log(`RENDERSTYLES: bdsmData[${roleKey}].styles =`, bdsmData[roleKey].styles); // <<< ADD THIS LINE
+
+    if (!bdsmData[roleKey] || !bdsmData[roleKey].styles) {
+        console.warn(`RENDERSTYLES: No styles found for role ${roleKey}.`);
+        this.elements.style.innerHTML = '<option value="">-- No Styles Available --</option>';
         return;
     }
     // ... rest of your renderStyles function ...
