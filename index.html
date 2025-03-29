@@ -29,16 +29,6 @@
 
     <main class="container">
 
-        <!-- <<< NEW: Daily Challenge Section >>> -->
-        <section id="daily-challenge-section" class="card daily-challenge-card" style="display: none;">
-             <h2>🌟 Today's Focus 🌟</h2>
-             <div id="daily-challenge-area">
-                 <p class="muted-text">Loading today's challenge...</p>
-             </div>
-             <!-- Optional: Add button like <button id="log-challenge-reflection" class="small-btn">Reflect on this?</button> -->
-        </section>
-
-
         <!-- Profile Creation/Editing Form -->
         <section id="form-section" class="form-section card">
             <h2 id="form-title">✨ Create New Persona ✨</h2>
@@ -49,18 +39,18 @@
                         <span id="avatar-display" aria-hidden="true">❓</span>
                         <input type="hidden" id="avatar-input" value="❓">
                         <!-- Avatar buttons -->
-                        <button class="avatar-btn" data-emoji="🎀" aria-label="Ribbon">🎀</button>
-                        <button class="avatar-btn" data-emoji="✨" aria-label="Sparkles">✨</button>
-                        <button class="avatar-btn" data-emoji="💖" aria-label="Sparkling Heart">💖</button>
-                        <button class="avatar-btn" data-emoji="🔥" aria-label="Fire">🔥</button>
-                        <button class="avatar-btn" data-emoji="😈" aria-label="Devil">😈</button>
-                        <button class="avatar-btn" data-emoji="😇" aria-label="Angel">😇</button>
-                        <button class="avatar-btn" data-emoji="🐶" aria-label="Dog">🐶</button>
-                        <button class="avatar-btn" data-emoji="🦊" aria-label="Fox">🦊</button>
-                        <button class="avatar-btn" data-emoji="👑" aria-label="Crown">👑</button>
-                        <button class="avatar-btn" data-emoji="🎭" aria-label="Masks">🎭</button>
-                        <button class="avatar-btn" data-emoji="⛓️" aria-label="Chains">⛓️</button>
-                        <button class="avatar-btn" data-emoji="🗝️" aria-label="Key">🗝️</button>
+                        <button type="button" class="avatar-btn" data-emoji="🎀" aria-label="Ribbon">🎀</button>
+                        <button type="button" class="avatar-btn" data-emoji="✨" aria-label="Sparkles">✨</button>
+                        <button type="button" class="avatar-btn" data-emoji="💖" aria-label="Sparkling Heart">💖</button>
+                        <button type="button" class="avatar-btn" data-emoji="🔥" aria-label="Fire">🔥</button>
+                        <button type="button" class="avatar-btn" data-emoji="😈" aria-label="Devil">😈</button>
+                        <button type="button" class="avatar-btn" data-emoji="😇" aria-label="Angel">😇</button>
+                        <button type="button" class="avatar-btn" data-emoji="🐶" aria-label="Dog">🐶</button>
+                        <button type="button" class="avatar-btn" data-emoji="🦊" aria-label="Fox">🦊</button>
+                        <button type="button" class="avatar-btn" data-emoji="👑" aria-label="Crown">👑</button>
+                        <button type="button" class="avatar-btn" data-emoji="🎭" aria-label="Masks">🎭</button>
+                        <button type="button" class="avatar-btn" data-emoji="⛓️" aria-label="Chains">⛓️</button>
+                        <button type="button" class="avatar-btn" data-emoji="🗝️" aria-label="Key">🗝️</button>
                     </div>
                 </fieldset>
             </div>
@@ -89,21 +79,21 @@
 
             <!-- Traits Area -->
             <div id="traits-message" class="muted-text" style="display: none; margin-top: 1.5em; text-align: center;">
-                Select Role & Style above to customize traits. <!-- JS Will update this text -->
+                Select Role & Style above to customize traits.
             </div>
-            <div id="traits-container" style="display: block;"> <!-- Initially block, JS hides if needed -->
-               <p class="muted-text" style="margin-top: 1.5em; text-align: center;">Select Role & Style to see relevant traits...</p> <!-- Default message if JS fails early -->
+            <div id="traits-container" style="display: block;">
+               <p class="muted-text" style="margin-top: 1.5em; text-align: center;">Select Role & Style to see relevant traits...</p>
             </div>
 
-            <!-- Trait Info Popup (inside form section for relative positioning) -->
+            <!-- Trait Info Popup (inside form section for relative positioning if needed) -->
             <div id="trait-info-popup" class="trait-info-popup card" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="trait-info-title" aria-hidden="true">
-                <button id="trait-info-close" class="modal-close popup-close" aria-label="Close trait info">×</button>
+                <button type="button" id="trait-info-close" class="modal-close popup-close" aria-label="Close trait info">×</button>
                 <h4 id="trait-info-title">Trait Info</h4>
                 <div id="trait-info-body"></div>
             </div>
 
             <div class="form-actions">
-                <button id="save" class="save-btn">Save Persona! <span role="img" aria-label="Sparkles">💖</span></button>
+                <button type="button" id="save" class="save-btn">Save Persona! <span role="img" aria-label="Sparkles">💖</span></button>
                 <button type="button" id="clear-form" class="clear-btn">Clear Form <span role="img" aria-label="Broom">🧹</span></button>
             </div>
         </section>
@@ -117,11 +107,15 @@
             </ul>
         </section>
 
-        <!-- Live Preview -->
+        <!-- Live Preview Section (Now includes Daily Challenge) -->
         <section class="preview-section card">
             <h2>🎈 Live Vibe Preview 🎈</h2>
             <div id="live-preview">
                 <p class="muted-text">Fill the form to see your persona's vibe! 🌈</p>
+                <!-- Moved Daily Challenge Area Here -->
+                <div id="daily-challenge-area" style="margin-top: 1.5em; padding-top: 1em; border-top: 1px dashed var(--border-color); display: none;">
+                    <p class="muted-text">Loading today's focus...</p>
+                </div>
             </div>
         </section>
     </main>
@@ -130,14 +124,12 @@
 
     <!-- Persona Detail Modal -->
     <div class="modal" id="detail-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="detail-modal-title" aria-hidden="true">
-        <div class="modal-content card wide-modal"> <!-- Made modal wider -->
-            <button class="modal-close" id="modal-close" aria-label="Close details">×</button>
+        <div class="modal-content card wide-modal">
+            <button type="button" class="modal-close" id="modal-close" aria-label="Close details">×</button>
             <h2 class="modal-title" id="detail-modal-title">Persona Details</h2>
-            <!-- Tabs -->
             <div class="modal-tabs" id="modal-tabs" role="tablist" aria-orientation="horizontal">
                 <!-- Tabs generated by JS -->
             </div>
-            <!-- Tab Content Area -->
             <div id="modal-body">
                 <!-- Tab content panes generated by JS -->
             </div>
@@ -147,7 +139,7 @@
     <!-- Resources Modal -->
     <div class="modal" id="resources-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="resources-modal-title" aria-hidden="true">
         <div class="modal-content card">
-            <button class="modal-close" id="resources-close" aria-label="Close resources">×</button>
+            <button type="button" class="modal-close" id="resources-close" aria-label="Close resources">×</button>
             <h2 id="resources-modal-title">🔗 Helpful Resources</h2>
             <div id="resources-body">
                  <p>Here are some general resources. Always practice safety, consent, and communication (SSC/RACK/PRICK).</p>
@@ -170,7 +162,7 @@
     <!-- Glossary Modal -->
     <div class="modal" id="glossary-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="glossary-modal-title" aria-hidden="true">
         <div class="modal-content card wide-modal">
-            <button class="modal-close" id="glossary-close" aria-label="Close glossary">×</button>
+            <button type="button" class="modal-close" id="glossary-close" aria-label="Close glossary">×</button>
             <h2 id="glossary-modal-title">📚 Kink Glossary</h2>
             <div id="glossary-body">
                 <p class="muted-text">Loading glossary terms...</p>
@@ -181,7 +173,7 @@
     <!-- Style Discovery Modal -->
     <div class="modal" id="style-discovery-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="style-discovery-title" aria-hidden="true">
         <div class="modal-content card wide-modal">
-            <button class="modal-close" id="style-discovery-close" aria-label="Close style discovery">×</button>
+            <button type="button" class="modal-close" id="style-discovery-close" aria-label="Close style discovery">×</button>
             <h2 id="style-discovery-title">🔭 Explore Styles</h2>
             <div class="style-discovery-controls">
                 <label for="style-discovery-role">Filter by Role:</label>
@@ -201,13 +193,13 @@
     <!-- Themes Modal -->
     <div class="modal" id="themes-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="themes-modal-title" aria-hidden="true">
         <div class="modal-content card">
-            <button class="modal-close" id="themes-close" aria-label="Close themes">×</button>
+            <button type="button" class="modal-close" id="themes-close" aria-label="Close themes">×</button>
             <h2 id="themes-modal-title">🎨 Select Theme</h2>
             <div id="themes-body" class="theme-options">
-                <button class="theme-option-btn" data-theme="light">🌸 Light</button>
-                <button class="theme-option-btn" data-theme="dark">🌙 Dark</button>
-                <button class="theme-option-btn" data-theme="pastel">🍬 Pastel</button>
-                <button class="theme-option-btn" data-theme="velvet">💜 Velvet</button>
+                <button type="button" class="theme-option-btn" data-theme="light">🌸 Light</button>
+                <button type="button" class="theme-option-btn" data-theme="dark">🌙 Dark</button>
+                <button type="button" class="theme-option-btn" data-theme="pastel">🍬 Pastel</button>
+                <button type="button" class="theme-option-btn" data-theme="velvet">💜 Velvet</button>
             </div>
         </div>
     </div>
@@ -215,7 +207,7 @@
     <!-- Achievements Modal -->
     <div class="modal" id="achievements-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="achievements-modal-title" aria-hidden="true">
         <div class="modal-content card wide-modal">
-            <button class="modal-close" id="achievements-close" aria-label="Close achievements">×</button>
+            <button type="button" class="modal-close" id="achievements-close" aria-label="Close achievements">×</button>
             <h2 id="achievements-modal-title">🏆 Achievements Hub 🏆</h2>
             <div id="achievements-body">
                 <p class="muted-text">Loading achievements status...</p>
@@ -226,7 +218,7 @@
     <!-- Welcome Modal -->
     <div class="modal" id="welcome-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="welcome-modal-title" aria-hidden="true">
         <div class="modal-content card">
-            <button class="modal-close" id="welcome-close" aria-label="Close welcome message">×</button>
+            <button type="button" class="modal-close" id="welcome-close" aria-label="Close welcome message">×</button>
             <h2 id="welcome-modal-title">Welcome to KinkCompass! ✨🧭</h2>
             <div id="welcome-body">
                  <p>Your journey to understanding and tracking your desires starts here!</p>
@@ -244,8 +236,8 @@
 
     <!-- Style Finder Modal -->
     <div class="modal sf-modal" id="style-finder-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="sf-modal-title" aria-hidden="true">
-        <div class="modal-content sf-modal-content card"> <!-- Added card -->
-            <button class="modal-close" id="sf-close-style-finder" aria-label="Close Style Finder">×</button>
+        <div class="modal-content sf-modal-content card">
+            <button type="button" class="modal-close" id="sf-close-style-finder" aria-label="Close Style Finder">×</button>
             <h3 id="sf-modal-title">🧭 Style Finder Quest 🧭</h3>
             <div id="sf-progress-tracker" class="sf-progress-tracker" aria-live="polite"></div>
             <div id="sf-step-content">
@@ -260,32 +252,30 @@
 
      <!-- Generic Context Help Popup -->
      <div id="context-help-popup" class="context-help-popup card" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="context-help-title" aria-hidden="true">
-        <button id="context-help-close" class="modal-close popup-close" aria-label="Close help">×</button>
+        <button type="button" id="context-help-close" class="modal-close popup-close" aria-label="Close help">×</button>
         <h4 id="context-help-title">Help</h4>
         <div id="context-help-body"></div>
     </div>
 
-    <!-- App Notification Area (Dynamically created by JS) -->
-    <!-- <div id="app-notification" style="display: none;"></div> -->
+    <!-- App Notification Area (JS will create if needed) -->
+    <!-- <div id="app-notification" style="display: none;" aria-live="assertive" role="alert"></div> -->
 
     <footer class="app-footer">
         <p>KinkCompass Reimagined - Navigate your desires with clarity & joy! ✨</p>
-        <p><small>Version 2.2 (Rich Features)</small></p> <!-- Updated version -->
+        <p><small>Version 2.8.3 (Integrated SF)</small></p>
     </footer>
 
     <!-- SCRIPTS (Keep at the end) -->
     <script type="module" src="data.js"></script>
     <script type="module" src="glossary.js"></script>
     <script type="module" src="prompts.js"></script>
-    <script type="module" src="achievements.js"></script> <!-- Make sure this is the UPDATED one -->
+    <script type="module" src="achievements.js"></script>
     <script type="module" src="paraphrasing_sub.js"></script>
     <script type="module" src="paraphrasing_dom.js"></script>
-    <!-- <<< NEW SCRIPT IMPORTS >>> -->
     <script type="module" src="synergyHints.js"></script>
     <script type="module" src="goalPrompts.js"></script>
     <script type="module" src="challenges.js"></script>
     <script type="module" src="oracle.js"></script>
-    <!-- <<< END NEW SCRIPT IMPORTS >>> -->
     <script type="module" src="app.js"></script> <!-- This MUST be last -->
 </body>
 </html>
