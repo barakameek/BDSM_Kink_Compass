@@ -2255,7 +2255,7 @@ class TrackerApp {
         } else {
              console.log("[SF_NEXT_STEP] Last step.");
         }
-   
+   }
 
     sfPrevStep() {
         console.log(`[SF_PREV_STEP] Back from step ${this.styleFinderStep}`);
