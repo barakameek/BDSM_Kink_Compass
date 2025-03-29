@@ -41,7 +41,7 @@ const contextHelpTexts = {
 
 class TrackerApp {
   constructor() {
-    console.log("CONSTRUCTOR: Starting KinkCompass App (v2.2)...");
+    console.log("CONSTRUCTOR: Starting KinkCompass App (v2.3 - Fix Attempt)..."); // Updated version
     this.people = [];
     this.previewPerson = null;
     this.currentEditId = null;
@@ -63,7 +63,7 @@ class TrackerApp {
     this.sfTraitSet = [];
     this.sfSteps = [];
     this.sfShowDashboardDuringTraits = false;
-    // (Keep sfStyles, sfSubFinderTraits, sfDomFinderTraits etc. as before)
+    // Style Finder Data Structures (Copied from previous correct version)
     this.sfStyles = {
       submissive: [ 'Classic Submissive 🙇‍♀️', 'Brat 😈', 'Slave 🔗', 'Pet 🐾', 'Little 🍼', 'Puppy 🐶', 'Kitten 🐱', 'Princess 👑', 'Rope Bunny 🪢', 'Masochist 💥', 'Prey 🏃‍♀️', 'Toy 🎲', 'Doll 🎎', 'Bunny 🐰', 'Servant 🧹', 'Playmate 🎉', 'Babygirl 🌸', 'Captive ⛓️', 'Thrall 🛐', 'Puppet 🎭', 'Maid 🧼', 'Painslut 🔥', 'Bottom ⬇️' ],
       dominant: [ 'Classic Dominant 👑', 'Assertive 💪', 'Nurturer 🤗', 'Strict 📏', 'Master 🎓', 'Mistress 👸', 'Daddy 👨‍🏫', 'Mommy 👩‍🏫', 'Owner 🔑', 'Rigger 🧵', 'Sadist 😏', 'Hunter 🏹', 'Trainer 🏋️‍♂️', 'Puppeteer 🕹️', 'Protector 🛡️', 'Disciplinarian ✋', 'Caretaker 🧡', 'Sir 🎩', 'Goddess 🌟', 'Commander ⚔️' ],
@@ -757,42 +757,42 @@ class TrackerApp {
 
       try {
           switch (tabId) {
-               case 'tab-goals':
-                contentElement.innerHTML = `
-                  <section class="goals-section">
-                    <h3>Goals <button class="context-help-btn small-btn" data-help-key="goalsSectionInfo" aria-label="Help with Goals Section">?</button></h3>
-                    <ul id="goal-list-${person.id}"></ul>
-                    <form class="add-goal-form" id="add-goal-form-${person.id}" onsubmit="event.preventDefault(); kinkCompassApp.addGoal(${person.id}, this);">
-                      <label for="new-goal-${person.id}" class="sr-only">New Goal:</label>
-                      <input type="text" id="new-goal-${person.id}" placeholder="Add a new goal..." required>
-                      <button type="submit" id="add-goal-btn" class="small-btn">Add Goal</button>
-                    </form>
-                    <div id="goal-alignment-hints-${person.id}" class="alignment-hints">
-                      <!-- Goal Alignment Hints Area -->
-                    </div>
-                  </section>
-                `;
-                const goalListUl = contentElement.querySelector(`#goal-list-${person.id}`);
-                if (goalListUl) {
-                    goalListUl.innerHTML = this.renderGoalList(person);
-                } else {
-                    console.error(`Could not find goal list UL element for person ${person.id}`);
-                }
-                // Render Goal Alignment Hints
-                const alignmentHints = this.getGoalAlignmentHints(person);
-                const hintsContainer = contentElement.querySelector(`#goal-alignment-hints-${person.id}`);
-                if (hintsContainer) {
-                    if (alignmentHints.length > 0) {
-                        hintsContainer.innerHTML = `<h4>🎯 Alignment Insights:</h4><ul>${alignmentHints.map(hint => `<li>${this.escapeHTML(hint)}</li>`).join('')}</ul>`;
-                    } else {
-                       hintsContainer.innerHTML = `<p class="muted-text">Add some active goals to see alignment insights!</p>`;
-                    }
-                }
-                // NO extra brace should be here.
-                break; // End of case 'tab-goals'
+
+              case 'tab-goals':
+                  contentElement.innerHTML = `
+                    <section class="goals-section">
+                      <h3>Goals <button class="context-help-btn small-btn" data-help-key="goalsSectionInfo" aria-label="Help with Goals Section">?</button></h3>
+                      <ul id="goal-list-${person.id}"></ul>
+                      <form class="add-goal-form" id="add-goal-form-${person.id}" onsubmit="event.preventDefault(); kinkCompassApp.addGoal(${person.id}, this);">
+                        <label for="new-goal-${person.id}" class="sr-only">New Goal:</label>
+                        <input type="text" id="new-goal-${person.id}" placeholder="Add a new goal..." required>
+                        <button type="submit" id="add-goal-btn" class="small-btn">Add Goal</button>
+                      </form>
+                      <div id="goal-alignment-hints-${person.id}" class="alignment-hints">
+                        <!-- Goal Alignment Hints Area -->
+                      </div>
+                    </section>
+                  `;
+                  const goalListUl = contentElement.querySelector(`#goal-list-${person.id}`);
+                  if (goalListUl) {
+                      goalListUl.innerHTML = this.renderGoalList(person);
+                  } else {
+                      console.error(`Could not find goal list UL element for person ${person.id}`);
+                  }
+                  // Render Goal Alignment Hints
+                  const alignmentHints = this.getGoalAlignmentHints(person);
+                  const hintsContainer = contentElement.querySelector(`#goal-alignment-hints-${person.id}`);
+                  if (hintsContainer) {
+                      if (alignmentHints.length > 0) {
+                          hintsContainer.innerHTML = `<h4>🎯 Alignment Insights:</h4><ul>${alignmentHints.map(hint => `<li>${this.escapeHTML(hint)}</li>`).join('')}</ul>`;
+                      } else {
+                          hintsContainer.innerHTML = `<p class="muted-text">Add some active goals to see alignment insights!</p>`;
+                      }
+                  }
+                  break; // End of case 'tab-goals'
 
 
-            case 'tab-traits':
+              case 'tab-traits':
                   contentElement.innerHTML = `
                       <section class="trait-details-section">
                         <h3>Trait Details <button class="context-help-btn small-btn" data-help-key="traitsSectionInfo" aria-label="Help with Traits Section">?</button></h3>
@@ -803,7 +803,6 @@ class TrackerApp {
 
                   if (!grid) {
                       console.error("Trait details grid element not found.");
-                      // Ensure the error message doesn't break structure
                       contentElement.innerHTML += '<p class="error-text">Error displaying traits.</p>';
                   } else { // Only proceed if grid exists
                       const roleData = bdsmData[person.role];
@@ -849,7 +848,7 @@ class TrackerApp {
                                     }
                                     const score = person.traits[traitDef.name] ?? '-';
                                     // Safely access nested description
-                                    const description = traitDef.desc && score !== '-' && traitDef.desc[String(score)]
+                                    const description = traitDef.desc && score !== '-' && typeof traitDef.desc === 'object' && traitDef.desc[String(score)]
                                         ? (traitDef.desc[String(score)])
                                         : 'N/A';
                                     const displayName = traitDef.name.charAt(0).toUpperCase() + traitDef.name.slice(1).replace(/([A-Z])/g, ' $1');
@@ -871,35 +870,68 @@ class TrackerApp {
 
               case 'tab-breakdown':
                   const getBreakdown = person.role === 'dominant' ? getDomBreakdown : getSubBreakdown;
-                  const breakdownData = getBreakdown(person.style, person.traits);
+                  // Need to handle potential errors if style/traits are missing
+                  let breakdownData = { strengths: "N/A", improvements: "N/A" };
+                  if (person.style && person.traits) {
+                     try {
+                         // Ensure traits are passed correctly (assuming person.traits is {traitName: score})
+                         const traitsForBreakdown = person.traits || {};
+                         breakdownData = getBreakdown(person.style, traitsForBreakdown);
+                     } catch (e) {
+                         console.error("Error getting breakdown data:", e);
+                         breakdownData = { strengths: "Error loading breakdown.", improvements: "Please check data consistency." };
+                     }
+                  } else {
+                     console.warn("Cannot get breakdown - missing style or traits for person:", person.id);
+                     breakdownData = { strengths: "Select style and rate traits first.", improvements: "Select style and rate traits first." };
+                  }
+
                   const intro = this.getIntroForStyle(person.style);
-                  // <<< Get Synergy Hints >>>
+                  // Get Synergy Hints
                   const synergyHintsResult = this.getSynergyHints(person);
                   let synergyHTML = '';
                   if (synergyHintsResult.length > 0) {
                       synergyHTML += `<h4>✨ Trait Synergies & Dynamics:</h4><ul>`;
                       synergyHintsResult.forEach(hint => {
-                           synergyHTML += `<li class="${hint.type}-hint">${this.escapeHTML(hint.text)}</li>`;
+                           // Ensure hint.text exists before escaping
+                           synergyHTML += `<li class="${hint.type}-hint">${this.escapeHTML(hint.text || '')}</li>`;
                       });
                       synergyHTML += `</ul><hr>`;
                   }
-                  // <<< Get Proactive Suggestions >>>
+                  // Get Proactive Suggestions
                   let suggestionHTML = '';
                   const lowTraits = Object.entries(person.traits || {})
                       .filter(([, score]) => parseInt(score, 10) <= 2)
-                      .sort((a, b) => a[1] - b[1]) // Sort lowest first
-                      .slice(0, 2); // Max 2 suggestions
+                      .sort((a, b) => a[1] - b[1])
+                      .slice(0, 2);
 
                   if (lowTraits.length > 0) {
                        suggestionHTML += `<h4>🌱 Focus Ideas for Growth:</h4><ul>`;
                        lowTraits.forEach(([traitName, score]) => {
-                            // Need to get the specific suggestion text from paraphrasing files
-                            const breakdownForSuggestion = getBreakdown(person.style, person.traits); // Re-call needed? Maybe pass it down.
                             let suggestionText = `Consider focusing on ${traitName}.`; // Fallback
-                            // This part is tricky, breakdown function returns formatted string, not raw suggestion
-                            // We need to modify getSubBreakdown/getDomBreakdown or add another helper
-                            // For now, let's use a placeholder:
-                            suggestionText = `Explore ways to nurture your ${traitName} (currently ${score}/5).`;
+                            try {
+                                // Use the breakdown data we already fetched
+                                if (breakdownData && breakdownData.improvements) {
+                                     // Attempt to parse the suggestion from the improvements string
+                                    const improvementsMatch = breakdownData.improvements.match(/🎯 \*\*(.*?)\*\* (.*)/);
+                                    if (improvementsMatch && improvementsMatch[2]) {
+                                        // Check if this specific improvement relates to the current low trait
+                                        // This is heuristic - might need refinement based on how paraphrasing_*.js formats output
+                                        if (breakdownData.improvements.toLowerCase().includes(traitName.toLowerCase())) {
+                                            suggestionText = improvementsMatch[2];
+                                        } else {
+                                             suggestionText = `Explore ways to nurture your ${traitName} (currently ${score}/5). See general tips above.`;
+                                        }
+                                    } else {
+                                        suggestionText = `Explore ways to nurture your ${traitName} (currently ${score}/5).`;
+                                    }
+                                } else {
+                                     suggestionText = `Explore ways to nurture your ${traitName} (currently ${score}/5).`;
+                                }
+                            } catch (suggestionError) {
+                                console.warn("Error processing proactive suggestion:", suggestionError);
+                                suggestionText = `Explore ways to nurture your ${traitName} (currently ${score}/5).`;
+                            }
                            suggestionHTML += `<li>${this.escapeHTML(suggestionText)}</li>`;
                        });
                        suggestionHTML += `</ul><hr>`;
@@ -913,19 +945,19 @@ class TrackerApp {
                       <div class="style-breakdown">
                         <div class="strengths">
                           <h4>🌟 Strengths / Current Vibe:</h4>
-                          <p>${breakdownData.strengths}</p> <!-- Already formatted -->
+                          <p>${breakdownData.strengths || 'N/A'}</p>
                         </div>
                         <hr>
                         <div class="improvements">
                           <h4>🧭 Growth / Focus Areas (General):</h4>
-                           <p>${breakdownData.improvements}</p> <!-- Already formatted -->
+                           <p>${breakdownData.improvements || 'N/A'}</p>
                         </div>
                          <hr>
                          ${suggestionHTML}
                          ${synergyHTML}
                       </div>
                     </section>`;
-                  break;
+                  break; // End of case 'tab-breakdown'
 
 
               case 'tab-history':
@@ -938,14 +970,14 @@ class TrackerApp {
                       <div class="modal-actions">
                         <button id="snapshot-btn" class="small-btn">Take Snapshot 📸</button>
                       </div>
-                      <div class="snapshot-info" style="display: none;"> <!-- Info for micro-interaction -->
+                      <div class="snapshot-info" style="display: none;">
                          <p><strong>Snapshot Taken:</strong> <span id="snapshot-timestamp-${person.id}"></span></p>
                          <p>View changes on the chart!</p>
                       </div>
                     </section>
                   `;
                   this.renderHistoryChart(person, `history-chart-${person.id}`);
-                  break;
+                  break; // End of case 'tab-history'
 
                case 'tab-journal':
                   const currentReflection = person.reflections?.text || '';
@@ -963,7 +995,7 @@ class TrackerApp {
                       </div>
                     </section>
                   `;
-                  break;
+                  break; // End of case 'tab-journal'
 
                case 'tab-achievements':
                   contentElement.innerHTML = `
@@ -976,9 +1008,8 @@ class TrackerApp {
                     </section>
                   `;
                   this.renderAchievementsList(person, `achievements-list-${person.id}`);
-                  break;
+                  break; // End of case 'tab-achievements'
 
-               // <<< NEW: Oracle Tab >>>
                case 'tab-oracle':
                     contentElement.innerHTML = `
                         <section class="kink-oracle-section">
@@ -988,16 +1019,18 @@ class TrackerApp {
                           </div>
                         </section>
                     `;
-                    break;
+                    break; // End of case 'tab-oracle'
 
               default:
                   contentElement.innerHTML = `<p>Content for tab "${tabId}" not yet implemented.</p>`;
-          }
+                  break; // End of default case
+          } // End switch
       } catch (error) {
           console.error(`Error rendering content for tab ${tabId}:`, error);
-          contentElement.innerHTML = `<p class="error-text">Sorry, there was an error loading this section.</p>`;
+          contentElement.innerHTML = `<p class="error-text">Sorry, there was an error loading this section. Check console for details.</p>`;
       }
-  }
+  } // End renderDetailTabContent function
+
 
   // --- New Feature Logic ---
   addGoal(personId, formElement) {
@@ -1028,9 +1061,9 @@ class TrackerApp {
       const alignmentHints = this.getGoalAlignmentHints(person);
        if (alignmentHintsContainer) {
             if (alignmentHints.length > 0) {
-                hintsContainer.innerHTML = `<h4>🎯 Alignment Insights:</h4><ul>${alignmentHints.map(hint => `<li>${this.escapeHTML(hint)}</li>`).join('')}</ul>`;
+                alignmentHintsContainer.innerHTML = `<h4>🎯 Alignment Insights:</h4><ul>${alignmentHints.map(hint => `<li>${this.escapeHTML(hint)}</li>`).join('')}</ul>`;
             } else {
-                hintsContainer.innerHTML = `<p class="muted-text">Add some goals to see alignment insights!</p>`;
+                alignmentHintsContainer.innerHTML = `<p class="muted-text">Add some active goals to see alignment insights!</p>`;
             }
         }
 
