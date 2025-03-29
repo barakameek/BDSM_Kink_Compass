@@ -5,7 +5,12 @@ import { getStyleBreakdown as getSubBreakdown } from './paraphrasing_sub.js';
 import { getStyleBreakdown as getDomBreakdown } from './paraphrasing_dom.js';
 import { glossaryTerms } from './glossary.js';
 import { getRandomPrompt } from './prompts.js';
-import { achievementList, hasAchievement, grantAchievement } from './achievements.js';
+import { achievementList, hasAchievement, grantAchievement, getAchievementDetails } from './achievements.js';
+
+import { synergyHints } from './synergyHints.js'; // Or just the function if defined there
+import { goalKeywords } from './goalPrompts.js';
+import { challenges } from './challenges.js';
+import { oracleReadings } from './oracle.js';
 
 // Chart.js and Confetti loaded via CDN
 
