@@ -1720,32 +1720,53 @@ class TrackerApp {
     console.log("[ADD_GOAL] END");
    } // End addGoal
 
-   toggleGoalStatus(personId, goalId, listItemElement = null) {
-        console.log(`[TOGGLE_GOAL] START - Goal ${goalId}, Person ${personId}`);
+      toggleGoalStatus(personId, goalId, listItemElement = null) {
+        console.log(`[TOGGLE_GOAL] START - Toggling goal ${goalId} for person ${personId}`);
         const person = this.people.find(p => p.id === personId);
         if (!person?.goals) { console.error(`[TOGGLE_GOAL] Fail: Person/goals not found.`); this.showNotification("Error updating goal.", "error"); return; }
         const goalIndex = person.goals.findIndex(g => g.id === goalId);
         if (goalIndex === -1) { console.error(`[TOGGLE_GOAL] Fail: Goal ${goalId} not found.`); this.showNotification("Error: Goal not found.", "error"); return; }
+
         person.goals[goalIndex].done = !person.goals[goalIndex].done;
         const isDone = person.goals[goalIndex].done;
         person.goals[goalIndex].completedAt = isDone ? new Date().toISOString() : null;
+
         this.saveToLocalStorage();
         this.showNotification(isDone ? "Goal complete! 🎉" : "Goal incomplete.", isDone ? "success" : "info");
-        if (isDone) { grantAchievement(person, 'goal_completed'); const completedCount = person.goals.filter(g => g.done).length; if (completedCount >= 5) grantAchievement(person, 'five_goals_completed'); this.checkGoalStreak(person); }
-        console.log(`[TOGGLE_GOAL] Goal ${goalId} status: ${isDone}`);
+
+        if (isDone) {
+            grantAchievement(person, 'goal_completed');
+            const completedCount = person.goals.filter(g => g.done).length;
+            if (completedCount >= 5) grantAchievement(person, 'five_goals_completed');
+            this.checkGoalStreak(person);
+        }
+
+        console.log(`[TOGGLE_GOAL] Goal ${goalId} status set to ${isDone}`);
+
+        // Update UI directly if listItemElement is provided
         if (listItemElement) {
-            console.log("[TOGGLE_GOAL] Updating UI directly.");
+            console.log("[TOGGLE_GOAL] Updating list item UI directly.");
             listItemElement.classList.toggle('done', isDone);
-            listItemElement.querySelector('.toggle-goal-btn')?.textContent = isDone ? 'Undo' : 'Done';
-            if (isDone) { const span = listItemElement.querySelector('span:first-child'); if(span) { span.classList.add('goal-completed-animation'); setTimeout(() => span.classList.remove('goal-completed-animation'), 600); } 
-        } else {
+            const button = listItemElement.querySelector('.toggle-goal-btn');
+            if (button) button.textContent = isDone ? 'Undo' : 'Done';
+
+            if (isDone) {
+                 const span = listItemElement.querySelector('span:first-child');
+                 if(span) {
+                     span.classList.add('goal-completed-animation');
+                     setTimeout(() => span.classList.remove('goal-completed-animation'), 600);
+                 }
+            } // <<< *** ADDED MISSING '}' HERE ***
+        } else { // This 'else' correctly corresponds to 'if (listItemElement)'
              console.log("[TOGGLE_GOAL] No list item. Full re-render needed if visible.");
              const goalListContainer = document.querySelector('#tab-goals-content #goal-list-container');
-             if (goalListContainer && this.activeDetailModalTab === 'tab-goals') { console.log("[TOGGLE_GOAL] Re-rendering list."); goalListContainer.innerHTML = this.renderGoalList(person, true); }
+             if (goalListContainer && this.activeDetailModalTab === 'tab-goals') {
+                 console.log("[TOGGLE_GOAL] Re-rendering list after toggle.");
+                 goalListContainer.innerHTML = this.renderGoalList(person, true); // Render just list part
+             }
         }
         console.log("[TOGGLE_GOAL] END");
     } // End toggleGoalStatus
-
    deleteGoal(personId, goalId) {
         console.log(`[DELETE_GOAL] START - Goal ${goalId}, Person ${personId}`);
         const person = this.people.find(p => p.id === personId);
