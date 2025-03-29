@@ -14,16 +14,16 @@
     <header class="app-header">
         <h1><span role="img" aria-label="Compass">🧭</span> KinkCompass <span role="img" aria-label="Sparkles">✨</span></h1>
         <nav class="header-nav">
-            <button id="style-finder-trigger-btn" class="header-btn" title="Find Your Kink Style!">🧭 Style Finder</button>
-            <button id="style-discovery-btn" class="header-btn" title="Explore All Styles">🔭 Explore Styles</button>
-            <button id="achievements-btn" class="header-btn" title="View Achievements">🏆 Achievements</button>
-            <button id="glossary-btn" class="header-btn" title="Kink Glossary">📚 Glossary</button>
-            <button id="resources-btn" class="header-btn" title="Helpful Resources">🔗 Resources</button>
-            <button id="themes-btn" class="header-btn" title="Change Theme">🎨 Themes</button>
-            <button id="export-btn" class="header-btn" title="Export Data">💾 Export</button>
-            <button id="import-btn" class="header-btn" title="Import Data">📁 Import</button>
+            <button type="button" id="style-finder-trigger-btn" class="header-btn" title="Find Your Kink Style!">🧭 Style Finder</button>
+            <button type="button" id="style-discovery-btn" class="header-btn" title="Explore All Styles">🔭 Explore Styles</button>
+            <button type="button" id="achievements-btn" class="header-btn" title="View Achievements">🏆 Achievements</button>
+            <button type="button" id="glossary-btn" class="header-btn" title="Kink Glossary">📚 Glossary</button>
+            <button type="button" id="resources-btn" class="header-btn" title="Helpful Resources">🔗 Resources</button>
+            <button type="button" id="themes-btn" class="header-btn" title="Change Theme">🎨 Themes</button>
+            <button type="button" id="export-btn" class="header-btn" title="Export Data">💾 Export</button>
+            <button type="button" id="import-btn" class="header-btn" title="Import Data">📁 Import</button>
             <input type="file" id="import-file-input" accept=".json" style="display: none;" aria-hidden="true" />
-            <button id="theme-toggle" class="header-btn theme-btn" title="Toggle light/dark mode">🌙</button>
+            <button type="button" id="theme-toggle" class="header-btn theme-btn" title="Toggle light/dark mode">🌙</button>
         </nav>
     </header>
 
@@ -32,14 +32,13 @@
         <!-- Profile Creation/Editing Form -->
         <section id="form-section" class="form-section card">
             <h2 id="form-title">✨ Create New Persona ✨</h2>
-            <form action="#" onsubmit="event.preventDefault();"> <!-- Add form wrapper to potentially help reset/submission -->
+            <form action="#" onsubmit="event.preventDefault();">
                 <div class="field-group avatar-group">
                     <fieldset class="avatar-picker-fieldset">
                         <legend>Avatar:</legend>
                         <div class="avatar-picker">
                             <span id="avatar-display" aria-hidden="true">❓</span>
                             <input type="hidden" id="avatar-input" value="❓">
-                            <!-- Avatar buttons -->
                             <button type="button" class="avatar-btn" data-emoji="🎀" aria-label="Ribbon">🎀</button>
                             <button type="button" class="avatar-btn" data-emoji="✨" aria-label="Sparkles">✨</button>
                             <button type="button" class="avatar-btn" data-emoji="💖" aria-label="Sparkling Heart">💖</button>
@@ -64,7 +63,7 @@
                     <select id="role" autocomplete="off">
                         <option value="dominant">Dominant</option>
                         <option value="submissive" selected>Submissive</option>
-                        <option value="switch">Switch</option>
+                         <option value="switch">Switch</option>
                     </select>
                 </div>
                 <div class="field-group">
@@ -72,10 +71,10 @@
                     <select id="style" autocomplete="off" required>
                         <option value="">-- Select Role First --</option>
                     </select>
-                    <div class="style-helpers">
-                        <button type="button" id="form-style-finder-link" class="link-button">Use Style Finder?</button>
-                        <a href="#" id="style-explore-link" class="explore-style-link" style="display: none;" aria-label="Explore selected style details">(Explore Details)</a>
-                    </div>
+                     <div class="style-helpers">
+                         <button type="button" id="form-style-finder-link" class="link-button">Use Style Finder?</button>
+                         <a href="#" id="style-explore-link" class="explore-style-link" style="display: none;" aria-label="Explore selected style details">(Explore Details)</a>
+                     </div>
                 </div>
 
                 <!-- Traits Area -->
@@ -83,10 +82,10 @@
                     Select Role & Style above to customize traits.
                 </div>
                 <div id="traits-container" style="display: block;">
-                    <p class="muted-text" style="margin-top: 1.5em; text-align: center;">Select Role & Style to see relevant traits...</p>
+                   <p class="muted-text" style="margin-top: 1.5em; text-align: center;">Select Role & Style to see relevant traits...</p>
                 </div>
 
-                <!-- Trait Info Popup (can remain here or move outside form) -->
+                <!-- Trait Info Popup -->
                 <div id="trait-info-popup" class="trait-info-popup card" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="trait-info-title" aria-hidden="true">
                     <button type="button" id="trait-info-close" class="modal-close popup-close" aria-label="Close trait info">×</button>
                     <h4 id="trait-info-title">Trait Info</h4>
@@ -97,7 +96,7 @@
                     <button type="button" id="save" class="save-btn">Save Persona! <span role="img" aria-label="Sparkles">💖</span></button>
                     <button type="button" id="clear-form" class="clear-btn">Clear Form <span role="img" aria-label="Broom">🧹</span></button>
                 </div>
-            </form> <!-- End of form wrapper -->
+            </form>
         </section>
 
         <!-- Persona List -->
@@ -109,16 +108,14 @@
             </ul>
         </section>
 
-        <!-- Live Preview Section (Now includes Daily Challenge) -->
+        <!-- Live Preview Section (Daily Challenge Area is now added inside #live-preview by JS) -->
         <section class="preview-section card">
             <h2>🎈 Live Vibe Preview 🎈</h2>
             <div id="live-preview">
                 <p class="muted-text">Fill the form to see your persona's vibe! 🌈</p>
-                <!-- Moved Daily Challenge Area Here -->
-                <div id="daily-challenge-area" style="margin-top: 1.5em; padding-top: 1em; border-top: 1px dashed var(--border-color); display: none;">
-                    <!-- JS will populate this -->
-                    <p class="muted-text">Loading today's focus...</p>
-                </div>
+                 <!-- JS will insert Daily Challenge here if applicable -->
+                 <!-- Example structure it might create: -->
+                 <!-- <div id="daily-challenge-area" ... > ... </div> -->
             </div>
         </section>
     </main>
@@ -131,7 +128,7 @@
             <button type="button" class="modal-close" id="modal-close" aria-label="Close details">×</button>
             <h2 class="modal-title" id="detail-modal-title">Persona Details</h2>
             <div class="modal-tabs" id="modal-tabs" role="tablist" aria-orientation="horizontal">
-                <!-- Tabs generated by JS -->
+                <!-- Tabs generated by JS (will reflect merged structure) -->
             </div>
             <div id="modal-body">
                 <!-- Tab content panes generated by JS -->
@@ -145,19 +142,53 @@
             <button type="button" class="modal-close" id="resources-close" aria-label="Close resources">×</button>
             <h2 id="resources-modal-title">🔗 Helpful Resources</h2>
             <div id="resources-body">
-                 <p>Here are some general resources. Always practice safety, consent, and communication (SSC/RACK/PRICK).</p>
+                 <p>Expand your knowledge and connect safely. Always practice enthusiastic consent, communicate clearly, and prioritize well-being.</p>
                  <dl>
-                    <dt>Consent & Communication</dt>
-                    <dd>Tools and articles on negotiation, safewords, and enthusiastic consent (e.g., FRIES model). Search online for "FRIES consent model".</dd>
+                    <dt>Consent Models</dt>
+                    <dd>
+                        <ul>
+                            <li><strong>SSC:</strong> Safe, Sane, Consensual. A baseline, ensure activities are physically safe, mentally sound, and agreed upon.</li>
+                            <li><strong>RACK:</strong> Risk-Aware Consensual Kink. Acknowledges inherent risks in some activities, emphasizing understanding and acceptance of those risks.</li>
+                            <li><strong>FRIES:</strong> Freely given, Reversible, Informed, Enthusiastic, Specific. A great checklist for ongoing consent.</li>
+                        </ul>
+                         Search online for detailed explanations of each.
+                    </dd>
+                    <dt>Negotiation & Communication</dt>
+                    <dd>
+                        <ul>
+                            <li>Discuss limits (hard/soft), desires, safewords, aftercare needs *before* play.</li>
+                            <li>Use "I feel" statements to express needs without blame.</li>
+                            <li>Practice active listening to truly understand your partner(s).</li>
+                            <li>Check in during and after scenes.</li>
+                        </ul>
+                    </dd>
                     <dt>Safety Information</dt>
-                    <dd>Guides on risk-aware practices for specific kinks (e.g., bondage safety, impact play zones, breath play dangers). Reputable sources like the National Coalition for Sexual Freedom (NCSF) often have safety guidelines.</dd>
-                    <dt>Community Links</dt>
-                    <dd>Connections to reputable online communities or educational platforms (e.g., FetLife, local Munch groups - vet carefully!).</dd>
-                    <dt>Mental Health</dt>
-                    <dd>Resources for finding kink-aware therapists or support groups (e.g., Kink Aware Professionals directory - search Kapprofessionals).</dd>
+                    <dd>
+                        <ul>
+                            <li>Research specific practices (e.g., rope safety, impact play zones, breath play risks, electrical play precautions).</li>
+                            <li>Understand basic first aid relevant to potential activities.</li>
+                            <li>Look for resources from reputable organizations like the National Coalition for Sexual Freedom (NCSF).</li>
+                        </ul>
+                     </dd>
+                    <dt>Community & Education</dt>
+                    <dd>
+                        <ul>
+                            <li><strong>FetLife:</strong> Large social network (use with caution, vet carefully).</li>
+                            <li><strong>Local Munches/Events:</strong> Search for community events in your area (vet carefully).</li>
+                            <li><strong>Educational Workshops:</strong> Many communities offer classes on specific skills or topics.</li>
+                        </ul>
+                    </dd>
+                    <dt>Mental Health & Support</dt>
+                    <dd>
+                         <ul>
+                             <li><strong>Kink Aware Professionals (KAP):</strong> Directory via Kapprofessionals.com to find therapists familiar with kink/BDSM dynamics.</li>
+                             <li>Peer support groups (online or local).</li>
+                             <li>Recognize sub/dom drop and prioritize aftercare.</li>
+                         </ul>
+                    </dd>
                  </dl>
                  <hr>
-                 <p><em>Disclaimer: KinkCompass provides informational pointers only and does not endorse specific organizations or practices. Your safety, well-being, and choices are your own responsibility. Research thoroughly and practice responsibly.</em></p>
+                 <p><em>Disclaimer: KinkCompass provides pointers only and does not endorse specific resources, organizations, or practices. Your safety, well-being, and choices are your responsibility. Research thoroughly, communicate clearly, and practice responsibly.</em></p>
             </div>
         </div>
     </div>
@@ -229,8 +260,8 @@
                  <ol>
                     <li>Use the form on the left to <strong>Create a Persona</strong>.</li>
                     <li>Explore the <strong>Style Finder</strong> (🧭 button in header) for guidance.</li>
-                    <li>Click personas in the list to view <strong>Details</strong> (Goals, Traits, History, Journal).</li>
-                    <li>Check out the <strong>Glossary</strong> (📚) & <strong>Resources</strong> (🔗) for learning.</li>
+                    <li>Click personas in the list to view <strong>Details</strong>.</li>
+                    <li>Check out the <strong>Glossary</strong> (📚) & <strong>Resources</strong> (🔗).</li>
                  </ol>
                  <p>Ready to explore? Close this message to begin!</p>
             </div>
