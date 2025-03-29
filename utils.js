@@ -1,4 +1,4 @@
-// === utils.js === (Corrected Again)
+// === utils.js === (Corrected - THIRD TIME'S THE CHARM!)
 // Contains helper functions for KinkCompass, separated from core app logic and data.
 
 // Import needed DATA structures from appData.js
@@ -24,9 +24,10 @@ function normalizeStyleKey(name) {
     if (!name) return '';
     const cleanedName = name
         .toLowerCase()
+        // Remove common emojis and symbols - adjust range if needed
         .replace(/([\u{1F300}-\u{1F5FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1FA70}-\u{1FAFF}\u{FE00}-\u{FE0F}\u{1F900}-\u{1F9FF}]+)/gu, '')
-        .replace(/\(.*?\)/g, '')
-        .replace(/ \/ /g, '/')
+        .replace(/\(.*?\)/g, '') // Remove content in parentheses
+        .replace(/ \/ /g, '/')   // Keep slashes if intended (like switch styles)
         .trim();
     return cleanedName;
 }
@@ -40,10 +41,10 @@ function normalizeStyleKey(name) {
 export function getSubStyleBreakdown(styleName, traits) {
   if (!styleName || !traits) { console.warn("getSubStyleBreakdown called with invalid args:", styleName, traits); return { strengths: "Select a style first!", improvements: "Choose your path to get tips!" }; }
   const styleKey = normalizeStyleKey(styleName);
-  const styleData = subStyleSuggestions[styleKey];
+  const styleData = subStyleSuggestions[styleKey]; // Use imported suggestions from appData.js
   if (!styleData) { console.warn(`No suggestions found for submissive style key: ${styleKey}`); return { strengths: `You're crafting your unique ${styleName} sparkle! Keep exploring. 💕`, improvements: "Continue defining what this style means to you! 😸" }; }
 
-  const roleData = bdsmData.submissive;
+  const roleData = bdsmData.submissive; // Use imported bdsmData from appData.js
   if (!roleData || !roleData.styles) { console.error("bdsmData.submissive or its styles are missing!"); return { strengths: "Error loading style data.", improvements: "Please check data source." }; }
 
   const styleObj = roleData.styles.find(s => normalizeStyleKey(s.name) === styleKey);
@@ -73,10 +74,10 @@ export function getSubStyleBreakdown(styleName, traits) {
 export function getDomStyleBreakdown(styleName, traits) {
   if (!styleName || !traits) { console.warn("getDomStyleBreakdown called with invalid args:", styleName, traits); return { strengths: "Select a style first!", improvements: "Choose your path to get tips!" }; }
   const styleKey = normalizeStyleKey(styleName);
-  const styleData = domStyleSuggestions[styleKey];
+  const styleData = domStyleSuggestions[styleKey]; // Use imported suggestions from appData.js
   if (!styleData) { console.warn(`No suggestions found for dominant style key: ${styleKey}`); return { strengths: `You're forging your own unique ${styleName} path! Keep exploring, Commander! 💪`, improvements: "Continue defining what this style means to you! 🔍" }; }
 
-  const roleData = bdsmData.dominant;
+  const roleData = bdsmData.dominant; // Use imported bdsmData from appData.js
   if (!roleData || !roleData.styles) { console.error("bdsmData.dominant or its styles are missing!"); return { strengths: "Error loading style data.", improvements: "Please check data source." }; }
 
   const styleObj = roleData.styles.find(s => normalizeStyleKey(s.name) === styleKey);
@@ -243,7 +244,7 @@ export function escapeHTML(str) {
             .replace(/</g, '<')
             .replace(/>/g, '>')
             .replace(/"/g, '"')
-            .replace(/'/g, ''');   // CORRECTED: Use the HTML entity for single quote
+            .replace(/'/g, ''');   // DEFINITELY CORRECTED NOW
 }
 
 /**
