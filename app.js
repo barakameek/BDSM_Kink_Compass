@@ -2249,69 +2249,87 @@ filterStyleDiscovery(searchTerm) {
 }
 
 sfComputeScores(temporary = false) {
-    let scores = {};
-    if (!this.styleFinderRole || !sfStyles[this.styleFinderRole]) return scores;
+    let stylePoints = {}; // Stores raw points for each style
+    if (!this.styleFinderRole || !sfStyles[this.styleFinderRole]) {
+        console.warn("[SF_COMPUTE_SCORES] Cannot compute scores: Role not set or invalid.");
+        return {}; // Return empty object for scores
+    }
 
     const relevantStyles = sfStyles[this.styleFinderRole];
+    const answeredTraits = Object.keys(this.styleFinderAnswers.traits);
 
-  sfUpdateDashboard(forceVisible = false) {
-    if (!this.elements.sfDashboard || !this.styleFinderRole) return;
-
-    const currentScores = this.sfComputeScores(true);
-    const scoreChanges = {};
-    if (this.previousScores) {
-        Object.keys(currentScores).forEach(styleName => {
-            const diff = currentScores[styleName] - (this.previousScores[styleName] || 0);
-            if (diff !== 0) scoreChanges[styleName] = { diff, direction: diff > 0 ? 'up' : 'down' };
-        });
-    }
-    const sortedScores = Object.entries(currentScores).sort(([, a], [, b]) => b - a);
-
-    let dashboardHTML = `<h4 class="sf-dashboard-header">Style Resonance ✨</h4>`;
-    // FIX: Use corrected escapeHTML
-    sortedScores.forEach(([styleName, score]) => {
-        const change = scoreChanges[styleName];
-        const changeHTML = change ? `<span class="sf-score-delta ${change.direction === 'up' ? 'positive' : 'negative'}">${change.direction === 'up' ? '+' : ''}${change.diff}</span> <span class="sf-move-${change.direction}">${change.direction === 'up' ? '▲' : '▼'}</span>` : '';
-         const barWidth = Math.max(0, Math.min(100, score));
-         const barHTML = `<div class="sf-score-bar" style="width: ${barWidth}%;"></div>`;
-        dashboardHTML += `
-            <div class="sf-dashboard-item">
-                <span class="sf-style-name">${escapeHTML(styleName)}</span>
-                <div class="sf-score-bar-container">${barHTML}</div>
-                <span class="sf-dashboard-score">${score}% ${changeHTML}</span>
-            </div>`;
+    // 1. Initialize points for all relevant styles to 0
+    relevantStyles.forEach(styleName => {
+        stylePoints[styleName] = 0;
     });
 
-    this.elements.sfDashboard.innerHTML = dashboardHTML;
-    if (forceVisible || this.hasRenderedDashboard) {
-        this.elements.sfDashboard.style.display = 'block';
+    // 2. Calculate Raw Points based on answered traits and key trait weights
+    relevantStyles.forEach(styleName => {
+        let pointsForThisStyle = 0;
+        let traitsConsideredCount = 0; // Count how many *key traits* for this style were answered
+
+        // Find the key traits definition for the current style
+        const styleKeyTraitKey = Object.keys(sfStyleKeyTraits).find(key =>
+            normalizeStyleKey(key) === normalizeStyleKey(styleName)
+        );
+        const keyTraitsForStyle = styleKeyTraitKey ? sfStyleKeyTraits[styleKeyTraitKey] : {};
+
+        // Iterate through the traits the user *actually answered*
+        answeredTraits.forEach(traitName => {
+            // Check if this answered trait is a key trait for the current style
+            if (keyTraitsForStyle.hasOwnProperty(traitName)) {
+                traitsConsideredCount++; // Increment count for normalization later
+                const userScore = this.styleFinderAnswers.traits[traitName]; // Score is 1-10
+                const weight = keyTraitsForStyle[traitName] || 1; // Default weight 1
+
+                // --- Scoring based on thresholds ---
+                let scoreContribution = 0;
+                if (userScore >= 9) {         // Very High Alignment
+                    scoreContribution = 3;
+                } else if (userScore >= 7) {  // High Alignment
+                    scoreContribution = 1;
+                } else if (userScore >= 4) { // Neutral / Mild Alignment (small positive)
+                    scoreContribution = 0.25; // Give a small nudge for being above pure neutral
+                } else if (userScore >= 2) { // Mild Misalignment
+                    scoreContribution = -1;
+                } else {                     // Strong Misalignment (userScore is 1)
+                    scoreContribution = -2;
+                }
+
+                pointsForThisStyle += scoreContribution * weight;
+            }
+            // NOTE: Traits answered by the user that are NOT key traits for this style do NOT affect its score.
+        });
+
+        // Store the raw points (consider averaging later if needed)
+        // We clamp at 0 here to prevent negative scores from unduly affecting relative percentages later
+        stylePoints[styleName] = Math.max(0, pointsForThisStyle);
+
+        // Optional: Log raw points per style for debugging
+        // if (!temporary) console.log(`[SF_COMPUTE] Raw points for ${styleName}: ${pointsForThisStyle.toFixed(2)} (based on ${traitsConsideredCount} traits)`);
+    });
+
+    // 3. Normalization (Convert points to 0-100 percentage based on max points *achieved*)
+    let finalScores = {};
+    let maxAchievedPoints = 0;
+    Object.values(stylePoints).forEach(points => {
+        if (points > maxAchievedPoints) {
+            maxAchievedPoints = points;
+        }
+    });
+
+    // Avoid division by zero if no style got positive points
+    if (maxAchievedPoints <= 0) {
+        relevantStyles.forEach(styleName => finalScores[styleName] = 0);
+    } else {
+        relevantStyles.forEach(styleName => {
+            // Normalize against the highest score *actually achieved* in this run
+            finalScores[styleName] = Math.round((stylePoints[styleName] / maxAchievedPoints) * 100);
+        });
     }
-    this.previousScores = currentScores;
-}
 
-  sfCalculateResult() {
-    console.log("[SF_CALCULATE_RESULT] Calculating final results...");
-    const finalScores = this.sfComputeScores(false);
-    if (Object.keys(finalScores).length === 0) return null;
-    const sortedScores = Object.entries(finalScores).sort(([, a], [, b]) => b - a);
-    if (sortedScores.length === 0) return { topStyle: { name: "Undetermined", score: 0 }, /* ...defaults */ };
-
-    const topStyleName = sortedScores[0][0];
-    const topStyleScore = sortedScores[0][1];
-    const topStyleDetails = sfStyleDescriptions[topStyleName] || null;
-    const topMatch = sfDynamicMatches[topStyleName] || null;
-
-    if (!topStyleDetails) console.warn(`[SF_CALCULATE_RESULT] Missing description for top style: ${topStyleName}`);
-    if (!topMatch) console.warn(`[SF_CALCULATE_RESULT] Missing dynamic match for top style: ${topStyleName}`);
-
-    const result = {
-        topStyle: { name: topStyleName, score: topStyleScore },
-        topStyleDetails: topStyleDetails || { short: "Details unavailable.", long: "No description.", tips: [] },
-        topMatch: topMatch || { dynamic: "N/A", match: "N/A", desc: "N/A", longDesc: "No match data." },
-        sortedScores: sortedScores
-    };
-    console.log("[SF_CALCULATE_RESULT] Final result determined:", result.topStyle.name);
-    return result;
+    if (!temporary) console.log("[SF_COMPUTE_SCORES] Final Normalized Scores:", finalScores);
+    return finalScores; // Return the normalized 0-100 scores
 }
 
   sfGenerateSummaryDashboard(sortedScores) {
