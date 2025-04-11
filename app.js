@@ -2243,9 +2243,9 @@ filterStyleDiscovery(searchTerm) {
 
 
 
-  sfStartOver() {
-    console.log("[SF_START_OVER] Restarting Style Finder.");
-    this.sfStart();
+sfStart() { // <--- Make sure this definition exists and is spelled correctly
+        console.log("[SF_START] Initiating Style Finder (Redesigned).");
+        this.styleFinderActive = true;
 }
 
 sfComputeScores(temporary = false) {
@@ -2254,7 +2254,22 @@ sfComputeScores(temporary = false) {
         // ... (warning) ...
         return {};
     }
-
+   sfCloseAllPopups() {
+         let popupsClosed = false;
+         // Find any popups created by sfShowTraitInfo or sfShowFullDetails
+         document.querySelectorAll('.sf-style-info-popup').forEach(popup => {
+             // Remove the popup element from the DOM
+             popup.remove();
+             popupsClosed = true;
+         });
+         // Find any info icons that were left active
+         document.querySelectorAll('.sf-info-icon.active').forEach(icon => {
+              icon.classList.remove('active');
+              // Optionally try to return focus if needed, though closing the modal handles it
+         });
+         if(popupsClosed) console.log("[SF_CLOSE_POPUPS] Closed open SF popups.");
+         return popupsClosed; // Indicate if any were closed
+    }
     const relevantStyles = sfStyles[this.styleFinderRole];
     const answeredTraits = Object.keys(this.styleFinderAnswers.traits);
 
