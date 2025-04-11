@@ -2249,7 +2249,7 @@ sfStart() { // <--- Make sure this definition exists and is spelled correctly
 }
 
 
-    sfComputeScores(temporary = false) {
+  sfComputeScores(temporary = false) {
     let stylePoints = {};
     if (!this.styleFinderRole || !sfStyles[this.styleFinderRole]) {
         console.warn("[SF_COMPUTE_SCORES] Cannot compute scores: Role not set or invalid.");
@@ -2266,8 +2266,31 @@ sfStart() { // <--- Make sure this definition exists and is spelled correctly
 
     // 2. Calculate Raw Points
     relevantStyles.forEach(styleName => {
-        // ... (points calculation logic - This block seems okay based on previous checks) ...
-        stylePoints[styleName] = Math.max(0, pointsForThisStyle);
+        let pointsForThisStyle = 0;
+        let traitsConsideredCount = 0; // Keep track if needed for avg later
+
+        const styleKeyTraitKey = Object.keys(sfStyleKeyTraits).find(key =>
+            normalizeStyleKey(key) === normalizeStyleKey(styleName)
+        );
+        const keyTraitsForStyle = styleKeyTraitKey ? sfStyleKeyTraits[styleKeyTraitKey] : {};
+
+        answeredTraits.forEach(traitName => {
+            if (keyTraitsForStyle.hasOwnProperty(traitName)) {
+                traitsConsideredCount++;
+                const userScore = this.styleFinderAnswers.traits[traitName];
+                const weight = keyTraitsForStyle[traitName] || 1;
+                let scoreContribution = 0;
+
+                if (userScore >= 9) { scoreContribution = 3; }
+                else if (userScore >= 7) { scoreContribution = 1; }
+                else if (userScore >= 4) { scoreContribution = 0.25; }
+                else if (userScore >= 2) { scoreContribution = -1; }
+                else { scoreContribution = -2; }
+
+                pointsForThisStyle += scoreContribution * weight;
+            }
+        });
+        stylePoints[styleName] = Math.max(0, pointsForThisStyle); // Clamp raw score at 0
     }); // End of raw point calculation loop
 
     // 3. Normalization
@@ -2278,21 +2301,22 @@ sfStart() { // <--- Make sure this definition exists and is spelled correctly
         if (points > maxAchievedPoints) {
             maxAchievedPoints = points;
         }
-    }); // End of finding max points loop
+    });
 
-    // *** LINE ~2281 IS LIKELY IN THIS if/else BLOCK ***
     if (maxAchievedPoints <= 0) {
-        // If no points, set all scores to 0
-        relevantStyles.forEach(styleName => finalScores[styleName] = 0); // Check this line
-} else {
-    relevantStyles.forEach(styleName => {
-        finalScores[styleName] = Math.round((stylePoints[styleName] / maxAchievedPoints) * 100);
-    }); // <-- Add semicolon here? (Usually not needed, but worth trying)
-} // End else block
-// Now the if statement
-if (!temporary) console.log(...)
+        relevantStyles.forEach(styleName => finalScores[styleName] = 0);
+    } else { // <-- Added missing brace before this else
+        relevantStyles.forEach(styleName => {
+            finalScores[styleName] = Math.round((stylePoints[styleName] / maxAchievedPoints) * 100);
+        });
+    } // <-- Correctly closes the else block
+
+    // REMOVED Duplicate/incorrect block that was here
+
+    // Correct final logging and return
     if (!temporary) console.log("[SF_COMPUTE_SCORES] Final Normalized Scores:", finalScores);
     return finalScores;
+
 } // End sfComputeScores
 
     if (!temporary) console.log("[SF_COMPUTE_SCORES] Final Normalized Scores:", finalScores);
