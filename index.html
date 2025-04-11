@@ -6,16 +6,16 @@
     <title>🌟 KinkCompass Reimagined 🌟</title>
     <!-- Link the main consolidated stylesheet -->
     <link rel="stylesheet" href="styles.css" />
-    <!-- Remove any link to stylesbdsmfinder.css or similar -->
+    <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧭</text></svg>">
     <!-- External Libraries (Keep if used via CDN) -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script> <!-- Updated Chart.js version -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script> <!-- Updated Confetti -->
 </head>
 <body>
     <header class="app-header">
         <h1><span role="img" aria-label="Compass">🧭</span> KinkCompass <span role="img" aria-label="Sparkles">✨</span></h1>
-        <nav class="header-nav">
+        <nav class="header-nav" aria-label="Main navigation">
             <button type="button" id="style-finder-trigger-btn" class="header-btn" title="Find Your Kink Style!">🧭 Style Finder</button>
             <button type="button" id="style-discovery-btn" class="header-btn" title="Explore All Styles">🔭 Explore Styles</button>
             <button type="button" id="achievements-btn" class="header-btn" title="View Achievements">🏆 Achievements</button>
@@ -25,22 +25,24 @@
             <button type="button" id="export-btn" class="header-btn" title="Export Data">💾 Export</button>
             <button type="button" id="import-btn" class="header-btn" title="Import Data">📁 Import</button>
             <input type="file" id="import-file-input" accept=".json" style="display: none;" aria-hidden="true" />
-            <button type="button" id="theme-toggle" class="header-btn theme-btn" title="Toggle light/dark mode">🌙</button>
+            <button type="button" id="theme-toggle" class="header-btn theme-btn" title="Toggle light/dark mode" aria-label="Switch to Dark Mode">🌙</button>
         </nav>
     </header>
 
     <main class="container">
 
         <!-- Profile Creation/Editing Form -->
-        <section id="form-section" class="form-section card">
+        <section id="form-section" class="form-section card" aria-labelledby="form-title">
             <h2 id="form-title">✨ Create New Persona ✨</h2>
-            <form action="#" onsubmit="event.preventDefault();">
+            <!-- Removed inline onsubmit -->
+            <form action="#">
                 <div class="field-group avatar-group">
                     <fieldset class="avatar-picker-fieldset">
                         <legend>Avatar:</legend>
                         <div class="avatar-picker">
                             <span id="avatar-display" aria-hidden="true">❓</span>
                             <input type="hidden" id="avatar-input" value="❓">
+                            <!-- Added type="button" to all avatar buttons -->
                             <button type="button" class="avatar-btn" data-emoji="🎀" aria-label="Ribbon">🎀</button>
                             <button type="button" class="avatar-btn" data-emoji="✨" aria-label="Sparkles">✨</button>
                             <button type="button" class="avatar-btn" data-emoji="💖" aria-label="Sparkling Heart">💖</button>
@@ -53,29 +55,37 @@
                             <button type="button" class="avatar-btn" data-emoji="🎭" aria-label="Masks">🎭</button>
                             <button type="button" class="avatar-btn" data-emoji="⛓️" aria-label="Chains">⛓️</button>
                             <button type="button" class="avatar-btn" data-emoji="🗝️" aria-label="Key">🗝️</button>
-                            <!-- Add more avatars as desired -->
+                            <button type="button" class="avatar-btn" data-emoji="🌹" aria-label="Rose">🌹</button>
+                            <button type="button" class="avatar-btn" data-emoji="🍓" aria-label="Strawberry">🍓</button>
+                            <button type="button" class="avatar-btn" data-emoji="🌙" aria-label="Moon">🌙</button>
+                            <button type="button" class="avatar-btn" data-emoji="⭐" aria-label="Star">⭐</button>
+                            <button type="button" class="avatar-btn" data-emoji="💎" aria-label="Gem">💎</button>
+                            <button type="button" class="avatar-btn" data-emoji="🖤" aria-label="Black Heart">🖤</button>
+                            <button type="button" class="avatar-btn" data-emoji="🤍" aria-label="White Heart">🤍</button>
+                            <button type="button" class="avatar-btn" data-emoji="💜" aria-label="Purple Heart">💜</button>
+                            <button type="button" class="avatar-btn selected" data-emoji="❓" aria-label="Question Mark">❓</button>
                         </div>
                     </fieldset>
                 </div>
                 <div class="field-group">
                     <label for="name">Name</label>
-                    <input type="text" id="name" placeholder="Persona Name (e.g., Playful Kitten)" autocomplete="off" required />
+                    <input type="text" id="name" placeholder="Persona Name (e.g., Playful Kitten)" autocomplete="off" required aria-required="true" />
                 </div>
                 <div class="field-group">
                     <label for="role">Primary Role</label>
-                    <select id="role" autocomplete="off">
-                        <option value="dominant">Dominant</option>
+                    <select id="role" autocomplete="off" required aria-required="true">
                         <option value="submissive" selected>Submissive</option>
+                        <option value="dominant">Dominant</option>
                          <option value="switch">Switch</option>
                     </select>
                 </div>
                 <div class="field-group">
                     <label for="style">Primary Style</label>
-                    <select id="style" autocomplete="off" required>
+                    <select id="style" autocomplete="off" required aria-required="true" aria-describedby="style-helper-text">
                         <option value="">-- Select Role First --</option>
                         <!-- Options populated by JS -->
                     </select>
-                     <div class="style-helpers">
+                     <div class="style-helpers" id="style-helper-text">
                          <button type="button" id="form-style-finder-link" class="link-button">Use Style Finder?</button>
                          <a href="#" id="style-explore-link" class="explore-style-link" style="display: none;" aria-label="Explore selected style details">(Explore Details)</a>
                      </div>
@@ -85,7 +95,7 @@
                 <div id="traits-message" class="muted-text" style="display: none; margin-top: 1.5em; text-align: center;">
                     Select Role & Style above to customize traits.
                 </div>
-                <div id="traits-container" style="display: block;">
+                <div id="traits-container" style="display: block;" aria-live="polite">
                    <p class="muted-text" style="margin-top: 1.5em; text-align: center;">Select Role & Style to see relevant traits...</p>
                    <!-- Trait sliders generated by JS -->
                 </div>
@@ -94,30 +104,37 @@
                 <div id="trait-info-popup" class="trait-info-popup card" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="trait-info-title" aria-hidden="true">
                     <button type="button" id="trait-info-close" class="modal-close popup-close" aria-label="Close trait info">×</button>
                     <h4 id="trait-info-title">Trait Info</h4>
-                    <div id="trait-info-body"></div>
+                    <div id="trait-info-body">
+                        <!-- Content injected by JS -->
+                    </div>
                 </div>
 
+                <!-- Form Actions -->
                 <div class="form-actions">
-                    <button type="button" id="save" class="save-btn">Save Persona! <span role="img" aria-label="Sparkles">💖</span></button>
+                    <!-- Button type handled by listener -->
+                    <button id="save" class="save-btn">
+                        Save Persona! <span role="img" aria-label="Sparkles">💖</span>
+                        <span class="spinner" style="display: none;" aria-hidden="true"></span> <!-- Spinner for loading state -->
+                    </button>
                     <button type="button" id="clear-form" class="clear-btn">Clear Form <span role="img" aria-label="Broom">🧹</span></button>
                 </div>
             </form>
         </section>
 
         <!-- Persona List -->
-        <section class="list-section card">
-            <h2>🌟 Persona Crew 🌟</h2>
+        <section class="list-section card" aria-labelledby="persona-list-title">
+            <h2 id="persona-list-title">🌟 Persona Crew 🌟</h2>
             <p class="muted-text">Click a persona to view details or edit.</p>
             <ul id="people-list" aria-live="polite">
-                <li>Loading personas...</li>
+                <li role="status" aria-live="polite">Loading personas...</li>
                 <!-- Persona list items generated by JS -->
             </ul>
         </section>
 
         <!-- Live Preview Section -->
-        <section class="preview-section card">
-            <h2>🎈 Live Vibe Preview 🎈</h2>
-            <div id="live-preview">
+        <section class="preview-section card" aria-labelledby="live-preview-title">
+            <h2 id="live-preview-title">🎈 Live Vibe Preview 🎈</h2>
+            <div id="live-preview" aria-live="polite">
                 <p class="muted-text">Fill the form to see your persona's vibe! 🌈</p>
                  <!-- JS will insert dynamic content here, including #daily-challenge-area -->
             </div>
@@ -131,10 +148,11 @@
         <div class="modal-content card wide-modal">
             <button type="button" class="modal-close" id="modal-close" aria-label="Close details">×</button>
             <h2 class="modal-title" id="detail-modal-title">Persona Details</h2>
-            <div class="modal-tabs" id="modal-tabs" role="tablist" aria-orientation="horizontal">
-                <!-- Tabs generated by JS (e.g., Traits & Breakdown, Goals & Journal, History, Insights) -->
+            <div class="modal-tabs" id="modal-tabs" role="tablist" aria-orientation="horizontal" aria-label="Persona details sections">
+                <!-- Tabs generated by JS -->
             </div>
             <div id="modal-body">
+                <div role="status" aria-live="polite">Loading details...</div>
                 <!-- Tab content panes generated by JS -->
             </div>
         </div>
@@ -185,14 +203,14 @@
                     <dt>Mental Health & Support</dt>
                     <dd>
                          <ul>
-                             <li><strong>Kink Aware Professionals (KAP):</strong> Directory via Kapprofessionals.com to find therapists familiar with kink/BDSM dynamics.</li>
+                             <li><strong>Kink Aware Professionals (KAP):</strong> Directory via Kapprofessionals.com or similar listings to find therapists familiar with kink/BDSM dynamics.</li>
                              <li>Peer support groups (online or local).</li>
                              <li>Recognize sub/dom drop and prioritize aftercare.</li>
                          </ul>
                     </dd>
                  </dl>
                  <hr>
-                 <p><em>Disclaimer: KinkCompass provides pointers only and does not endorse specific resources, organizations, or practices. Your safety, well-being, and choices are your responsibility. Research thoroughly, communicate clearly, and practice responsibly.</em></p>
+                 <p class="disclaimer"><em>Disclaimer: KinkCompass provides pointers only and does not endorse specific resources, organizations, or practices. Your safety, well-being, and choices are your responsibility. Research thoroughly, communicate clearly, and practice responsibly.</em></p>
             </div>
         </div>
     </div>
@@ -202,8 +220,14 @@
         <div class="modal-content card wide-modal">
             <button type="button" class="modal-close" id="glossary-close" aria-label="Close glossary">×</button>
             <h2 id="glossary-modal-title">📚 Kink Glossary</h2>
+            <!-- Optional Search Bar -->
+            <div class="glossary-search">
+                <label for="glossary-search-input" class="sr-only">Search Glossary</label>
+                <input type="search" id="glossary-search-input" placeholder="Search terms..." />
+                <button type="button" id="glossary-search-clear" class="small-btn clear-btn" aria-label="Clear search">✕</button>
+            </div>
             <div id="glossary-body">
-                <p class="muted-text">Loading glossary terms...</p>
+                <p class="muted-text" role="status" aria-live="polite">Loading glossary terms...</p>
                 <!-- Glossary content generated by JS -->
             </div>
         </div>
@@ -222,9 +246,14 @@
                     <option value="dominant">Dominant</option>
                     <option value="switch">Switch</option>
                 </select>
+                <!-- Optional Search Bar -->
+                <div class="style-discovery-search">
+                    <label for="style-discovery-search-input" class="sr-only">Search Styles</label>
+                    <input type="search" id="style-discovery-search-input" placeholder="Search styles..." />
+                </div>
             </div>
             <div id="style-discovery-body">
-                <p class="muted-text">Loading styles...</p>
+                <p class="muted-text" role="status" aria-live="polite">Loading styles...</p>
                 <!-- Style discovery content generated by JS -->
             </div>
         </div>
@@ -249,8 +278,17 @@
         <div class="modal-content card wide-modal">
             <button type="button" class="modal-close" id="achievements-close" aria-label="Close achievements">×</button>
             <h2 id="achievements-modal-title">🏆 Achievements Hub 🏆</h2>
+            <!-- Optional Filter/Sort Actions -->
+            <div class="modal-actions" style="display: none;"> <!-- Hidden for now, can be enabled later -->
+                 <label for="achievements-filter">Filter:</label>
+                 <select id="achievements-filter">
+                     <option value="all">All</option>
+                     <option value="unlocked">Unlocked</option>
+                     <option value="locked">Locked</option>
+                 </select>
+            </div>
             <div id="achievements-body">
-                <p class="muted-text">Loading achievements status...</p>
+                <p class="muted-text" role="status" aria-live="polite">Loading achievements status...</p>
                 <!-- Achievements list generated by JS -->
             </div>
         </div>
@@ -264,11 +302,11 @@
             <div id="welcome-body">
                  <p>Your journey to understanding and tracking your desires starts here!</p>
                  <p><strong>Quick Start:</strong></p>
-                 <ol>
+                 <ol style="list-style: decimal; padding-left: 1.5em;"> <!-- Added list styling -->
                     <li>Use the form on the left to <strong>Create a Persona</strong>.</li>
                     <li>Explore the <strong>Style Finder</strong> (🧭 button in header) for guidance.</li>
-                    <li>Click personas in the list to view <strong>Details</strong>.</li>
-                    <li>Check out the <strong>Glossary</strong> (📚) & <strong>Resources</strong> (🔗).</li>
+                    <li>Click personas in the list to view <strong>Details</strong>, track goals, and reflect.</li>
+                    <li>Check out the <strong>Glossary</strong> (📚) & <strong>Resources</strong> (🔗) in the header.</li>
                  </ol>
                  <p>Ready to explore? Close this message to begin!</p>
             </div>
@@ -280,13 +318,14 @@
         <div class="modal-content sf-modal-content card">
             <button type="button" class="modal-close" id="sf-close-style-finder" aria-label="Close Style Finder">×</button>
             <h3 id="sf-modal-title">🧭 Style Finder Quest 🧭</h3>
-            <div id="sf-progress-tracker" class="sf-progress-tracker" aria-live="polite"></div>
-            <div id="sf-step-content">
+            <div id="sf-progress-tracker" class="sf-progress-tracker" aria-live="polite">Step 0 of 0</div>
+            <div id="sf-progress-bar-container" aria-hidden="true"><div id="sf-progress-bar"></div></div> <!-- Added Progress Bar -->
+            <div id="sf-step-content" role="region" aria-live="polite">
                 <p>Loading your quest...</p>
                 <!-- Style Finder steps generated by JS -->
             </div>
             <p id="sf-feedback" class="sf-feedback" aria-live="assertive"></p>
-            <div id="sf-dashboard" class="sf-dashboard" style="display:none;">
+            <div id="sf-dashboard" class="sf-dashboard" style="display:none;" aria-live="polite">
                 <!-- Style Finder dashboard generated by JS -->
             </div>
         </div>
@@ -296,23 +335,24 @@
      <div id="context-help-popup" class="context-help-popup card" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="context-help-title" aria-hidden="true">
         <button type="button" id="context-help-close" class="modal-close popup-close" aria-label="Close help">×</button>
         <h4 id="context-help-title">Help</h4>
-        <div id="context-help-body"></div>
+        <div id="context-help-body">
+            <!-- Content injected by JS -->
+        </div>
     </div>
 
     <!-- App Notification Area -->
-     <div id="app-notification" style="opacity: 0; top: 20px;" aria-live="assertive" aria-hidden="true">
+     <div id="app-notification" style="opacity: 0; top: 20px;" role="status" aria-live="polite" aria-hidden="true">
          <!-- Notifications populated by JS -->
      </div>
 
 
     <footer class="app-footer">
         <p>KinkCompass Reimagined - Navigate your desires with clarity & joy! ✨</p>
-        <p><small>Version 2.8.7 (Consolidated)</small></p>
+        <p><small>Version 2.8.7 (Consolidated & Enhanced)</small></p>
     </footer>
 
     <!-- SCRIPTS (Keep at the end) -->
-    <!-- Ensure ONLY app.js is loaded as a module -->
-    <!-- Any other JS files like data.js, utils.js etc. should NOT be loaded here -->
+    <!-- Load main app module -->
     <script type="module" src="app.js"></script>
 
 </body>
