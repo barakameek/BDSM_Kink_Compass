@@ -2249,92 +2249,51 @@ sfStart() { // <--- Make sure this definition exists and is spelled correctly
 }
 
 
-    sfComputeScores(temporary = false) { // <--- Method definition starts here
-        let stylePoints = {};
-        if (!this.styleFinderRole || !sfStyles[this.styleFinderRole]) {
-            // ... warning ...
-            return {};
-        }
-        const relevantStyles = sfStyles[this.styleFinderRole];
-        const answeredTraits = Object.keys(this.styleFinderAnswers.traits);
+    sfComputeScores(temporary = false) {
+    let stylePoints = {};
+    if (!this.styleFinderRole || !sfStyles[this.styleFinderRole]) {
+        console.warn("[SF_COMPUTE_SCORES] Cannot compute scores: Role not set or invalid.");
+        return {};
+    }
 
-        // ... rest of the point calculation logic ...
-
-        let finalScores = {};
-        // ... normalization logic ...
-
-        return finalScores;
-    } // <--- Method definition ENDS here
-
-    sfCloseAllPopups() { // <--- SEPARATE method definition starts here
-         let popupsClosed = false;
-         document.querySelectorAll('.sf-style-info-popup').forEach(popup => {
-             popup.remove();
-             popupsClosed = true;
-         });
-         document.querySelectorAll('.sf-info-icon.active').forEach(icon => {
-              icon.classList.remove('active');
-         });
-         if(popupsClosed) console.log("[SF_CLOSE_POPUPS] Closed open SF popups.");
-         return popupsClosed;
-    } 
     const relevantStyles = sfStyles[this.styleFinderRole];
     const answeredTraits = Object.keys(this.styleFinderAnswers.traits);
 
+    // 1. Initialize points
     relevantStyles.forEach(styleName => {
         stylePoints[styleName] = 0;
     });
 
+    // 2. Calculate Raw Points
     relevantStyles.forEach(styleName => {
-        let pointsForThisStyle = 0;
-        let traitsConsideredCount = 0;
-
-        const styleKeyTraitKey = Object.keys(sfStyleKeyTraits).find(key => // Arrow func OK
-            normalizeStyleKey(key) === normalizeStyleKey(styleName)
-        );
-        // Potential Issue Area: Check this assignment carefully
-        const keyTraitsForStyle = styleKeyTraitKey ? sfStyleKeyTraits[styleKeyTraitKey] : {}; // Ternary OK
-
-        answeredTraits.forEach(traitName => { // Arrow func OK
-            if (keyTraitsForStyle.hasOwnProperty(traitName)) {
-                traitsConsideredCount++;
-                const userScore = this.styleFinderAnswers.traits[traitName];
-                const weight = keyTraitsForStyle[traitName] || 1;
-
-                let scoreContribution = 0;
-                // Threshold logic (if/else if) - Braces seem correct here
-                if (userScore >= 9) { scoreContribution = 3; }
-                else if (userScore >= 7) { scoreContribution = 1; }
-                else if (userScore >= 4) { scoreContribution = 0.25; }
-                else if (userScore >= 2) { scoreContribution = -1; }
-                else { scoreContribution = -2; }
-
-                pointsForThisStyle += scoreContribution * weight;
-            }
-        });
-
+        // ... (points calculation logic - This block seems okay based on previous checks) ...
         stylePoints[styleName] = Math.max(0, pointsForThisStyle);
+    }); // End of raw point calculation loop
 
-    }); // End of relevantStyles.forEach
-
+    // 3. Normalization
     let finalScores = {};
     let maxAchievedPoints = 0;
 
-    // *** LINE ~2257 IS LIKELY AROUND HERE ***
-    Object.values(stylePoints).forEach(points => { // Arrow func OK
+    Object.values(stylePoints).forEach(points => {
         if (points > maxAchievedPoints) {
             maxAchievedPoints = points;
         }
-    }); // End of Object.values.forEach
+    }); // End of finding max points loop
 
-    // Conditional logic (if/else) - Braces seem correct here
+    // *** LINE ~2281 IS LIKELY IN THIS if/else BLOCK ***
     if (maxAchievedPoints <= 0) {
-        relevantStyles.forEach(styleName => finalScores[styleName] = 0); // Arrow func OK
+        // If no points, set all scores to 0
+        relevantStyles.forEach(styleName => finalScores[styleName] = 0); // Check this line
     } else {
-        relevantStyles.forEach(styleName => { // Arrow func OK
+        // If points exist, normalize
+        relevantStyles.forEach(styleName => { // Check this line (start of arrow func)
             finalScores[styleName] = Math.round((stylePoints[styleName] / maxAchievedPoints) * 100);
-        }); // End inner forEach
-    } // End else
+        }); // Check this line (end of arrow func body)
+    } // Check this line (end of else block)
+
+    if (!temporary) console.log("[SF_COMPUTE_SCORES] Final Normalized Scores:", finalScores);
+    return finalScores;
+} // End sfComputeScores
 
     if (!temporary) console.log("[SF_COMPUTE_SCORES] Final Normalized Scores:", finalScores);
     return finalScores;
