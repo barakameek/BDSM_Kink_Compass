@@ -36,9 +36,11 @@ import {
     findHintsForTraits,
     getRandomPrompt,
     escapeHTML,
+  
     getFlairForScore,
     generateSimpleId,
     debounce
+     normalizeStyleKey
 } from './utils.js';
 
 // Ensure Chart.js and Confetti are loaded (via CDN in HTML)
