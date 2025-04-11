@@ -38,7 +38,8 @@ import {
     escapeHTML,
     getFlairForScore,
     generateSimpleId,
-    debounce
+    debounce,
+    normalizeStyleKey
 } from './utils.js';
 
 // Ensure Chart.js and Confetti are loaded (via CDN in HTML)
