@@ -2249,89 +2249,73 @@ filterStyleDiscovery(searchTerm) {
 }
 
 sfComputeScores(temporary = false) {
-    let stylePoints = {}; // Stores raw points for each style
+    let stylePoints = {};
     if (!this.styleFinderRole || !sfStyles[this.styleFinderRole]) {
-        console.warn("[SF_COMPUTE_SCORES] Cannot compute scores: Role not set or invalid.");
-        return {}; // Return empty object for scores
+        // ... (warning) ...
+        return {};
     }
 
     const relevantStyles = sfStyles[this.styleFinderRole];
     const answeredTraits = Object.keys(this.styleFinderAnswers.traits);
 
-    // 1. Initialize points for all relevant styles to 0
     relevantStyles.forEach(styleName => {
         stylePoints[styleName] = 0;
     });
 
-    // 2. Calculate Raw Points based on answered traits and key trait weights
     relevantStyles.forEach(styleName => {
         let pointsForThisStyle = 0;
-        let traitsConsideredCount = 0; // Count how many *key traits* for this style were answered
+        let traitsConsideredCount = 0;
 
-        // Find the key traits definition for the current style
-        const styleKeyTraitKey = Object.keys(sfStyleKeyTraits).find(key =>
+        const styleKeyTraitKey = Object.keys(sfStyleKeyTraits).find(key => // Arrow func OK
             normalizeStyleKey(key) === normalizeStyleKey(styleName)
         );
-        const keyTraitsForStyle = styleKeyTraitKey ? sfStyleKeyTraits[styleKeyTraitKey] : {};
+        // Potential Issue Area: Check this assignment carefully
+        const keyTraitsForStyle = styleKeyTraitKey ? sfStyleKeyTraits[styleKeyTraitKey] : {}; // Ternary OK
 
-        // Iterate through the traits the user *actually answered*
-        answeredTraits.forEach(traitName => {
-            // Check if this answered trait is a key trait for the current style
+        answeredTraits.forEach(traitName => { // Arrow func OK
             if (keyTraitsForStyle.hasOwnProperty(traitName)) {
-                traitsConsideredCount++; // Increment count for normalization later
-                const userScore = this.styleFinderAnswers.traits[traitName]; // Score is 1-10
-                const weight = keyTraitsForStyle[traitName] || 1; // Default weight 1
+                traitsConsideredCount++;
+                const userScore = this.styleFinderAnswers.traits[traitName];
+                const weight = keyTraitsForStyle[traitName] || 1;
 
-                // --- Scoring based on thresholds ---
                 let scoreContribution = 0;
-                if (userScore >= 9) {         // Very High Alignment
-                    scoreContribution = 3;
-                } else if (userScore >= 7) {  // High Alignment
-                    scoreContribution = 1;
-                } else if (userScore >= 4) { // Neutral / Mild Alignment (small positive)
-                    scoreContribution = 0.25; // Give a small nudge for being above pure neutral
-                } else if (userScore >= 2) { // Mild Misalignment
-                    scoreContribution = -1;
-                } else {                     // Strong Misalignment (userScore is 1)
-                    scoreContribution = -2;
-                }
+                // Threshold logic (if/else if) - Braces seem correct here
+                if (userScore >= 9) { scoreContribution = 3; }
+                else if (userScore >= 7) { scoreContribution = 1; }
+                else if (userScore >= 4) { scoreContribution = 0.25; }
+                else if (userScore >= 2) { scoreContribution = -1; }
+                else { scoreContribution = -2; }
 
                 pointsForThisStyle += scoreContribution * weight;
             }
-            // NOTE: Traits answered by the user that are NOT key traits for this style do NOT affect its score.
         });
 
-        // Store the raw points (consider averaging later if needed)
-        // We clamp at 0 here to prevent negative scores from unduly affecting relative percentages later
         stylePoints[styleName] = Math.max(0, pointsForThisStyle);
 
-        // Optional: Log raw points per style for debugging
-        // if (!temporary) console.log(`[SF_COMPUTE] Raw points for ${styleName}: ${pointsForThisStyle.toFixed(2)} (based on ${traitsConsideredCount} traits)`);
-    });
+    }); // End of relevantStyles.forEach
 
-    // 3. Normalization (Convert points to 0-100 percentage based on max points *achieved*)
     let finalScores = {};
     let maxAchievedPoints = 0;
-    Object.values(stylePoints).forEach(points => {
+
+    // *** LINE ~2257 IS LIKELY AROUND HERE ***
+    Object.values(stylePoints).forEach(points => { // Arrow func OK
         if (points > maxAchievedPoints) {
             maxAchievedPoints = points;
         }
-    });
+    }); // End of Object.values.forEach
 
-    // Avoid division by zero if no style got positive points
+    // Conditional logic (if/else) - Braces seem correct here
     if (maxAchievedPoints <= 0) {
-        relevantStyles.forEach(styleName => finalScores[styleName] = 0);
+        relevantStyles.forEach(styleName => finalScores[styleName] = 0); // Arrow func OK
     } else {
-        relevantStyles.forEach(styleName => {
-            // Normalize against the highest score *actually achieved* in this run
+        relevantStyles.forEach(styleName => { // Arrow func OK
             finalScores[styleName] = Math.round((stylePoints[styleName] / maxAchievedPoints) * 100);
-        });
-    }
+        }); // End inner forEach
+    } // End else
 
     if (!temporary) console.log("[SF_COMPUTE_SCORES] Final Normalized Scores:", finalScores);
-    return finalScores; // Return the normalized 0-100 scores
-}
-
+    return finalScores;
+} // End sfComputeScores
   sfGenerateSummaryDashboard(sortedScores) {
     console.log("[SF_GEN_SUMMARY_DASH] Generating summary dashboard.");
     if (!sortedScores || sortedScores.length === 0) return '<p>No results to display.</p>';
