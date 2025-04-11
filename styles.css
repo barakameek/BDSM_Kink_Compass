@@ -615,27 +615,336 @@ html[data-theme="pastel"] .all-achievements-list li.unlocked { background-color:
 
 
 /* --- Style Finder Specific Styles --- */
-.sf-modal .sf-modal-content { background: var(--sf-modal-bg, var(--card-bg-color)); padding: 2em; border-radius: var(--border-radius-medium); max-width: 95%; width: 650px; max-height: 90vh; overflow-y: auto; box-shadow: var(--card-shadow); transition: background-color var(--transition-duration) var(--transition-timing), border-color var(--transition-duration) var(--transition-timing); display: flex; flex-direction: column; text-align: center; margin-left: auto; margin-right: auto; }
-.sf-modal-content h3 { margin-top: 0; margin-bottom: 1em; color: var(--accent-color); }
-#sf-progress-tracker { font-size: 0.9em; color: var(--sf-progress-color, var(--muted-text-color)); margin-bottom: 1em; }
-#sf-progress-bar-container { width: 80%; max-width: 300px; height: 8px; background-color: var(--border-color); border-radius: 4px; margin: 0.5em auto 1.5em auto; overflow: hidden; }
-#sf-progress-bar { height: 100%; width: 0%; background-color: var(--accent-color); border-radius: 4px; transition: width 0.4s ease-out; }
-#sf-step-content { padding: 0.5em 0; position: relative; min-height: 150px; }
+.sf-modal .sf-modal-content {
+    background: var(--sf-modal-bg, var(--card-bg-color));
+    padding: 1.5em; /* Reduced padding slightly */
+    border-radius: var(--border-radius-medium);
+    max-width: 95%;
+    width: 600px; /* Adjusted width */
+    max-height: 95vh; /* Allow slightly more height */
+    box-shadow: var(--card-shadow);
+    transition: background-color var(--transition-duration) var(--transition-timing), border-color var(--transition-duration) var(--transition-timing);
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    border: 1px solid var(--border-color); /* Softer border */
+}
+
+.sf-modal-content h3#sf-modal-title { /* Target title specifically */
+    margin-top: 0;
+    margin-bottom: 0.8em; /* Reduced margin */
+    color: var(--accent-color);
+    font-size: 1.6em; /* Slightly smaller title */
+    font-weight: 600;
+}
+
+/* Progress Area */
+.sf-progress-area { /* New wrapper for tracker and bar */
+    margin-bottom: 1.5em;
+    padding-bottom: 1em;
+    border-bottom: 1px dashed var(--border-color);
+}
+#sf-progress-tracker {
+    font-size: 0.85em; /* Smaller tracker text */
+    color: var(--sf-progress-color, var(--muted-text-color));
+    margin-bottom: 0.5em; /* Space between text and bar */
+    font-weight: 500;
+}
+#sf-progress-bar-container {
+    width: 100%; /* Full width */
+    max-width: 350px;
+    height: 10px; /* Slightly thicker bar */
+    background-color: var(--border-color);
+    border-radius: 5px; /* Match bar radius */
+    margin: 0 auto;
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+#sf-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent-color-light), var(--accent-color)); /* Gradient bar */
+    border-radius: 5px;
+    transition: width 0.4s ease-out;
+    box-shadow: inset 0 -1px 1px rgba(0,0,0,0.15);
+}
+
+/* Step Content Area */
+#sf-step-content {
+    padding: 0; /* Remove padding, handled by inner */
+    position: relative;
+    flex-grow: 1; /* Allow content to take available space */
+    display: flex; /* Use flex for centering inner */
+    flex-direction: column;
+    justify-content: center; /* Center content vertically */
+    min-height: 200px; /* Ensure minimum height */
+    overflow: hidden; /* Prevent internal overflow issues */
+}
+#sf-step-content {
+    padding: 0; /* Remove padding, handled by inner */
+    position: relative;
+    flex-grow: 1; /* Allow content to take available space */
+    display: flex; /* Use flex for centering inner */
+    flex-direction: column;
+    justify-content: center; /* Center content vertically */
+    min-height: 200px; /* Ensure minimum height */
+    overflow: hidden; /* Prevent internal overflow issues */
+}
+
+/* Step Transition */
+.sf-step-transition {
+    opacity: 0;
+    transform: translateY(15px);
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+#sf-step-content:not(.sf-step-transition) { /* Apply final state when class removed */
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.sf-step-inner {
+    padding: 1em 0.5em; /* Padding for inner content */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center horizontally */
+    flex-grow: 1;
+    justify-content: space-between; /* Space out content and buttons */
+}
+
+.sf-trait-content { /* Wrapper for trait text and slider */
+    width: 100%;
+    max-width: 450px; /* Limit width of trait area */
+    margin-bottom: 1.5em; /* Space before buttons */
+}
 #sf-step-content.loading::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(var(--card-bg-color-rgb, 255, 255, 255), 0.7); z-index: 10; display: flex; align-items: center; justify-content: center; }
 html[data-theme="dark"] #sf-step-content.loading::after, html[data-theme="velvet"] #sf-step-content.loading::after { background: rgba(var(--card-bg-color-rgb, 44, 31, 62), 0.7); }
-#sf-step-content h2 { color: var(--accent-color); margin-bottom: 1em; font-size: 1.4em; display: flex; align-items: center; justify-content: center; gap: 0.5em; }
-#sf-step-content p { margin-bottom: 1.5em; }
-.sf-button-container { display: flex; flex-wrap: wrap; gap: 1em; justify-content: center; margin-top: 1.5em; }
+#sf-step-content h2 {
+    color: var(--accent-color-darker); /* Darker accent for title */
+    margin-bottom: 0.8em;
+    font-size: 1.4em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    font-weight: 600;
+}
+#sf-step-content p { /* General paragraph styling */
+    margin-bottom: 1em;
+    color: var(--text-color);
+    max-width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+}
+p.sf-trait-desc { /* Specific description styling */
+    font-size: 1.05em; /* Slightly larger trait desc */
+    margin-bottom: 1.5em;
+    color: var(--muted-text-color);
+}
+
+.sf-button-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+    justify-content: center;
+    margin-top: 1.5em; /* Consistent margin */
+    width: 100%;
+    padding: 0 1em; /* Padding for spacing */
+}
+.sf-button-container.trait-buttons {
+    justify-content: space-between; /* Space out prev/next */
+    margin-top: 1em; /* Less margin after slider */
+}
+.sf-role-btn {
+    border: none;
+    padding: 0.8em 1.8em;
+    font-size: 1.1em;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    min-width: 180px;
+    color: var(--text-color-light);
+}
+.sf-nav-btn {
+    background: var(--border-color);
+    color: var(--text-color);
+    border: none;
+    padding: 0.6em 1.2em;
+    font-size: 1em;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+.sf-nav-btn:hover:not(:disabled) {
+    background: var(--accent-color-light);
+    transform: scale(1.05);
+    box-shadow: var(--button-shadow);
+}
+.sf-nav-btn.next-btn {
+    background: var(--accent-color);
+    color: var(--text-color-light);
+    font-weight: bold;
+}
+.sf-nav-btn.next-btn:hover:not(:disabled) {
+    background: var(--accent-color-darker);
+}
+.sf-nav-btn.clear-btn {
+    background: var(--muted-text-color);
+    color: var(--bg-color); /* Lighter text on muted */
+}
+.sf-nav-btn.clear-btn:hover:not(:disabled) {
+    background: var(--text-color);
+}
+.sf-nav-placeholder { /* Takes up space when Prev button isn't shown */
+    width: 80px; /* Approximate width of prev button */
+    display: inline-block;
+}
+.sf-action-btn { /* Base for Apply */
+    border: none;
+    padding: 0.8em 1.8em;
+    font-size: 1.05em;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    background: var(--success-color); /* Green for apply */
+    color: #fff;
+}
+.sf-action-btn:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--success-color) 85%, black);
+    transform: translateY(-2px);
+    box-shadow: var(--button-shadow);
+}
+.sf-details-link { /* Link-style button for details */
+    font-size: 0.9em;
+    margin-top: 0.5em;
+}
+
+.sf-role-btn.sub-btn { background: var(--accent-color); }
+.sf-role-btn.sub-btn:hover { background: var(--accent-color-darker); transform: translateY(-2px); box-shadow: var(--button-shadow); }
+.sf-role-btn.dom-btn { background: var(--accent-color-darker); } /* Use darker accent for Dom */
+.sf-role-btn.dom-btn:hover { background: var(--accent-color); transform: translateY(-2px); box-shadow: var(--button-shadow); }
 /* Use base button styles */
 #sf-step-content button { /* Base styles defined below */ padding: 0.7em 1.5em; }
 #sf-step-content button[data-action="setRole"] { min-width: 150px; font-size: 1.05em; }
 #sf-step-content button.clear-btn { background: var(--muted-text-color); color: var(--card-bg-color); }
 #sf-step-content button.small-btn { background: var(--border-color); color: var(--text-color); font-size: 0.9em; padding: 0.5em 1em; }
 #sf-step-content button.small-btn:hover:not(:disabled) { background: var(--accent-color-light); }
-#sf-feedback { font-size: 0.9em; color: var(--accent-color); margin: 1em 0; min-height: 1.2em; font-weight: bold; }
+#sf-feedback {
+    font-size: 0.9em;
+    color: var(--accent-color);
+    margin: 1em 0 0 0; /* Position below content */
+    min-height: 1.2em;
+    font-weight: bold;
+    /* Ensure it's placed correctly if needed */
+     order: 5; /* Place it after dashboard if both visible */
+     padding: 0 1em;
+}
 #sf-feedback.feedback-error { color: var(--danger-color); }
 #sf-feedback.feedback-warning { color: var(--warning-color); }
-#sf-dashboard { margin-top: 1.5em; font-size: 0.9em; color: var(--text-color); padding: 1em; background: var(--bg-color); border-radius: var(--border-radius-small); border: var(--border-width) dashed var(--border-color); animation: sfFadeIn 0.5s ease; } /* Added fade-in */
+
+#sf-dashboard {
+    margin-top: 1.5em; /* Ensure space below buttons */
+    font-size: 0.9em;
+    color: var(--text-color);
+    padding: 1em;
+    background: var(--bg-color);
+    border-radius: var(--border-radius-small);
+    border: 1px dashed var(--border-color);
+    animation: sfFadeIn 0.5s ease;
+    width: 100%;
+    max-width: 500px; /* Limit dashboard width */
+    margin-left: auto;
+    margin-right: auto;
+    max-height: 200px; /* Limit height */
+    overflow-y: auto; /* Add scroll */
+    flex-shrink: 0; /* Prevent shrinking */
+}
+#sf-dashboard .sf-dashboard-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 8px; /* Reduced gap */
+    background: var(--sf-dashboard-item-bg, rgba(255, 112, 150, 0.05));
+    border-radius: 6px; /* Smaller radius */
+    padding: 0.5em 0.8em; /* Adjust padding */
+    margin: 0.4em 0;
+    box-shadow: none; /* Remove shadow */
+    border: 1px solid var(--border-color);
+}
+#sf-dashboard .sf-style-name {
+    font-size: 0.95em; /* Adjust size */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-basis: 50%; /* Give name more space */
+    text-align: left;
+}
+#sf-dashboard .sf-score-bar-container {
+    width: 60px; /* Slightly narrower bar */
+    height: 6px;
+}
+#sf-dashboard .sf-dashboard-score {
+    font-size: 0.95em;
+    min-width: 80px; /* Ensure space for delta */
+    text-align: right;
+}
+.sf-result-step {
+    justify-content: flex-start; /* Align content top */
+}
+.sf-result-intro {
+    font-size: 1.1em;
+    color: var(--muted-text-color);
+    margin-bottom: 1.5em !important; /* Ensure space */
+}
+.sf-result-summary {
+    width: 100%;
+    max-width: 550px; /* Limit result area width */
+    margin-bottom: 2em;
+}
+.sf-result-summary h3 { /* Top Suggestion Header */
+    color: var(--accent-color);
+    margin-bottom: 0.5em;
+    font-size: 1.3em;
+}
+.sf-result-summary h4 { /* Other headers */
+    color: var(--text-color);
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    font-size: 1.1em;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.3em;
+}
+
+.sf-result-card {
+    background-color: var(--bg-color);
+    padding: 1em 1.2em;
+    border-radius: var(--border-radius-small);
+    border: 1px solid var(--border-color);
+    margin-bottom: 1em;
+    text-align: left;
+}
+.sf-result-card h4 { /* Title within top suggestion card */
+    margin-top: 0;
+    margin-bottom: 0.5em;
+    font-size: 1.25em;
+    color: var(--accent-color-darker);
+    border: none;
+    padding: 0;
+}
+.sf-result-card p {
+    margin-bottom: 0.5em;
+    line-height: 1.5;
+    font-size: 0.95em;
+}
+.sf-result-card p strong { color: var(--accent-color-darker); }
+.sf-result-card p em { color: var(--muted-text-color); font-style: italic; }
+.sf-result-card .match-desc { font-size: 0.9em; color: var(--muted-text-color); }
+
 html[data-theme="dark"] #sf-dashboard, html[data-theme="velvet"] #sf-dashboard { color: var(--text-color); background: var(--bg-color); border-color: var(--border-color); }
 .sf-dashboard-header { font-size: 1.2em; color: var(--accent-color); margin-bottom: 0.8em; text-align: center; font-weight: bold; }
 /* Style Finder Summary Dashboard Layout Fix */
@@ -654,17 +963,97 @@ html[data-theme="dark"] .sf-dashboard-score, html[data-theme="velvet"] .sf-dashb
 html[data-theme="dark"] .sf-score-delta.positive, html[data-theme="velvet"] .sf-score-delta.positive { color: var(--accent-color-light); }
 .sf-score-delta.negative { color: var(--sf-score-delta-negative-color, var(--muted-text-color)); }
 /* Style Finder Slider */
-.sf-trait-slider { width: 100%; max-width: 400px; margin: 15px auto; display: block; -webkit-appearance: none; appearance: none; height: 8px; background: var(--sf-slider-track-bg, var(--border-color)); border-radius: 5px; outline: none; transition: background 0.3s; accent-color: var(--accent-color); cursor: pointer; }
-.sf-trait-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; background: var(--accent-color); border-radius: 50%; cursor: pointer; transition: all 0.2s ease; border: 2px solid var(--card-bg-color); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
-.sf-trait-slider::-moz-range-thumb { width: 20px; height: 20px; background: var(--accent-color); border-radius: 50%; cursor: pointer; border: 2px solid var(--card-bg-color); transition: all 0.2s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.sf-trait-slider {
+    width: 100%;
+    max-width: 380px;
+    margin: 15px auto 5px auto; /* Adjust margins */
+    display: block;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 10px; /* Match progress bar */
+    background: var(--sf-slider-track-bg, var(--border-color));
+    border-radius: 5px;
+    outline: none;
+    transition: background 0.3s;
+    accent-color: var(--accent-color);
+    cursor: pointer;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+.sf-trait-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px; /* Larger thumb */
+    height: 24px;
+    background: var(--accent-color);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 3px solid var(--sf-modal-bg, var(--card-bg-color)); /* Border matches modal bg */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.sf-trait-slider::-moz-range-thumb {
+    width: 20px; /* Adjusted for consistency */
+    height: 20px;
+    background: var(--accent-color);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid var(--sf-modal-bg, var(--card-bg-color));
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.sf-trait-slider:hover::-webkit-slider-thumb,
+.sf-trait-slider:focus-visible::-webkit-slider-thumb {
+    background: var(--accent-color-darker);
+    transform: scale(1.1);
+}
+.sf-trait-slider:hover::-moz-range-thumb,
+.sf-trait-slider:focus-visible::-moz-range-thumb {
+    background: var(--accent-color-darker);
+    transform: scale(1.1);
+}
 .sf-trait-slider::-webkit-slider-thumb:hover, .sf-trait-slider::-moz-range-thumb:hover { background: var(--accent-color-darker); transform: scale(1.1); }
 .sf-trait-slider:active { cursor: grabbing; }
+
 .sf-trait-slider:active::-webkit-slider-thumb { box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
 .sf-trait-slider:active::-moz-range-thumb { box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
-.sf-slider-description { font-size: 1em; color: var(--accent-color); margin-top: 10px; font-weight: bold; transition: all 0.2s ease; text-align: center; padding: 8px 12px; background: var(--highlight-bg-color); border-radius: var(--border-radius-small); max-width: 400px; margin-left: auto; margin-right: auto; min-height: 2.5em; }
-.sf-slider-footnote { font-size: 0.85em; color: var(--sf-slider-footnote-color, var(--muted-text-color)); margin-top: 8px; text-align: center; }
-.sf-info-icon { cursor: pointer; margin-left: 8px; color: var(--accent-color); font-size: 1.1em; vertical-align: middle; transition: transform 0.2s; background: none; border: none; padding: 0; }
-.sf-info-icon:hover { transform: scale(1.2); color: var(--accent-color-darker); }
+.sf-slider-description {
+    font-size: 1.1em; /* Larger description */
+    color: var(--accent-color-darker);
+    margin-top: 10px;
+    font-weight: 600; /* Bolder */
+    text-align: center;
+    padding: 8px 15px; /* More padding */
+    background: var(--highlight-bg-color);
+    border-radius: var(--border-radius-small);
+    border: 1px dashed var(--accent-color-light);
+    max-width: 380px;
+    margin-left: auto;
+    margin-right: auto;
+    min-height: 2.5em;
+}
+.sf-slider-footnote {
+    font-size: 0.8em; /* Smaller footnote */
+    color: var(--sf-slider-footnote-color, var(--muted-text-color));
+    margin-top: 8px;
+    text-align: center;
+}
+.sf-info-icon {
+    cursor: pointer;
+    margin-left: 8px;
+    color: var(--muted-text-color); /* Subtler info icon */
+    font-size: 1em; /* Adjust size */
+    vertical-align: middle;
+    transition: transform 0.2s, color 0.2s;
+    background: none;
+    border: none;
+    padding: 0;
+    line-height: 1;
+}
+.sf-info-icon:hover {
+    transform: scale(1.2);
+    color: var(--accent-color);
+}
+
 .sf-info-icon.active { color: var(--accent-color-darker); transform: scale(1.1); } /* Show active state */
 /* Style Finder Popups */
 .sf-style-info-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--sf-popup-bg, var(--card-bg-color)); padding: 2em; border-radius: var(--border-radius-medium); max-width: 500px; width: 90%; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25); z-index: 1010; text-align: left; max-height: 80vh; overflow-y: auto; border: 2px solid var(--accent-color); }
@@ -679,7 +1068,23 @@ html[data-theme="dark"] .sf-style-info-popup, html[data-theme="velvet"] .sf-styl
 .sf-close-btn:hover { color: var(--accent-color); transform: scale(1.15) rotate(90deg); }
 /* Style Finder Results Section */
 .sf-result-section { margin: 20px 0; text-align: center; }
-#summary-dashboard { margin-bottom: 1.5em; }
+#summary-dashboard { /* Override general dashboard styles slightly */
+    margin-top: 0.5em;
+    padding: 0.8em;
+    max-height: none; /* No height limit here */
+    overflow-y: visible;
+    border-style: solid;
+}
+#summary-dashboard .sf-dashboard-item.summary-item {
+    background: none; /* Simpler background */
+    border: none;
+    padding: 0.3em 0.5em;
+    gap: 10px;
+}
+#summary-dashboard .sf-style-name { flex-basis: 45%; font-size: 0.9em;}
+#summary-dashboard .sf-score-bar-container { width: 80px; height: 8px; }
+#summary-dashboard .sf-dashboard-score { font-size: 0.9em; min-width: 40px;}
+
 .sf-result-heading { color: var(--accent-color); border-bottom: 2px solid var(--accent-color); padding-bottom: 5px; display: inline-block; margin-bottom: 1em; }
 .sf-result-section p { margin-bottom: 1em; text-align: left; max-width: 90%; margin-left: auto; margin-right: auto; }
 .sf-result-section p strong { color: var(--accent-color-darker); }
@@ -802,6 +1207,50 @@ button.clear-btn.loading .spinner { border: 3px solid rgba(255, 255, 255, 0.4); 
     .all-achievements-list .achievement-icon { font-size: 2em; }
     .person-info { flex-direction: column; align-items: flex-start; text-align: left; gap: 0.2em; } /* Stack avatar/details */
     .person-actions { flex-direction: column; align-self: center; margin-left: 0; gap: 0.4em;} /* Stack actions */
+}
+@media (max-width: 650px) {
+    .sf-modal .sf-modal-content {
+        width: 95%;
+        padding: 1em;
+    }
+    #sf-step-content h2 {
+        font-size: 1.25em;
+    }
+    p.sf-trait-desc {
+        font-size: 1em;
+    }
+    .sf-trait-slider {
+        max-width: 90%;
+    }
+    .sf-button-container {
+        gap: 0.8em;
+    }
+    .sf-nav-btn, .sf-role-btn, .sf-action-btn {
+        font-size: 0.95em;
+        padding: 0.6em 1.2em;
+    }
+    #sf-dashboard {
+        max-height: 180px; /* Slightly less height on mobile */
+    }
+}
+
+@media (max-width: 480px) {
+     .sf-modal .sf-modal-content {
+         padding: 0.8em;
+     }
+    #sf-step-content h2 {
+        font-size: 1.15em;
+    }
+     p.sf-trait-desc {
+        font-size: 0.95em;
+    }
+     .sf-nav-btn, .sf-role-btn, .sf-action-btn {
+        font-size: 0.9em;
+        padding: 0.5em 1em;
+    }
+    .sf-result-card {
+        padding: 0.8em;
+    }
 }
 
 /* Form Actions (Save/Clear Buttons) */
