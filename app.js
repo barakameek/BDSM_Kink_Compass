@@ -85,7 +85,148 @@ class TrackerApp {
         console.warn("[CONSTRUCTOR] Style Finder UI elements missing. Style Finder feature may be disabled.");
     }
 
-   
+    sfRenderStep() {
+        if (!this.styleFinderActive || !this.elements.sfStepContent) return;
+        this.elements.sfStepContent.classList.add('sf-step-transition');
+
+        const steps = this.sfCalculateSteps();
+        const currentStepIndex = this.styleFinderStep;
+        const totalSteps = steps.length;
+
+        if (currentStepIndex >= totalSteps || currentStepIndex < 0) {
+            console.error(`[SF_RENDER_STEP] Invalid step index: ${currentStepIndex}. Total steps: ${totalSteps}. Resetting.`);
+            this.sfStartOver(); return;
+        }
+        const currentStepData = steps[currentStepIndex];
+        console.log(`[SF_RENDER_STEP] Rendering step ${currentStepIndex + 1} (${currentStepData.type}). Trait (if any): ${currentStepData.name || 'N/A'}`); // Debug log
+
+        // Progress Bar Update
+        const progressPercent = totalSteps > 1 ? Math.round(((currentStepIndex + 1) / totalSteps) * 100) : 0;
+        if(this.elements.sfProgressTracker) this.elements.sfProgressTracker.textContent = `Step ${currentStepIndex + 1} / ${totalSteps}`;
+        if(this.elements.sfProgressBar) {
+             this.elements.sfProgressBar.style.width = `${progressPercent}%`;
+             this.elements.sfProgressBar.setAttribute('aria-valuenow', progressPercent);
+        }
+
+        let html = '';
+        let showDashboard = false;
+
+        switch (currentStepData.type) {
+            case 'role_selection':
+                html = `
+                    <div class="sf-step-inner">
+                        <h2>${escapeHTML(currentStepData.title)}</h2>
+                        <p>${escapeHTML(currentStepData.text)}</p>
+                        <div class="sf-button-container">
+                            <button type="button" data-action="setRole" data-role="submissive" class="sf-role-btn sub-btn">Submissive Path 🙇‍♀️</button>
+                            <button type="button" data-action="setRole" data-role="dominant" class="sf-role-btn dom-btn">Dominant Path 👑</button>
+                        </div>
+                    </div>`;
+                 if (this.elements.sfDashboard) this.elements.sfDashboard.style.display = 'none';
+                 this.hasRenderedDashboard = false;
+                 showDashboard = false;
+                break;
+
+            case 'trait':
+                const traitName = currentStepData.name;
+                const traitDesc = currentStepData.desc;
+                const currentValue = this.styleFinderAnswers.traits[traitName] ?? 5;
+                const footnote = this.traitFootnotes[traitName] || '';
+                const sliderDescArray = this.sliderDescriptions[traitName] || [];
+                const currentDescText = sliderDescArray[Math.max(0, Math.min(9, currentValue - 1))] || `Value: ${currentValue}`;
+                const escapedTraitName = escapeHTML(traitName);
+
+                html = `
+                    <div class="sf-step-inner">
+                        <div class="sf-trait-content">
+                             <h2>
+                                ${escapeHTML(traitName.charAt(0).toUpperCase() + traitName.slice(1))}
+                                <button type="button" class="sf-info-icon" data-trait="${escapedTraitName}" aria-label="Info about ${escapedTraitName}" title="Show info for ${escapedTraitName}">?</button>
+                             </h2>
+                             <p class="sf-trait-desc">${escapeHTML(traitDesc)}</p>
+                             <input type="range" class="sf-trait-slider" data-trait="${escapedTraitName}" min="1" max="10" value="${currentValue}" aria-label="${escapedTraitName} rating" step="1">
+                             <div class="sf-slider-description" id="sf-desc-${escapedTraitName}">${escapeHTML(currentDescText)}</div>
+                             <div class="sf-slider-footnote">${escapeHTML(footnote)}</div>
+                        </div>
+                        <div class="sf-button-container trait-buttons">
+                             ${currentStepIndex > 1 ? '<button type="button" data-action="prev" class="sf-nav-btn prev-btn">⬅️ Back</button>' : '<span class="sf-nav-placeholder"></span>'}
+                             <button type="button" data-action="next" data-currenttrait="${escapedTraitName}" class="sf-nav-btn next-btn">Next ➡️</button>
+                        </div>
+                    </div>
+                    `;
+                this.sfSliderInteracted = this.styleFinderAnswers.traits[traitName] !== undefined;
+                showDashboard = true;
+                break;
+
+            case 'result':
+                const resultData = this.sfCalculateResult();
+                 if (!resultData?.topStyle) {
+                     html = '<div class="sf-step-inner error-text"><p>Could not calculate results. Please try again.</p><button type="button" data-action="startOver" class="sf-nav-btn">Restart</button></div>';
+                     break;
+                 }
+                const escapedTopStyleName = escapeHTML(resultData.topStyle.name);
+
+                html = `
+                     <div class="sf-step-inner sf-result-step">
+                         <h2>${escapeHTML(currentStepData.title)}</h2>
+                         <p class="sf-result-intro">Based on your responses, here are styles that seem to resonate:</p>
+
+                         <div class="sf-result-summary">
+                            <h3>✨ Top Suggestion ✨</h3>
+                            <div class="sf-result-card top-suggestion">
+                                 <h4>${escapedTopStyleName}</h4>
+                                 <p><strong>${escapeHTML(resultData.topStyleDetails?.short || '')}</strong> ${escapeHTML(resultData.topStyleDetails?.long || 'Details loading...')}</p>
+                                 <button type="button" class="link-button sf-details-link" data-action="showDetails" data-style="${escapedTopStyleName}">(Show Full Details)</button>
+                             </div>
+
+                             <h4>Possible Dynamic</h4>
+                              <div class="sf-result-card dynamic-match">
+                                 <p>Match: <strong>${escapeHTML(resultData.topMatch?.match || '?')}</strong></p>
+                                 <p><em>Dynamic: ${escapeHTML(resultData.topMatch?.dynamic || '?')}</em></p>
+                                 <p class="match-desc">${escapeHTML(resultData.topMatch?.longDesc || '?')}</p>
+                             </div>
+
+                             <h4>Other Resonating Styles</h4>
+                              <div id="summary-dashboard">
+                                ${this.sfGenerateSummaryDashboard(resultData.sortedScores.slice(1))}
+                             </div>
+                         </div>
+
+
+                         <div class="sf-button-container result-buttons">
+                             <button type="button" data-action="confirmApply" data-role="${this.styleFinderRole}" data-style="${escapedTopStyleName}" class="sf-action-btn apply-btn">Apply '${escapedTopStyleName}' to Form</button>
+                             <button type="button" data-action="prev" class="sf-nav-btn prev-btn">⬅️ Back to Traits</button>
+                             <button type="button" data-action="startOver" class="sf-nav-btn clear-btn">Start Over 🔄</button>
+                         </div>
+                     </div>`;
+                showDashboard = false;
+
+                 if (typeof confetti === 'function') {
+                     try { confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 }, angle: 90 }); } catch (e) { console.warn("Confetti error:", e); }
+                 }
+                 grantAchievement({}, 'style_finder_complete', this.showNotification.bind(this));
+                break;
+
+            default:
+                html = '<div class="sf-step-inner error-text"><p>Error: Unknown step type.</p></div>';
+                showDashboard = false;
+        }
+
+        // Update dashboard visibility
+        if (this.elements.sfDashboard) {
+             if (showDashboard) {
+                  if (!this.hasRenderedDashboard) { this.sfUpdateDashboard(true); this.hasRenderedDashboard = true; }
+                  else { this.sfUpdateDashboard(); }
+                  this.elements.sfDashboard.style.display = 'block';
+             } else { this.elements.sfDashboard.style.display = 'none'; }
+        }
+
+        // Render HTML with transition handling
+        requestAnimationFrame(() => {
+             this.elements.sfStepContent.innerHTML = html;
+             setTimeout(() => { this.elements.sfStepContent.classList.remove('sf-step-transition'); }, 50);
+        });
+    } // End sfRenderStep
     console.log("[CONSTRUCTOR] Calling addEventListeners...");
     this.addEventListeners();
     console.log("[CONSTRUCTOR] Listeners setup completed.");
