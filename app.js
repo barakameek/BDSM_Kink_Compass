@@ -2284,13 +2284,13 @@ sfStart() { // <--- Make sure this definition exists and is spelled correctly
     if (maxAchievedPoints <= 0) {
         // If no points, set all scores to 0
         relevantStyles.forEach(styleName => finalScores[styleName] = 0); // Check this line
-    } else {
-        // If points exist, normalize
-        relevantStyles.forEach(styleName => { // Check this line (start of arrow func)
-            finalScores[styleName] = Math.round((stylePoints[styleName] / maxAchievedPoints) * 100);
-        }); // Check this line (end of arrow func body)
-    } // Check this line (end of else block)
-
+} else {
+    relevantStyles.forEach(styleName => {
+        finalScores[styleName] = Math.round((stylePoints[styleName] / maxAchievedPoints) * 100);
+    }); // <-- Add semicolon here? (Usually not needed, but worth trying)
+} // End else block
+// Now the if statement
+if (!temporary) console.log(...)
     if (!temporary) console.log("[SF_COMPUTE_SCORES] Final Normalized Scores:", finalScores);
     return finalScores;
 } // End sfComputeScores
