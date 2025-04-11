@@ -39,7 +39,7 @@ import {
   
     getFlairForScore,
     generateSimpleId,
-    debounce
+    debounce,
      normalizeStyleKey
 } from './utils.js';
 
