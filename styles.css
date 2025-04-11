@@ -803,3 +803,48 @@ button.clear-btn.loading .spinner { border: 3px solid rgba(255, 255, 255, 0.4); 
     .person-info { flex-direction: column; align-items: flex-start; text-align: left; gap: 0.2em; } /* Stack avatar/details */
     .person-actions { flex-direction: column; align-self: center; margin-left: 0; gap: 0.4em;} /* Stack actions */
 }
+
+/* Form Actions (Save/Clear Buttons) */
+.form-actions { display: flex; flex-wrap: wrap; gap: 1em; margin-top: 1.8em; justify-content: center; }
+.save-btn, .clear-btn { border: none; padding: 0.8em 1.8em; font-size: 1.1em; border-radius: 50px; cursor: pointer; font-weight: bold; transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 0.5em; }
+.save-btn { background: var(--accent-color); color: var(--text-color-light); }
+.save-btn:hover:not(:disabled) { background: var(--accent-color-darker); transform: translateY(-2px); box-shadow: var(--button-shadow); }
+.clear-btn { background: var(--muted-text-color); color: var(--card-bg-color); }
+.clear-btn:hover:not(:disabled) { background: var(--text-color); transform: translateY(-2px); box-shadow: var(--button-shadow); }
+.save-btn:disabled, .clear-btn:disabled { background: color-mix(in srgb, var(--muted-text-color) 70%, transparent); color: color-mix(in srgb, var(--text-color-light) 70%, transparent); cursor: not-allowed; transform: none; box-shadow: none; opacity: 0.7; }
+.save-btn.loading { cursor: wait; }
+
+/* IMPROVEMENT: Style for the button text span */
+.button-text {
+    /* Add styles if needed, but mostly for JS targeting */
+    display: inline-block; /* Ensure it behaves well with adjacent spinner */
+}
+
+
+/* ... (rest of styles) ... */
+
+/* Achievements Panel Polish (Standalone Modal Version) */
+.all-achievements-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2em; padding: 0; margin-top: 1em; }
+.all-achievements-list li { background: var(--bg-color); border: var(--border-width) solid var(--border-color); border-left: 6px solid var(--muted-text-color); padding: 1.2em; border-radius: var(--border-radius-small); display: flex; align-items: center; gap: 1em; transition: background-color var(--transition-duration) var(--transition-timing), border-color var(--transition-duration) var(--transition-timing), transform 0.2s ease; }
+.all-achievements-list li:hover { transform: translateY(-2px); box-shadow: var(--card-shadow); }
+.all-achievements-list li.locked { opacity: 0.65; border-left-color: color-mix(in srgb, var(--muted-text-color) 50%, transparent); }
+.all-achievements-list li.unlocked { border-left-color: var(--achievement-color); background-color: color-mix(in srgb, var(--achievement-color) 10%, var(--bg-color)); }
+html[data-theme="dark"] .all-achievements-list li.unlocked, html[data-theme="velvet"] .all-achievements-list li.unlocked { border-left-color: var(--achievement-color); background-color: color-mix(in srgb, var(--achievement-color) 12%, var(--bg-color)); }
+html[data-theme="pastel"] .all-achievements-list li.unlocked { background-color: color-mix(in srgb, var(--achievement-color) 15%, var(--bg-color)); }
+.all-achievements-list .achievement-icon { font-size: 2.2em; flex-shrink: 0; line-height: 1; }
+.all-achievements-list .achievement-details { display: flex; flex-direction: column; flex-grow: 1; /* Allow details to take space */ }
+.all-achievements-list .achievement-name { font-weight: bold; font-size: 1.05em; color: var(--accent-color-darker); margin-bottom: 0.2em; }
+.all-achievements-list li.locked .achievement-name { color: var(--text-color); }
+.all-achievements-list .achievement-desc { font-size: 0.9em; color: var(--text-color); line-height: 1.5; }
+.all-achievements-list li.locked .achievement-desc { color: var(--muted-text-color); font-style: italic; }
+
+
+/* FIX: Add styles for persona achievement list in insights */
+.persona-achievements-list { display: flex; flex-wrap: wrap; gap: 0.8em; margin-top: 0.5em; padding-left: 0; justify-content: flex-start; list-style: none; }
+.persona-achievements-list li { background: var(--bg-color); border: var(--border-width) solid var(--border-color); padding: 0.5em 0.8em; border-radius: var(--border-radius-medium); text-align: center; display: flex; align-items: center; gap: 0.4em; min-width: 90px; transition: background-color var(--transition-duration) var(--transition-timing), border-color var(--transition-duration) var(--transition-timing), transform 0.1s ease; cursor: default; }
+.persona-achievements-list li:hover { transform: translateY(-1px); border-color: var(--accent-color-light); }
+.persona-achievements-list .achievement-icon { font-size: 1.2em; line-height: 1; }
+.persona-achievements-list .achievement-name { font-weight: bold; font-size: 0.8em; line-height: 1.2; }
+.persona-achievements-list li.no-border { border: none; background: none; box-shadow: none; padding: 0; width: 100%; text-align: center; display: block; }
+.persona-achievements-list li.view-all-link { margin-top: 0.5em; } /* Style the 'View All' link container if needed */
+
