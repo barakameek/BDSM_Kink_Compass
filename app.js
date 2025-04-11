@@ -36,11 +36,9 @@ import {
     findHintsForTraits,
     getRandomPrompt,
     escapeHTML,
-  
     getFlairForScore,
     generateSimpleId,
-    debounce,
-     normalizeStyleKey
+    debounce
 } from './utils.js';
 
 // Ensure Chart.js and Confetti are loaded (via CDN in HTML)
@@ -921,7 +919,7 @@ class TrackerApp {
                 <button type="button" class="small-btn context-help-btn trait-info-btn"
                         data-trait-name="${escapedName}"
                         aria-label="Info about ${escapedName}" aria-expanded="false"
-                        title="${escapedExplanation}">?</button> 
+                        title="${escapedExplanation}">?</button> {/* Add explanation to title */}
             </label>
             <div class="slider-container">
                 <input type="range" id="${uniqueId}" class="trait-slider" name="${escapedName}"
@@ -1006,7 +1004,7 @@ class TrackerApp {
 
         // Use button for person-info for better accessibility
         return `
-            <li data-id="${person.id}" tabindex="-1"> 
+            <li data-id="${person.id}" tabindex="-1"> {/* Li still focusable for container nav if needed */}
                 <button type="button" class="person-info" aria-label="View details for ${escapedName}">
                     <span class="person-avatar" aria-hidden="true">${avatar}</span>
                     <div class="person-name-details">
@@ -1372,7 +1370,7 @@ class TrackerApp {
     this.elements.modalTabs.innerHTML = tabs.map(tab => `
         <button type="button" class="tab-link ${tab.id === this.activeDetailModalTab ? 'active' : ''}"
                 role="tab" aria-selected="${tab.id === this.activeDetailModalTab}"
-                aria-controls="${tab.id}" data-tab-id="${tab.id}" id="tab-label-${tab.id}"> 
+                aria-controls="${tab.id}" data-tab-id="${tab.id}" id="tab-label-${tab.id}"> {/* Added ID for aria-labelledby */}
             ${escapeHTML(tab.label)}
         </button>
     `).join('');
@@ -1722,7 +1720,7 @@ renderDetailTabContent(person, tabId, contentElement) {
                        <li class="unlocked" title="${escapeHTML(details.desc)}">
                            <span class="achievement-icon" aria-hidden="true">🏆</span>
                            <span class="achievement-name">${escapeHTML(details.name)}</span>
-                           
+                           {/* Optional: Can add desc here too if desired for persona view */}
                        </li>
                    `;
                    count++;
@@ -2083,7 +2081,8 @@ renderDetailTabContent(person, tabId, contentElement) {
 
     body.innerHTML = `
         <p style="text-align: center; margin-bottom: 1.5em;">Track your milestones and discoveries!</p>
-        ${this.renderAchievementsList(null)} 
+        ${this.renderAchievementsList(null)} {/* Render global list */}
+    `;
     this.openModal(modal);
 }
 
@@ -2767,7 +2766,7 @@ sfCalculateSteps() {
                  </div>
 
                 <div class="sf-button-container result-buttons">
-                   
+                    {/* Confirmation moved to handler */}
                     <button type="button" data-action="confirmApply" data-role="${this.styleFinderRole}" data-style="${escapedTopStyleName}" class="save-btn">Apply '${escapedTopStyleName}' to Form</button>
                     <button type="button" data-action="prev" class="small-btn">⬅️ Back to Traits</button>
                     <button type="button" data-action="startOver" class="clear-btn">Start Over 🔄</button>
