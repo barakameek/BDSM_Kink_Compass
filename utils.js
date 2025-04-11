@@ -416,16 +416,13 @@ export function generateSimpleId() {
  * @param {number} delay - The debounce delay in milliseconds.
  * @returns {function} The debounced function.
  */
-export function debounce(func, delay) {
+export function debounce(func, delay) { // <<<<< This function is now included again
   let timeoutId;
-  // Use traditional function for wider compatibility, ensure 'this' and args are handled
-  return function(...args) { // The function returned by debounce
-    const context = this; // Capture the correct 'this' context
+  return function(...args) {
+    const context = this;
     clearTimeout(timeoutId);
-    // Use traditional function for setTimeout callback
-    timeoutId = setTimeout(function() {
-      // Apply the original function with the captured context and arguments
+    timeoutId = setTimeout(function() { // Using traditional function for setTimeout callback
       func.apply(context, args);
     }, delay);
   };
-}
+} // <<<<< Closing brace for debounce
