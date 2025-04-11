@@ -2244,10 +2244,63 @@ filterStyleDiscovery(searchTerm) {
 
 
 
-sfStart() { // <--- Make sure this definition exists and is spelled correctly
-        console.log("[SF_START] Initiating Style Finder (Redesigned).");
+    // Inside class TrackerApp
+
+    sfStart() {
+        console.log("[SF_START] Initiating Style Finder (Redesigned)."); // Check if this logs
         this.styleFinderActive = true;
-}
+        this.styleFinderStep = 0;
+        this.styleFinderRole = null;
+        this.styleFinderAnswers = { traits: {} };
+        this.styleFinderScores = {};
+        this.previousScores = null;
+        this.hasRenderedDashboard = false;
+        this.sfSliderInteracted = false;
+        this.styleFinderTraits = []; // Reset traits list
+        this.traitOrder = [];
+
+        // --- Reset UI ---
+        try { // Wrap UI resets in try...catch
+            if(this.elements.sfProgressTracker) this.elements.sfProgressTracker.textContent = 'Starting...';
+            if(this.elements.sfProgressBar) this.elements.sfProgressBar.style.width = '0%';
+            if(this.elements.sfStepContent) this.elements.sfStepContent.innerHTML = '<p class="loading-text">Loading quest...</p>';
+            if(this.elements.sfFeedback) this.elements.sfFeedback.textContent = '';
+            if(this.elements.sfDashboard) {
+                this.elements.sfDashboard.innerHTML = '';
+                this.elements.sfDashboard.style.display = 'none'; // Ensure hidden
+            }
+        } catch (uiError) {
+            console.error("[SF_START] Error resetting UI elements:", uiError);
+            // Potentially show user notification, but proceed if possible
+        }
+
+        // --- Render First Step ---
+        try {
+            this.sfRenderStep(); // Render the first step (role selection)
+        } catch (renderError) {
+             console.error("[SF_START] Error during initial sfRenderStep:", renderError);
+             this.showNotification("Error preparing Style Finder. Please try again.", "error");
+             this.styleFinderActive = false; // Deactivate if render fails
+             return; // Stop if initial render fails
+        }
+
+        // --- Open Modal ---
+        // Check if the modal element exists before trying to open
+        if (!this.elements.sfModal) {
+            console.error("[SF_START] Cannot open modal: this.elements.sfModal is not valid!");
+            this.showNotification("UI Error: Style Finder window not found.", "error");
+            this.styleFinderActive = false; // Deactivate
+            return;
+        }
+        try {
+            this.openModal(this.elements.sfModal); // <<< THE KEY LINE
+            console.log("[SF_START] Style Finder modal open command issued.");
+        } catch (openModalError) {
+             console.error("[SF_START] Error calling openModal:", openModalError);
+             this.showNotification("Error opening Style Finder window.", "error");
+             this.styleFinderActive = false; // Deactivate
+        }
+    }
 sfCloseAllPopups() {
          let popupsClosed = false;
          document.querySelectorAll('.sf-style-info-popup').forEach(popup => {
