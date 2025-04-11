@@ -2253,45 +2253,6 @@ sfComputeScores(temporary = false) {
     if (!this.styleFinderRole || !sfStyles[this.styleFinderRole]) return scores;
 
     const relevantStyles = sfStyles[this.styleFinderRole];
-    relevantStyles.forEach(styleName => scores[styleName] = 0);
-
-    Object.entries(this.styleFinderAnswers.traits).forEach(([trait, rating]) => {
-        const scoreValue = parseInt(rating, 10);
-        if (isNaN(scoreValue)) return;
-
-        relevantStyles.forEach(styleName => {
-             const styleKeyTraitKey = Object.keys(sfStyleKeyTraits).find(key =>
-                 normalizeStyleKey(key) === normalizeStyleKey(styleName)
-             );
-             if (styleKeyTraitKey) {
-                 const keyTraitsForStyle = sfStyleKeyTraits[styleKeyTraitKey] || {};
-                 if (keyTraitsForStyle.hasOwnProperty(trait)) {
-                      const weight = keyTraitsForStyle[trait] || 1;
-                      scores[styleName] += scoreValue * weight;
-                      if (scoreValue >= 9) scores[styleName] += (3 * weight);
-                      else if (scoreValue >= 7) scores[styleName] += (1 * weight);
-                      else if (scoreValue <= 3) scores[styleName] -= (1 * weight);
-                      else if (scoreValue <= 1) scores[styleName] -= (3 * weight);
-                 }
-             }
-        });
-    });
-
-    let highestScore = 0;
-    Object.values(scores).forEach(score => {
-         const clampedScore = Math.max(0, score);
-         if (clampedScore > highestScore) highestScore = clampedScore;
-     });
-
-     if (highestScore > 0) {
-         Object.keys(scores).forEach(styleName => {
-             scores[styleName] = Math.max(0, Math.round((scores[styleName] / highestScore) * 100));
-         });
-     } else {
-          Object.keys(scores).forEach(styleName => scores[styleName] = 0);
-     }
-    return scores;
-}
 
   sfUpdateDashboard(forceVisible = false) {
     if (!this.elements.sfDashboard || !this.styleFinderRole) return;
