@@ -2248,28 +2248,36 @@ sfStart() { // <--- Make sure this definition exists and is spelled correctly
         this.styleFinderActive = true;
 }
 
-sfComputeScores(temporary = false) {
-    let stylePoints = {};
-    if (!this.styleFinderRole || !sfStyles[this.styleFinderRole]) {
-        // ... (warning) ...
-        return {};
-    }
-   sfCloseAllPopups() {
+
+    sfComputeScores(temporary = false) { // <--- Method definition starts here
+        let stylePoints = {};
+        if (!this.styleFinderRole || !sfStyles[this.styleFinderRole]) {
+            // ... warning ...
+            return {};
+        }
+        const relevantStyles = sfStyles[this.styleFinderRole];
+        const answeredTraits = Object.keys(this.styleFinderAnswers.traits);
+
+        // ... rest of the point calculation logic ...
+
+        let finalScores = {};
+        // ... normalization logic ...
+
+        return finalScores;
+    } // <--- Method definition ENDS here
+
+    sfCloseAllPopups() { // <--- SEPARATE method definition starts here
          let popupsClosed = false;
-         // Find any popups created by sfShowTraitInfo or sfShowFullDetails
          document.querySelectorAll('.sf-style-info-popup').forEach(popup => {
-             // Remove the popup element from the DOM
              popup.remove();
              popupsClosed = true;
          });
-         // Find any info icons that were left active
          document.querySelectorAll('.sf-info-icon.active').forEach(icon => {
               icon.classList.remove('active');
-              // Optionally try to return focus if needed, though closing the modal handles it
          });
          if(popupsClosed) console.log("[SF_CLOSE_POPUPS] Closed open SF popups.");
-         return popupsClosed; // Indicate if any were closed
-    }
+         return popupsClosed;
+    } 
     const relevantStyles = sfStyles[this.styleFinderRole];
     const answeredTraits = Object.keys(this.styleFinderAnswers.traits);
 
