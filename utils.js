@@ -13,7 +13,7 @@ import {
 
 // --- Normalization & Paraphrasing ---
 
-function normalizeStyleKey(name) {
+export function normalizeStyleKey(name) { // <<< ADD export HERE
     if (typeof name !== 'string' || !name) {
         return '';
     }
