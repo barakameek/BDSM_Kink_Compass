@@ -2249,32 +2249,32 @@ sfStart() { // <--- Make sure this definition exists and is spelled correctly
 }
 
 
-  sfComputeScores(temporary = false) {
+ sfComputeScores(temporary = false) {
     let stylePoints = {};
     if (!this.styleFinderRole || !sfStyles[this.styleFinderRole]) {
         console.warn("[SF_COMPUTE_SCORES] Cannot compute scores: Role not set or invalid.");
-        return {};
+        return {}; // Return empty object if role/styles invalid
     }
 
     const relevantStyles = sfStyles[this.styleFinderRole];
     const answeredTraits = Object.keys(this.styleFinderAnswers.traits);
 
     // 1. Initialize points
-    relevantStyles.forEach(styleName => {
+    relevantStyles.forEach(styleName => { // Start forEach #1
         stylePoints[styleName] = 0;
-    });
+    }); // End forEach #1
 
     // 2. Calculate Raw Points
-    relevantStyles.forEach(styleName => {
+    relevantStyles.forEach(styleName => { // Start forEach #2
         let pointsForThisStyle = 0;
-        let traitsConsideredCount = 0; // Keep track if needed for avg later
+        let traitsConsideredCount = 0;
 
         const styleKeyTraitKey = Object.keys(sfStyleKeyTraits).find(key =>
             normalizeStyleKey(key) === normalizeStyleKey(styleName)
         );
         const keyTraitsForStyle = styleKeyTraitKey ? sfStyleKeyTraits[styleKeyTraitKey] : {};
 
-        answeredTraits.forEach(traitName => {
+        answeredTraits.forEach(traitName => { // Start forEach #3 (nested)
             if (keyTraitsForStyle.hasOwnProperty(traitName)) {
                 traitsConsideredCount++;
                 const userScore = this.styleFinderAnswers.traits[traitName];
@@ -2288,40 +2288,43 @@ sfStart() { // <--- Make sure this definition exists and is spelled correctly
                 else { scoreContribution = -2; }
 
                 pointsForThisStyle += scoreContribution * weight;
-            }
-        });
+            } // End if hasOwnProperty
+        }); // End forEach #3 (nested)
+
         stylePoints[styleName] = Math.max(0, pointsForThisStyle); // Clamp raw score at 0
-    }); // End of raw point calculation loop
+
+    }); // End forEach #2
 
     // 3. Normalization
     let finalScores = {};
     let maxAchievedPoints = 0;
 
-    Object.values(stylePoints).forEach(points => {
+    Object.values(stylePoints).forEach(points => { // Start forEach #4
         if (points > maxAchievedPoints) {
             maxAchievedPoints = points;
         }
-    });
+    }); // End forEach #4
 
-    if (maxAchievedPoints <= 0) {
-        relevantStyles.forEach(styleName => finalScores[styleName] = 0);
-    } else { // <-- Added missing brace before this else
-        relevantStyles.forEach(styleName => {
+    // --- CAREFUL CHECK OF THIS if/else BLOCK ---
+    if (maxAchievedPoints <= 0) { // Start IF block
+        relevantStyles.forEach(styleName => { // Start forEach #5 (nested)
+             finalScores[styleName] = 0;
+        }); // End forEach #5 (nested)
+    } else { // Start ELSE block
+        relevantStyles.forEach(styleName => { // Start forEach #6 (nested)
+            // *** Line ~2293 was here ***
             finalScores[styleName] = Math.round((stylePoints[styleName] / maxAchievedPoints) * 100);
-        });
-    } // <-- Correctly closes the else block
+        }); // End forEach #6 (nested)
+    } // <<< --- THIS IS THE CORRECT CLOSING BRACE for the IF/ELSE
 
-    // REMOVED Duplicate/incorrect block that was here
+    // *** Line ~2298 IS HERE ***
+    if (!temporary) { // Added brace for clarity, though optional for single statement
+        console.log("[SF_COMPUTE_SCORES] Final Normalized Scores:", finalScores);
+    } // End 'if (!temporary)'
 
-    // Correct final logging and return
-    if (!temporary) console.log("[SF_COMPUTE_SCORES] Final Normalized Scores:", finalScores);
-    return finalScores;
+    return finalScores; // Final return statement
 
-} // End sfComputeScores
-
-    if (!temporary) console.log("[SF_COMPUTE_SCORES] Final Normalized Scores:", finalScores);
-    return finalScores;
-} // End sfComputeScores
+}
   sfGenerateSummaryDashboard(sortedScores) {
     console.log("[SF_GEN_SUMMARY_DASH] Generating summary dashboard.");
     if (!sortedScores || sortedScores.length === 0) return '<p>No results to display.</p>';
