@@ -310,15 +310,20 @@ class TrackerApp {
   addEventListeners() {
     console.log("[ADD_LISTENERS] Starting listener setup...");
     const safeAddListener = (element, event, handler, elementName, options = {}) => {
-        if (element) {
-            element.addEventListener(event, handler.bind(this), options);
-        } else {
-            const expectedCore = ['role', 'style', 'name', 'save', 'clearForm', 'traitsContainer', 'peopleList', 'formSection', 'modal', 'modalClose'];
-            if (expectedCore.includes(elementName)) {
-                 console.warn(`  [LISTENER FAILED] ❓ Expected element not found for: ${elementName}`);
-            }
+    if (element) {
+        // *** ADD THIS LOG ***
+        console.log(`Adding listener for: ${elementName}, Handler type: ${typeof handler}, Handler:`, handler);
+        if (typeof handler !== 'function') {
+            console.error(`HANDLER IS NOT A FUNCTION for ${elementName}`);
+            // Optionally throw an error here to stop execution immediately
+            // throw new Error(`Invalid handler provided for ${elementName}`);
+            return; // Stop trying to add listener if handler is invalid
         }
-    };
+        element.addEventListener(event, handler.bind(this), options);
+    } else {
+        // ... (warning for missing element) ...
+    }
+};
 
     // Form Interactions
     safeAddListener(this.elements.mainForm, 'submit', (e) => e.preventDefault(), 'mainForm submit');
