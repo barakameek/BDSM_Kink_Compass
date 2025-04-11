@@ -1,4 +1,4 @@
-// === utils.js === (Revised & Enhanced - v2)
+// === utils.js === (Revised & Enhanced - v3)
 // Contains helper functions for KinkCompass, separated from core app logic and data.
 
 // Import needed DATA structures from appData.js
@@ -232,7 +232,7 @@ export function hasAchievement(person, achievementId) {
  * Uses localStorage for global achievements.
  * @param {object | null | undefined} person - The persona object, or null/undefined/{} for global.
  * @param {string} achievementId - The ID of the achievement to grant.
- * @param {function} [showNotificationCallback] - Optional callback (receives message, type, details).
+ * @param {function} [showNotificationCallback] - Optional callback (receives message, type, duration, details).
  * @param {function} [saveCallback] - Optional callback to trigger saving data.
  * @returns {boolean} True if a NEW achievement was granted, false otherwise.
  */
@@ -252,7 +252,7 @@ export function grantAchievement(person, achievementId, showNotificationCallback
                 localStorage.setItem(storageKey, 'true');
                 console.log(`🏆 Global Achievement Unlocked: ${details.name}`);
                 if (showNotificationCallback && typeof showNotificationCallback === 'function') {
-                    showNotificationCallback(`Achieved: ${details.name}!`, "achievement", 4000, { details }); // Pass duration
+                    showNotificationCallback(`Achieved: ${details.name}!`, "achievement", 4000, { details });
                 }
                 return true;
             }
@@ -406,7 +406,7 @@ export function getFlairForScore(score) {
  * @returns {string} A unique-ish string.
  */
 export function generateSimpleId() {
-    return Date.now().toString(36) + Math.random().toString(36).substring(2, 9); // Increased length slightly
+    return Date.now().toString(36) + Math.random().toString(36).substring(2, 9);
 }
 
 /**
@@ -418,12 +418,13 @@ export function generateSimpleId() {
  */
 export function debounce(func, delay) {
   let timeoutId;
-  // The returned function now correctly handles 'this' context and arguments
-  return function(...args) {
-    const context = this; // Capture the context in which the debounced function is called
+  // Use traditional function for wider compatibility, ensure 'this' and args are handled
+  return function(...args) { // The function returned by debounce
+    const context = this; // Capture the correct 'this' context
     clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-      // Use the captured context and arguments when calling the original function
+    // Use traditional function for setTimeout callback
+    timeoutId = setTimeout(function() {
+      // Apply the original function with the captured context and arguments
       func.apply(context, args);
     }, delay);
   };
