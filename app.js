@@ -84,18 +84,8 @@ class TrackerApp {
     if (!this.elements.sfModal || !this.elements.sfStepContent) {
         console.warn("[CONSTRUCTOR] Style Finder UI elements missing. Style Finder feature may be disabled.");
     }
- sfCloseAllPopups() {
-         let popupsClosed = false;
-         document.querySelectorAll('.sf-style-info-popup').forEach(popup => {
-             popup.remove();
-             popupsClosed = true;
-         });
-         document.querySelectorAll('.sf-info-icon.active').forEach(icon => {
-              icon.classList.remove('active');
-         });
-         if(popupsClosed) console.log("[SF_CLOSE_POPUPS] Closed open SF popups.");
-         return popupsClosed;
-    }
+
+   
     console.log("[CONSTRUCTOR] Calling addEventListeners...");
     this.addEventListeners();
     console.log("[CONSTRUCTOR] Listeners setup completed.");
@@ -2258,7 +2248,18 @@ sfStart() { // <--- Make sure this definition exists and is spelled correctly
         console.log("[SF_START] Initiating Style Finder (Redesigned).");
         this.styleFinderActive = true;
 }
-
+sfCloseAllPopups() {
+         let popupsClosed = false;
+         document.querySelectorAll('.sf-style-info-popup').forEach(popup => {
+             popup.remove();
+             popupsClosed = true;
+         });
+         document.querySelectorAll('.sf-info-icon.active').forEach(icon => {
+              icon.classList.remove('active');
+         });
+         if(popupsClosed) console.log("[SF_CLOSE_POPUPS] Closed open SF popups.");
+         return popupsClosed;
+    }
 
  sfComputeScores(temporary = false) {
     let stylePoints = {};
