@@ -1,4 +1,4 @@
-// === utils.js === (Revised & Enhanced - v3)
+// === utils.js === (Revised & Enhanced - v4 - NO debounce)
 // Contains helper functions for KinkCompass, separated from core app logic and data.
 
 // Import needed DATA structures from appData.js
@@ -409,23 +409,6 @@ export function generateSimpleId() {
     return Date.now().toString(36) + Math.random().toString(36).substring(2, 9);
 }
 
-/**
- * Debounces a function: Ensures the function is only called after
- * a certain period of inactivity.
- * @param {function} func - The function to debounce.
- * @param {number} delay - The debounce delay in milliseconds.
- * @returns {function} The debounced function.
- */
-export function debounce(func, delay) {
-  let timeoutId;
-  // Use traditional function for wider compatibility, ensure 'this' and args are handled
-  return function(...args) { // The function returned by debounce
-    const context = this; // Capture the correct 'this' context
-    clearTimeout(timeoutId);
-    // Use traditional function for setTimeout callback
-    timeoutId = setTimeout(function() {
-      // Apply the original function with the captured context and arguments
-      func.apply(context, args);
-    }, delay);
-  };
-}
+// Debounce function removed for troubleshooting.
+// If the error goes away, we know the issue was near the end of this file.
+// If the error persists or moves, it's elsewhere.
