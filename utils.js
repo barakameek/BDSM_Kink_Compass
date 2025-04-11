@@ -118,7 +118,7 @@ export function grantAchievement(person, achievementId, showNotificationCallback
         person.achievements.push(achievementId);
         person.achievements.sort();
         console.log(`🏆 Persona Achievement for ${person.name || '?'}: ${details.name}`);
-        if (showNotificationCallback) showNotificationCallback(`Achieved: ${details.name}!`, "achievement", 4000);
+        if (showNotificationCallback) showNotificationCallback(`Achieved: ${details.name}!`, "achievement", 4000, { details: details, personaName: person.name });
         if (saveCallback) { try { saveCallback(); } catch (e) { console.error(`Grant Save Error ${person.id}:`, e); } }
         else { console.warn(`Grant: No saveCallback for ${achievementId} on ${person.name}.`); }
         return true;
