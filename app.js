@@ -3430,7 +3430,7 @@ filterStyleDiscovery(searchTerm) {
                  console.error("[SF_RENDER_STEP] sfStepContent element disappeared before rendering HTML.");
              }
         });
-  
+  }
 
    sfCloseAllPopups() {
          // Closes any open SF info popups
