@@ -3249,10 +3249,7 @@ filterStyleDiscovery(searchTerm) {
         // Basic validation for step index
         if (currentStepIndex >= totalSteps || currentStepIndex < 0) {
             console.error(`[SF_RENDER_STEP] Invalid step index: ${currentStepIndex}. Total steps: ${totalSteps}. Attempting reset.`);
-            // Attempt to recover by restarting
             this.sfStartOver();
-            // It's crucial that sfStartOver resets state properly AND calls sfRenderStep itself
-            // or that the calling context handles the restart. Avoid recursion here.
             return; // Stop this invalid render attempt
         }
 
@@ -3304,9 +3301,13 @@ filterStyleDiscovery(searchTerm) {
                 const currentValue = this.styleFinderAnswers.traits[traitName] ?? 5;
                 const footnote = this.traitFootnotes[traitName] || '';
                 const sliderDescArray = this.sliderDescriptions[traitName] || [];
-                 // Clamp index safely for description array
-                const descIndex = Math.max(0, Math.min(sliderDescArray.length - 1, currentValue - 1));
-                const currentDescText = sliderDescArray[descIndex] || `Value: ${currentValue}`;
+
+                // FIX: Correctly calculate the description index, clamping between 0 and max valid index
+                const maxDescIndex = sliderDescArray.length > 0 ? sliderDescArray.length - 1 : 0;
+                const desiredDescIndex = currentValue - 1; // Convert 1-10 value to 0-9 index
+                const descIndex = Math.max(0, Math.min(desiredDescIndex, maxDescIndex)); // Clamp it
+
+                const currentDescText = sliderDescArray[descIndex] || `Value: ${currentValue}`; // Get text using corrected index
                 const escapedTraitName = escapeHTML(traitName);
                 const displayTitle = escapedTraitName.charAt(0).toUpperCase() + escapedTraitName.slice(1);
 
@@ -3420,11 +3421,16 @@ filterStyleDiscovery(searchTerm) {
 
         // --- Render HTML with Transition ---
         requestAnimationFrame(() => { // Ensure transition class is removed after render
-             this.elements.sfStepContent.innerHTML = html;
-             // Allow short delay for CSS transition before removing class
-             setTimeout(() => { this.elements.sfStepContent?.classList.remove('sf-step-transition'); }, 50);
+             // Ensure element still exists before updating
+             if (this.elements.sfStepContent) {
+                 this.elements.sfStepContent.innerHTML = html;
+                 // Allow short delay for CSS transition before removing class
+                 setTimeout(() => { this.elements.sfStepContent?.classList.remove('sf-step-transition'); }, 50);
+             } else {
+                 console.error("[SF_RENDER_STEP] sfStepContent element disappeared before rendering HTML.");
+             }
         });
-    }
+  
 
    sfCloseAllPopups() {
          // Closes any open SF info popups
