@@ -59,7 +59,7 @@ class TrackerApp {
     this.styleFinderActive = false;
     this.styleFinderStep = 0;
     this.styleFinderRole = null;
-    this.styleFinderAnswers = { traits: {} };
+    this.styleFinderAnswers = { traits: {} }; // Reset answers
     this.styleFinderScores = {};
     this.hasRenderedDashboard = false; // Flag to prevent dashboard re-render animation
     this.previousScores = null; // Track score changes for animation
@@ -112,19 +112,33 @@ class TrackerApp {
     // Helper to get elements and log warnings if missing
     const get = (id) => {
         const el = document.getElementById(id);
-        if (!el) console.warn(`[MAP_ELEMENTS] Element with ID '${id}' not found.`);
+        // Only log warning once per missing element during setup
+        if (!el && (!this.missingElementsLogged || !this.missingElementsLogged.has(id))) {
+            console.warn(`[MAP_ELEMENTS] Element with ID '${id}' not found.`);
+            if (!this.missingElementsLogged) this.missingElementsLogged = new Set();
+            this.missingElementsLogged.add(id);
+        }
         return el;
     };
     const query = (selector) => {
         const el = document.querySelector(selector);
-        if (!el) console.warn(`[MAP_ELEMENTS] Element with selector '${selector}' not found.`);
+         if (!el && (!this.missingElementsLogged || !this.missingElementsLogged.has(selector))) {
+            console.warn(`[MAP_ELEMENTS] Element with selector '${selector}' not found.`);
+             if (!this.missingElementsLogged) this.missingElementsLogged = new Set();
+             this.missingElementsLogged.add(selector);
+        }
         return el;
     };
     const queryAll = (selector) => { // Added helper for multiple elements
         const els = document.querySelectorAll(selector);
-        if (els.length === 0) console.warn(`[MAP_ELEMENTS] No elements found with selector '${selector}'.`);
+         if (els.length === 0 && (!this.missingElementsLogged || !this.missingElementsLogged.has(selector))) {
+            console.warn(`[MAP_ELEMENTS] No elements found with selector '${selector}'.`);
+             if (!this.missingElementsLogged) this.missingElementsLogged = new Set();
+             this.missingElementsLogged.add(selector);
+        }
         return els;
     };
+
 
     return {
         // Core Form
@@ -408,7 +422,7 @@ class TrackerApp {
         if (!e.target.closest('.sf-style-info-popup') && !e.target.closest('.sf-info-icon')) {
              this.sfCloseAllPopups();
         }
-        // FIX: Added check for clicking glossary links anywhere
+        // Handle glossary links anywhere
         const glossaryLink = e.target.closest('a.glossary-link[data-term-key]');
         if (glossaryLink) {
             this.handleGlossaryLinkClick(e); // Delegate handling
@@ -503,9 +517,6 @@ class TrackerApp {
     safeAddListener(this.elements.modalBody, 'click', this.handleModalBodyClick, 'modalBody click');
     safeAddListener(this.elements.modalBody, 'submit', this.handleModalBodyClick, 'modalBody submit'); // For Add Goal form
     safeAddListener(this.elements.modalTabs, 'click', this.handleDetailTabClick, 'modalTabs');
-
-    // Glossary Link Handling (Delegated to body earlier, but this listener can catch clicks within the glossary itself)
-    // safeAddListener(this.elements.glossaryBody, 'click', this.handleGlossaryLinkClick, 'glossaryBody link'); // Covered by body delegation now
 
     // Explore Style Link in Form
     safeAddListener(this.elements.styleExploreLink, 'click', this.handleExploreStyleLinkClick, 'styleExploreLink');
@@ -752,7 +763,7 @@ class TrackerApp {
                 } else {
                     this.sfShowFeedback("Please rate this trait before proceeding.", "warning");
                      // Add a visual cue to the slider (optional)
-                    const slider = this.elements.sfStepContent.querySelector('.sf-trait-slider');
+                    const slider = this.elements.sfStepContent?.querySelector('.sf-trait-slider');
                     if(slider) {
                          slider.classList.add('shake-animation');
                          setTimeout(() => slider.classList.remove('shake-animation'), 500);
@@ -801,7 +812,7 @@ class TrackerApp {
         const descElement = document.getElementById(`sf-desc-${traitName}`);
         if (descElement && this.sliderDescriptions[traitName]) {
              const descArray = this.sliderDescriptions[traitName];
-             // Clamp index for safety
+             // Clamp index safely for description array
              const index = Math.max(0, Math.min(descArray.length - 1, value - 1));
              const descText = descArray[index] || `Value: ${value}`;
              descElement.textContent = escapeHTML(descText);
@@ -827,8 +838,8 @@ class TrackerApp {
         console.log(`[EVENT] Detail tab clicked: ${newTabId}`);
 
         // Deactivate previous tab and content
-        const activeTab = this.elements.modalTabs.querySelector('.tab-link.active');
-        const activeContent = this.elements.modalBody.querySelector('.tab-content.active');
+        const activeTab = this.elements.modalTabs?.querySelector('.tab-link.active');
+        const activeContent = this.elements.modalBody?.querySelector('.tab-content.active');
         activeTab?.classList.remove('active');
         activeTab?.setAttribute('aria-selected', 'false');
         activeContent?.classList.remove('active');
@@ -848,7 +859,8 @@ class TrackerApp {
             }
             if (newTabId === 'tab-insights') {
                 // Display the challenge when insights tab becomes active
-                this.displayDailyChallenge(person);
+                 const challengeArea = contentPane.querySelector('#daily-challenge-area');
+                 if (challengeArea) this.displayDailyChallenge(person, challengeArea);
             }
             // If content wasn't pre-rendered (e.g., still shows loading text), render it now
              if (contentPane.querySelector('.loading-text')) {
@@ -1019,6 +1031,7 @@ class TrackerApp {
         <div class="trait">
             <label for="${uniqueId}" class="trait-label">
                 <span>${title} ${flair}</span>
+                 {/* Use context help button styling but specific dataset */}
                  <button type="button" class="small-btn context-help-btn trait-info-btn"
                          data-trait-name="${escapedName}"
                          aria-label="Info about ${title}" aria-expanded="false"
@@ -1136,7 +1149,7 @@ class TrackerApp {
 
       const selectedStyleName = this.elements.style.value;
       if (selectedStyleName) {
-          // FIX: Ensure style name is escaped for display
+          // Escape style name for display
           const escapedStyleName = escapeHTML(selectedStyleName);
           this.elements.styleExploreLink.textContent = `(Explore '${escapedStyleName}' Details)`;
           this.elements.styleExploreLink.setAttribute('aria-label', `Explore details for the ${escapedStyleName} style`);
@@ -1305,8 +1318,10 @@ class TrackerApp {
       // Update form state
       this.currentEditId = personId;
       if(this.elements.formTitle) this.elements.formTitle.textContent = `✏️ Edit: ${escapeHTML(person.name)} ✨`;
-      if(this.elements.saveButtonText) this.elements.saveButtonText.textContent = 'Update Persona! 💾 ';
-      else if (this.elements.save) this.elements.save.textContent = 'Update Persona! 💾'; // Fallback if span removed
+      // IMPROVEMENT: Use saveButtonText span for consistency
+      const updateText = 'Update Persona! 💾 ';
+      if(this.elements.saveButtonText) this.elements.saveButtonText.textContent = updateText;
+      else if (this.elements.save) this.elements.save.textContent = updateText; // Fallback
 
       // Scroll to form and focus name field
       this.elements.formSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1383,8 +1398,8 @@ class TrackerApp {
       this.elements.saveSpinner.style.display = isLoading ? 'inline-block' : 'none';
 
       // Update button text based on loading state and edit mode
-      const defaultSaveText = 'Save Persona! 💖 ';
-      const updateText = 'Update Persona! 💾 ';
+      const defaultSaveText = 'Save Persona! 💖';
+      const updateText = 'Update Persona! 💾';
       const loadingText = 'Saving... ';
 
       let targetText = '';
@@ -1397,21 +1412,25 @@ class TrackerApp {
       // Use the inner span if available, otherwise update the button directly
       const buttonTextElement = this.elements.saveButtonText;
       if (buttonTextElement) {
-          buttonTextElement.textContent = targetText;
-          // Ensure the emoji span (if any) inside button-text is still there or re-add if needed
-          const emojiSpan = buttonTextElement.querySelector('span[role="img"]');
-          if (!emojiSpan && !isLoading) { // Re-add emoji if missing and not loading
-              const emoji = this.currentEditId ? '' : '💖'; // Only add for initial save
-              if (emoji) {
-                  const span = document.createElement('span');
-                  span.setAttribute('role', 'img');
-                  span.setAttribute('aria-label', 'Sparkles'); // Or appropriate label
-                  span.textContent = ` ${emoji}`; // Add space
-                  buttonTextElement.appendChild(span);
-              }
-          } else if (emojiSpan && isLoading) {
-              // Optionally remove emoji during loading
-              // emojiSpan.remove();
+          // Clear existing content before setting new text
+          let baseText = targetText;
+          let emoji = '';
+          if (!isLoading) {
+              emoji = this.currentEditId ? '' : '💖'; // Only add emoji for initial save
+              if(emoji) baseText = baseText.replace(emoji,'').trim(); // Remove emoji if present in base text
+          }
+          buttonTextElement.textContent = baseText + ' '; // Add space for potential emoji
+
+          // Re-add emoji span if needed
+          const existingEmojiSpan = buttonTextElement.querySelector('span[role="img"]');
+          if (existingEmojiSpan) existingEmojiSpan.remove(); // Remove old one first
+
+          if (emoji) {
+              const span = document.createElement('span');
+              span.setAttribute('role', 'img');
+              span.setAttribute('aria-label', 'Sparkles'); // Or appropriate label
+              span.textContent = emoji;
+              buttonTextElement.appendChild(span);
           }
       } else if (this.elements.save) {
           this.elements.save.textContent = targetText; // Fallback if structure changed
@@ -1444,13 +1463,13 @@ class TrackerApp {
     if (role && style) {
         const breakdownData = getStyleBreakdown(style, traits, role); // Use consolidated function
         if (breakdownData) {
-             // Escape HTML content from breakdownData before inserting
+             // Breakdown text is already escaped by getStyleBreakdown
              breakdownHTML = `
                  <div class="preview-breakdown">
                      <h4>Strengths:</h4>
-                     <p>${breakdownData.strengths}</p> <!-- Assumes getStyleBreakdown already escapes -->
+                     <p>${breakdownData.strengths}</p>
                      <h4>Growth Areas:</h4>
-                     <p>${breakdownData.improvements}</p> <!-- Assumes getStyleBreakdown already escapes -->
+                     <p>${breakdownData.improvements}</p>
                  </div>
              `;
         }
@@ -1458,6 +1477,7 @@ class TrackerApp {
         if (Object.keys(traits).length > 0) {
             const hints = findHintsForTraits(traits);
             if (hints.length > 0) {
+                 // Escape the first hint's text
                  synergyHTML = `
                      <div class="preview-synergy-hint">
                          <strong>Synergy Hint:</strong> ${escapeHTML(hints[0].text)}
@@ -1467,21 +1487,21 @@ class TrackerApp {
             }
         }
     }
-    // Use escapeHTML for all user-provided data
+    // Use escapeHTML for all user-provided data in the main structure
     this.elements.livePreview.innerHTML = `
         <div class="preview-avatar-name">
             <span class="person-avatar" aria-hidden="true">${escapeHTML(avatar)}</span>
             <h3 class="preview-title">${escapeHTML(name)}</h3>
         </div>
         <p class="preview-role-style">${escapeHTML(role) || 'No Role'} / ${escapeHTML(style) || 'No Style Selected'}</p>
-        ${breakdownHTML}
-        ${synergyHTML}
+        ${breakdownHTML} {/* Breakdown HTML already escaped */}
+        ${synergyHTML} {/* Synergy HTML already escaped */}
         <div id="daily-challenge-area" role="region" aria-live="polite" aria-labelledby="daily-challenge-title">
              <!-- Daily challenge content injected separately -->
         </div>
     `;
     // Display the daily challenge relevant to the preview context
-    this.displayDailyChallenge();
+    this.displayDailyChallenge(null, this.elements.livePreview.querySelector('#daily-challenge-area')); // Pass target explicitly
 }
 
 
@@ -1502,7 +1522,7 @@ class TrackerApp {
     // Set person ID on modal for context
     this.elements.modal.dataset.personId = personId;
 
-    // Update modal title and subtitle
+    // Update modal title and subtitle (Escape HTML)
     this.elements.detailModalTitle.innerHTML = `
         <span class="person-avatar" aria-hidden="true">${escapeHTML(person.avatar || '❓')}</span>
         ${escapeHTML(person.name)}
@@ -1517,7 +1537,7 @@ class TrackerApp {
         { id: 'tab-insights', label: '💡 Insights' }
     ];
 
-    // Render tabs
+    // Render tabs (Escape labels)
     this.elements.modalTabs.innerHTML = tabs.map(tab => `
         <button type="button" class="tab-link ${tab.id === this.activeDetailModalTab ? 'active' : ''}"
                 role="tab" aria-selected="${tab.id === this.activeDetailModalTab ? 'true' : 'false'}"
@@ -1526,7 +1546,7 @@ class TrackerApp {
         </button>
     `).join('');
 
-    // Render tab content skeletons
+    // Render tab content skeletons (Escape labels)
     this.elements.modalBody.innerHTML = tabs.map(tab => `
         <div class="tab-content ${tab.id === this.activeDetailModalTab ? 'active' : ''}"
              id="${tab.id}" role="tabpanel" aria-labelledby="tab-label-${tab.id}" tabindex="-1">
@@ -1534,28 +1554,13 @@ class TrackerApp {
         </div>
     `).join('');
 
-    // Immediately render content for the active tab
-    const activeContentPane = document.getElementById(this.activeDetailModalTab);
+    // Immediately render content for the currently active tab
+    const activeContentPane = this.elements.modalBody.querySelector(`#${this.activeDetailModalTab}`);
     if (activeContentPane) {
         this.renderDetailTabContent(person, this.activeDetailModalTab, activeContentPane);
     } else {
         console.error(`[DETAILS] Active content pane not found: ${this.activeDetailModalTab}`);
     }
-
-     // Pre-render other tabs in the background (optional performance optimization)
-     /*
-     tabs.forEach(tab => {
-         if (tab.id !== this.activeDetailModalTab) {
-              const contentPane = document.getElementById(tab.id);
-              if (contentPane && contentPane.querySelector('.loading-text')) {
-                   // Use requestAnimationFrame to avoid blocking UI
-                   requestAnimationFrame(() => {
-                       this.renderDetailTabContent(person, tab.id, contentPane);
-                   });
-              }
-         }
-     });
-     */
 
     this.openModal(this.elements.modal); // Open the modal
     console.log(`[DETAILS] Modal opened for ${person.name}.`);
@@ -1597,9 +1602,9 @@ renderDetailTabContent(person, tabId, contentElement) {
             this.renderHistoryChart(person, `history-chart-${person.id}`);
         }
         if (tabId === 'tab-insights') {
-            // Display daily challenge specific to this tab
+            // Display daily challenge specific to this tab's content area
              const challengeArea = contentElement.querySelector('#daily-challenge-area');
-             if (challengeArea) { // Ensure the area exists within the rendered content
+             if (challengeArea) {
                  this.displayDailyChallenge(person, challengeArea); // Pass the specific element
              }
         }
@@ -1653,7 +1658,7 @@ renderDetailTabContent(person, tabId, contentElement) {
              {/* Container for the chart - initial state shows loading/message */}
              <div class="history-chart-container ${!person.history || person.history.length < 2 ? 'chart-loading' : ''}">
                  <canvas id="history-chart-${person.id}"></canvas>
-                 ${!person.history || person.history.length < 2 ? '<p class="muted-text">Need at least two snapshots to show trait history.</p>' : ''}
+                 ${!person.history || person.history.length < 2 ? '<p class="muted-text" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">Need at least two snapshots to show trait history.</p>' : ''}
              </div>
              <h4>Saved Snapshots:</h4>
              <ul class="snapshot-list">
@@ -1712,8 +1717,8 @@ renderDetailTabContent(person, tabId, contentElement) {
         <section aria-labelledby="goal-align-heading">
              <h3 id="goal-align-heading">🌱 Goal Alignment</h3>
              ${goalHints.length > 0
-                 // Escape goal alignment hints before inserting (they contain HTML tags)
-                 ? `<ul>${goalHints.map(h => `<li style="margin-bottom: 0.5em;">${h}</li>`).join('')}</ul>` // Assuming hints are pre-formatted safely
+                 // Goal alignment hints are pre-escaped where needed by getGoalAlignmentHints
+                 ? `<ul>${goalHints.map(h => `<li style="margin-bottom: 0.5em;">${h}</li>`).join('')}</ul>`
                  : '<p class="muted-text">Add some goals to see alignment hints based on your traits!</p>'
              }
         </section>
@@ -1745,22 +1750,8 @@ renderDetailTabContent(person, tabId, contentElement) {
 
     let html = '<div class="trait-details-grid">';
     sortedTraitEntries.forEach(([name, score]) => {
-        // Find trait explanation from core data or glossary
-        let explanation = `Details for '${escapeHTML(name)}' not found.`;
-        let traitData = null;
-        for (const roleKey in bdsmData) { // Search all roles
-            const roleData = bdsmData[roleKey];
-            traitData = roleData.coreTraits?.find(t => t.name === name) ||
-                        roleData.styles?.flatMap(s => s.traits || []).find(t => t.name === name);
-            if (traitData?.explanation) {
-                explanation = traitData.explanation;
-                break; // Found it
-            }
-        }
-        // Fallback to glossary if not found in core data
-        if (!traitData?.explanation && glossaryTerms[name]?.definition) {
-             explanation = glossaryTerms[name].definition;
-        }
+        // Use the helper function to find the explanation robustly
+        const explanation = findTraitExplanation(name); // Already handles fallbacks
 
         const escapedName = escapeHTML(name);
         const displayTitle = escapedName.charAt(0).toUpperCase() + escapedName.slice(1);
@@ -1769,8 +1760,20 @@ renderDetailTabContent(person, tabId, contentElement) {
         const escapedExplanation = escapeHTML(explanation);
         const value = parseInt(score, 10);
         const flair = getFlairForScore(value);
+
         // Get the specific description for the score, escape it
-        const traitDesc = escapeHTML(traitData?.desc?.[value] || '');
+        let traitDesc = '';
+        // Find trait data again specifically for descriptions (could optimize this)
+        let traitData = null;
+        for (const roleKey in bdsmData) { // Search all roles
+            const roleData = bdsmData[roleKey];
+            traitData = roleData.coreTraits?.find(t => t.name === name) ||
+                        roleData.styles?.flatMap(s => s.traits || []).find(t => t.name === name);
+            if (traitData?.desc) break;
+        }
+        if (traitData?.desc?.[value]) {
+            traitDesc = escapeHTML(traitData.desc[value]);
+        }
 
         html += `
         <div class="trait-detail-item">
@@ -1793,7 +1796,7 @@ renderDetailTabContent(person, tabId, contentElement) {
       // Renders the style breakdown (strengths/improvements)
       let breakdown;
       if (person.role && person.style && person.traits) {
-            // Uses the utility function which now handles HTML escaping
+            // Uses the utility function which now handles HTML escaping internally
             breakdown = getStyleBreakdown(person.style, person.traits, person.role);
       } else {
            return '<p class="muted-text">Select a Role and Style, and define traits to see the breakdown.</p>';
@@ -1817,6 +1820,8 @@ renderDetailTabContent(person, tabId, contentElement) {
   renderJournalTab(person) {
       // Renders the journal textarea and buttons
       const reflections = person.reflections || "";
+      // Escape existing reflections before putting them in the textarea value
+      const escapedReflections = escapeHTML(reflections);
       return `
         <div class="modal-actions">
              {/* Prompt button handled by delegation */}
@@ -1828,8 +1833,7 @@ renderDetailTabContent(person, tabId, contentElement) {
         </div>
         <form action="#"> {/* Form prevents accidental submission */}
             <label for="reflections-textarea-${person.id}" class="sr-only">Journal Entry</label>
-            {/* Use escapeHTML for default value to prevent XSS if reflections somehow contain HTML */}
-            <textarea id="reflections-textarea-${person.id}" class="reflections-textarea" placeholder="Reflect on your experiences, feelings, goals...">${escapeHTML(reflections)}</textarea>
+            <textarea id="reflections-textarea-${person.id}" class="reflections-textarea" placeholder="Reflect on your experiences, feelings, goals...">${escapedReflections}</textarea>
             <div class="modal-actions">
                   {/* Save button handled by delegation */}
                  <button type="button" id="save-reflections-btn" class="small-btn save-btn">Save Reflections 💾</button>
@@ -1926,7 +1930,7 @@ renderDetailTabContent(person, tabId, contentElement) {
                     <div class="goal-actions">
                          {/* Buttons handled by delegation */}
                         <button type="button" class="small-btn goal-toggle-btn" data-goal-id="${goal.id}" aria-label="${goal.done ? 'Mark as not done' : 'Mark as done'}">
-                            ${goal.done ? '↩️ Undo' : '✔️ Done'}
+                            ${goal.done ? '↩️&nbsp;Undo' : '✔️&nbsp;Done'}
                         </button>
                         <button type="button" class="small-btn delete-btn goal-delete-btn" data-goal-id="${goal.id}" aria-label="Delete goal">🗑️</button>
                     </div>
@@ -1949,7 +1953,7 @@ renderDetailTabContent(person, tabId, contentElement) {
   }
 
 
-  // --- Feature Logic ---
+  // --- Feature Logic --- (Goal, Journal, History, etc.)
 
   addGoal(personId, formElement) {
       const input = formElement.querySelector('input[type="text"]');
@@ -1980,23 +1984,32 @@ renderDetailTabContent(person, tabId, contentElement) {
       grantAchievement(person, 'goal_added', this.showNotification.bind(this), this.saveToLocalStorage.bind(this));
 
       // Re-render the goal list dynamically
-      const listContainer = formElement.closest('.goals-section')?.querySelector('.goal-list');
-      const listParent = listContainer?.parentElement; // Find parent to replace innerHTML
-      if (listParent) {
-            // Create a temporary div to hold the new list, then replace only the list part
-            const tempListContainer = document.createElement('div');
-            tempListContainer.innerHTML = this.renderGoalList(person, true); // Render only list
-            const newList = tempListContainer.querySelector('.goal-list');
-            if (newList) {
-                if (listContainer) { // Replace existing list if found
-                     listParent.replaceChild(newList, listContainer);
-                } else { // Append new list if none existed (shouldn't happen with current structure but safe)
-                     listParent.insertBefore(newList, formElement);
-                }
-            }
+      const goalsSection = formElement.closest('.goals-section');
+      const listContainer = goalsSection?.querySelector('.goal-list');
+      const noGoalsMessage = goalsSection?.querySelector('p.muted-text'); // Find the 'no goals' message if it exists
+
+      if (goalsSection) { // Ensure the parent section exists
+           if (listContainer) { // If list exists, append new item
+                const tempLi = document.createElement('li');
+                // Use map logic from renderGoalList to create the item HTML
+                tempLi.dataset.goalId = newGoal.id;
+                tempLi.innerHTML = `
+                    <span class="goal-text">${escapeHTML(newGoal.text)}</span>
+                    <div class="goal-actions">
+                        <button type="button" class="small-btn goal-toggle-btn" data-goal-id="${newGoal.id}" aria-label="Mark as done">✔️&nbsp;Done</button>
+                        <button type="button" class="small-btn delete-btn goal-delete-btn" data-goal-id="${newGoal.id}" aria-label="Delete goal">🗑️</button>
+                    </div>`;
+                listContainer.appendChild(tempLi);
+                if (noGoalsMessage) noGoalsMessage.remove(); // Remove 'no goals' message if it was there
+           } else { // If no list existed, create it and add item
+                const newListHTML = this.renderGoalList(person, true); // Get HTML for the whole list
+                if (noGoalsMessage) noGoalsMessage.remove(); // Remove 'no goals' message
+                // Insert the new list before the form
+                formElement.insertAdjacentHTML('beforebegin', newListHTML);
+           }
       } else {
           // Fallback: Re-render the whole tab if specific container not found
-          console.warn("[ADD_GOAL] Goal list container not found, re-rendering tab.");
+          console.warn("[ADD_GOAL] Goal section not found, re-rendering tab.");
           const tabContent = formElement.closest('.tab-content');
           if(tabContent) this.renderDetailTabContent(person, 'tab-goals-journal', tabContent);
       }
@@ -2045,7 +2058,10 @@ renderDetailTabContent(person, tabId, contentElement) {
           // Fallback: If element not passed, re-render the list (less efficient)
           console.warn("[TOGGLE_GOAL] List item element not provided, re-rendering list.");
           const listContainer = document.querySelector(`#detail-modal[data-person-id="${personId}"] .goals-section .goal-list`);
-          if (listContainer) listContainer.outerHTML = this.renderGoalList(person, true);
+          const listParent = listContainer?.parentElement;
+          if (listParent) {
+               listParent.innerHTML = this.renderGoalList(person, false); // Re-render list and form
+          }
       }
 
       this.saveToLocalStorage(); // Save changes
@@ -2067,19 +2083,29 @@ renderDetailTabContent(person, tabId, contentElement) {
 
       // Update UI dynamically
       const listItem = document.querySelector(`#detail-modal[data-person-id="${personId}"] li[data-goal-id="${goalId}"]`);
+      const goalsSection = listItem?.closest('.goals-section');
+      const listContainer = goalsSection?.querySelector('.goal-list');
+
       if (listItem) {
             listItem.remove(); // Remove the specific list item
-            // Check if list is now empty
-            const listContainer = document.querySelector(`#detail-modal[data-person-id="${personId}"] .goals-section .goal-list`);
+            // Check if list is now empty and show message if needed
             if (listContainer && listContainer.children.length === 0) {
-                 listContainer.outerHTML = '<p class="muted-text">No goals added yet.</p>'; // Replace list with message
+                const noGoalsMessage = document.createElement('p');
+                noGoalsMessage.className = 'muted-text';
+                noGoalsMessage.textContent = 'No goals added yet.';
+                listContainer.replaceWith(noGoalsMessage); // Replace empty list with message
             }
             this.showNotification("Goal deleted.", "info", 2000);
       } else {
           // Fallback: Re-render the whole list if specific item not found
           console.warn("[DELETE_GOAL] List item element not found, re-rendering list.");
-          const listContainer = document.querySelector(`#detail-modal[data-person-id="${personId}"] .goals-section .goal-list`);
-          if (listContainer) listContainer.outerHTML = this.renderGoalList(person, true);
+          if (goalsSection) {
+             // Replace list content, keeping the form
+             goalsSection.innerHTML = `
+                 <h3 id="goals-heading">🎯 Goals & Aspirations</h3>
+                 ${this.renderGoalList(person, false)}
+             `;
+          }
       }
   }
 
@@ -2094,11 +2120,15 @@ renderDetailTabContent(person, tabId, contentElement) {
        const prompt = getRandomPrompt();
        promptArea.innerHTML = `💡 Prompt: ${escapeHTML(prompt)}`; // Escape prompt
        promptArea.style.display = 'block'; // Show the prompt area
-       // Pre-fill textarea if empty
+       // Pre-fill textarea if empty, adding prompt text
        if (textarea.value.trim() === '') {
             textarea.value = `Prompt: ${escapeHTML(prompt)}\n\n`;
+        } else {
+            // Optionally add prompt if textarea already has content
+            // textarea.value = `Prompt: ${escapeHTML(prompt)}\n\n---\n\n${textarea.value}`;
         }
        textarea.focus(); // Focus the textarea for writing
+       textarea.scrollTop = 0; // Scroll to top
        grantAchievement({}, 'prompt_used', this.showNotification.bind(this)); // Grant global achievement
    }
 
@@ -2122,8 +2152,9 @@ renderDetailTabContent(person, tabId, contentElement) {
 
        // Grant achievements (pass save function)
        grantAchievement(person, 'reflection_saved', this.showNotification.bind(this), this.saveToLocalStorage.bind(this));
-       // Count reflections (consider history in future?)
-       const reflectionCount = (person.reflections && person.reflections.trim() !== "") ? 1 : 0; // Simplified count for now
+       // Count non-empty reflections (simplified count)
+       const reflectionCount = (person.reflections && person.reflections.trim() !== "") ? 1 : 0;
+       // In a real scenario, you'd likely store reflections as an array of entries to count properly
        if (reflectionCount >= 5) grantAchievement(person, 'five_reflections', this.showNotification.bind(this), this.saveToLocalStorage.bind(this));
        if (reflectionCount >= 10) grantAchievement(person, 'journal_journeyman', this.showNotification.bind(this), this.saveToLocalStorage.bind(this));
 
@@ -2143,28 +2174,32 @@ renderDetailTabContent(person, tabId, contentElement) {
             timestamp: currentTimestamp,
             role: person.role,
             style: person.style,
-            traits: JSON.parse(JSON.stringify(person.traits || {})) // Deep copy
+            traits: JSON.parse(JSON.stringify(person.traits || {})) // Deep copy essential
         };
 
         if (!Array.isArray(person.history)) person.history = []; // Initialize history array
 
-        // Grant achievements before pushing to history (to check previous state)
+        // Grant achievements *before* adding the new snapshot to history
+        // This allows comparing the new state to the *previous* state (if history exists)
         grantAchievement(person, 'history_snapshot', this.showNotification.bind(this));
-        this.checkConsistentSnapper(person, currentTimestamp);
-        this.checkTraitTransformation(person, newSnapshot);
-        if(person.history.length >= 9) grantAchievement(person, 'ten_snapshots', this.showNotification.bind(this));
+        this.checkConsistentSnapper(person, currentTimestamp); // Checks against last item in history
+        this.checkTraitTransformation(person, newSnapshot); // Compares newSnapshot to last item in history
 
+        // Grant achievement for reaching 10 snapshots *after* this one is added
+        if(person.history.length === 9) { // Check if this snapshot makes it 10
+             grantAchievement(person, 'ten_snapshots', this.showNotification.bind(this));
+        }
+
+        // Add the new snapshot and save
         person.history.push(newSnapshot);
-        this.saveToLocalStorage(); // Save after granting achievements and pushing
+        this.saveToLocalStorage();
 
         // Re-render the history tab content if it's currently active
         const historyTabContent = document.getElementById('tab-history');
         if (historyTabContent?.classList.contains('active')) {
             this.renderDetailTabContent(person, 'tab-history', historyTabContent);
         } else if (historyTabContent) {
-            // Mark for re-render if tab becomes active later
-            // Or use requestAnimationFrame for a deferred update:
-            // requestAnimationFrame(() => this.renderDetailTabContent(person, 'tab-history', historyTabContent));
+            // Optionally mark for re-render if tab becomes active later
              historyTabContent.innerHTML = `<p class="loading-text" role="status">Loading History...</p>`; // Mark as needing refresh
         }
         this.showNotification("Persona snapshot saved to history!", "success");
@@ -2186,12 +2221,13 @@ renderDetailTabContent(person, tabId, contentElement) {
         }
 
         if (!person.history || person.history.length < 2) {
-            // Update container message instead of innerHTML directly
+            // Update container message instead of innerHTML directly to preserve canvas
             container.classList.add('chart-loading'); // Ensure class is present
             let msgElement = container.querySelector('.muted-text');
             if (!msgElement) {
                  msgElement = document.createElement('p');
                  msgElement.className = 'muted-text';
+                 msgElement.style.cssText = 'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;'; // Center message
                  container.appendChild(msgElement); // Append message if not present
             }
             msgElement.textContent = 'Need at least two snapshots to show trait history.';
@@ -2203,6 +2239,7 @@ renderDetailTabContent(person, tabId, contentElement) {
         // Prepare data for Chart.js
         const history = person.history;
         const labels = history.map(snap => new Date(snap.timestamp).toLocaleDateString());
+        // Find all unique traits across all snapshots
         const allTraits = [...new Set(history.flatMap(snap => Object.keys(snap.traits || {})))].sort();
         const datasets = [];
         // Define a more diverse color palette
@@ -2210,12 +2247,12 @@ renderDetailTabContent(person, tabId, contentElement) {
         let colorIndex = 0;
 
         allTraits.forEach(traitName => {
-            // Get data points, using null for missing values
+            // Get data points, using null for missing values in older snapshots
             const dataPoints = history.map(snap => snap.traits?.[traitName] ?? null);
              // Only include trait if it has at least one data point
              if (dataPoints.some(p => p !== null)) {
                  datasets.push({
-                     label: traitName,
+                     label: traitName.charAt(0).toUpperCase() + traitName.slice(1), // Capitalize label
                      data: dataPoints,
                      borderColor: colors[colorIndex % colors.length],
                      backgroundColor: colors[colorIndex % colors.length] + '33', // Add some transparency
@@ -2231,11 +2268,18 @@ renderDetailTabContent(person, tabId, contentElement) {
 
         if (datasets.length === 0) {
             container.classList.add('chart-loading');
-            container.innerHTML = '<p class="muted-text">No valid trait data found in snapshots.</p>';
+            container.innerHTML = '<p class="muted-text" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">No valid trait data found in snapshots.</p>';
             canvas.style.display = 'none';
             console.log("[HISTORY_CHART] No datasets to display.");
             return;
         }
+
+        // Get current theme colors for chart styling
+        const computedStyle = getComputedStyle(document.documentElement);
+        const gridColor = computedStyle.getPropertyValue('--chart-grid-color').trim();
+        const labelColor = computedStyle.getPropertyValue('--chart-label-color').trim();
+        const tooltipBg = computedStyle.getPropertyValue('--chart-tooltip-bg').trim();
+        const tooltipText = computedStyle.getPropertyValue('--chart-tooltip-text').trim();
 
         // Chart Configuration
         const config = {
@@ -2247,41 +2291,49 @@ renderDetailTabContent(person, tabId, contentElement) {
                 scales: {
                     y: {
                         beginAtZero: true,
-                        max: 5.5, // Ensure scale goes up to 5
-                        ticks: { stepSize: 1, color: getComputedStyle(document.documentElement).getPropertyValue('--chart-label-color').trim() },
-                        title: { display: true, text: 'Score', color: getComputedStyle(document.documentElement).getPropertyValue('--chart-label-color').trim() },
-                        grid: { color: getComputedStyle(document.documentElement).getPropertyValue('--chart-grid-color').trim() }
+                        max: 5.5, // Ensure scale goes up to 5 clearly
+                        ticks: { stepSize: 1, color: labelColor },
+                        title: { display: true, text: 'Score', color: labelColor },
+                        grid: { color: gridColor }
                     },
                     x: {
-                        ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--chart-label-color').trim() },
-                        title: { display: true, text: 'Date', color: getComputedStyle(document.documentElement).getPropertyValue('--chart-label-color').trim() },
+                        ticks: { color: labelColor },
+                        title: { display: true, text: 'Date', color: labelColor },
                         grid: { display: false } // Hide vertical grid lines
                     }
                 },
                 plugins: {
                     legend: {
                         position: 'top',
-                        labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--chart-label-color').trim() }
+                        labels: { color: labelColor }
                     },
                     tooltip: {
-                        backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--chart-tooltip-bg').trim(),
-                        titleColor: getComputedStyle(document.documentElement).getPropertyValue('--chart-tooltip-text').trim(),
-                        bodyColor: getComputedStyle(document.documentElement).getPropertyValue('--chart-tooltip-text').trim(),
-                        boxPadding: 4
+                        backgroundColor: tooltipBg,
+                        titleColor: tooltipText,
+                        bodyColor: tooltipText,
+                        boxPadding: 4,
+                        intersect: false, // Show tooltip on hover near point
+                        mode: 'index', // Show tooltips for all datasets at that index
                     }
-                }
+                },
+                interaction: { // Improve hover interaction
+                     mode: 'index',
+                     intersect: false,
+                 },
             }
         };
 
         // Create the chart
         try {
             container.classList.remove('chart-loading'); // Remove loading state
+            const existingMessage = container.querySelector('.muted-text');
+            if(existingMessage) existingMessage.remove(); // Remove message if chart is rendering
             canvas.style.display = 'block'; // Ensure canvas is visible
             this.chartInstance = new Chart(canvas, config);
             console.log("[HISTORY_CHART] Chart rendered successfully.");
         } catch (error) {
             console.error("[HISTORY_CHART] Error creating chart:", error);
-            container.innerHTML = `<p class="error-text">Failed to render history chart.</p>`;
+            container.innerHTML = `<p class="error-text" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">Failed to render history chart.</p>`;
              container.classList.add('chart-loading'); // Indicate error state
         }
     }
@@ -2354,9 +2406,10 @@ renderDetailTabContent(person, tabId, contentElement) {
             if (!readingData) throw new Error("Oracle returned no reading data.");
 
             // Escape all parts of the reading before inserting
+            // Note: readingData.focus might contain <strong> or <em> tags, which are safe here
             outputElement.innerHTML = `
                 <p>${escapeHTML(readingData.opening)}</p>
-                <p><strong>Focus:</strong> ${escapeHTML(readingData.focus)}</p> {/* Focus might contain HTML */}
+                <p><strong>Focus:</strong> ${readingData.focus}</p> {/* Trust pre-escaped content */}
                 <p><em>${escapeHTML(readingData.encouragement)}</em></p>
                 <p>${escapeHTML(readingData.closing)}</p>
             `;
@@ -2401,8 +2454,8 @@ renderDetailTabContent(person, tabId, contentElement) {
                 <p>${escapeHTML(challenge.desc)}</p>
                 <p class="muted-text"><small>(Category: ${escapeHTML(challenge.category)})</small></p>`;
             challengeArea.style.display = 'block';
-            // Grant achievement (global, no save needed)
-            grantAchievement({}, 'challenge_accepted', this.showNotification.bind(this));
+            // Grant achievement (global, no save needed) - grant only if interaction planned
+            // grantAchievement({}, 'challenge_accepted', this.showNotification.bind(this));
         } else {
             challengeArea.innerHTML = '<p class="muted-text">No specific focus challenge today. Explore freely!</p>';
             challengeArea.style.display = 'block';
@@ -2443,8 +2496,18 @@ renderDetailTabContent(person, tabId, contentElement) {
             // Skip invalid entries
             if (!termData?.term || !termData.definition) return;
 
+             // Create a wrapper div for each term+definition for easier filtering/styling
+             const itemWrapper = document.createElement('div');
+             itemWrapper.classList.add('glossary-item');
+             // Store lower-case data for case-insensitive search
+             itemWrapper.dataset.term = termData.term.toLowerCase();
+             itemWrapper.dataset.definition = termData.definition.toLowerCase();
+
+
             const dt = document.createElement('dt');
-            dt.id = `glossary-${key}`; // ID for linking/highlighting
+             // FIX: Create a safe ID for linking, handling potential special chars in keys
+            const safeId = `glossary-${key.replace(/[^a-zA-Z0-9_-]/g, '')}`;
+            dt.id = safeId;
             dt.textContent = escapeHTML(termData.term); // Escape term name
 
             const dd = document.createElement('dd');
@@ -2458,28 +2521,23 @@ renderDetailTabContent(person, tabId, contentElement) {
                 relatedP.appendChild(document.createTextNode('Related: ')); // Add label text
 
                 termData.related.forEach((relatedKey, index) => {
-                    if (glossaryTerms[relatedKey]) {
-                        const link = document.createElement('a');
-                        link.href = `#glossary-${relatedKey}`; // Link to the related term's ID
-                        link.textContent = escapeHTML(glossaryTerms[relatedKey].term); // Escape related term name
-                        link.classList.add('glossary-link');
-                        link.dataset.termKey = relatedKey; // Add key for JS handling
-                        relatedP.appendChild(link);
-                        // Add comma separator
-                        if (index < termData.related.length - 1) {
-                            relatedP.appendChild(document.createTextNode(', '));
-                        }
-                    }
+                     const relatedTermData = glossaryTerms[relatedKey];
+                     if (relatedTermData) {
+                         const relatedSafeId = `glossary-${relatedKey.replace(/[^a-zA-Z0-9_-]/g, '')}`;
+                         const link = document.createElement('a');
+                         link.href = `#${relatedSafeId}`; // Link to the related term's ID
+                         link.textContent = escapeHTML(relatedTermData.term); // Escape related term name
+                         link.classList.add('glossary-link');
+                         link.dataset.termKey = relatedKey; // Add key for JS handling
+                         relatedP.appendChild(link);
+                         // Add comma separator
+                         if (index < termData.related.length - 1) {
+                             relatedP.appendChild(document.createTextNode(', '));
+                         }
+                     }
                 });
                 dd.appendChild(relatedP); // Append related terms paragraph to definition
             }
-
-             // Wrap dt and dd in a div for easier filtering
-             const itemWrapper = document.createElement('div');
-             itemWrapper.classList.add('glossary-item');
-             // Store lower-case data for case-insensitive search
-             itemWrapper.dataset.term = termData.term.toLowerCase();
-             itemWrapper.dataset.definition = termData.definition.toLowerCase();
              itemWrapper.appendChild(dt);
              itemWrapper.appendChild(dd);
              dl.appendChild(itemWrapper); // Add item to the definition list
@@ -2489,7 +2547,7 @@ renderDetailTabContent(person, tabId, contentElement) {
 
     this.openModal(modal); // Open the modal
 
-    // Highlight term if requested, after modal is open
+    // Highlight term if requested, after modal is open and content is rendered
     if (termKeyToHighlight) {
          this.highlightGlossaryTerm(termKeyToHighlight);
     }
@@ -2505,8 +2563,7 @@ highlightGlossaryTerm(termKeyToHighlight) {
          previouslyHighlighted?.classList.remove('highlighted-term');
 
          // Find the new term element by ID
-         // FIX: Escape the key for use in ID selector if keys might contain special characters
-         const safeId = `glossary-${termKeyToHighlight.replace(/[^a-zA-Z0-9_-]/g, '')}`; // Basic sanitization for ID
+         const safeId = `glossary-${termKeyToHighlight.replace(/[^a-zA-Z0-9_-]/g, '')}`; // Use the same safe ID generation
          const element = document.getElementById(safeId);
 
          if (element) {
@@ -2517,6 +2574,9 @@ highlightGlossaryTerm(termKeyToHighlight) {
              setTimeout(() => element?.classList.remove('highlighted-term'), 2500);
          } else {
              console.warn(`[HIGHLIGHT_TERM] Element ID not found for highlighting: ${safeId}`);
+             // Optionally, try searching by data-term-key if ID fails?
+             // const elementByData = this.elements.glossaryBody.querySelector(`a[data-term-key="${termKeyToHighlight}"]`);
+             // if(elementByData) { /* highlight parent dt? */ }
          }
      });
 }
@@ -2544,15 +2604,17 @@ linkGlossaryTerms(escapedText) {
              // Replace matches with links
              linkedText = linkedText.replace(regex, (match) => {
                  // The matched text is already escaped (since input was escaped), so use it directly
-                 // Ensure the key used in href and data-term-key is the original key
                  const safeKey = escapeHTML(key); // Escape key just in case for data attribute
-                 return `<a href="#glossary-${safeKey}" class="glossary-link" data-term-key="${safeKey}">${match}</a>`;
+                  // FIX: Create safe ID for href
+                  const safeId = `glossary-${key.replace(/[^a-zA-Z0-9_-]/g, '')}`;
+                 return `<a href="#${safeId}" class="glossary-link" data-term-key="${safeKey}">${match}</a>`;
                 }
              );
         }
     });
     return linkedText;
 }
+
 
 filterGlossary(searchTerm) {
     const lowerSearchTerm = searchTerm.toLowerCase().trim();
@@ -2576,7 +2638,7 @@ filterGlossary(searchTerm) {
      if (itemsFound === 0 && lowerSearchTerm !== '') {
          if (!noResultsMsg) { // Create message if it doesn't exist
              noResultsMsg = document.createElement('p');
-             noResultsMsg.className = 'muted-text no-results-message';
+             noResultsMsg.className = 'muted-text no-results-message'; // Added class for specific styling if needed
              noResultsMsg.textContent = 'No terms found matching your search.';
              // Append after the last item or at the end of the list
              list.appendChild(noResultsMsg);
@@ -2617,7 +2679,7 @@ clearGlossarySearch() {
 }
 
   renderStyleDiscoveryContent(styleNameToHighlight = null) {
-    // Normalize highlight name if provided
+    // Normalize highlight name if provided (using original utils function)
     const highlightKey = typeof styleNameToHighlight === 'string' ? normalizeStyleKey(styleNameToHighlight) : null;
     const body = this.elements.styleDiscoveryBody;
     const selectedRole = this.elements.styleDiscoveryRoleFilter?.value || 'all';
@@ -2658,17 +2720,17 @@ clearGlossarySearch() {
     // Generate HTML for each style item
     let contentHTML = stylesToDisplay.map(style => {
         // Create a safe ID based on role and normalized name
-        const styleIdSafe = `style-discovery-${escapeHTML(style.role)}-${normalizeStyleKey(style.name).replace(/[^a-zA-Z0-9]/g, '-')}`;
+        const currentNormalizedKey = normalizeStyleKey(style.name); // Normalize current style name
+        const styleIdSafe = `style-discovery-${escapeHTML(style.role)}-${currentNormalizedKey.replace(/[^a-zA-Z0-9]/g, '-')}`;
         const summary = style.summary || "No summary available.";
         const icon = sfStyleIcons[style.name] || ''; // Get icon safely using original name
         const escapedName = escapeHTML(style.name);
         const escapedRole = escapeHTML(style.role);
         const escapedSummary = escapeHTML(summary);
-        // Use normalized key for comparison later
-        const currentNormalizedKey = normalizeStyleKey(style.name);
+        const shouldHighlight = highlightKey === currentNormalizedKey; // Compare normalized keys
 
         return `
-            <div class="style-discovery-item ${highlightKey === currentNormalizedKey ? 'highlighted-style' : ''}" id="${styleIdSafe}" data-normalized-key="${currentNormalizedKey}">
+            <div class="style-discovery-item ${shouldHighlight ? 'highlighted-style' : ''}" id="${styleIdSafe}" data-normalized-key="${currentNormalizedKey}">
                 <h4>${icon ? escapeHTML(icon) + ' ' : ''}${escapedName} <small>(${escapedRole})</small></h4>
                 <p>${escapedSummary}</p>
                  ${this.renderStyleTraitList(style)} {/* Render trait list with links */}
@@ -2712,7 +2774,9 @@ renderStyleTraitList(style) {
         const escapedTrait = escapeHTML(t);
         // Get the display term from glossary, fallback to the trait name
         const displayTerm = escapeHTML(glossaryTerms[t]?.term || t.charAt(0).toUpperCase() + t.slice(1));
-        return `<a href="#glossary-${escapedTrait}" class="glossary-link" data-term-key="${escapedTrait}" title="View '${displayTerm}' in Glossary">${escapedTrait}</a>`;
+        // FIX: Create safe ID for href
+        const safeId = `glossary-${t.replace(/[^a-zA-Z0-9_-]/g, '')}`;
+        return `<a href="#${safeId}" class="glossary-link" data-term-key="${escapedTrait}" title="View '${displayTerm}' in Glossary">${escapedTrait}</a>`;
     }).join(', '); // Join with commas
 
     return `<p class="traits-list"><small>Key Traits: ${traitLinks}</small></p>`;
@@ -2862,7 +2926,7 @@ filterStyleDiscovery(searchTerm) {
         return;
     }
 
-    // Use the helper function to find the explanation
+    // Use the helper function to find the explanation robustly
     const explanation = findTraitExplanation(traitName); // Already handles fallbacks
 
     // Escape content before inserting
@@ -3053,6 +3117,8 @@ filterStyleDiscovery(searchTerm) {
          this.styleFinderTraits = [];
          this.traitOrder = [];
          // Optionally clear UI elements again here if needed
+         if (this.elements.sfStepContent) this.elements.sfStepContent.innerHTML = '';
+         if (this.elements.sfDashboard) this.elements.sfDashboard.innerHTML = '';
     }
 
     sfSetRole(role) {
@@ -3071,7 +3137,7 @@ filterStyleDiscovery(searchTerm) {
         this.styleFinderTraits = (role === 'submissive' ? sfSubFinderTraits : sfDomFinderTraits);
         this.traitFootnotes = (role === 'submissive' ? sfSubTraitFootnotes : sfDomTraitFootnotes);
         this.sliderDescriptions = sfSliderDescriptions; // Descriptions are shared for now
-        // Shuffle the order traits are presented (simple shuffle)
+        // Shuffle the order traits are presented (simple shuffle using sort)
         this.traitOrder = [...this.styleFinderTraits].sort(() => 0.5 - Math.random());
         console.log(`[SF_SET_ROLE] Selected ${this.traitOrder.length} traits for role ${role}.`);
 
@@ -3085,7 +3151,7 @@ filterStyleDiscovery(searchTerm) {
             this.styleFinderAnswers.traits[traitName] = 5; // Default to neutral if invalid
         } else {
             this.styleFinderAnswers.traits[traitName] = numericValue;
-            // console.log(`[SF_SET_TRAIT] Set ${traitName} to ${numericValue}`); // Can be noisy
+            // console.log(`[SF_SET_TRAIT] Set ${traitName} to ${numericValue}`); // Can be noisy, commented out
         }
     }
 
@@ -3122,12 +3188,20 @@ filterStyleDiscovery(searchTerm) {
             this.sfShowFeedback(''); // Clear previous feedback
         } else {
             console.log("[SF_NEXT_STEP] Already at the last step (results).");
+            // Optionally re-render results if needed, but usually not necessary
+             // this.sfRenderStep();
         }
     }
 
     sfPrevStep() {
         if (!this.styleFinderActive || this.styleFinderStep <= 0) return;
-        this.styleFinderStep--;
+        // If currently on the results step, go back to the last trait
+        if (this.sfCalculateSteps()[this.styleFinderStep]?.type === 'result') {
+             this.styleFinderStep = this.sfCalculateSteps().length - 2; // Index of last trait
+        } else {
+             this.styleFinderStep--; // Otherwise just go back one step
+        }
+
         this.previousScores = { ...this.styleFinderScores }; // Store scores before potential update
         this.styleFinderScores = this.sfComputeScores(true); // Recompute scores temporarily for dashboard update
         this.sfRenderStep();
@@ -3147,7 +3221,7 @@ filterStyleDiscovery(searchTerm) {
         this.sfSliderInteracted = false;
         this.styleFinderTraits = [];
         this.traitOrder = [];
-        // FIX: Ensure UI elements are reset here as well
+        // Reset UI elements as well
         if(this.elements.sfDashboard) this.elements.sfDashboard.style.display = 'none';
         if(this.elements.sfFeedback) this.elements.sfFeedback.textContent = '';
         // Render the first step (role selection)
@@ -3165,13 +3239,13 @@ filterStyleDiscovery(searchTerm) {
 
         const sortedScores = Object.entries(this.styleFinderScores).sort((a, b) => b[1] - a[1]);
 
-        if (sortedScores.length === 0 || sortedScores[0][1] === 0) {
+        if (sortedScores.length === 0 || sortedScores[0][1] <= 5) { // Use a threshold slightly above 0
             console.warn("[SF_CALC_RESULT] No style resonated significantly.");
             // Provide a default or "needs more info" result
              return {
-                topStyle: { name: "Explorer 🌱", score: 0 },
-                topStyleDetails: { short: "Your responses were neutral.", long: "Try adjusting sliders more decisively or exploring different traits!", tips: ["Revisit the questions.", "Consider core role traits.", "Explore Style Discovery."] },
-                topMatch: { match: "Open Field", dynamic: "Self-Discovery", longDesc: "A great time to explore basic concepts and desires." },
+                topStyle: { name: "Explorer 🌱", score: sortedScores[0]?.[1] || 0 }, // Show top score even if low
+                topStyleDetails: { short: "Your responses were quite balanced or neutral.", long: "Try adjusting sliders more decisively or exploring different trait combinations to find a stronger resonance!", tips: ["Revisit the trait ratings.", "Consider core role traits strongly.", "Explore Style Discovery."] },
+                topMatch: { match: "Open Field", dynamic: "Self-Discovery", longDesc: "A great time to explore basic concepts and desires without strong labels." },
                 sortedScores: sortedScores
              };
         }
@@ -3196,10 +3270,13 @@ filterStyleDiscovery(searchTerm) {
         if (!this.elements.sfDashboard) return;
 
         const currentScores = this.styleFinderScores; // Use temporarily computed scores
+        // Filter out styles with 0 score before sorting and displaying? Optional.
+        // const sortedEntries = Object.entries(currentScores).filter(([,score]) => score > 0).sort((a, b) => b[1] - a[1]);
         const sortedEntries = Object.entries(currentScores).sort((a, b) => b[1] - a[1]);
 
+
         let dashboardHTML = `<h4 class="sf-dashboard-header">Style Resonance</h4>`;
-        if (sortedEntries.length === 0) {
+        if (sortedEntries.length === 0 || sortedEntries.every(([,score]) => score === 0)) {
              dashboardHTML += '<p class="muted-text">Answer questions to see scores...</p>';
         } else {
             sortedEntries.forEach(([styleName, score]) => {
@@ -3208,11 +3285,12 @@ filterStyleDiscovery(searchTerm) {
                 let changeIndicator = '';
                 let deltaClass = '';
 
+                // Generate change indicator HTML if change is not 0
                 if (scoreChange > 0) {
                     changeIndicator = `<span class="sf-move-up">▲</span><span class="sf-score-delta positive">+${scoreChange}%</span>`;
                     deltaClass = 'positive';
                 } else if (scoreChange < 0) {
-                    changeIndicator = `<span class="sf-move-down">▼</span><span class="sf-score-delta negative">${scoreChange}%</span>`;
+                    changeIndicator = `<span class="sf-move-down">▼</span><span class="sf-score-delta negative">${scoreChange}%</span>`; // Negative sign included
                     deltaClass = 'negative';
                 }
 
@@ -3220,6 +3298,7 @@ filterStyleDiscovery(searchTerm) {
                 const barHTML = `<div class="sf-score-bar" style="width: ${barWidth}%;"></div>`;
                  const escapedStyleName = escapeHTML(styleName); // Escape style name
 
+                // Build the dashboard item HTML
                 dashboardHTML += `
                     <div class="sf-dashboard-item ${deltaClass}">
                         <span class="sf-style-name" title="${escapedStyleName}">${escapedStyleName}</span>
@@ -3232,11 +3311,13 @@ filterStyleDiscovery(searchTerm) {
         }
 
         this.elements.sfDashboard.innerHTML = dashboardHTML;
+        // Scroll dashboard to top only on updates, not initial render
         if(!isInitialRender) {
-             this.elements.sfDashboard.scrollTop = 0; // Scroll to top on update
+             this.elements.sfDashboard.scrollTop = 0;
         }
     }
 
+    // FIX: Corrected sfRenderStep logic based on second error report
     sfRenderStep() {
         if (!this.styleFinderActive || !this.elements.sfStepContent) return;
 
@@ -3302,14 +3383,15 @@ filterStyleDiscovery(searchTerm) {
                 const footnote = this.traitFootnotes[traitName] || '';
                 const sliderDescArray = this.sliderDescriptions[traitName] || [];
 
-                // FIX: Correctly calculate the description index, clamping between 0 and max valid index
+                // FIX: Correctly calculate the description index
+                // Ensure length is checked correctly and index is clamped
                 const maxDescIndex = sliderDescArray.length > 0 ? sliderDescArray.length - 1 : 0;
                 const desiredDescIndex = currentValue - 1; // Convert 1-10 value to 0-9 index
-                const descIndex = Math.max(0, Math.min(desiredDescIndex, maxDescIndex)); // Clamp it
+                const descIndex = Math.max(0, Math.min(desiredDescIndex, maxDescIndex)); // Clamp index
 
                 const currentDescText = sliderDescArray[descIndex] || `Value: ${currentValue}`; // Get text using corrected index
                 const escapedTraitName = escapeHTML(traitName);
-                const displayTitle = escapedTraitName.charAt(0).toUpperCase() + escapedTraitName.slice(1);
+                const displayTitle = escapedTraitName.charAt(0).toUpperCase() + escapedTraitName.slice(1); // This line is OK
 
                 html = `
                     <div class="sf-step-inner">
@@ -3430,7 +3512,8 @@ filterStyleDiscovery(searchTerm) {
                  console.error("[SF_RENDER_STEP] sfStepContent element disappeared before rendering HTML.");
              }
         });
-  }
+    } // End sfRenderStep
+
 
    sfCloseAllPopups() {
          // Closes any open SF info popups
@@ -3501,7 +3584,7 @@ filterStyleDiscovery(searchTerm) {
         // Find the maximum score achieved among all styles
         const maxAchievedPoints = achievedScores.length > 0 ? Math.max(...achievedScores) : 0;
 
-        // FIX: Corrected logic for normalization - brace placement fixed
+        // Corrected logic for normalization
         if (maxAchievedPoints <= 0) {
              // If max score is 0 or less, all normalized scores are 0
             relevantStyles.forEach(styleName => {
@@ -3512,7 +3595,7 @@ filterStyleDiscovery(searchTerm) {
             relevantStyles.forEach(styleName => {
                 finalScores[styleName] = Math.round((stylePoints[styleName] / maxAchievedPoints) * 100);
             });
-        } // <<< Closing brace for the if/else block is correctly placed here
+        } // Correct closing brace for the if/else
 
         if (!temporary) { // Log final scores only when not temporary calculation
             console.log("[SF_COMPUTE_SCORES] Final Normalized Scores:", finalScores);
@@ -3691,7 +3774,6 @@ filterStyleDiscovery(searchTerm) {
          }, 150); // Delay allows DOM updates
 
         this.sfClose(); // Close the Style Finder modal
-        // FIX: Use corrected escapeHTML
         this.showNotification(`Style '${escapeHTML(styleWithEmoji)}' applied! Add a name & Save.`, "success");
         // Scroll to the form and focus the name field
         this.elements.formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -3788,9 +3870,11 @@ filterStyleDiscovery(searchTerm) {
 
              this.chartInstance.options.plugins?.legend?.labels?.color = labelColor;
 
-             this.chartInstance.options.plugins?.tooltip?.backgroundColor = tooltipBg;
-             this.chartInstance.options.plugins?.tooltip?.titleColor = tooltipText;
-             this.chartInstance.options.plugins?.tooltip?.bodyColor = tooltipText;
+             if (this.chartInstance.options.plugins?.tooltip) {
+                 this.chartInstance.options.plugins.tooltip.backgroundColor = tooltipBg;
+                 this.chartInstance.options.plugins.tooltip.titleColor = tooltipText;
+                 this.chartInstance.options.plugins.tooltip.bodyColor = tooltipText;
+             }
 
              // Apply updates without animation
              this.chartInstance.update('none');
@@ -3950,7 +4034,7 @@ filterStyleDiscovery(searchTerm) {
              }
         }
         // Return unique hints (Set might reorder, so just return the array)
-        return hints; // [...new Set(hints)] - If uniqueness across goals is needed
+        return hints; // Return the collected hints (might have duplicates if keywords overlap significantly)
     }
 
    getDailyChallenge(persona = null) {
@@ -4046,7 +4130,10 @@ filterStyleDiscovery(searchTerm) {
                 focusText = getRandom(oracleReadings.focusAreas.general);
             }
 
-            reading.focus = focusText || "Inner reflection and presence."; // Default focus if none selected
+            // Escape the final focus text (unless it was already structured with HTML)
+            reading.focus = focusText.includes('<strong>') || focusText.includes('<em>')
+                ? focusText
+                : (focusText || "Inner reflection and presence."); // Default focus if none selected
 
             return reading;
         } catch (error) {
@@ -4151,8 +4238,8 @@ filterStyleDiscovery(searchTerm) {
 
         // Set class for styling based on type
         notificationElement.className = `notification-${type}`;
-        // Set message content securely
-        notificationElement.textContent = escapeHTML(message); // Use textContent for security
+        // Set message content securely using textContent
+        notificationElement.textContent = message; // Avoid escapeHTML here as it's for internal messages
         notificationElement.style.opacity = '1'; // Fade in
         notificationElement.style.transform = 'translate(-50%, 0)'; // Move into view
         notificationElement.style.top = '70px'; // Position from top
@@ -4190,11 +4277,20 @@ filterStyleDiscovery(searchTerm) {
             // Apply initial styles (match CSS)
             div.style.opacity = '0';
             div.style.top = '20px';
+            // Explicitly set required styles from CSS in case CSS hasn't loaded/applied yet
             div.style.position = 'fixed';
             div.style.left = '50%';
             div.style.transform = 'translateX(-50%)';
+            div.style.padding = '12px 25px';
+            div.style.borderRadius = '8px';
             div.style.zIndex = '2000';
-            div.style.transition = 'opacity 0.5s ease, top 0.5s ease, transform 0.5s ease';
+            div.style.transition = 'opacity 0.5s ease, top 0.5s ease, transform 0.5s ease, background-color 0.3s ease, color 0.3s ease';
+            div.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+            div.style.fontSize = '0.95em';
+            div.style.textAlign = 'center';
+            div.style.pointerEvents = 'none';
+            div.style.maxWidth = '80%';
+
             document.body.appendChild(div);
             this.elements.notificationArea = div; // Store reference
             return div;
@@ -4228,10 +4324,9 @@ try {
     // Display a visible error message to the user as a fallback
     const errorDiv = document.createElement('div');
     errorDiv.style.cssText = 'color: white; padding: 20px; border: 3px solid darkred; margin: 20px auto; background: red; font-family: monospace; white-space: pre-wrap; z-index: 9999; position: fixed; top: 10px; left: 10px; right: 10px; max-width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5);';
+    // Use escapeHTML safely on error properties
     errorDiv.innerHTML = `<strong>FATAL ERROR: KinkCompass could not start.</strong><br><br>Message: ${escapeHTML(error.message)}<br><br>Stack Trace:<br>${escapeHTML(error.stack || 'Not available')}<br><br>Check console (F12). Clear localStorage or import backup if needed.`;
     // Ensure body exists before prepending
     const prependError = () => document.body ? document.body.prepend(errorDiv) : setTimeout(prependError, 50);
     prependError();
 }
-
---- END OF FILE app.js ---
