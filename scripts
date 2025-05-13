@@ -1664,6 +1664,11 @@ class StyleFinderApp {
         console.error('Failed to copy text: ', err);
     });
   }
+// Continuing from the previous script.js content, specifically the downloadCuratedAsText method...
+// Assume all prior code (constructor, data objects, quiz logic methods, curation mode methods up to this point)
+// is present above this line.
+
+      // ... (previous parts of the StyleFinderApp class, including the start of downloadCuratedAsText) ...
 
   downloadCuratedAsText() {
     const textToDownload = `My Curated Archetype: ${this.customArchetypeName}\n\nDescription:\n${this.customArchetypeDescription}\n\nSelected Elements:\n`;
@@ -1671,4 +1676,34 @@ class StyleFinderApp {
     Object.values(this.selectedCuratedElements).forEach(item => {
         elementsText += `- (${item.source} - ${item.type}): ${item.text}\n`;
     });
-    const fullText = textToDownload + (elementsText || "None selected - self-authored description.");
+    const fullText = textToDownload + (elementsText || "Description self-authored without direct element selection.");
+
+    const blob = new Blob([fullText], { type: 'text/plain;charset=utf-8' }); // Added charset
+    const anchor = document.createElement('a');
+    // Sanitize filename: replace spaces with underscores and remove non-alphanumeric characters (except underscore and hyphen)
+    const sanitizedFilename = (this.customArchetypeName || "My_Archetype").replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_-]/g, '');
+    anchor.download = `${sanitizedFilename}.txt`;
+    anchor.href = URL.createObjectURL(blob);
+    anchor.style.display = 'none'; // Hide the anchor
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+    URL.revokeObjectURL(anchor.href); // Clean up
+    this.showFeedback("Curated archetype text file downloading!");
+  }
+
+  refineCuration() {
+    // This simply re-renders the curation screen.
+    // The current selections and custom text are already stored in `this` properties.
+    this.renderCurationScreen();
+  }
+
+  exitCurationModeAndRestart() {
+    this.curationModeActive = false; // Exit curation mode
+    this.startOver(); // Start a completely new quiz journey
+  }
+
+} // End of StyleFinderApp class
+
+// Instantiate the app
+const styleFinderApp = new StyleFinderApp();
