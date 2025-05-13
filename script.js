@@ -197,6 +197,10 @@ class StyleFinderApp {
     };
 
 
+    this.initElements();
+    this.addEventListeners();
+  }
+
  initElements() {
     this.elements = {
       styleFinderBtn: document.getElementById('style-finder-btn'),
