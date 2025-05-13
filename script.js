@@ -1117,14 +1117,13 @@ class StyleFinderApp {
 } // End of StyleFinderApp class
 
 // --- GLOBAL INSTANTIATION ---
+
 const styleFinderApp = new StyleFinderApp();
 
-// --- GLOBAL EVENT LISTENERS ---
-// This listener is for a general playground button on the main page.
-// Remove this if the button #open-playground-btn is removed from index.html
+// This is for the button on the main index.html page
 document.addEventListener('DOMContentLoaded', () => {
     const openPlaygroundBtnMainPage = document.getElementById('open-playground-btn');
-    if (openPlaygroundBtnMainPage) {
+    if (openPlaygroundBtnMainPage) { // Only if this button exists on the main page
         openPlaygroundBtnMainPage.addEventListener('click', () => {
             if (typeof PlaygroundApp !== 'undefined') {
                 if (!styleFinderApp.playgroundApp) {
@@ -1133,10 +1132,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 styleFinderApp.playgroundApp.showPlayground();
                 if (styleFinderApp.elements.styleFinder && styleFinderApp.elements.styleFinder.style.display !== 'none') {
-                   styleFinderApp.elements.styleFinder.style.display = 'none';
+                   styleFinderApp.elements.styleFinder.style.display = 'none'; // Hide quiz if open
                 }
             } else {
-                console.error("PlaygroundApp class not found.");
+                console.error("PlaygroundApp class not found. Ensure playground.js is loaded AFTER script.js.");
                 alert("Playground feature is not available.");
             }
         });
