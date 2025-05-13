@@ -1,9 +1,5 @@
-
-
-
 class StyleFinderApp {
   constructor() {
-    // ... (Initial state variables remain the same, including this.playgroundApp = null;) ...
     // Initial state variables
     this.styleFinderActive = false;
     this.styleFinderStep = 0;
@@ -12,15 +8,16 @@ class StyleFinderApp {
     this.styleFinderScores = {};
     this.hasRenderedDashboard = false;
 
+    // Curation State Variables
     this.curationModeActive = false;
     this.topArchetypesForCuration = [];
     this.selectedCuratedElements = {};
     this.customArchetypeName = "";
     this.customArchetypeDescription = "";
 
-    this.playgroundApp = null; // Will hold the PlaygroundApp instance
+    // Playground Integration
+    this.playgroundApp = null;
 
-    // ... (All data objects: styles, subFinderTraits, subTraitFootnotes, domFinderTraits, domTraitFootnotes, sliderDescriptions, traitExplanations, styleDescriptions, dynamicMatches, guidingPreferences remain THE SAME AND FULLY POPULATED as in the previous complete script response) ...
     // Style categories
     this.styles = {
       submissive: [
@@ -34,89 +31,22 @@ class StyleFinderApp {
       ]
     };
 
-    // Submissive traits (randomized order)
+    // Submissive traits
     this.subFinderTraits = [
-      { name: 'obedience', desc: 'How deeply do you resonate with following instructions or rules from a trusted guide?' },
-      { name: 'rebellion', desc: 'Is there a spark of joy in playfully resisting or teasing when someone tries to direct you?' },
-      { name: 'service', desc: 'How fulfilling is it to assist, perform tasks, or dedicate yourself to another\'s happiness?' },
-      { name: 'playfulness', desc: 'How much do silly games, lighthearted mischief, or imaginative scenarios call to you?' },
-      { name: 'sensuality', desc: 'Do soft touches, varied textures, or heightened physical sensations ignite your senses?' },
-      { name: 'exploration', desc: 'How strong is your desire to venture into new experiences or uncharted territories of sensation?' },
-      { name: 'devotion', desc: 'Does profound loyalty and unwavering commitment to someone bring you a deep sense of purpose?' },
-      { name: 'innocence', desc: 'How much do you enjoy embodying a carefree, pure, or even childlike essence in interactions?' },
-      { name: 'mischief', desc: 'What is your affinity for stirring things up with a cheeky prank or playful, well-intentioned trouble?' },
-      { name: 'affection', desc: 'How vital is physical closeness, like hugs, cuddles, or gentle nuzzling, for you to feel connected?' },
-      { name: 'painTolerance', desc: 'Does a spectrum of discomfort, from a light sting to intense sensations, excite or intrigue you?' },
-      { name: 'submissionDepth', desc: 'How completely do you yearn to let go, entrusting your full control to another?' },
-      { name: 'dependence', desc: 'Is there comfort and security for you in relying on another for guidance and decision-making?' },
-      { name: 'vulnerability', desc: 'How natural and right does it feel to open up emotionally, exposing your innermost self?' },
-      { name: 'adaptability', desc: 'How readily can you shift between different roles, moods, or adjust to new expectations in a dynamic?' },
-      { name: 'tidiness', desc: 'Do you find satisfaction in maintaining perfect order, cleanliness, and organization for another?' },
-      { name: 'politeness', desc: 'Does courteous, respectful, and mannered interaction come naturally and feel important to you?' },
-      { name: 'craving', desc: 'Do you actively seek intense, boundary-pushing sensations or experiences that test your limits?' },
-      { name: 'receptiveness', desc: 'How open are you to truly receiving direction, sensations, or guidance from another without reservation?' }
+      { name: 'obedience', desc: 'How deeply do you resonate with following instructions or rules from a trusted guide?' }, { name: 'rebellion', desc: 'Is there a spark of joy in playfully resisting or teasing when someone tries to direct you?' }, { name: 'service', desc: 'How fulfilling is it to assist, perform tasks, or dedicate yourself to another\'s happiness?' }, { name: 'playfulness', desc: 'How much do silly games, lighthearted mischief, or imaginative scenarios call to you?' }, { name: 'sensuality', desc: 'Do soft touches, varied textures, or heightened physical sensations ignite your senses?' }, { name: 'exploration', desc: 'How strong is your desire to venture into new experiences or uncharted territories of sensation?' }, { name: 'devotion', desc: 'Does profound loyalty and unwavering commitment to someone bring you a deep sense of purpose?' }, { name: 'innocence', desc: 'How much do you enjoy embodying a carefree, pure, or even childlike essence in interactions?' }, { name: 'mischief', desc: 'What is your affinity for stirring things up with a cheeky prank or playful, well-intentioned trouble?' }, { name: 'affection', desc: 'How vital is physical closeness, like hugs, cuddles, or gentle nuzzling, for you to feel connected?' }, { name: 'painTolerance', desc: 'Does a spectrum of discomfort, from a light sting to intense sensations, excite or intrigue you?' }, { name: 'submissionDepth', desc: 'How completely do you yearn to let go, entrusting your full control to another?' }, { name: 'dependence', desc: 'Is there comfort and security for you in relying on another for guidance and decision-making?' }, { name: 'vulnerability', desc: 'How natural and right does it feel to open up emotionally, exposing your innermost self?' }, { name: 'adaptability', desc: 'How readily can you shift between different roles, moods, or adjust to new expectations in a dynamic?' }, { name: 'tidiness', desc: 'Do you find satisfaction in maintaining perfect order, cleanliness, and organization for another?' }, { name: 'politeness', desc: 'Does courteous, respectful, and mannered interaction come naturally and feel important to you?' }, { name: 'craving', desc: 'Do you actively seek intense, boundary-pushing sensations or experiences that test your limits?' }, { name: 'receptiveness', desc: 'How open are you to truly receiving direction, sensations, or guidance from another without reservation?' }
     ].sort(() => 0.5 - Math.random());
-
     this.subTraitFootnotes = {
-      obedience: "1: Rarely follows / 10: Always obeys implicitly",
-      rebellion: "1: Utterly compliant / 10: Master of playful defiance",
-      service: "1: Self-focused primarily / 10: Driven by acts of service",
-      playfulness: "1: Generally serious / 10: Embodiment of playful spirit",
-      sensuality: "1: Prefers less sensory input / 10: Craves rich sensory experiences",
-      exploration: "1: Prefers the known / 10: Eagerly seeks the unknown",
-      devotion: "1: Highly independent / 10: Capable of profound devotion",
-      innocence: "1: Feels mature/worldly / 10: Cherishes childlike innocence",
-      mischief: "1: Prefers calm / 10: Delightfully mischievous",
-      affection: "1: Prefers personal space / 10: Craves constant affection",
-      painTolerance: "1: Avoids all pain / 10: Embraces intense sensations",
-      submissionDepth: "1: Enjoys light guidance / 10: Yearns for total surrender",
-      dependence: "1: Fiercely self-reliant / 10: Finds comfort in dependence",
-      vulnerability: "1: Heavily guarded / 10: Naturally open and vulnerable",
-      adaptability: "1: Prefers a fixed role / 10: Highly versatile and fluid",
-      tidiness: "1: Happily chaotic / 10: Devoted to pristine order",
-      politeness: "1: Casual and direct / 10: Epitome of courtesy",
-      craving: "1: Prefers gentle experiences / 10: Seeks extreme thrills",
-      receptiveness: "1: Internally directed / 10: Fully open to external input"
+      obedience: "1: Rarely follows / 10: Always obeys implicitly",rebellion: "1: Utterly compliant / 10: Master of playful defiance",service: "1: Self-focused primarily / 10: Driven by acts of service",playfulness: "1: Generally serious / 10: Embodiment of playful spirit",sensuality: "1: Prefers less sensory input / 10: Craves rich sensory experiences",exploration: "1: Prefers the known / 10: Eagerly seeks the unknown",devotion: "1: Highly independent / 10: Capable of profound devotion",innocence: "1: Feels mature/worldly / 10: Cherishes childlike innocence",mischief: "1: Prefers calm / 10: Delightfully mischievous",affection: "1: Prefers personal space / 10: Craves constant affection",painTolerance: "1: Avoids all pain / 10: Embraces intense sensations",submissionDepth: "1: Enjoys light guidance / 10: Yearns for total surrender",dependence: "1: Fiercely self-reliant / 10: Finds comfort in dependence",vulnerability: "1: Heavily guarded / 10: Naturally open and vulnerable",adaptability: "1: Prefers a fixed role / 10: Highly versatile and fluid",tidiness: "1: Happily chaotic / 10: Devoted to pristine order",politeness: "1: Casual and direct / 10: Epitome of courtesy",craving: "1: Prefers gentle experiences / 10: Seeks extreme thrills",receptiveness: "1: Internally directed / 10: Fully open to external input"
     };
-
-    // Dominant traits (randomized order)
+    // Dominant traits
     this.domFinderTraits = [
-      { name: 'authority', desc: 'How natural and invigorating is it for you to take command and lead?' },
-      { name: 'confidence', desc: 'How unwavering is your belief in your decisions and your ability to guide?' },
-      { name: 'discipline', desc: 'Do you find satisfaction in establishing firm rules and ensuring they are followed?' },
-      { name: 'boldness', desc: 'How fearlessly do you embrace challenges and navigate new or intense situations?' },
-      { name: 'care', desc: 'How strong is your instinct to nurture, support, and protect those under your guidance?' },
-      { name: 'empathy', desc: 'How intuitively do you connect with and understand the emotions and needs of others?' },
-      { name: 'control', desc: 'How much do you thrive on meticulously directing details and orchestrating outcomes?' },
-      { name: 'creativity', desc: 'Do you delight in crafting unique scenarios, experiences, or methods of interaction?' },
-      { name: 'precision', desc: 'How important is meticulous attention to detail and flawless execution to you?' },
-      { name: 'intensity', desc: 'Do you bring a potent, focused, and powerful energy to your interactions and scenes?' },
-      { name: 'sadism', desc: 'Does the artful, consensual giving of pain or psychological challenge excite you?' },
-      { name: 'leadership', desc: 'How naturally do you assume the role of guiding others towards a shared or set goal?' },
-      { name: 'possession', desc: 'How profound is your sense of pride and responsibility in what (or whom) you consider "yours"?' },
-      { name: 'patience', desc: 'How calm and steadfast are you while teaching, training, or waiting for compliance?' },
-      { name: 'dominanceDepth', desc: 'Do you crave a dynamic where your power is absolute and your influence all-encompassing?' }
+      { name: 'authority', desc: 'How natural and invigorating is it for you to take command and lead?' },{ name: 'confidence', desc: 'How unwavering is your belief in your decisions and your ability to guide?' },{ name: 'discipline', desc: 'Do you find satisfaction in establishing firm rules and ensuring they are followed?' },{ name: 'boldness', desc: 'How fearlessly do you embrace challenges and navigate new or intense situations?' },{ name: 'care', desc: 'How strong is your instinct to nurture, support, and protect those under your guidance?' },{ name: 'empathy', desc: 'How intuitively do you connect with and understand the emotions and needs of others?' },{ name: 'control', desc: 'How much do you thrive on meticulously directing details and orchestrating outcomes?' },{ name: 'creativity', desc: 'Do you delight in crafting unique scenarios, experiences, or methods of interaction?' },{ name: 'precision', desc: 'How important is meticulous attention to detail and flawless execution to you?' },{ name: 'intensity', desc: 'Do you bring a potent, focused, and powerful energy to your interactions and scenes?' },{ name: 'sadism', desc: 'Does the artful, consensual giving of pain or psychological challenge excite you?' },{ name: 'leadership', desc: 'How naturally do you assume the role of guiding others towards a shared or set goal?' },{ name: 'possession', desc: 'How profound is your sense of pride and responsibility in what (or whom) you consider "yours"?' },{ name: 'patience', desc: 'How calm and steadfast are you while teaching, training, or waiting for compliance?' },{ name: 'dominanceDepth', desc: 'Do you crave a dynamic where your power is absolute and your influence all-encompassing?' }
     ].sort(() => 0.5 - Math.random());
-
     this.domTraitFootnotes = {
-      authority: "1: Prefers to suggest / 10: Naturally commands",
-      confidence: "1: Often hesitant / 10: Unshakeably self-assured",
-      discipline: "1: Very relaxed approach / 10: Enjoys strict structure",
-      boldness: "1: Highly cautious / 10: Fearlessly dives in",
-      care: "1: More detached / 10: Deeply caring and protective",
-      empathy: "1: Logically focused / 10: Highly intuitive and empathetic",
-      control: "1: Prefers to delegate / 10: Craves total control",
-      creativity: "1: Prefers routines / 10: Exceptionally imaginative",
-      precision: "1: Prefers broad strokes / 10: Meticulous to the core",
-      intensity: "1: Gentle and soft / 10: Radiates powerful intensity",
-      sadism: "1: Avoids causing discomfort / 10: Finds artistry in consensual pain",
-      leadership: "1: Prefers to follow / 10: A natural-born leader",
-      possession: "1: Prefers autonomy for all / 10: Deeply possessive and protective",
-      patience: "1: Easily impatient / 10: Endlessly patient",
-      dominanceDepth: "1: Enjoys light influence / 10: Desires complete dominance"
+      authority: "1: Prefers to suggest / 10: Naturally commands",confidence: "1: Often hesitant / 10: Unshakeably self-assured",discipline: "1: Very relaxed approach / 10: Enjoys strict structure",boldness: "1: Highly cautious / 10: Fearlessly dives in",care: "1: More detached / 10: Deeply caring and protective",empathy: "1: Logically focused / 10: Highly intuitive and empathetic",control: "1: Prefers to delegate / 10: Craves total control",creativity: "1: Prefers routines / 10: Exceptionally imaginative",precision: "1: Prefers broad strokes / 10: Meticulous to the core",intensity: "1: Gentle and soft / 10: Radiates powerful intensity",sadism: "1: Avoids causing discomfort / 10: Finds artistry in consensual pain",leadership: "1: Prefers to follow / 10: A natural-born leader",possession: "1: Prefers autonomy for all / 10: Deeply possessive and protective",patience: "1: Easily impatient / 10: Endlessly patient",dominanceDepth: "1: Enjoys light influence / 10: Desires complete dominance"
     };
-
-    this.sliderDescriptions = { /* ... All 10 descriptions for each trait ... */
+    // Slider Descriptions
+    this.sliderDescriptions = {
       obedience: ["A free spirit, you dance to your own beat!","Rules are mere whispers in the wind to you.","You'll consider following, if the mood is right!","A hint of compliance, when it suits your fancy.","Gentle guidance? You can roll with that.","Following instructions can feel surprisingly good.","Pleasing through obedience offers a quiet satisfaction.","'Yes' is a word you offer with thoughtful consideration.","A sweet request often earns your willing accord.","Your 'yes' is a gift, offered with radiant trust."],
       rebellion: ["The soul of compliance, you bend like a willow.","A tiny 'perhaps not' might escape your lips.","You playfully nudge boundaries with a charming smile.","Teasing and testing rules is your delightful game.","A perfect blend of 'yes' and 'no, but make it cute'.","You push back with an irresistible, sparkling charm.","Defiance, for you, is an art form of connection.","A playful 'no' is your favorite kind of 'yes, please'.","Rebellious energy dances in your every move.","You are the star of delightful, cheeky insubordination!"],
       service: ["Your focus is inward, on your own path mostly.","A quick favor is a gesture you might offer.","Helping those who are sweet to you feels natural.","You'll lend a hand when it's convenient and light.","Serving can be okay, a pleasant interlude sometimes.","Making someone smile through service brings you joy.","Assisting others is your quiet happy place.","You cherish the opportunity to perform kind tasks.","You are a sweet angel of devoted helpfulness.","Caring for others through service is your superpower!"],
@@ -152,9 +82,11 @@ class StyleFinderApp {
       patience: ["Fast, now, and preferring immediate results!","A moment of waiting, a brief pause, slips in.","You'll chill and wait if it's quick and clearly defined.","Half rushing and eager, half calm and composed.","You're cooling down, finding the virtue in waiting.","Patience is becoming your quiet, steady strength.","You wait with grace, composure, and understanding.","Calm, unwavering patience is your superpower.","You are a zen star, a beacon of tranquil waiting.","Total peace, the embodiment of perfect patience!"],
       dominanceDepth: ["Light, free, and preferring gentle influence.","A subtle hold, a hint of deeper control, peeks out.","You'll lead and direct if it's easy and welcomed.","Half soft and suggestive, half firm and authoritative.","You're taking charge, embracing your inner power.","Power, wielded responsibly, is your radiant glow.","You rule with ease, wisdom, and clear intention.","Total, profound control is the core of your being.","You are a rare gem of potent, ethical power.","A total ruler, a sovereign of your domain!"]
     };
+    // Trait Explanations
     this.traitExplanations = {
       obedience: "This explores your inclination to follow instructions or yield to another's guidance. High scores suggest comfort with clear direction and rules, while low scores indicate a preference for autonomy or questioning directives.",rebellion: "This measures your tendency towards playful defiance or testing boundaries. High scores point to enjoying a spirited challenge and 'taming' dynamics, while low scores suggest a more compliant or direct approach to interaction.",service: "This assesses the fulfillment you derive from performing acts of service or dedicating yourself to another's needs. High scores indicate a strong desire to please and assist, while low scores suggest other forms of connection are more primary.",playfulness: "This gauges your love for lighthearted fun, games, and imaginative scenarios. High scores mean you thrive on silliness and creative play, while low scores point to a more serious or grounded interactive style.",sensuality: "This looks at your responsiveness to physical sensations like touch, texture, and atmosphere. High scores indicate a deep appreciation for rich sensory input, while low scores suggest a preference for less intense or more focused sensory experiences.",exploration: "This checks your eagerness to try new things, roles, or sensations. High scores mean you're adventurous and open to the unknown, while low scores suggest comfort with familiar routines and experiences.",devotion: "This measures the depth of loyalty and commitment you feel towards a partner or ideal. High scores indicate a capacity for profound, unwavering dedication, while low scores suggest a more independent or less intensely focused bond.",innocence: "This assesses your enjoyment of embodying a carefree, childlike, or pure persona. High scores point to a love for 'little space' or similar dynamics, while low scores suggest a preference for more mature or sophisticated roles.",mischief: "This gauges your affinity for playful troublemaking or cheeky pranks. High scores indicate a love for stirring things up lightheartedly, while low scores suggest a preference for calmer, more predictable interactions.",affection: "This explores your need for physical closeness, warmth, and expressed tenderness. High scores mean you crave cuddles and overt affection, while low scores suggest you're comfortable with more personal space or subtle expressions.",painTolerance: "This measures your interest in or capacity to experience and find meaning/pleasure in consensually given physical or psychological discomfort. High scores indicate an attraction to masochism or intense sensation play.",submissionDepth: "This assesses how completely you desire to surrender control to another. High scores point to a yearning for total power exchange, while low scores suggest a preference for lighter guidance or shared control.",dependence: "This gauges your comfort with relying on another for guidance, decisions, or care. High scores indicate a sense of security in dependence, while low scores suggest a strong preference for self-reliance.",vulnerability: "This measures how comfortable you are with emotional openness and exposing your inner self. High scores point to a natural ease with being vulnerable, while low scores indicate a more guarded emotional posture.",adaptability: "This checks your ability to switch between roles, moods, or styles of interaction. High scores indicate versatility (e.g., a Switch), while low scores suggest a preference for a consistent role.",tidiness: "This explores your enjoyment of maintaining order, cleanliness, and organization, potentially for another. High scores suggest a 'neat freak' or service-oriented tidiness, low scores a comfort with chaos.",politeness: "This assesses your natural inclination towards courteous, respectful, and mannered interactions. High scores indicate formality or deep respect is key, low scores a more casual or blunt style.",craving: "This measures your desire for intense, boundary-pushing, or extreme experiences. High scores point to a thrill-seeking nature, while low scores suggest a preference for gentler, more moderate sensations.",receptiveness: "This gauges your openness to truly receiving and internalizing direction, sensation, or energy from another. High scores indicate a strong 'bottoming' or receptive capacity, low scores a more self-directed approach.",authority: "This measures your natural inclination to take charge, make decisions, and lead. High scores indicate a strong Dominant tendency, while low scores suggest a preference for supporting or following roles.",confidence: "This assesses your self-assurance in your decisions, guidance, and ability to hold a dominant role. High scores point to unwavering conviction, while low scores might indicate hesitation or a softer approach.",discipline: "This explores your enjoyment of setting and enforcing rules, structure, and expectations. High scores indicate a 'Strict' or 'Disciplinarian' tendency, while low scores suggest a more relaxed, less rule-bound style.",boldness: "This gauges your fearlessness in facing challenges, trying new things, or taking initiative in a dominant capacity. High scores point to an 'Assertive' or 'Hunter' type, low scores a more cautious or gentle approach.",care: "This measures your instinct to nurture, protect, and support those under your guidance. High scores indicate a 'Nurturer,' 'Caretaker,' 'Daddy,' or 'Mommy' tendency, while low scores suggest a less overtly protective style.",empathy: "This assesses your ability to intuitively understand and connect with the emotional state of your partner. High scores are crucial for ethical dominance and roles like 'Nurturer,' while low scores might indicate a more objective or pragmatic approach.",control: "This explores your desire to direct, manage, and orchestrate aspects of a dynamic or your partner. High scores point to roles like 'Master,' 'Owner,' or 'Puppeteer,' while low scores suggest a preference for less micromanagement.",creativity: "This gauges your enjoyment in crafting unique scenarios, methods of interaction, or artistic expressions within a dynamic. High scores are typical for 'Riggers,' 'Puppeteers,' or imaginative Dominants.",precision: "This measures the importance you place on meticulous detail, flawless execution, and exacting standards. High scores are common in 'Riggers,' 'Strict' types, or 'Masters' with specific protocols.",intensity: "This assesses the focused, powerful energy you bring to interactions. High scores suggest a 'Sadist,' 'Hunter,' or 'Commander' who thrives on potent exchanges, while low scores indicate a softer, gentler presence.",sadism: "This explores your interest in the artful, consensual giving of physical or psychological pain/challenge. High scores point clearly to a Sadist archetype, recognizing the need for ethics and consent.",leadership: "This measures your natural ability to guide, inspire, and direct others towards a goal. It's a core trait for many Dominant roles, especially 'Master,' 'Commander,' or 'Sir.'",possession: "This gauges your sense of protective ownership or profound responsibility for a partner. High scores are typical for 'Owners,' 'Masters,' or 'Daddies/Mommies' who feel a deep bond of belonging.",patience: "This assesses your ability to remain calm, steadfast, and understanding while teaching, training, or awaiting compliance. Crucial for 'Trainers,' 'Nurturers,' and any Dominant working with a learning or testing partner.",dominanceDepth: "This explores your desire for a comprehensive and profound level of power within a dynamic. High scores point to roles like 'Master,' 'Goddess,' or those seeking total power exchange."
     };
+    // Style Descriptions (Fully Populated)
     this.styleDescriptions = {
       Brat: {title: "The Sparking Imp: Brat", icon: "😈",flavorText: "Rules are merely suggestions, darling. And I'm *awfully* good at creative reinterpretations.",essence: "The Brat is a whirlwind of playful defiance and mischievous charm. They thrive on testing boundaries, not to break them, but to engage in a spirited dance of wits and wills. It's a quest for attention, for the delicious friction of being 'tamed,' and for the underlying affection that makes the game worthwhile.",coreMotivations: ["To feel seen and engaged through playful challenge.", "To turn rules and expectations into a delightful game.", "To elicit a strong, focused (and often amused) reaction from their Dominant.", "To experience the thrill of 'being caught' and lovingly 'corrected'."],keyCharacteristics: ["Witty and quick-tongued.", "Loves to tease and provoke (playfully).", "Pushes boundaries with a twinkle in their eye.", "Energetic and often attention-seeking.", "Masters of loopholes and creative disobedience.", "Ultimately craves connection and reassurance beneath the mischief."],strengthsInDynamic: ["Injects immense fun, energy, and unpredictability.", "Keeps Dominants on their toes and encourages creative responses.", "Can lead to strong communication as true limits are navigated amidst play.", "Builds a unique bond based on shared humor and understanding."],potentialChallenges: ["Playful defiance can be misread as genuine disrespect if not carefully calibrated.", "Risk of frustrating a partner who isn't in the mood for games or lacks patience.", "Requires clear communication of 'hard limits' versus 'playful resistance'.", "Can sometimes escalate beyond intended playfulness without clear signals from both sides."],thrivesWith: ["A Dominant who possesses patience, a robust sense of humor, and enjoys intellectual sparring.", "Clear boundaries and consistent (but loving and often playful) consequences.", "Partners who appreciate the art of the 'chase' and the affection beneath the mischief.", "Dynamics where their wit and energy are seen as strengths rather than annoyances."],pathwaysToExploration: ["Clearly define 'safe words' and 'soft/hard limits' before engaging in bratty play.", "Experiment with different levels of bratting – from subtle teasing to outright (playful) rebellion.", "Discuss with your partner what 'taming' or 'correction' feels rewarding and fun for both of you.", "Explore 'funishments' that are more about shared amusement or connection than genuine punishment."]},
       Little: {title: "The Cherished Heart: Little", icon: "🍼",flavorText: "In a world of big worries, I find my joy in small wonders and gentle hands.",essence: "The Little embodies innocence, playfulness, and a desire for nurturing care. They find comfort in stepping away from adult responsibilities, embracing a more carefree and dependent state. This style is about trust, vulnerability, and the joy of being cherished, guided, and allowed to explore a simpler, often imaginative, world.",coreMotivations: ["To experience a sense of safety, comfort, and being unconditionally cared for.", "To explore playfulness, creativity, and imagination without adult inhibitions.", "To escape the pressures of adulthood and reconnect with a simpler, more joyful state of being.", "To build a deep, trusting bond with a caregiver figure who appreciates their unique needs."],keyCharacteristics: ["Innocent, curious, and often highly playful or imaginative.", "Seeks affection, reassurance, guidance, and gentle rules.", "May engage in age-regressive behaviors (e.g., using a 'little' voice, enjoying toys, specific foods, or simple comforts).", "Values emotional connection and trust profoundly.", "Can be shy initially but highly expressive once comfortable and secure."],strengthsInDynamic: ["Brings a sense of warmth, joy, and lightheartedness to the dynamic.", "Fosters deep emotional intimacy, trust, and a unique form of bonding.", "Allows the caregiver partner to express nurturing, protective, and guiding instincts.", "Can be a source of stress relief, healing, and shared delight for both partners."],potentialChallenges: ["Requires a caregiver who is genuinely nurturing, patient, understanding, and ethical.", "Boundaries around 'little space' and 'adult space' need clear, ongoing communication.", "Vulnerability is inherently high, making unwavering trust and respect paramount.", "Ensuring the dynamic remains consensual and doesn't exploit perceived innocence or power imbalances."],thrivesWith: ["A patient, empathetic, and protective Caretaker, Daddy, or Mommy figure who genuinely enjoys the role.", "Clear communication about needs, boundaries, comfort levels, and desired activities in 'little space'.", "An environment that feels safe, secure, and encouraging of their innocent exploration and self-expression.", "Partners who understand that 'little space' is a valid and important part of their identity."],pathwaysToExploration: ["Create a 'little space' kit with comforting items (e.g., favorite blanket, stuffie, coloring books, simple games, snacks).", "Discuss desired age range (if any) and preferred activities with your caregiver.", "Explore different forms of affection, praise, and reassurance that feel good and affirming.", "Practice transitioning in and out of 'little space' in a way that feels comfortable, safe, and respected by both partners."]},
@@ -201,7 +133,7 @@ class StyleFinderApp {
       Goddess: {title: "The Divine Presence: Goddess", icon: "🌟",flavorText: "Bask in my radiance...",essence: "The Goddess embodies an aura...",coreMotivations: ["To embody supreme power..."],keyCharacteristics: ["Exudes supreme confidence..."],strengthsInDynamic: ["Creates powerful dynamic..."],potentialChallenges: ["Requires genuine worshippers..."],thrivesWith: ["Devoted Thralls..."],pathwaysToExploration: ["Develop Goddess mythology..."]},
       Commander: {title: "The Strategic Leader: Commander", icon: "⚔️",flavorText: "By my strategy, order is forged...",essence: "The Commander is a master of strategy...",coreMotivations: ["To lead with strategic vision..."],keyCharacteristics: ["Highly strategic..."],strengthsInDynamic: ["Excellent for complex scenes..."],potentialChallenges: ["Can be perceived as demanding..."],thrivesWith: ["Subordinates appreciating strategy..."],pathwaysToExploration: ["Design missions..."]}
     };
-    this.dynamicMatches = { /* ... ALL FULLEST DYNAMIC MATCHES ... */
+    this.dynamicMatches = {
       Brat: {primary: { partnerStyle: "Disciplinarian", dynamicName: "The Spark & Steel Tango", description: "A spirited dance where the Brat's playful defiance meets the Disciplinarian's firm, loving guidance. This pairing thrives on witty banter, the thrill of the chase, and the eventual satisfaction of (consensual) 'taming'.", interactionFocus: ["Playful rule-testing and creative loopholes.", "Consistent, fair, and often 'fun' consequences.", "Underlying affection and mutual enjoyment of the game."] }, secondary: [{ partnerStyle: "Master", dynamicName: "The Impish Courtier", description: "A Master with patience and a sense of humor can find a Brat's antics an amusing challenge, channeling their energy into devoted (if cheeky) service." }, { partnerStyle: "Daddy", dynamicName: "The Cheeky Cherub", description: "A Daddy who enjoys playful challenges will find a Brat keeps them on their toes, blending mischief with underlying affection."}]},
       Little: {primary: { partnerStyle: "Caretaker", dynamicName: "The Cozy Cocoon", description: "A deeply nurturing dynamic where the Little finds safety and joy in the Caretaker's gentle guidance and protection. It's a world of comfort, play, and affectionate bonding.", interactionFocus: ["Nurturing activities (e.g., story time, cuddles, preparing snacks).", "Reassurance, praise, and gentle guidance.", "Creating a safe space for innocent play and emotional expression."] }, secondary: [{ partnerStyle: "Daddy", dynamicName: "Daddy's Little Star", description: "A classic pairing focusing on protection, guidance, and often a blend of firm rules with abundant affection." }, { partnerStyle: "Mommy", dynamicName: "Mommy's Cherished One", description: "Similar to Daddy, emphasizing warmth, emotional support, and gentle instruction within a loving framework." }]},
       'Rope Bunny': {primary: { partnerStyle: "Rigger", dynamicName: "The Woven Tapestry", description: "An intimate collaboration where the Rigger's skill and artistry meet the Rope Bunny's trust and physical form. This dynamic is a visual and sensory exploration, creating intricate patterns and profound connections.", interactionFocus: ["Aesthetic rope application and suspension (if desired/safe).", "Constant communication about sensation and comfort.", "Shared appreciation for the beauty and intensity of shibari."] }, secondary: [{ partnerStyle: "Sadist", dynamicName: "The Bound Sensation", description: "For Rope Bunnies who also enjoy pain, a Sadistic Rigger can incorporate impact or discomfort into the rope experience, heightening the intensity." }, { partnerStyle: "Puppeteer", dynamicName: "The Living Marionette", description: "A Puppeteer can use ropes to manipulate and pose the Rope Bunny, creating living art through controlled movement."}]},
@@ -261,24 +193,15 @@ class StyleFinderApp {
         { id: 'creativity', text: "The delight in crafting unique scenarios, training, or shaping another's experience.", archetypes: ['Puppeteer', 'Trainer', 'Owner', 'Mistress', 'Goddess', 'Rigger', 'Hunter'] }
       ]
     };
-
-    // Call initElements and addEventListeners for StyleFinderApp's own elements
+    // Initialize StyleFinderApp's own DOM elements and event listeners
     this.initElements();
-    this.addEventListeners(); // This is for QUIZ related listeners
+    this.addEventListeners();
   }
 
-  // ... (The rest of StyleFinderApp methods: initElements, addEventListeners for quiz,
-  //      computeCurrentScores, updateDashboard, getTotalSteps, renderStyleFinder with NEW CASE for userKeyTraits,
-  //      setStyleFinderRole, setGuidingPreference, setStyleFinderTrait, handleUserKeyTraitSelection (NEW),
-  //      nextStyleFinderStep, prevStyleFinderStep, getCurrentStepConfig, startOver, calculateStyleFinderResult,
-  //      generateSummaryDashboard, showFeedback, showTraitInfo, showFullDetails,
-  //      AND ALL CURATION METHODS: escapeJsString, enterCurationMode, exitCurationMode, renderCurationScreen,
-  //      openCurationTab, handleElementSelection, unescapeJsString, updateSelectedElementsDisplay,
-  //      updateCustomDescriptionWithSelections, finalizeCuration, renderCuratedResultScreen,
-  //      copyCuratedToClipboard, downloadCuratedAsText, refineCuration, exitCurationModeAndRestart)
-  //      ARE ASSUMED TO BE HERE, COMPLETE AND CORRECT FROM PREVIOUS FULL SCRIPT RESPONSES.
-  //      I will only show the method directly modified for clarity.
-
+  // ... (ALL OTHER StyleFinderApp methods, including those that were previously complete
+  //      like computeCurrentScores, updateDashboard, renderStyleFinder, curation methods, etc.,
+  //      are defined here, ensuring they are part of the class.) ...
+  // The key is that this.updateDashboard(), this.computeCurrentScores(), etc., are all methods of this class.
   initElements() {
     this.elements = {
       styleFinderBtn: document.getElementById('style-finder-btn'),
@@ -289,44 +212,202 @@ class StyleFinderApp {
       feedback: document.getElementById('feedback'),
       dashboard: document.getElementById('dashboard'),
       themeToggle: document.getElementById('theme-toggle')
-      // NO openPlaygroundBtn here, that's handled globally or after DOMContentLoaded
     };
     if (this.elements.styleFinderBtn) {
         this.elements.styleFinderBtn.textContent = "Unveil Your Archetype";
     }
   }
 
-  addEventListeners() { // These are for the QUIZ MODAL
-    this.elements.styleFinderBtn.addEventListener('click', () => {
-      this.styleFinderActive = true;
-      this.styleFinderStep = 0;
-      this.styleFinderRole = null;
-      this.styleFinderAnswers = { traits: {}, guidingPreference: null, userDefinedKeyTraits: [] };
-      this.styleFinderScores = {};
-      this.hasRenderedDashboard = false;
-      this.curationModeActive = false; // Ensure curation is off
-      this.elements.styleFinder.style.display = 'flex';
-      this.renderStyleFinder();
-      this.showFeedback("The journey of discovery begins...");
-    });
-
-    this.elements.closeStyleFinder.addEventListener('click', () => {
-        this.styleFinderActive = false;
+  addEventListeners() {
+    if(this.elements.styleFinderBtn) {
+      this.elements.styleFinderBtn.addEventListener('click', () => {
+        this.styleFinderActive = true;
+        this.styleFinderStep = 0;
+        this.styleFinderRole = null;
+        this.styleFinderAnswers = { traits: {}, guidingPreference: null, userDefinedKeyTraits: [] };
+        this.styleFinderScores = {};
+        this.hasRenderedDashboard = false;
         this.curationModeActive = false;
-        this.elements.styleFinder.style.display = 'none';
-        // If playground is active, we might want to show it, or show main page.
-        // For now, just closes modal. Playground visibility is separate.
-    });
+        this.elements.styleFinder.style.display = 'flex';
+        this.renderStyleFinder();
+        this.showFeedback("The journey of discovery begins...");
+      });
+    }
 
-    this.elements.themeToggle.addEventListener('click', () => {
-      const currentTheme = document.body.getAttribute('data-theme') || 'light';
-      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-      document.body.setAttribute('data-theme', newTheme);
-      this.elements.themeToggle.textContent = newTheme === 'light' ? '🌙' : '☀️';
-    });
+    if(this.elements.closeStyleFinder) {
+      this.elements.closeStyleFinder.addEventListener('click', () => {
+          this.styleFinderActive = false;
+          this.curationModeActive = false;
+          this.elements.styleFinder.style.display = 'none';
+      });
+    }
+
+    if(this.elements.themeToggle) {
+      this.elements.themeToggle.addEventListener('click', () => {
+        const currentTheme = document.body.getAttribute('data-theme') || 'light';
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.body.setAttribute('data-theme', newTheme);
+        this.elements.themeToggle.textContent = newTheme === 'light' ? '🌙' : '☀️';
+      });
+    }
   }
 
-  // MODIFIED renderStyleFinder to include a different button for Playground on result screen
+  // ALL OTHER METHODS, INCLUDING updateDashboard, computeCurrentScores, calculateStyleFinderResult,
+  // renderStyleFinder (with the NEW case for userKeyTraits), etc., must be defined here.
+  // Since you indicated they were correct in the previous full script, I'm including them again
+  // to ensure completeness and resolve the "is not a function" error.
+
+  computeCurrentScores() {
+    let scores = {};
+    if (!this.styleFinderRole) return scores;
+    const roleStyles = this.styles[this.styleFinderRole];
+    roleStyles.forEach(style => { scores[style] = 0; });
+
+    if (this.styleFinderAnswers.guidingPreference && this.guidingPreferences[this.styleFinderRole]) {
+        const preference = this.guidingPreferences[this.styleFinderRole].find(p => p.id === this.styleFinderAnswers.guidingPreference);
+        if (preference && preference.archetypes) {
+            preference.archetypes.forEach(arch => {
+                if (scores[arch] !== undefined) {
+                    scores[arch] += 25;
+                }
+            });
+        }
+    }
+    const styleKeyTraits = {
+        'Brat': { primary: ['rebellion', 'mischief', 'playfulness'], secondary: ['adaptability', 'confidence', 'exploration'] },
+        'Little': { primary: ['innocence', 'dependence', 'affection', 'playfulness'], secondary: ['vulnerability', 'receptiveness', 'sensuality'] },
+        'Rope Bunny': { primary: ['sensuality', 'submissionDepth', 'painTolerance', 'receptiveness', 'exploration'], secondary: ['vulnerability', 'adaptability'] },
+        'Masochist': { primary: ['painTolerance', 'submissionDepth', 'craving', 'receptiveness'], secondary: ['vulnerability', 'devotion', 'exploration'] },
+        'Pet': { primary: ['affection', 'playfulness', 'devotion', 'dependence', 'obedience'], secondary: ['service', 'innocence', 'receptiveness'] },
+        'Slave': { primary: ['service', 'devotion', 'submissionDepth', 'obedience', 'tidiness'], secondary: ['politeness', 'receptiveness', 'vulnerability'] },
+        'Submissive': { primary: ['obedience', 'submissionDepth', 'vulnerability', 'receptiveness', 'dependence'], secondary: ['politeness', 'affection', 'devotion'] },
+        'Switch': { primary: ['adaptability', 'exploration', 'playfulness', 'confidence', 'empathy'], secondary: ['leadership', 'obedience', 'authority', 'receptiveness'] },
+        'Puppy': { primary: ['playfulness', 'devotion', 'affection', 'obedience', 'receptiveness'], secondary: ['dependence', 'service', 'innocence'] },
+        'Kitten': { primary: ['sensuality', 'mischief', 'affection', 'playfulness', 'adaptability'], secondary: ['exploration', 'innocence', 'receptiveness'] },
+        'Princess': { primary: ['sensuality', 'innocence', 'dependence', 'affection', 'service'], secondary: ['tidiness', 'politeness', 'craving'] },
+        'Prey': { primary: ['exploration', 'vulnerability', 'rebellion', 'craving', 'adaptability'], secondary: ['sensuality', 'playfulness'] },
+        'Toy': { primary: ['submissionDepth', 'adaptability', 'service', 'receptiveness', 'playfulness'], secondary: ['sensuality', 'obedience', 'vulnerability'] },
+        'Doll': { primary: ['vulnerability', 'dependence', 'sensuality', 'tidiness', 'obedience', 'receptiveness'], secondary: ['politeness', 'submissionDepth'] },
+        'Bunny': { primary: ['playfulness', 'innocence', 'affection', 'vulnerability', 'sensuality'], secondary: ['dependence', 'receptiveness'] },
+        'Servant': { primary: ['service', 'obedience', 'devotion', 'tidiness', 'politeness'], secondary: ['receptiveness', 'submissionDepth'] },
+        'Playmate': { primary: ['playfulness', 'mischief', 'exploration', 'adaptability', 'affection'], secondary: ['sensuality', 'rebellion', 'confidence'] },
+        'Babygirl': { primary: ['dependence', 'innocence', 'affection', 'vulnerability', 'receptiveness'], secondary: ['playfulness', 'sensuality', 'obedience'] },
+        'Captive': { primary: ['submissionDepth', 'vulnerability', 'exploration', 'craving', 'dependence'], secondary: ['painTolerance', 'receptiveness', 'obedience'] },
+        'Thrall': { primary: ['devotion', 'submissionDepth', 'dependence', 'obedience', 'receptiveness'], secondary: ['service', 'vulnerability', 'politeness'] },
+        'Puppet': { primary: ['receptiveness', 'adaptability', 'obedience', 'submissionDepth', 'sensuality'], secondary: ['vulnerability', 'playfulness', 'dependence'] },
+        'Maid': { primary: ['tidiness', 'politeness', 'service', 'obedience', 'devotion'], secondary: ['receptiveness', 'submissionDepth'] },
+        'Painslut': { primary: ['painTolerance', 'craving', 'submissionDepth', 'exploration', 'receptiveness'], secondary: ['devotion', 'vulnerability', 'obedience'] },
+        'Bottom': { primary: ['receptiveness', 'painTolerance', 'submissionDepth', 'vulnerability', 'adaptability'], secondary: ['sensuality', 'obedience'] },
+        'Disciplinarian': { primary: ['discipline', 'authority', 'precision', 'patience', 'control'], secondary: ['confidence', 'leadership'] },
+        'Master': { primary: ['authority', 'possession', 'dominanceDepth', 'leadership', 'confidence', 'discipline'], secondary: ['care', 'patience', 'control'] },
+        'Nurturer': { primary: ['care', 'empathy', 'patience', 'affection', 'protection'], secondary: ['authority', 'confidence'] },
+        'Sadist': { primary: ['sadism', 'intensity', 'control', 'precision', 'empathy'], secondary: ['creativity', 'confidence', 'patience'] },
+        'Owner': { primary: ['possession', 'control', 'dominanceDepth', 'authority', 'care'], secondary: ['discipline', 'patience', 'leadership'] },
+        'Dominant': { primary: ['authority', 'confidence', 'leadership', 'control', 'dominanceDepth'], secondary: ['boldness', 'intensity'] },
+        'Assertive': { primary: ['boldness', 'intensity', 'authority', 'confidence', 'leadership'], secondary: ['control', 'dominanceDepth'] },
+        'Strict': { primary: ['discipline', 'control', 'precision', 'authority', 'leadership'], secondary: ['confidence'] },
+        'Mistress': { primary: ['confidence', 'creativity', 'dominanceDepth', 'authority', 'sensuality', 'possession'], secondary: ['intensity', 'discipline'] },
+        'Daddy': { primary: ['care', 'possession', 'empathy', 'authority', 'discipline', 'protection'], secondary: ['patience', 'affection', 'leadership'] },
+        'Mommy': { primary: ['care', 'patience', 'empathy', 'affection', 'discipline', 'protection'], secondary: ['authority', 'sensuality', 'leadership'] },
+        'Rigger': { primary: ['creativity', 'precision', 'control', 'patience', 'sensuality'], secondary: ['sadism', 'authority', 'intensity'] },
+        'Hunter': { primary: ['boldness', 'leadership', 'intensity', 'creativity', 'possession', 'patience'], secondary: ['sadism', 'control', 'authority'] },
+        'Trainer': { primary: ['patience', 'discipline', 'leadership', 'care', 'precision', 'authority'], secondary: ['confidence', 'empathy', 'control'] },
+        'Puppeteer': { primary: ['control', 'creativity', 'precision', 'dominanceDepth', 'patience'], secondary: ['intensity', 'authority', 'empathy'] },
+        'Protector': { primary: ['care', 'authority', 'possession', 'boldness', 'patience', 'leadership'], secondary: ['empathy', 'confidence', 'intensity'] },
+        'Caretaker': { primary: ['care', 'empathy', 'patience', 'affection', 'protection', 'devotion'], secondary: ['sensuality', 'dependence'] },
+        'Sir': { primary: ['authority', 'confidence', 'leadership', 'discipline', 'politeness', 'control'], secondary: ['patience', 'precision', 'integrity'] },
+        'Goddess': { primary: ['confidence', 'intensity', 'dominanceDepth', 'authority', 'possession', 'creativity'], secondary: ['sensuality', 'control', 'leadership'] },
+        'Commander': { primary: ['authority', 'intensity', 'dominanceDepth', 'leadership', 'precision', 'boldness'], secondary: ['confidence', 'discipline', 'control', 'strategy'] }
+    };
+
+    Object.keys(this.styleFinderAnswers.traits).forEach(traitName => {
+        const rating = this.styleFinderAnswers.traits[traitName] || 0;
+        const userKeyTraitBonus = this.styleFinderAnswers.userDefinedKeyTraits.includes(traitName) ? 1.5 : 1.0;
+
+        (this.styles[this.styleFinderRole] || []).forEach(style => {
+            if (scores[style] === undefined) scores[style] = 0;
+            const styleTraitsDef = styleKeyTraits[style] || { primary: [], secondary: [] };
+            if (styleTraitsDef.primary.includes(traitName)) {
+                scores[style] += rating * 2.0 * userKeyTraitBonus;
+            } else if (styleTraitsDef.secondary.includes(traitName)) {
+                scores[style] += rating * 1.0 * userKeyTraitBonus;
+            }
+        });
+    });
+    return scores;
+  }
+
+  updateDashboard() {
+    const currentStepConfig = this.getCurrentStepConfig();
+    if (!this.styleFinderRole || !currentStepConfig || currentStepConfig.type !== 'trait' ) {
+      this.elements.dashboard.style.display = 'none';
+      return;
+    }
+    this.elements.dashboard.style.display = 'block';
+
+    const scores = this.computeCurrentScores();
+    const sortedScores = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+
+    if (!this.previousScores) this.previousScores = {};
+    const previousPositions = {};
+    Object.entries(this.previousScores)
+        .sort((a, b) => b[1] - a[1])
+        .forEach(([style], index) => { previousPositions[style] = index; });
+
+    const isFirstRenderForTraits = !this.hasRenderedDashboard;
+    let dashboardHTML = "<div class='dashboard-header'>✨ Whispers of Your Archetype ✨</div>";
+    sortedScores.slice(0, 4).forEach(([style, score], index) => {
+      const prevPos = previousPositions[style] !== undefined ? previousPositions[style] : index;
+      const movement = prevPos - index;
+      let moveIndicator = '';
+      if (this.previousScores[style] && movement !== 0 && prevPos < 4) {
+          if (movement > 0) moveIndicator = '<span class="move-up">↑</span>';
+          else if (movement < 0) moveIndicator = '<span class="move-down">↓</span>';
+      }
+
+      const prevScoreVal = this.previousScores[style] || 0;
+      const deltaValue = score - prevScoreVal;
+      let delta = '';
+      if (Math.abs(deltaValue) > 0.1) {
+        delta = `<span class="score-delta ${deltaValue > 0 ? 'positive' : 'negative'}">${deltaValue > 0 ? '+' : ''}${(deltaValue).toFixed(1)}</span>`;
+      }
+
+      const animationStyle = isFirstRenderForTraits || !this.previousScores[style] ? 'style="animation: slideIn 0.3s ease;"' : '';
+      const icon = (this.styleDescriptions[style] && this.styleDescriptions[style].icon) || '🌟';
+      dashboardHTML += `
+        <div class="dashboard-item ${index === 0 ? 'top-archetype' : ''}" ${animationStyle}>
+          <span class="style-name">${icon} ${style}</span>
+          <span class="dashboard-score">${score.toFixed(1)} ${delta} ${moveIndicator}</span>
+        </div>
+      `;
+    });
+
+    this.elements.dashboard.innerHTML = dashboardHTML;
+    this.previousScores = { ...scores };
+    if(currentStepConfig.type === 'trait') this.hasRenderedDashboard = true;
+  }
+
+  getQuizStepsArray() { // Renamed from getTotalSteps to be more descriptive
+    const steps = [];
+    steps.push({ type: 'welcome' });
+    steps.push({ type: 'role' });
+    if (this.styleFinderRole) {
+        steps.push({ type: 'guidingPreference' });
+        const traitSet = (this.styleFinderRole === 'dominant' ? this.domFinderTraits : this.subFinderTraits);
+        traitSet.forEach(trait => steps.push({ type: 'trait', trait: trait.name }));
+        steps.push({ type: 'userKeyTraits' });
+    }
+    steps.push({ type: 'roundSummary', round: 'Traits' });
+    steps.push({ type: 'result' });
+    return steps;
+  }
+  
+  // Compatibility for old calls, can be removed if all calls are updated
+  getTotalSteps() {
+      return this.getQuizStepsArray().length;
+  }
+
+
   renderStyleFinder() {
     if (!this.styleFinderActive || !this.elements.stepContent) return;
     
@@ -335,17 +416,17 @@ class StyleFinderApp {
         return;
     }
 
-    const steps = this.getQuizStepsArray(); // Use helper
+    const steps = this.getQuizStepsArray();
 
     if (this.styleFinderStep >= steps.length) this.styleFinderStep = steps.length - 1;
     const currentStepConfig = steps[this.styleFinderStep];
     if (!currentStepConfig) {
         console.error("Invalid step configuration for step:", this.styleFinderStep);
+        this.elements.stepContent.innerHTML = "<p>An error occurred. Please try restarting.</p>";
         return;
     }
     let html = "";
 
-    // Progress Tracker Logic
     if (currentStepConfig.type === 'trait' && this.styleFinderRole) {
         const traitSet = (this.styleFinderRole === 'dominant' ? this.domFinderTraits : this.subFinderTraits);
         const currentTraitIndex = traitSet.findIndex(t => t.name === currentStepConfig.trait);
@@ -358,7 +439,6 @@ class StyleFinderApp {
     } else {
         this.elements.progressTracker.style.display = 'none';
     }
-
 
     switch (currentStepConfig.type) {
       case 'welcome':
@@ -434,7 +514,7 @@ class StyleFinderApp {
                      </label>`;
         });
         html += `</div>`;
-        html += `<p id="key-trait-feedback" style="color: #e74c75; font-size:0.9em; min-height:1.2em;"></p>`;
+        html += `<p id="key-trait-feedback" style="color: #e74c75; font-size:0.9em; min-height:1.2em;">Select up to 3 core traits.</p>`; // Initial message
         html += `<div class="navigation-buttons" style="margin-top: 15px;">
                     <button onclick="styleFinderApp.nextStyleFinderStep()" class="cta-button">Confirm Core Traits</button>
                     <button onclick="styleFinderApp.prevStyleFinderStep()">Back to Traits</button>
@@ -493,7 +573,6 @@ class StyleFinderApp {
             <div class="result-buttons">
               <button onclick="styleFinderApp.showFullDetails('${topStyle}')">Explore ${styleData.title || topStyle} Deeper</button>
               <button class="cta-button" onclick="styleFinderApp.enterCurationMode()">Curate Your Constellation</button>
-              <!-- NEW: Button to directly open playground from results -->
               <button class="cta-button" onclick="styleFinderApp.openPlaygroundFromQuiz()">Enter the Playground</button>
             </div>
             <div class="result-buttons" style="margin-top:10px;">
@@ -510,23 +589,6 @@ class StyleFinderApp {
       this.elements.dashboard.style.display = 'none';
     }
   }
-
-  // Helper to get the quiz steps array consistently
-  getQuizStepsArray() {
-    const steps = [];
-    steps.push({ type: 'welcome' });
-    steps.push({ type: 'role' });
-    if (this.styleFinderRole) {
-        steps.push({ type: 'guidingPreference' });
-        const traitSet = (this.styleFinderRole === 'dominant' ? this.domFinderTraits : this.subFinderTraits);
-        traitSet.forEach(trait => steps.push({ type: 'trait', trait: trait.name }));
-        steps.push({ type: 'userKeyTraits' });
-    }
-    steps.push({ type: 'roundSummary', round: 'Final Glimpse' });
-    steps.push({ type: 'result' });
-    return steps;
-  }
-
 
   setStyleFinderRole(role) {
     this.styleFinderRole = role;
@@ -569,17 +631,20 @@ class StyleFinderApp {
     }
   }
 
-  nextStyleFinderStep(currentInput = null) { // Renamed currentTraitOrStep for clarity
+  nextStyleFinderStep(currentInput = null) {
     const currentStepConfig = this.getCurrentStepConfig();
-    if (currentStepConfig && currentStepConfig.type === 'trait' && currentInput && this.styleFinderAnswers.traits[currentInput] === undefined) {
+    if (!currentStepConfig) { // Should not happen if logic is correct
+        console.error("Reached end of defined steps or invalid step.");
+        return;
+    }
+    if (currentStepConfig.type === 'trait' && currentInput && this.styleFinderAnswers.traits[currentInput] === undefined) {
       this.showFeedback("Please slide to express your affinity first!");
       return;
     }
-    if (currentStepConfig && currentStepConfig.type === 'guidingPreference' && !this.styleFinderAnswers.guidingPreference) {
+    if (currentStepConfig.type === 'guidingPreference' && !this.styleFinderAnswers.guidingPreference) {
         this.showFeedback("Please select a guiding path to continue.");
         return;
     }
-    // For 'userKeyTraits', we allow proceeding even if none are selected.
     this.styleFinderStep++;
     this.renderStyleFinder();
   }
@@ -588,9 +653,8 @@ class StyleFinderApp {
     if (this.styleFinderStep > 0) {
       this.styleFinderStep--;
       const newStepConfig = this.getCurrentStepConfig();
-      // Reset answers for steps "after" the new current step to avoid inconsistencies
       if (newStepConfig.type === 'role') {
-          this.styleFinderRole = null; // This effectively resets subsequent steps
+          this.styleFinderRole = null;
           this.styleFinderAnswers.guidingPreference = null;
           this.styleFinderAnswers.traits = {};
           this.styleFinderAnswers.userDefinedKeyTraits = [];
@@ -601,13 +665,13 @@ class StyleFinderApp {
           this.styleFinderAnswers.userDefinedKeyTraits = [];
           this.previousScores = {};
           this.hasRenderedDashboard = false;
-      } else if (newStepConfig.type === 'trait' && this.styleFinderAnswers.userDefinedKeyTraits.length > 0) {
-          // If going back from userKeyTraits selection TO the last trait question, clear the key traits.
-          // This ensures that if they change a trait slider, their key trait selection might need re-evaluation.
-          // Check if the PREVIOUS step was 'userKeyTraits'
+      } else if (newStepConfig.type === 'userKeyTraits') { // When moving from summary back to key traits
+          // No specific reset needed here, just render the step
+      } else if (newStepConfig.type === 'trait') {
+          // If moving from key traits back to the last trait, clear key traits
           const stepsArray = this.getQuizStepsArray();
           if (this.styleFinderStep + 1 < stepsArray.length && stepsArray[this.styleFinderStep + 1].type === 'userKeyTraits') {
-            // this.styleFinderAnswers.userDefinedKeyTraits = []; // Optionally clear if desired
+              this.styleFinderAnswers.userDefinedKeyTraits = [];
           }
       }
       this.renderStyleFinder();
@@ -631,12 +695,11 @@ class StyleFinderApp {
     this.customArchetypeName = "";
     this.customArchetypeDescription = "";
     
-    // If playground exists and is visible, hide it
-    if (this.playgroundApp && document.getElementById('playgroundContainer').style.display !== 'none') {
+    if (this.playgroundApp && document.getElementById('playgroundContainer') && document.getElementById('playgroundContainer').style.display !== 'none') {
         this.playgroundApp.hidePlayground();
     }
 
-    this.elements.styleFinder.style.display = 'flex'; // Ensure quiz modal is shown
+    if (this.elements.styleFinder) this.elements.styleFinder.style.display = 'flex';
     this.renderStyleFinder();
     this.showFeedback("A fresh journey begins!");
   }
@@ -667,9 +730,13 @@ class StyleFinderApp {
   }
 
   showFeedback(message) {
-    this.elements.feedback.innerHTML = message;
-    this.elements.feedback.classList.add('feedback-animation');
-    setTimeout(() => this.elements.feedback.classList.remove('feedback-animation'), 500);
+    if (this.elements.feedback) {
+      this.elements.feedback.innerHTML = message;
+      this.elements.feedback.classList.add('feedback-animation');
+      setTimeout(() => {
+        if(this.elements.feedback) this.elements.feedback.classList.remove('feedback-animation');
+      }, 500);
+    }
   }
 
   showTraitInfo(trait) {
@@ -745,24 +812,22 @@ class StyleFinderApp {
     document.body.appendChild(popup);
   }
 
-  // --- Curation Methods ---
   escapeJsString(str) { if (typeof str !== 'string') return ''; return str.replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n'); }
   enterCurationMode() { this.curationModeActive = true; this.selectedCuratedElements = {}; this.customArchetypeName = ""; this.customArchetypeDescription = ""; this.renderCurationScreen(); }
   
-  exitCurationMode() { // MODIFIED: Takes user back to their main quiz result display
+  exitCurationMode() {
     this.curationModeActive = false;
-    // Find the 'result' step index within the quiz flow
     const resultStepIndex = this.getQuizStepsArray().findIndex(s => s.type === 'result');
-    if (resultStepIndex !== -1) {
-        this.styleFinderStep = resultStepIndex;
-    } else {
-        // Fallback, though should always find 'result'
-        this.styleFinderStep = this.getQuizStepsArray().length - 1;
-    }
-    this.renderStyleFinder(); // Re-render the main quiz result page
+    if (resultStepIndex !== -1) { this.styleFinderStep = resultStepIndex; }
+    else { this.styleFinderStep = this.getQuizStepsArray().length - 1; }
+    this.renderStyleFinder();
   }
 
   renderCurationScreen() {
+    if (!this.elements.stepContent || !this.elements.dashboard || !this.elements.progressTracker) {
+        console.error("Modal elements not found for curation screen.");
+        return;
+    }
     this.elements.dashboard.style.display = 'none';
     this.elements.progressTracker.style.display = 'none';
     let html = `<div class="curation-header"><h2>Craft Your Unique Archetype Constellation</h2>`;
@@ -772,12 +837,15 @@ class StyleFinderApp {
     html += `<div class="tab-navigation">`;
     this.topArchetypesForCuration.forEach((arch, index) => {
         if (!arch.data) return;
-        html += `<button class="tab-button ${index === 0 ? 'active' : ''}" onclick="styleFinderApp.openCurationTab(event, '${this.escapeJsString(arch.name)}')">${arch.data.icon || '🌟'} ${arch.name}</button>`;
+        // Sanitize arch.name for use in ID and JS call
+        const safeArchName = this.escapeJsString(arch.name.replace(/[^a-zA-Z0-9_-]/g, ''));
+        html += `<button class="tab-button ${index === 0 ? 'active' : ''}" onclick="styleFinderApp.openCurationTab(event, '${safeArchName}')">${arch.data.icon || '🌟'} ${arch.name}</button>`;
     });
     html += `</div>`;
     this.topArchetypesForCuration.forEach((arch, index) => {
         if (!arch.data) return;
-        html += `<div id="curation-tab-${this.escapeJsString(arch.name).replace(/[^a-zA-Z0-9_-]/g, '')}" class="tab-content ${index === 0 ? 'active' : ''}">`; // Sanitize ID
+        const safeArchName = arch.name.replace(/[^a-zA-Z0-9_-]/g, ''); // Sanitize for ID
+        html += `<div id="curation-tab-${safeArchName}" class="tab-content ${index === 0 ? 'active' : ''}">`;
         html += `<h3>${arch.data.title} (Score: ${arch.score.toFixed(1)})</h3>`;
         if (arch.data.flavorText) html += `<p class="flavor-text"><em>"${arch.data.flavorText}"</em></p>`;
         html += `<p><strong>Essence:</strong> ${arch.data.essence}</p>`;
@@ -790,7 +858,7 @@ class StyleFinderApp {
             if (section.items && section.items.length > 0) {
                 html += `<h4 class="curation-section-title">${section.title}:</h4><ul class="selectable-list">`;
                 section.items.forEach(item => {
-                    const uniqueId = `${section.type}-${arch.name}-${this.escapeJsString(item.substring(0,20)).replace(/[^a-zA-Z0-9_-]/g, '')}`; // Sanitize uniqueId
+                    const uniqueId = `${section.type}-${arch.name}-${this.escapeJsString(item.substring(0,20)).replace(/[^a-zA-Z0-9_-]/g, '')}`; // Sanitize
                     const isChecked = !!this.selectedCuratedElements[uniqueId];
                     html += `<li><label><input type="checkbox" data-type="${section.type}" data-source="${arch.name}" data-text="${this.escapeJsString(item)}" onchange="styleFinderApp.handleElementSelection(this, '${this.escapeJsString(uniqueId)}')" ${isChecked ? 'checked' : ''}> ${item}</label></li>`;
                 });
@@ -813,20 +881,18 @@ class StyleFinderApp {
     html += `</div></div>`;
     html += `</div>`;
     html += `</div>`;
-    // MODIFIED: Changed button text for clarity
-    html += `<div class="navigation-buttons" style="margin-top: 20px;">
-                <button onclick="styleFinderApp.exitCurationMode()">Back to Primary Quiz Result</button>
-             </div>`;
+    html += `<div class="navigation-buttons" style="margin-top: 20px;"><button onclick="styleFinderApp.exitCurationMode()">Back to Primary Quiz Result</button></div>`;
     this.elements.stepContent.innerHTML = html;
     this.updateSelectedElementsDisplay();
     if (document.getElementById('customArchetypeDescriptionTextarea')) {
         document.getElementById('customArchetypeDescriptionTextarea').value = this.customArchetypeDescription;
     }
     if (this.topArchetypesForCuration.length > 0 && this.topArchetypesForCuration[0].name) {
-        this.openCurationTab(null, this.topArchetypesForCuration[0].name, true);
+         const firstSafeArchName = this.topArchetypesForCuration[0].name.replace(/[^a-zA-Z0-9_-]/g, '');
+        this.openCurationTab(null, firstSafeArchName, true);
     }
   }
-  openCurationTab(evt, archetypeName, isInitialCall = false) {
+  openCurationTab(evt, safeArchetypeName, isInitialCall = false) {
     let i, tabcontent, tablinks;
     if (!this.elements.stepContent) return;
 
@@ -840,7 +906,6 @@ class StyleFinderApp {
       tablinks[i].classList.remove("active");
     }
     
-    const safeArchetypeName = archetypeName.replace(/[^a-zA-Z0-9_-]/g, ''); // Simpler sanitization for ID
     const currentTabContent = document.getElementById("curation-tab-" + safeArchetypeName);
 
     if (currentTabContent) {
@@ -851,10 +916,19 @@ class StyleFinderApp {
     if (evt && evt.currentTarget) {
       evt.currentTarget.classList.add("active");
     } else if (isInitialCall && tablinks.length > 0) {
+        // Find the button that corresponds to safeArchetypeName
         for (i = 0; i < tablinks.length; i++) {
-            if (tablinks[i].getAttribute('onclick').includes(`'${this.escapeJsString(archetypeName)}'`)) {
-                tablinks[i].classList.add("active");
-                break;
+            // The onclick attribute contains the original name, possibly with special chars,
+            // so we need to sanitize it for comparison or compare with the button's text content.
+            // Let's use text content as it's simpler if icon isn't too complex.
+            // Or, more robustly, add a data-archname attribute to the tab buttons.
+            // For now, will assume `onclick` string match is feasible with careful escaping.
+            const originalArchName = this.unescapeJsString(safeArchetypeName); // This won't work as safeArchetypeName is already sanitized
+                                                                           // We need to find the original name if possible or match via text.
+                                                                           // Let's match via text for now, assuming icon doesn't interfere too much
+            if (tablinks[i].textContent.includes(this.topArchetypesForCuration.find(a => a.name.replace(/[^a-zA-Z0-9_-]/g, '') === safeArchetypeName)?.name) ) {
+                 tablinks[i].classList.add("active");
+                 break;
             }
         }
     }
@@ -862,7 +936,7 @@ class StyleFinderApp {
   handleElementSelection(checkboxElement, uniqueId) {
     const type = checkboxElement.dataset.type;
     const source = checkboxElement.dataset.source;
-    const text = this.unescapeJsString(checkboxElement.dataset.text); // Unescape for storage and display
+    const text = this.unescapeJsString(checkboxElement.dataset.text);
 
     if (checkboxElement.checked) {
         this.selectedCuratedElements[uniqueId] = { type, text, source };
@@ -899,8 +973,8 @@ class StyleFinderApp {
     for (const source in elementsByTypeAndSource) {
         desc += `From ${source}:\n`;
         for (const type in elementsByTypeAndSource[source]) {
-            const typeDisplay = type.charAt(0).toUpperCase() + type.slice(1) + (type.endsWith('s') ? '' : 's'); // Make plural for display
-            desc += `  ${typeDisplay}:\n${elementsByTypeAndSource[source][type].map(t => `    ${t}`).join("\n")}\n`; // Indent items
+            const typeDisplay = type.charAt(0).toUpperCase() + type.slice(1) + (type.endsWith('s') ? '' : 's');
+            desc += `  ${typeDisplay}:\n${elementsByTypeAndSource[source][type].map(t => `    ${t}`).join("\n")}\n`;
         }
         desc += `\n`;
     }
@@ -919,6 +993,10 @@ class StyleFinderApp {
     this.renderCuratedResultScreen();
   }
   renderCuratedResultScreen() {
+    if (!this.elements.stepContent || !this.elements.dashboard || !this.elements.progressTracker) {
+        console.error("Modal elements not found for curated result screen.");
+        return;
+    }
     this.elements.dashboard.style.display = 'none'; this.elements.progressTracker.style.display = 'none';
     let html = `<div class="curated-result-display result-section fade-in">`;
     html += `<h2>✨ Your Curated Archetype ✨</h2>`;
@@ -935,7 +1013,7 @@ class StyleFinderApp {
     html += `</div>`;
     html += `<div class="navigation-buttons" style="margin-top: 20px;">`;
     html += `<button onclick="styleFinderApp.refineCuration()">Refine Curation</button>`;
-    html += `<button onclick="styleFinderApp.exitCurationModeAndRestart()">Start New Journey</button>`; // This was exitCurationModeAndRestart
+    html += `<button onclick="styleFinderApp.exitCurationModeAndRestart()">Start New Journey</button>`;
     html += `</div>`;
     html += `</div>`;
     this.elements.stepContent.innerHTML = html;
@@ -964,9 +1042,8 @@ class StyleFinderApp {
   refineCuration() { this.renderCurationScreen(); }
   exitCurationModeAndRestart() { this.curationModeActive = false; this.startOver(); }
 
-  // NEW: Method to open playground from quiz results
   openPlaygroundFromQuiz() {
-    this.elements.styleFinder.style.display = 'none'; // Hide quiz modal
+    if (this.elements.styleFinder) this.elements.styleFinder.style.display = 'none';
     if (typeof PlaygroundApp !== 'undefined') {
         if (!this.playgroundApp) {
             this.playgroundApp = new PlaygroundApp(this);
@@ -982,24 +1059,24 @@ class StyleFinderApp {
 } // End of StyleFinderApp class
 
 // --- GLOBAL INSTANTIATION AND SETUP ---
-const styleFinderApp = new StyleFinderApp();
+const styleFinderApp = new StyleFinderApp(); // Create the main app instance
 
-// Playground related setup (button listener)
+// Playground related setup (button listener on the main page)
 document.addEventListener('DOMContentLoaded', () => {
     const openPlaygroundBtn = document.getElementById('open-playground-btn');
     if (openPlaygroundBtn) {
         openPlaygroundBtn.addEventListener('click', () => {
-            if (typeof PlaygroundApp !== 'undefined') {
+            if (typeof PlaygroundApp !== 'undefined') { // Check if PlaygroundApp class is loaded
                 if (!styleFinderApp.playgroundApp) { // Use the global styleFinderApp instance
                     styleFinderApp.playgroundApp = new PlaygroundApp(styleFinderApp);
                     styleFinderApp.playgroundApp.initializePlayground('playgroundContainer');
                 }
                 styleFinderApp.playgroundApp.showPlayground();
-                if (styleFinderApp.elements.styleFinder) {
-                   styleFinderApp.elements.styleFinder.style.display = 'none';
+                if (styleFinderApp.elements.styleFinder) { // Ensure quiz modal exists
+                   styleFinderApp.elements.styleFinder.style.display = 'none'; // Hide quiz modal
                 }
             } else {
-                console.error("PlaygroundApp class not found.");
+                console.error("PlaygroundApp class not found. Ensure playground.js is loaded AFTER script.js.");
                 alert("Playground feature is not available at the moment. Please ensure all scripts are loaded correctly.");
             }
         });
