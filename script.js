@@ -1042,11 +1042,13 @@ class StyleFinderApp {
   refineCuration() { this.renderCurationScreen(); }
   exitCurationModeAndRestart() { this.curationModeActive = false; this.startOver(); }
 
-  openPlaygroundFromQuiz() {
-    if (this.elements.styleFinder) this.elements.styleFinder.style.display = 'none';
+openPlaygroundFromQuiz() {
+    this.lastQuizStepBeforePlayground = this.styleFinderStep; // Store the current step (should be 'result')
+    if (this.elements.styleFinder) this.elements.styleFinder.style.display = 'none'; // Hide quiz modal
+
     if (typeof PlaygroundApp !== 'undefined') {
         if (!this.playgroundApp) {
-            this.playgroundApp = new PlaygroundApp(this);
+            this.playgroundApp = new PlaygroundApp(this); // `this` is styleFinderApp
             this.playgroundApp.initializePlayground('playgroundContainer');
         }
         this.playgroundApp.showPlayground();
@@ -1054,10 +1056,20 @@ class StyleFinderApp {
         console.error("PlaygroundApp class not found.");
         alert("Playground is currently unavailable.");
     }
-  }
+}
 
-} // End of StyleFinderApp class
-
+showQuizModalAtLastStep() {
+    if (this.elements.styleFinder) {
+        this.elements.styleFinder.style.display = 'flex';
+        // If we have a stored last step (e.g., the result step), go there
+        if (this.lastQuizStepBeforePlayground !== null) {
+            this.styleFinderStep = this.lastQuizStepBeforePlayground;
+        }
+        // Ensure curation mode is off if we are just viewing results
+        this.curationModeActive = false;
+        this.renderStyleFinder(); // Re-render the quiz content
+    }
+}
 // --- GLOBAL INSTANTIATION AND SETUP ---
 const styleFinderApp = new StyleFinderApp(); // Create the main app instance
 
