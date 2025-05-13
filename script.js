@@ -1098,11 +1098,7 @@ openPlaygroundFromQuiz() {
 // --- GLOBAL INSTANTIATION ---
 const styleFinderApp = new StyleFinderApp();
 
-// --- GLOBAL EVENT LISTENERS ---
-// The DOMContentLoaded listener for a main page #open-playground-btn can be removed
-// if that button is no longer part of index.html, as Playground access is now
-// primarily through the button on the quiz result screen.
-/*
+
 document.addEventListener('DOMContentLoaded', () => {
     const openPlaygroundBtnMainPage = document.getElementById('open-playground-btn');
     if (openPlaygroundBtnMainPage) {
