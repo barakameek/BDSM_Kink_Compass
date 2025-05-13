@@ -284,7 +284,7 @@ addEventListeners() {
             }
         });
     }
-}
+
 
     const styleKeyTraits = {
         'Brat': { primary: ['rebellion', 'mischief', 'playfulness'], secondary: ['adaptability', 'confidence', 'exploration'] },
