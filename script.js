@@ -649,7 +649,7 @@ class StyleFinderApp {
   // ARE DEFINED BELOW THIS POINT, AS PROVIDED IN THE PREVIOUS FULL SCRIPT.
   // It is critical that they are all present and correct for the application to function.
 
-  initElements() {
+ initElements() {
     this.elements = {
       styleFinderBtn: document.getElementById('style-finder-btn'),
       styleFinder: document.getElementById('style-finder'),
@@ -659,14 +659,13 @@ class StyleFinderApp {
       feedback: document.getElementById('feedback'),
       dashboard: document.getElementById('dashboard'),
       themeToggle: document.getElementById('theme-toggle'),
-      returnToResultsBtn: document.getElementById('return-to-results-btn') // Retain this
+      returnToResultsBtn: document.getElementById('return-to-results-btn')
     };
     if (this.elements.styleFinderBtn) {
         this.elements.styleFinderBtn.textContent = "Unveil Your Archetype";
     }
-    // Button to return to results is handled in addEventListeners and renderStyleFinder (result case)
     if (this.elements.returnToResultsBtn) {
-        this.elements.returnToResultsBtn.style.display = 'none'; // Ensure hidden initially
+        this.elements.returnToResultsBtn.style.display = 'none';
     }
   }
 
@@ -1425,7 +1424,21 @@ class StyleFinderApp {
         alert("Playground feature is not available at the moment.");
     }
   }
-
+ showQuizModalAtLastStep() {
+    if (this.elements.styleFinder) {
+        this.elements.styleFinder.style.display = 'flex';
+        const resultStepIndex = this.getQuizStepsArray().findIndex(s => s.type === 'result');
+        if (this.lastQuizStepBeforePlayground === resultStepIndex && resultStepIndex !== -1) {
+            this.styleFinderStep = this.lastQuizStepBeforePlayground;
+        } else if (this.quizCompletedOnce && resultStepIndex !== -1) {
+            this.styleFinderStep = resultStepIndex;
+        } else {
+            this.styleFinderStep = (this.quizCompletedOnce && resultStepIndex !== -1) ? resultStepIndex : (this.lastQuizStepBeforePlayground || 0) ;
+        }
+        this.curationModeActive = false;
+        this.renderStyleFinder();
+    }
+  }
 } // End of StyleFinderApp class
 
 // --- GLOBAL INSTANTIATION ---
