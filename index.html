@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BDSM Archetype Oracle & Playground</title> <!-- Updated Title -->
+  <title>BDSM Archetype Oracle & Playground</title>
   <link rel="stylesheet" href="styles.css">
+  <!-- Example Favicon Link (replace with your actual favicon) -->
   <!-- <link rel="icon" href="favicon.ico" type="image/x-icon"> -->
 </head>
 <body data-theme="light">
@@ -15,41 +16,51 @@
   </header>
 
   <main class="app-main">
+    <!-- The main quiz initiation button -->
     <button id="style-finder-btn" class="cta-button">Unveil Your Archetype</button>
-    <!-- NEW: Button to open the Playground -->
-    <button id="open-playground-btn" style="margin-top: 15px;">Enter the Archetype Playground</button>
+    
+    <!-- NEW: Button to return to results - initially hidden.
+         This button allows users who have completed the quiz and then, for example,
+         navigated away from the page or closed the modal, to get back to their
+         last quiz result without re-taking the quiz. -->
+    <button id="return-to-results-btn" style="display: none; margin-top: 15px;">View My Last Archetype Result</button>
   </main>
 
+  <!-- Theme Toggle Button -->
   <button id="theme-toggle" aria-label="Toggle Dark Mode">🌙</button>
 
-  <!-- Quiz Modal -->
+  <!-- Quiz & Curation Modal -->
   <div id="style-finder" class="modal" role="dialog" aria-modal="true">
     <div class="modal-content">
       <span id="close-style-finder" role="button" tabindex="0" aria-label="Close Archetype Oracle">×</span>
+      <!-- Visually hidden title for accessibility, main title is usually in #step-content h2 -->
+      <h2 id="modal-main-title" class.visually-hidden>Archetype Discovery Process</h2>
       <div id="progress-tracker" aria-live="polite"></div>
       <div id="step-content">
-        <!-- Quiz and Curation content dynamically inserted here by script.js -->
+        <!-- Content for Quiz, Curation, and final Curated Result will be dynamically inserted here by script.js -->
       </div>
       <p id="feedback" aria-live="assertive"></p>
       <div id="dashboard">
-        <!-- Dashboard content dynamically inserted here -->
+        <!-- Dashboard content (live scores during quiz) will be dynamically inserted here -->
       </div>
     </div>
   </div>
 
-  <!-- NEW: Playground Container -->
-  <div id="playgroundContainer" class="playground-container-main" role="region" aria-labelledby="playground-title" style="display: none;">
-    <!-- Playground content will be dynamically injected by playground.js -->
-    <!-- A static title for accessibility, actual visible title is in playground.js -->
-    <h2 id="playground-title" class="visually-hidden">Archetype Playground</h2>
+  <!-- Playground Container (initially hidden) -->
+  <div id="playgroundContainer" class="playground-container-main" role="region" aria-labelledby="playground-main-title" style="display: none;">
+    <!-- Playground content (header, nav, activity area) will be dynamically injected by playground.js -->
+    <!-- Static, visually hidden title for the region, for accessibility -->
+    <h2 id="playground-main-title" class="visually-hidden">Archetype Playground</h2>
+    <!-- Actual visible header and content are managed by playground.js -->
   </div>
 
 
   <!-- External confetti library for result celebration -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-  <!-- Scripts -->
-  <script src="script.js"></script>
-  <script src="playground.js"></script> <!-- NEW: Include playground.js -->
+  
+  <!-- Scripts: Order is important! -->
+  <script src="script.js"></script>      <!-- Defines StyleFinderApp and creates styleFinderApp instance -->
+  <script src="playground.js"></script>  <!-- Defines PlaygroundApp class -->
 
   <footer class="app-footer">
     <p>© 2024 BDSM Archetype Oracle. For entertainment and self-exploration purposes only. Ages 18+.</p>
