@@ -3,45 +3,53 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BDSM Archetype Oracle</title>
+  <title>BDSM Archetype Oracle & Playground</title> <!-- Updated Title -->
   <link rel="stylesheet" href="styles.css">
-  <!-- Favicon (optional - good for branding) - Example, replace with your own -->
   <!-- <link rel="icon" href="favicon.ico" type="image/x-icon"> -->
 </head>
 <body data-theme="light">
 
   <header class="app-header">
     <h1>Discover Your Inner Archetype</h1>
-    <p class="subtitle">Navigate the realms of desire and uncover your unique BDSM resonance.</p>
+    <p class="subtitle">Navigate the realms of desire, uncover your unique BDSM resonance, and explore interactive scenarios in the Playground.</p>
   </header>
 
   <main class="app-main">
-    <button id="style-finder-btn">Unveil Your Archetype</button>
+    <button id="style-finder-btn" class="cta-button">Unveil Your Archetype</button>
+    <!-- NEW: Button to open the Playground -->
+    <button id="open-playground-btn" style="margin-top: 15px;">Enter the Archetype Playground</button>
   </main>
 
   <button id="theme-toggle" aria-label="Toggle Dark Mode">🌙</button>
 
+  <!-- Quiz Modal -->
   <div id="style-finder" class="modal" role="dialog" aria-modal="true">
     <div class="modal-content">
       <span id="close-style-finder" role="button" tabindex="0" aria-label="Close Archetype Oracle">×</span>
-      <!-- A visually hidden title for the modal for accessibility if needed, though step-content h2 usually covers it -->
-      <!-- <h2 id="modal-main-title" class="visually-hidden">Archetype Discovery Process</h2> -->
       <div id="progress-tracker" aria-live="polite"></div>
       <div id="step-content">
-        <!-- Content will be dynamically inserted by script.js:
-             Welcome, Role, Guiding Preference, Traits, Summary, Result,
-             Curation Screen, Curated Result Display -->
+        <!-- Quiz and Curation content dynamically inserted here by script.js -->
       </div>
       <p id="feedback" aria-live="assertive"></p>
       <div id="dashboard">
-        <!-- Dashboard content will be dynamically inserted by script.js -->
+        <!-- Dashboard content dynamically inserted here -->
       </div>
     </div>
   </div>
 
+  <!-- NEW: Playground Container -->
+  <div id="playgroundContainer" class="playground-container-main" role="region" aria-labelledby="playground-title" style="display: none;">
+    <!-- Playground content will be dynamically injected by playground.js -->
+    <!-- A static title for accessibility, actual visible title is in playground.js -->
+    <h2 id="playground-title" class="visually-hidden">Archetype Playground</h2>
+  </div>
+
+
   <!-- External confetti library for result celebration -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  <!-- Scripts -->
   <script src="script.js"></script>
+  <script src="playground.js"></script> <!-- NEW: Include playground.js -->
 
   <footer class="app-footer">
     <p>© 2024 BDSM Archetype Oracle. For entertainment and self-exploration purposes only. Ages 18+.</p>
