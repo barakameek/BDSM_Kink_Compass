@@ -227,7 +227,7 @@ initElements() {
 }
 
 addEventListeners() {
-    if(this.elements.styleFinderBtn) {
+   if (this.elements.styleFinderBtn) {
       this.elements.styleFinderBtn.addEventListener('click', () => {
         this.styleFinderActive = true;
         this.styleFinderStep = 0;
@@ -235,26 +235,34 @@ addEventListeners() {
         this.styleFinderAnswers = { traits: {}, guidingPreference: null, userDefinedKeyTraits: [] };
         this.styleFinderScores = {};
         this.hasRenderedDashboard = false;
-        this.curationModeActive = false;
-        if (this.elements.styleFinder) this.elements.styleFinder.style.display = 'flex';
+        this.curationModeActive = false; // Ensure curation is off when starting new quiz
+        
+        if (this.elements.styleFinder) {
+            this.elements.styleFinder.style.display = 'flex';
+        }
         this.renderStyleFinder();
         this.showFeedback("The journey of discovery begins...");
       });
     }
 
-    if(this.elements.closeStyleFinder) {
+    // Listener for the close button (X) on the quiz/curation modal
+    if (this.elements.closeStyleFinder) {
       this.elements.closeStyleFinder.addEventListener('click', () => {
           this.styleFinderActive = false;
-          this.curationModeActive = false;
-          if (this.elements.styleFinder) this.elements.styleFinder.style.display = 'none';
-          // If quizCompletedOnce is true, ensure the "Return to results" button is visible on main page
+          this.curationModeActive = false; // Turn off curation mode if modal is closed
+          if (this.elements.styleFinder) {
+              this.elements.styleFinder.style.display = 'none';
+          }
+          // If the quiz was completed, ensure the "Return to Results" button on the main page is visible
+          // so the user can get back to their results without restarting the quiz.
           if (this.quizCompletedOnce && this.elements.returnToResultsBtn) {
               this.elements.returnToResultsBtn.style.display = 'inline-block';
           }
       });
     }
 
-    if(this.elements.themeToggle) {
+    // Listener for the theme toggle button
+    if (this.elements.themeToggle) {
       this.elements.themeToggle.addEventListener('click', () => {
         const currentTheme = document.body.getAttribute('data-theme') || 'light';
         const newTheme = currentTheme === 'light' ? 'dark' : 'light';
@@ -263,27 +271,28 @@ addEventListeners() {
       });
     }
 
-    // NEW Listener for Return to Results button on the main page
+    // Listener for the "Return to My Last Archetype Result" button on the main page
     if (this.elements.returnToResultsBtn) {
         this.elements.returnToResultsBtn.addEventListener('click', () => {
             if (this.quizCompletedOnce) {
-                this.showQuizModalAtLastStep(); // This will show the quiz modal at the result step
-                // If playground is somehow open, tell it to hide without triggering its own quiz opening
+                // Hide playground if it's open
                 if (this.playgroundApp && document.getElementById('playgroundContainer') && document.getElementById('playgroundContainer').style.display !== 'none') {
                     if (typeof this.playgroundApp.hidePlaygroundWithoutOpeningQuiz === 'function') {
                         this.playgroundApp.hidePlaygroundWithoutOpeningQuiz();
                     } else {
-                        // Fallback if method isn't there (e.g. playground.js not loaded/error)
-                         const pgContainer = document.getElementById('playgroundContainer');
-                         if(pgContainer) pgContainer.style.display = 'none';
+                        const pgContainer = document.getElementById('playgroundContainer');
+                        if(pgContainer) pgContainer.style.display = 'none';
                     }
                 }
+                // Show the quiz modal at the last relevant step (results)
+                this.showQuizModalAtLastStep();
             } else {
-                // This case should ideally not be met if button is only shown after quiz completion
+                // This case should ideally not be met if the button's visibility is managed correctly
                 this.showFeedback("Please complete the Oracle quiz first to view results.");
             }
         });
     }
+  }
 
 
     const styleKeyTraits = {
