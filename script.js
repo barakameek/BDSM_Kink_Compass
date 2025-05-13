@@ -16,8 +16,11 @@ class StyleFinderApp {
     this.customArchetypeDescription = "";
 
     // Playground Integration
-    this.playgroundApp = null;
+      this.playgroundApp = null; // Instance of PlaygroundApp
+    this.quizCompletedOnce = false; // NEW: Tracks if quiz has been finished at least once in session
+    this.lastQuizStepBeforePlayground = null; // Stores the quiz step (e.g., result screen)
 
+    
     // Style categories
     this.styles = {
       submissive: [
@@ -202,23 +205,29 @@ class StyleFinderApp {
   //      like computeCurrentScores, updateDashboard, renderStyleFinder, curation methods, etc.,
   //      are defined here, ensuring they are part of the class.) ...
   // The key is that this.updateDashboard(), this.computeCurrentScores(), etc., are all methods of this class.
-  initElements() {
+
+initElements() {
     this.elements = {
-      styleFinderBtn: document.getElementById('style-finder-btn'),
-      styleFinder: document.getElementById('style-finder'),
-      closeStyleFinder: document.getElementById('close-style-finder'),
-      progressTracker: document.getElementById('progress-tracker'),
-      stepContent: document.getElementById('step-content'),
-      feedback: document.getElementById('feedback'),
-      dashboard: document.getElementById('dashboard'),
-      themeToggle: document.getElementById('theme-toggle')
+        styleFinderBtn: document.getElementById('style-finder-btn'),
+        styleFinder: document.getElementById('style-finder'),
+        closeStyleFinder: document.getElementById('close-style-finder'),
+        progressTracker: document.getElementById('progress-tracker'),
+        stepContent: document.getElementById('step-content'),
+        feedback: document.getElementById('feedback'),
+        dashboard: document.getElementById('dashboard'),
+        themeToggle: document.getElementById('theme-toggle'),
+        returnToResultsBtn: document.getElementById('return-to-results-btn') // NEW
     };
     if (this.elements.styleFinderBtn) {
         this.elements.styleFinderBtn.textContent = "Unveil Your Archetype";
     }
-  }
+    // Ensure button is hidden initially if you haven't done it in HTML
+    if (this.elements.returnToResultsBtn) {
+        this.elements.returnToResultsBtn.style.display = 'none';
+    }
+}
 
-  addEventListeners() {
+addEventListeners() {
     if(this.elements.styleFinderBtn) {
       this.elements.styleFinderBtn.addEventListener('click', () => {
         this.styleFinderActive = true;
@@ -228,7 +237,7 @@ class StyleFinderApp {
         this.styleFinderScores = {};
         this.hasRenderedDashboard = false;
         this.curationModeActive = false;
-        this.elements.styleFinder.style.display = 'flex';
+        if (this.elements.styleFinder) this.elements.styleFinder.style.display = 'flex';
         this.renderStyleFinder();
         this.showFeedback("The journey of discovery begins...");
       });
@@ -238,7 +247,11 @@ class StyleFinderApp {
       this.elements.closeStyleFinder.addEventListener('click', () => {
           this.styleFinderActive = false;
           this.curationModeActive = false;
-          this.elements.styleFinder.style.display = 'none';
+          if (this.elements.styleFinder) this.elements.styleFinder.style.display = 'none';
+          // If quizCompletedOnce is true, ensure the "Return to results" button is visible on main page
+          if (this.quizCompletedOnce && this.elements.returnToResultsBtn) {
+              this.elements.returnToResultsBtn.style.display = 'inline-block';
+          }
       });
     }
 
@@ -250,29 +263,30 @@ class StyleFinderApp {
         this.elements.themeToggle.textContent = newTheme === 'light' ? '🌙' : '☀️';
       });
     }
-  }
 
-  // ALL OTHER METHODS, INCLUDING updateDashboard, computeCurrentScores, calculateStyleFinderResult,
-  // renderStyleFinder (with the NEW case for userKeyTraits), etc., must be defined here.
-  // Since you indicated they were correct in the previous full script, I'm including them again
-  // to ensure completeness and resolve the "is not a function" error.
-
-  computeCurrentScores() {
-    let scores = {};
-    if (!this.styleFinderRole) return scores;
-    const roleStyles = this.styles[this.styleFinderRole];
-    roleStyles.forEach(style => { scores[style] = 0; });
-
-    if (this.styleFinderAnswers.guidingPreference && this.guidingPreferences[this.styleFinderRole]) {
-        const preference = this.guidingPreferences[this.styleFinderRole].find(p => p.id === this.styleFinderAnswers.guidingPreference);
-        if (preference && preference.archetypes) {
-            preference.archetypes.forEach(arch => {
-                if (scores[arch] !== undefined) {
-                    scores[arch] += 25;
+    // NEW Listener for Return to Results button on the main page
+    if (this.elements.returnToResultsBtn) {
+        this.elements.returnToResultsBtn.addEventListener('click', () => {
+            if (this.quizCompletedOnce) {
+                this.showQuizModalAtLastStep(); // This will show the quiz modal at the result step
+                // If playground is somehow open, tell it to hide without triggering its own quiz opening
+                if (this.playgroundApp && document.getElementById('playgroundContainer') && document.getElementById('playgroundContainer').style.display !== 'none') {
+                    if (typeof this.playgroundApp.hidePlaygroundWithoutOpeningQuiz === 'function') {
+                        this.playgroundApp.hidePlaygroundWithoutOpeningQuiz();
+                    } else {
+                        // Fallback if method isn't there (e.g. playground.js not loaded/error)
+                         const pgContainer = document.getElementById('playgroundContainer');
+                         if(pgContainer) pgContainer.style.display = 'none';
+                    }
                 }
-            });
-        }
+            } else {
+                // This case should ideally not be met if button is only shown after quiz completion
+                this.showFeedback("Please complete the Oracle quiz first to view results.");
+            }
+        });
     }
+}
+
     const styleKeyTraits = {
         'Brat': { primary: ['rebellion', 'mischief', 'playfulness'], secondary: ['adaptability', 'confidence', 'exploration'] },
         'Little': { primary: ['innocence', 'dependence', 'affection', 'playfulness'], secondary: ['vulnerability', 'receptiveness', 'sensuality'] },
@@ -1054,24 +1068,31 @@ downloadCuratedAsText() {
   }
 
   // Method to open playground from quiz results screen
-  openPlaygroundFromQuiz() {
+openPlaygroundFromQuiz() {
+    // Store the current step (which should be the 'result' step)
+    const resultStepIndex = this.getQuizStepsArray().findIndex(s => s.type === 'result');
+    if (this.styleFinderStep === resultStepIndex) { // Ensure we are on the result step
+        this.lastQuizStepBeforePlayground = this.styleFinderStep;
+    } else {
+        // If called from somewhere else, maybe default or log an error
+        this.lastQuizStepBeforePlayground = resultStepIndex !== -1 ? resultStepIndex : this.getQuizStepsArray().length -1;
+    }
+
     if (this.elements.styleFinder) {
         this.elements.styleFinder.style.display = 'none'; // Hide quiz modal
     }
 
-    // Check if PlaygroundApp class is defined (meaning playground.js has loaded)
     if (typeof PlaygroundApp !== 'undefined') {
-        // If playgroundApp instance doesn't exist on styleFinderApp, create it
-        if (!this.playgroundApp) {
-            this.playgroundApp = new PlaygroundApp(this); // Pass `this` (the styleFinderApp instance)
+        if (!this.playgroundApp) { // If instance not yet created
+            this.playgroundApp = new PlaygroundApp(this); // Pass `this` (StyleFinderApp instance)
             this.playgroundApp.initializePlayground('playgroundContainer');
         }
         this.playgroundApp.showPlayground();
     } else {
-        console.error("PlaygroundApp class not found. Ensure playground.js is loaded AFTER script.js.");
-        alert("Playground feature is not available at the moment. Please ensure all scripts are loaded correctly.");
+        console.error("PlaygroundApp class not found. Ensure playground.js is loaded.");
+        alert("Playground feature is not available at the moment.");
     }
-  }
+}
 
 } // End of StyleFinderApp class
 
