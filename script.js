@@ -4,21 +4,21 @@ class StyleFinderApp {
     this.styleFinderActive = false;
     this.styleFinderStep = 0;
     this.styleFinderRole = null;
-    // Added userDefinedKeyTraits
     this.styleFinderAnswers = { traits: {}, guidingPreference: null, userDefinedKeyTraits: [] };
     this.styleFinderScores = {};
     this.hasRenderedDashboard = false;
 
+    // Curation State Variables
     this.curationModeActive = false;
     this.topArchetypesForCuration = [];
     this.selectedCuratedElements = {};
     this.customArchetypeName = "";
     this.customArchetypeDescription = "";
 
+    // Playground Integration
+    this.playgroundApp = null; // Will hold the PlaygroundApp instance
 
-const styleFinderApp = new StyleFinderApp();
-const playgroundApp = new PlaygroundApp(styleFinderApp); // Pass the instance
-    // Style categories (Unchanged)
+    // Style categories
     this.styles = {
       submissive: [
         'Brat', 'Little', 'Rope Bunny', 'Masochist', 'Pet', 'Slave', 'Submissive', 'Switch', 'Puppy', 'Kitten', 'Princess',
@@ -30,6 +30,7 @@ const playgroundApp = new PlaygroundApp(styleFinderApp); // Pass the instance
         'Hunter', 'Trainer', 'Puppeteer', 'Protector', 'Caretaker', 'Sir', 'Goddess', 'Commander'
       ]
     };
+
 
     // Submissive traits (Unchanged - assumed to be fully populated from previous response)
     this.subFinderTraits = [
