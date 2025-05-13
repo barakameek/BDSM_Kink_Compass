@@ -1,6 +1,6 @@
 
 
-```javascript
+
 class StyleFinderApp {
   constructor() {
     // ... (Initial state variables remain the same, including this.playgroundApp = null;) ...
