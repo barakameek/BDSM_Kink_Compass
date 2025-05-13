@@ -16,7 +16,8 @@ class StyleFinderApp {
     this.customArchetypeDescription = "";
 
 
-
+const styleFinderApp = new StyleFinderApp();
+const playgroundApp = new PlaygroundApp(styleFinderApp); // Pass the instance
     // Style categories (Unchanged)
     this.styles = {
       submissive: [
