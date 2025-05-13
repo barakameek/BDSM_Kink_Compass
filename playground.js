@@ -230,30 +230,168 @@ class PlaygroundApp {
         title: "Adventure Paths",
         renderFunction: () => this.renderAdventureHome(),
         stories: [
-            { /* Adventure 1: The Mysterious Invitation */
-                id: 'adventure1', title: "The Mysterious Invitation", description: "A cryptic invitation arrives, promising unparalleled experiences at an exclusive underground event. Do you dare to uncover its secrets?", startNode: 'adv1_node1',
+            { // Adventure 1: The Mysterious Invitation (Fleshed Out Example)
+                id: 'adventure1',
+                title: "The Mysterious Invitation",
+                description: "A cryptic invitation arrives, promising unparalleled experiences at an exclusive underground event. Do you dare to uncover its secrets?",
+                startNode: 'adv1_node1',
                 nodes: {
-                    adv1_node1: { text: "You, a [UserArchetype], receive a cryptic invitation to an exclusive, underground kink event. The details are vague, promising 'unparalleled experiences'. Do you:", options: [ { text: "Investigate thoroughly, seeking reviews or contacts who know of it.",nextNode: 'adv1_node2_cautious' }, { text: "Attend with an open mind but clear boundaries and a safety plan.", nextNode: 'adv1_node2_prepared' }, { text: "Dive in headfirst, embracing the unknown and the thrill of spontaneity.", nextNode: 'adv1_node2_bold' } ] },
-                    adv1_node2_cautious: { text: "Your research reveals the event is run by a controversial group known for pushing boundaries, sometimes unsafely. You decide to skip it, prioritizing your well-being. (End of this path - Prudence is a virtue!)", options: [] },
-                    adv1_node2_prepared: { text: "You arrive. The atmosphere is intense. A masked figure approaches, offering you a drink and a private 'initiation'. Do you:", options: [ { text: "Politely decline the drink and the private initiation, preferring to observe first.", nextNode: 'adv1_node3_observe' }, { text: "Accept the drink but decline the private initiation for now.", nextNode: 'adv1_node3_drink' } ] },
-                    adv1_node2_bold: { text: "You plunge into the heart of the event. Music thumps, scenes unfold. It's overwhelming but exhilarating. A dominant figure singles you out, demanding you kneel. Do you:", options: [ { text: "Comply immediately, eager to see where this leads.", nextNode: 'adv1_node3_comply' }, { text: "Playfully challenge their authority, testing their reaction.", nextNode: 'adv1_node3_challenge_bold' } ] },
-                    adv1_node3_observe: { text: "Observing, you identify potential risks and decide to enjoy the event from a safe distance, networking carefully. (End of this path - Wisdom in observation!)", options: [] },
-                    adv1_node3_drink: { text: "The drink tastes odd. You feel dizzy. You wisely decide to leave with your pre-arranged buddy. (End of this path - Safety first!)", options: [] },
-                    adv1_node3_comply: { text: "Kneeling, you enter a powerful scene that respects your limits. (End of this path - A rewarding encounter!)", options: [] },
-                    adv1_node3_challenge_bold: { text: "Your challenge is met with unexpected aggression. You use your safe word and exit. (End of this path - Boundaries asserted!)", options: [] },
-            }},
-            { /* Adventure 2: The Reluctant Submissive */
-                id: 'adventure2', title: "The Emerging Submissive", description: "You encounter someone new to BDSM, curious but hesitant. How does your archetype guide (or respond to) their first steps?", startNode: 'adv2_node1',
+                    adv1_node1: {
+                        text: "You, a [UserArchetype], receive a sleek, unmarked envelope. Inside, an embossed card invites you to 'Elysian Shadows,' an exclusive, underground kink event spoken of only in whispers. It promises 'experiences beyond your wildest imaginings' but offers few concrete details. The location is revealed only upon RSVP. Do you:",
+                        options: [
+                            { text: "Decline politely. The mystery is too great, and safety is paramount.", nextNode: 'adv1_end_decline' },
+                            { text: "Attempt to research 'Elysian Shadows' online and through trusted contacts before deciding.", nextNode: 'adv1_node2_research' },
+                            { text: "RSVP immediately. The allure of the unknown is too strong to resist!", nextNode: 'adv1_node2_rsvp_bold' }
+                        ]
+                    },
+                    adv1_end_decline: { text: "You decide against attending. While the allure was there, your intuition (or caution) told you to prioritize the known and safe. Perhaps another time, another mystery. (End of Path - Prudence Chosen)", options: [] },
+                    adv1_node2_research: {
+                        text: "Your research yields mixed results. Some forums praise Elysian Shadows for its cutting-edge scenes and discretion. Others whisper of intense experiences, blurred lines, and a 'play at your own risk' atmosphere. No concrete safety violations are reported, but an air of intense secrecy prevails. You:",
+                        options: [
+                            { text: "Decide it's too risky based on the ambiguous warnings and your personal comfort level.", nextNode: 'adv1_end_decline_researched' },
+                            { text: "RSVP, deciding to attend with a trusted friend, a solid safety plan, and very clear personal boundaries.", nextNode: 'adv1_node3_prepared_arrival' },
+                            { text: "Contact the organizers with specific questions about safety protocols and consent facilitators before RSVPing.", nextNode: 'adv1_node3_contact_organizers'}
+                        ]
+                    },
+                    adv1_node2_rsvp_bold: {
+                        text: "You RSVP and receive the clandestine location details. You arrive alone, heart pounding with a mix of excitement and trepidation. The entrance is discreet, leading to a dimly lit, opulent space thrumming with exotic music and the sight of various scenes already in progress. You are immediately approached by a host with an enigmatic smile. 'Welcome, [UserArchetype],' they purr. 'First drink is on us. Or perhaps... a more personal welcome in our private salon?' They gesture towards a velvet-curtained alcove. You:",
+                        options: [
+                            { text: "Accept the drink and politely decline the salon for now, wanting to get your bearings.", nextNode: 'adv1_node4_drink_alone' },
+                            { text: "Decline both, stating you'd prefer to observe and mingle first.", nextNode: 'adv1_node4_observe_bold' },
+                            { text: "Accept the invitation to the private salon, intrigued by the 'personal welcome'.", nextNode: 'adv1_node4_private_salon_bold' }
+                        ]
+                    },
+                    adv1_end_decline_researched: { text: "After careful consideration of the mixed reviews, you decide the potential risks outweigh the allure. You value your safety and well-defined consent above a mysterious thrill. (End of Path - Informed Decision)", options: [] },
+                    adv1_node3_prepared_arrival: {
+                        text: "You and your friend arrive, having discussed your limits and check-in signals. The ambiance is electric. A host offers you a drink. You:",
+                        options: [
+                            { text: "Both accept a non-alcoholic drink and begin to explore the main area together.", nextNode: 'adv1_node4_explore_together' },
+                            { text: "Politely decline, preferring to stick to your own water bottles, and start observing.", nextNode: 'adv1_node4_observe_prepared' }
+                        ]
+                    },
+                    adv1_node3_contact_organizers: {
+                        text: "The organizers respond vaguely, emphasizing 'personal responsibility' and the 'transformative nature' of their events, but offer no specifics on DMs or clear safety structures. You:",
+                        options: [
+                            { text: "Thank them but decline the invitation. Their lack of transparency is a red flag.", nextNode: 'adv1_end_decline_researched' },
+                            { text: "Decide to risk it, hoping for the best, but go with a friend and a safety plan.", nextNode: 'adv1_node3_prepared_arrival' }
+                        ]
+                    },
+                    adv1_node4_drink_alone: { text: "The drink is strong but seems fine. You wander, taking in the sights. The energy is high. A figure detaches from a group and approaches you with intent. (Path continues - branch to specific encounter based on UserArchetype or a general challenge)", options: [{text:"Continue...", nextNode: "adv1_encounter_general"}] },
+                    adv1_node4_observe_bold: { text: "You navigate the periphery, observing various scenes. Some are artistic, some intense. You gain a better sense of the event's tone. (Path continues - opportunity to engage or be approached)", options: [{text:"Continue...", nextNode: "adv1_observe_decision"}] },
+                    adv1_node4_private_salon_bold: { text: "The salon is plush, with only a few other people and the enigmatic host. They offer you a seat and begin to ask probing, personal questions about your deepest desires... (End of Path - A Risky Intimacy or Interrogation? You decide how it unfolds for your [UserArchetype].)", options: [] },
+                    adv1_node4_explore_together: { text: "You and your friend explore, a silent support system for each other. You witness a scene that makes one of you uncomfortable. You use your check-in signal and decide to leave together, valuing your shared comfort. (End of Path - Friendship and Safety First)", options: [] },
+                    adv1_node4_observe_prepared: { text: "You and your friend observe, discussing scenes quietly. You identify a few individuals who seem safe and experienced, and consider approaching them for a potential interaction later. (End of Path - Calculated Exploration)", options: [] },
+                    adv1_encounter_general: {text: "The figure is a [Dominant/Submissive, depending on UserArchetype's role] with a compelling aura. They propose a scene that aligns with your known interests but feels a bit fast. Do you: a) Agree, trusting the moment, b) Suggest a slower start or more negotiation, c) Politely decline. (End of Path - User reflects on choice)", options:[]},
+                    adv1_observe_decision: {text: "After observing, you feel more confident. Do you: a) Approach someone for a scene, b) Wait to be approached, c) Decide the event isn't for you and leave. (End of Path - User reflects on choice)", options:[]}
+                }
+            },
+            { // Adventure 2: The Emerging Submissive (Fleshed Out Example)
+                id: 'adventure2',
+                title: "The Emerging Submissive",
+                description: "You encounter someone new to BDSM, curious but hesitant. How does your archetype guide (or respond to) their first steps into this world?",
+                startNode: 'adv2_node1',
                 nodes: {
-                    adv2_node1: { text: "As a [UserArchetype], you meet someone online expressing curiosity about submission but also deep nervousness. They admire your profile and ask for guidance. You:", options: [ {text: "Offer gentle reassurance, share some basic safety/consent resources, and suggest they explore reputable communities first.", nextNode:"adv2_educate_gentle"}, {text:"Explain the importance of negotiation, limits, and aftercare, offering to answer specific questions they have.", nextNode:"adv2_educate_direct"}, {text:"If your archetype is dominant, you might playfully suggest a very light, controlled online interaction to gauge their comfort, after emphasizing consent.", nextNode:"adv2_test_playful"}, {text:"If your archetype is submissive, share your positive experiences and what helped you feel safe when starting.", nextNode:"adv2_share_experience"} ]},
-                    adv2_educate_gentle: {text: "They thank you for the resources and your kind approach, feeling more empowered to explore safely at their own pace. (End - Responsible Guidance!)", options:[]},
-                    adv2_educate_direct: {text: "They appreciate your directness and knowledge, asking follow-up questions that lead to a productive educational exchange. (End - Knowledge Shared!)", options:[]},
-                    adv2_test_playful: {text: "They either respond well to the playful test, finding it intriguing, or they become more anxious. This path depends heavily on your skill and their actual readiness. (End - A Path of Attunement or Misstep.)", options:[]},
-                    adv2_share_experience: {text: "Your personal story helps demystify things for them and provides comfort. They feel less alone in their curiosity. (End - Connection Forged!)", options:[]}
-            }},
-            { id: 'adventure3', title: "The Broken Protocol", description: "A critical rule in your established dynamic is broken. How does your archetype handle the breach and its aftermath?", startNode: 'adv3_node1', nodes: { adv3_node1: { text: "Placeholder content for Adventure 3. This adventure will explore reactions to a significant breach of trust or rules within an established power exchange dynamic, tailored to how different [UserArchetype]s might react, from immediate confrontation to calculated withdrawal and later discussion, or even re-negotiation of the dynamic itself.", options: [{text:"Path A", nextNode:"adv3_nodeA"},{text:"Path B", nextNode:"adv3_nodeB"}] }, adv3_nodeA:{text:"End of Path A for Adventure 3.", options:[]}, adv3_nodeB:{text:"End of Path B for Adventure 3.", options:[]} } },
-            { id: 'adventure4', title: "The Unforeseen Interruption", description: "You're deep in an intense scene when an unexpected real-world interruption occurs (e.g., fire alarm, urgent phone call). How do you, as [UserArchetype], manage the situation?", startNode: 'adv4_node1', nodes: { adv4_node1: { text: "Placeholder content for Adventure 4. This adventure will challenge the [UserArchetype] to balance scene integrity with real-world emergencies, testing their ability to shift focus, ensure safety, and manage the emotional impact of an abrupt halt to intense play.", options: [{text:"Path A", nextNode:"adv4_nodeA"},{text:"Path B", nextNode:"adv4_nodeB"}] }, adv4_nodeA:{text:"End of Path A for Adventure 4.", options:[]}, adv4_nodeB:{text:"End of Path B for Adventure 4.", options:[]} } },
-            { id: 'adventure5', title: "The Shifting Desire", description: "Your partner expresses a desire to explore a kink that is a soft limit for you. How does your [UserArchetype] navigate this conversation?", startNode: 'adv5_node1', nodes: { adv5_node1: { text: "Placeholder content for Adventure 5. This scenario focuses on negotiation, boundary assertion, and the potential for dynamic evolution when a partner wishes to explore something that pushes the [UserArchetype]'s comfort zone, highlighting communication and compromise (or lack thereof).", options: [{text:"Path A", nextNode:"adv5_nodeA"},{text:"Path B", nextNode:"adv5_nodeB"}] }, adv5_nodeA:{text:"End of Path A for Adventure 5.", options:[]}, adv5_nodeB:{text:"End of Path B for Adventure 5.", options:[]} } }
+                    adv2_node1: {
+                        text: "As a [UserArchetype], you're at a local munch. Someone you vaguely know approaches you, looking nervous. 'I've been reading about BDSM,' they say, 'and it seems... intriguing, but also scary. You seem experienced. Could I ask you some questions?' How do you initially respond?",
+                        options: [
+                            { text: "Warmly invite them to sit, offering to answer any questions they have and share some basic resources.", nextNode: 'adv2_node2_open' },
+                            { text: "Be polite but slightly reserved, suggesting they join a beginner's discussion group first.", nextNode: 'adv2_node2_cautious' },
+                            { text: "If you're Dominant-leaning: Offer a very brief, controlled 'taste' of a D/s interaction (like a simple command) right there, after asking if they'd be open to a tiny demonstration of dynamic.", nextNode: 'adv2_node2_dom_demo' },
+                            { text: "If you're Submissive-leaning: Share a brief, positive personal anecdote about your own early explorations and what helped you.", nextNode: 'adv2_node2_sub_share' }
+                        ]
+                    },
+                    adv2_node2_open: {
+                        text: "They visibly relax and start asking about safe words, finding partners, and what a 'scene' actually is. You answer patiently. They then ask, 'Could... could you maybe show me something simple? Or tell me what to do? Just for a moment?' You:",
+                        options: [
+                            { text: "Gently explain that even simple scenes require negotiation and consent, and you're not comfortable 'scening' at a munch, but offer to continue talking or meet for coffee to discuss further.", nextNode: 'adv2_end_educate_coffee' },
+                            { text: "Suggest a very simple, non-physical power exchange: 'For the next five minutes, only speak when I ask you a question.' Gauge their reaction.", nextNode: 'adv2_node3_simple_exchange' },
+                            { text: "Decline to 'show' them anything, reiterating the importance of them finding their own path and trusted partners.", nextNode: 'adv2_end_firm_guidance' }
+                        ]
+                    },
+                    adv2_node2_cautious: {
+                        text: "They seem a little disappointed but thank you for the suggestion. Later, you see them looking lost in the crowd. Do you:",
+                        options: [
+                            { text: "Approach them again, soften your stance, and offer to chat more personally after all.", nextNode: 'adv2_node2_open' }, // Loop back with a change of heart
+                            { text: "Let them be, respecting their space and your initial boundary.", nextNode: 'adv2_end_respect_space' }
+                        ]
+                    },
+                    adv2_node2_dom_demo: {
+                        text: "You ask, 'Would you be comfortable if I asked you to pass me that napkin, using a specific tone?' They agree, looking intrigued. You give the simple command. They comply, a small smile playing on their lips. What's your next move?",
+                        options: [
+                            { text: "Praise their responsiveness and then smoothly transition back to a normal conversation, explaining how even small exchanges can feel different in a D/s frame.", nextNode: 'adv2_end_educate_coffee' },
+                            { text: "Give another, slightly more involved (but still public-appropriate) command to see their reaction.", nextNode: 'adv2_node3_escalate_gently' },
+                            { text: "Stop there, thank them for their participation, and offer to answer more questions.", nextNode: 'adv2_end_brief_demo_talk'}
+                        ]
+                    },
+                    adv2_node2_sub_share: {
+                        text: "Your story seems to reassure them. 'So it's not all... scary and extreme?' they ask. 'It can be about trust and connection too?' You reply:",
+                        options: [
+                            { text: "'Absolutely. For many, it's deeply about that. The intensity comes from the trust, not just the act.'", nextNode: 'adv2_end_reassured' },
+                            { text: "'It can be whatever you and your partner(s) negotiate it to be, as long as it's consensual.'", nextNode: 'adv2_end_educate_coffee' }
+                        ]
+                    },
+                    adv2_node3_simple_exchange: { text: "They follow your instruction for five minutes. Afterwards, they seem thoughtful. You've given them a tiny, safe glimpse. (End of Path - A Taste of Dynamic)", options: [] },
+                    adv2_node3_escalate_gently: { text: "You give another simple command. They either comply with growing interest or show signs of discomfort. This path tests your ability to read cues and not push too far, too fast in a public, unnegotiated setting. (End of Path - Attunement Tested)", options: [] },
+                    adv2_end_educate_coffee: { text: "You arrange to meet for coffee. The extended, focused conversation helps them understand BDSM fundamentals much better, and they feel grateful for your patient mentorship. (End of Path - Mentorship Begins)", options: [] },
+                    adv2_end_firm_guidance: { text: "They respect your decision and thank you for your time. You've empowered them to seek their own journey responsibly. (End of Path - Empowered Seeker)", options: [] },
+                    adv2_end_respect_space: { text: "You decide to let them navigate the social setting on their own, trusting they will find their way or ask for help if truly needed. (End of Path - Respecting Autonomy)", options: [] },
+                    adv2_end_brief_demo_talk: { text: "The brief demonstration sparked their curiosity further, and they now have more specific questions based on that tiny experience. (End of Path - Spark Ignited)", options: [] },
+                    adv2_end_reassured: { text: "Your reassurance visibly helps them. They express a desire to learn more about the trust and connection aspects. (End of Path - Comfort Provided)", options: [] }
+                }
+            },
+            { // Adventure 3: The Broken Protocol (More fleshed out)
+                id: 'adventure3',
+                title: "The Broken Protocol",
+                description: "A critical rule in your established dynamic is broken by your partner. How does your [UserArchetype] handle the breach and its aftermath?",
+                startNode: 'adv3_node1',
+                nodes: {
+                    adv3_node1: {
+                        text: "You are a [UserArchetype]. In your long-standing dynamic with Pat, a clear protocol (e.g., a specific morning ritual, a hard limit about discussing certain topics during playtime, a task that must always be done) has been consistently upheld. Today, Pat deliberately and obviously breaks this protocol without warning or explanation. Your immediate internal reaction is one of [shock/anger/disappointment/curiosity]. How do you respond externally?",
+                        options: [
+                            { text: "Immediately and sternly address the breach: 'Pat, you know this is a breach of protocol. Explain yourself.'", nextNode: 'adv3_node2_direct_confront' },
+                            { text: "Say nothing immediately, but make your displeasure known through coldness or withdrawal, waiting for Pat to address it.", nextNode: 'adv3_node2_cold_shoulder' },
+                            { text: "Calmly state: 'I notice protocol was broken. We need to discuss this later when we both have a clear head.'", nextNode: 'adv3_node2_defer_discuss' },
+                            { text: "Playfully ask: 'Oh? Are we trying something new today, or did someone forget the rules?'", nextNode: 'adv3_node2_playful_query' }
+                        ]
+                    },
+                    adv3_node2_direct_confront: {
+                        text: "Pat looks flustered/defiant/apologetic [choose one or let user imagine]. They say, 'I just... I couldn't do it today/I wanted to see what you'd do.' You:",
+                        options: [
+                            { text: "Insist on the importance of protocol and implement an immediate consequence.", nextNode: 'adv3_end_consequence_A' },
+                            { text: "Explore their reasoning. 'Why couldn't you? Or why did you want to test me?'", nextNode: 'adv3_node3_explore_why' }
+                        ]
+                    },
+                    adv3_node2_cold_shoulder: {
+                        text: "Pat eventually notices your demeanor. 'Is something wrong, [UserArchetype]?' they ask tentatively. You reply:",
+                        options: [
+                            { text: "'You know perfectly well what's wrong. The protocol regarding X.'", nextNode: 'adv3_node3_explain_coldly' },
+                            { text: "'I'm surprised you had to ask. We can discuss your lapse later.' And maintain distance.", nextNode: 'adv3_node2_defer_discuss' }
+                        ]
+                    },
+                    adv3_node2_defer_discuss: {
+                        text: "Later, in a neutral setting, you bring up the broken protocol. 'Pat, earlier you broke protocol X. Can you tell me what happened?' Pat explains they've been feeling [stressed/rebellious/that the protocol is stifling]. You:",
+                        options: [
+                            { text: "Acknowledge their feelings but reiterate the importance of upholding agreements. Discuss if the protocol needs adjustment or if Pat needs support.", nextNode: 'adv3_end_negotiate_support' },
+                            { text: "Focus on the breach: 'Your feelings are valid, but breaking protocol without discussion is unacceptable. There will be consequences, and then we can discuss adjustments.'", nextNode: 'adv3_end_consequence_B' }
+                        ]
+                    },
+                    adv3_node2_playful_query: {
+                        text: "Pat smirks/looks sheepish. 'Maybe I just wanted to shake things up, [UserArchetype]! Or maybe I just forgot...' Their tone is light, but you sense an underlying current. You:",
+                        options: [
+                            { text: "Match their playfulness but steer it towards a reminder: 'Well, shaking things up can be fun, but unannounced changes to important rules can have... interesting outcomes. Shall we explore those outcomes now?'", nextNode: 'adv3_end_playful_consequence' },
+                            { text: "Drop the playfulness: 'Forgetting isn't an option for this protocol, Pat. What's really going on?'", nextNode: 'adv3_node3_explore_why' }
+                        ]
+                    },
+                    adv3_node3_explore_why: { text: "Pat confesses they've been feeling [a specific emotion, e.g., unheard, constrained, needing more attention] and the protocol break was a cry for attention or a test. This opens a deeper conversation about the dynamic's health. (End of Path - Deeper Understanding Reached)", options: [] },
+                    adv3_node3_explain_coldly: { text: "Pat apologizes, explaining their reasons (similar to defer_discuss). The coldness made the conversation harder, but you eventually discuss the underlying issues. (End of Path - Difficult Conversation, Resolution Possible)", options: [] },
+                    adv3_end_consequence_A: { text: "The consequence is delivered. Pat accepts it. The immediate order is restored, but the 'why' behind the breach might still linger. (End of Path - Order Restored, Underlying Issue Unclear)", options: [] },
+                    adv3_end_negotiate_support: { text: "You both agree to adjust the protocol slightly or find ways for Pat to communicate their needs better. The dynamic strengthens. (End of Path - Growth and Adaptation)", options: [] },
+                    adv3_end_consequence_B: { text: "After consequences, the discussion about adjustments is more strained but necessary. Trust may need rebuilding. (End of Path - Strict Adherence, Strained Discussion)", options: [] },
+                    adv3_end_playful_consequence: { text: "The situation diffuses into a playful scene around 're-educating' Pat on the rules, but you make a mental note to check in more seriously later. (End of Path - Playful Deflection, Serious Check-in Needed)", options: [] }
+                }
+            },
+            { id: 'adventure4', title: "The Unforeseen Interruption", description: "You're deep in an intense scene when an unexpected real-world interruption occurs. How do you, as [UserArchetype], manage the situation?", startNode: 'adv4_node1', nodes: { adv4_node1: { text: "As a [UserArchetype], you are in the midst of a carefully constructed, intense [impact/sensory/psychological] scene. Your partner is deeply in subspace. Suddenly, your phone, which you thought was silenced, rings loudly – it's a call from a family member known for only calling in emergencies. You:", options: [ {text:"Immediately call 'Red!' or your emergency stop word, bringing the scene to a full halt. You quickly ensure your partner is safe and coming out of subspace before even glancing at the phone.", nextNode: 'adv4_safety_first'}, {text:"Try to ignore the phone, hoping it stops, not wanting to break the profound state your partner is in.", nextNode: 'adv4_ignore_call'}, {text:"Signal a brief 'pause' to your partner (if possible and safe), quickly check the caller ID, then decide whether to answer or immediately return to the scene/full stop.", nextNode: 'adv4_quick_check'} ]}, adv4_safety_first:{text:"It was a true family emergency. You handle it. Later, you provide extensive aftercare to your partner for the abrupt end and discuss how to better manage interruptions in the future. Trust is reinforced. (End - Responsibility Honored)", options:[]}, adv4_ignore_call:{text:"The phone stops, but the jarring sound has already broken the spell. Your partner is disoriented, and you both feel the scene is lost. The missed call turns out to have been important, though not life-threatening. (End - Scene Disrupted, Real Life Intrudes)", options:[]}, adv4_quick_check:{text:"You see it's the family member and answer. It's a minor issue that could have waited. The scene is irrevocably broken, and your partner feels the interruption deeply. You discuss better phone protocols for future scenes. (End - Interruption Protocol Needed)", options:[]} } },
+            { id: 'adventure5', title: "The Shifting Desire", description: "Your partner expresses a desire to explore a kink that is a soft limit for you. How does your [UserArchetype] navigate this conversation?", startNode: 'adv5_node1', nodes: { adv5_node1: { text: "Your partner, in a non-scene moment, expresses a genuine interest in exploring [a specific kink, e.g., knife play, public exhibitionism, a particular humiliation] which you have previously stated is a soft limit for you. As a [UserArchetype], you respond by:", options: [ {text:"Gently but firmly reiterating it's a soft limit and explaining *why* it makes you hesitant, and that you're not ready to explore it now, but appreciate them sharing.", nextNode: 'adv5_explain_hesitation'}, {text:"Asking them to elaborate on their interest: what specifically appeals to them about it? What are their expectations? This helps you understand their desire better before restating your boundaries.", nextNode: 'adv5_seek_understanding'}, {text:"Feeling pressured, you tentatively agree to 'maybe think about it' or 'try a very small version,' even though you're still very uncomfortable.", nextNode: 'adv5_tentative_agreement'} ]}, adv5_explain_hesitation:{text:"Your partner understands (or at least accepts) your position. The conversation may lead to discussing alternative ways to meet their underlying desires that don't cross your limit. (End - Boundary Upheld, Dialogue Open)", options:[]}, adv5_seek_understanding:{text:"Their explanation gives you more context. You might find a version of it you *are* comfortable with, or you might still decline, but the conversation is more informed. (End - Informed Decision, Potential Compromise)", options:[]}, adv5_tentative_agreement:{text:"This can lead to an uncomfortable or even boundary-violating experience if you're not truly okay with it. Resentment might build. (End - Discomfort Looms, True Consent Questionable)", options:[]} } }
         ]
       },
       consentWorkshop: { title: "Consent & Limits", renderFunction: () => this.renderConsentWorkshop(), sections: [
@@ -283,7 +421,7 @@ class PlaygroundApp {
     `;
     const allArchetypesWithDilemmas = Object.keys(this.activities.ethicalDilemmas.data);
     allArchetypesWithDilemmas.sort().forEach(archName => {
-        if (this.app.styleDescriptions[archName] || archName === "General") { // Check if archetype is known or is "General"
+        if (this.app.styleDescriptions[archName] || archName === "General") {
             const title = (archName === "General") ? "General" : (this.app.styleDescriptions[archName]?.title || archName);
             html += `<option value="${archName}" ${this.selectedDilemmaArchetype === archName ? 'selected' : ''}>${title}</option>`;
         }
@@ -319,10 +457,9 @@ class PlaygroundApp {
     if (this.selectedDilemmaArchetype && this.selectedDilemmaArchetype !== 'general' && allDilemmasByArchetype[this.selectedDilemmaArchetype]) {
         availableDilemmas = allDilemmasByArchetype[this.selectedDilemmaArchetype];
     } else { 
-        // If 'general' or selected archetype has no specific dilemmas, pool from all for now or use a dedicated "General" pool
         if (allDilemmasByArchetype["General"] && allDilemmasByArchetype["General"].length > 0) {
             availableDilemmas = allDilemmasByArchetype["General"];
-        } else { // Fallback to all if no "General" category exists or is empty
+        } else { 
             Object.values(allDilemmasByArchetype).forEach(archDilemmasList => {
                 if(Array.isArray(archDilemmasList)) {
                      availableDilemmas.push(...archDilemmasList);
@@ -346,7 +483,7 @@ class PlaygroundApp {
         while (!isNewArchetypeSelection && this.currentDilemma && newDilemma.id === this.currentDilemma.id && availableDilemmas.length > 1);
     }
     this.currentDilemma = newDilemma;
-    if (!this.currentDilemma) { // Safeguard if newDilemma is still undefined
+    if (!this.currentDilemma) { 
         dilemmaArea.innerHTML = "<p>Could not load a dilemma. Please try another selection.</p>"; return;
     }
     let html = `<p class="scenario-text">${this.currentDilemma.scenario.replace('[UserArchetype]', this.getUserArchetype().name)}</p>`;
@@ -382,7 +519,7 @@ class PlaygroundApp {
     }
     this.currentScenario = scenarios[Math.floor(Math.random() * scenarios.length)];
     const userArch = this.getUserArchetype();
-    let html = `<p class="scenario-text">${this.currentScenario.prompt.replace('[UserArchetype]', userArch.name)}</p>`;
+    let html = `<p class="scenario-text">${this.currentScenario.prompt.replace(/\[UserArchetype\]/g, userArch.name)}</p>`; // Global replace
     html += `<textarea id="scenario-response" rows="5" placeholder="How would you, as a ${userArch.name}, navigate this?"></textarea>`;
     html += `<button id="submit-scenario-response" class="playground-action-btn">Submit Reflection</button>`;
     html += `<div id="scenario-feedback" class="feedback-text"></div>`;
@@ -435,17 +572,17 @@ class PlaygroundApp {
     const node = this.currentAdventure.nodes[this.adventureStep];
     if (!node) {
         let endNavHTML = `<div class="adventure-nav-buttons" style="margin-top:15px;">`;
-        if(this.currentAdventure) { // Make sure currentAdventure is defined
+        if(this.currentAdventure) {
              endNavHTML += `<button id="restart-adventure-btn" class="playground-action-btn" data-adventure-id="${this.currentAdventure.id}">Restart This Adventure</button>`;
         }
         endNavHTML += `<button id="choose-another-adventure-btn" class="playground-action-btn">Choose Another Adventure</button>`;
         endNavHTML += `</div>`;
-        this.playgroundContentEl.innerHTML = "<p>Adventure ended or error.</p>" + endNavHTML;
+        this.playgroundContentEl.innerHTML = "<p>Adventure ended or an error occurred in the story path.</p>" + endNavHTML;
         return;
     }
     const userArch = this.getUserArchetype();
     let html = `<h3>${this.currentAdventure.title} <span class="arch-context">(as a ${userArch.name} ${userArch.icon})</span></h3>`;
-    html += `<p class="scenario-text">${node.text.replace(/\[UserArchetype\]/g, userArch.name)}</p>`; // Global replace
+    html += `<p class="scenario-text">${node.text.replace(/\[UserArchetype\]/g, userArch.name)}</p>`;
     if (node.options && node.options.length > 0) {
       html += `<div class="options-list adventure-options">`;
       node.options.forEach(opt => {
@@ -476,7 +613,7 @@ class PlaygroundApp {
       html += `
         <details class="workshop-section">
           <summary><h4>${section.title}</h4></summary>
-          <p>${section.content.replace(/\[UserArchetype\]/g, userArch.name)}</p> 
+          <p>${section.content.replace(/\[UserArchetype\]/g, userArch.name)}</p>
         </details>
       `;
     });
@@ -529,9 +666,7 @@ class PlaygroundApp {
     const archetypesToExploreSource = (this.app.topArchetypesForCuration && this.app.topArchetypesForCuration.length > 0) 
         ? this.app.topArchetypesForCuration.map(a => a.name)
         : [...new Set([...this.app.styles.submissive, ...this.app.styles.dominant])].sort();
-    
     const archetypesToExplore = archetypesToExploreSource.filter(name => this.app.styleDescriptions[name] && this.app.styleDescriptions[name].title);
-
 
     if (archetypesToExplore.length > 1) {
         html += `<div class="activity-selector" id="explore-another-arch-options" style="margin-top:20px;">
@@ -544,7 +679,6 @@ class PlaygroundApp {
         html += `</select></div>`;
     }
     this.playgroundContentEl.innerHTML = html;
-
     const deepDiveSelect = this.playgroundContentEl.querySelector('#deep-dive-select');
     if(deepDiveSelect) {
         deepDiveSelect.addEventListener('change', (e) => {
@@ -558,7 +692,6 @@ class PlaygroundApp {
     html += `<p>Select two archetypes to see their core aspects side-by-side.</p>`;
     html += `<div class="compare-selects">`;
     const allStyleNames = [...new Set([...this.app.styles.submissive, ...this.app.styles.dominant])].sort();
-
     html += `<select id="compare-arch1">`;
     html += `<option value="">-- Select Archetype 1 --</option>`;
     allStyleNames.forEach(name => {
@@ -568,7 +701,6 @@ class PlaygroundApp {
         }
     });
     html += `</select>`;
-
     html += `<select id="compare-arch2">`;
     html += `<option value="">-- Select Archetype 2 --</option>`;
     allStyleNames.forEach(name => {
@@ -580,12 +712,10 @@ class PlaygroundApp {
     html += `</select></div>`;
     html += `<div id="comparison-area" class="comparison-results"></div>`;
     this.playgroundContentEl.innerHTML = html;
-
     const select1 = this.playgroundContentEl.querySelector('#compare-arch1');
     const select2 = this.playgroundContentEl.querySelector('#compare-arch2');
     if(select1) select1.addEventListener('change', (e) => { this.compareArchetype1 = e.target.value; this.displayComparison(); });
     if(select2) select2.addEventListener('change', (e) => { this.compareArchetype2 = e.target.value; this.displayComparison(); });
-    
     this.displayComparison();
   }
 
