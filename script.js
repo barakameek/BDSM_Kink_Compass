@@ -682,7 +682,7 @@ class StyleFinderApp {
         this.curationModeActive = false;
         if (this.elements.styleFinder) this.elements.styleFinder.style.display = 'flex';
         this.renderStyleFinder();
-        this.showFeedback("The journey of discovery begins...");
+        this.showFeedback("The journey of discovery begins..."); // THIS IS WHERE THE ERROR WAS
       });
     }
 
@@ -732,7 +732,6 @@ class StyleFinderApp {
     if (!this.styleFinderRole) {
       return scores;
     }
-
     const roleStyles = this.styles[this.styleFinderRole];
     if (!roleStyles) {
         console.error(`No styles defined for role: ${this.styleFinderRole}`);
@@ -798,10 +797,9 @@ class StyleFinderApp {
         'Commander': { primary: ['authority', 'intensity', 'dominanceDepth', 'leadership', 'precision', 'boldness'], secondary: ['confidence', 'discipline', 'control', 'strategy'] }
     };
 
-    Object.keys(this.styleFinderAnswers.traits).forEach(traitName => {
+  Object.keys(this.styleFinderAnswers.traits).forEach(traitName => {
         const rating = this.styleFinderAnswers.traits[traitName] || 0;
         const userKeyTraitBonus = this.styleFinderAnswers.userDefinedKeyTraits.includes(traitName) ? 1.5 : 1.0;
-
         (this.styles[this.styleFinderRole] || []).forEach(style => {
             if (scores[style] === undefined && roleStyles.includes(style)) {
                 scores[style] = 0;
@@ -818,24 +816,18 @@ class StyleFinderApp {
     });
     return scores;
   }
-
-  updateDashboard() {
+ updateDashboard() {
     const currentStepConfig = this.getCurrentStepConfig();
     if (!this.elements.dashboard || !this.styleFinderRole || !currentStepConfig || currentStepConfig.type !== 'trait' ) {
       if(this.elements.dashboard) this.elements.dashboard.style.display = 'none';
       return;
     }
     this.elements.dashboard.style.display = 'block';
-
     const scores = this.computeCurrentScores();
     const sortedScores = Object.entries(scores).sort((a, b) => b[1] - a[1]);
-
     if (!this.previousScores) this.previousScores = {};
     const previousPositions = {};
-    Object.entries(this.previousScores)
-        .sort((a, b) => b[1] - a[1])
-        .forEach(([style], index) => { previousPositions[style] = index; });
-
+    Object.entries(this.previousScores).sort((a, b) => b[1] - a[1]).forEach(([style], index) => { previousPositions[style] = index; });
     const isFirstRenderForTraits = !this.hasRenderedDashboard;
     let dashboardHTML = "<div class='dashboard-header'>✨ Whispers of Your Archetype ✨</div>";
     sortedScores.slice(0, 4).forEach(([style, score], index) => {
@@ -846,24 +838,16 @@ class StyleFinderApp {
           if (movement > 0) moveIndicator = '<span class="move-up">↑</span>';
           else if (movement < 0) moveIndicator = '<span class="move-down">↓</span>';
       }
-
       const prevScoreVal = this.previousScores[style] || 0;
       const deltaValue = score - prevScoreVal;
       let delta = '';
       if (Math.abs(deltaValue) > 0.1) {
         delta = `<span class="score-delta ${deltaValue > 0 ? 'positive' : 'negative'}">${deltaValue > 0 ? '+' : ''}${(deltaValue).toFixed(1)}</span>`;
       }
-
       const animationStyle = isFirstRenderForTraits || this.previousScores[style] === undefined ? 'style="animation: slideIn 0.3s ease;"' : '';
       const icon = (this.styleDescriptions[style] && this.styleDescriptions[style].icon) || '🌟';
-      dashboardHTML += `
-        <div class="dashboard-item ${index === 0 ? 'top-archetype' : ''}" ${animationStyle}>
-          <span class="style-name">${icon} ${style}</span>
-          <span class="dashboard-score">${score.toFixed(1)} ${delta} ${moveIndicator}</span>
-        </div>
-      `;
+      dashboardHTML += `<div class="dashboard-item ${index === 0 ? 'top-archetype' : ''}" ${animationStyle}><span class="style-name">${icon} ${style}</span><span class="dashboard-score">${score.toFixed(1)} ${delta} ${moveIndicator}</span></div>`;
     });
-
     this.elements.dashboard.innerHTML = dashboardHTML;
     this.previousScores = { ...scores };
     if(currentStepConfig.type === 'trait') this.hasRenderedDashboard = true;
@@ -884,20 +868,12 @@ class StyleFinderApp {
     return steps;
   }
   
-  getTotalSteps() {
-      return this.getQuizStepsArray().length;
-  }
+  getTotalSteps() { return this.getQuizStepsArray().length; }
 
   renderStyleFinder() {
     if (!this.styleFinderActive || !this.elements.stepContent) return;
-    
-    if (this.curationModeActive) {
-        this.renderCurationScreen();
-        return;
-    }
-
+    if (this.curationModeActive) { this.renderCurationScreen(); return; }
     const steps = this.getQuizStepsArray();
-
     if (this.styleFinderStep >= steps.length) this.styleFinderStep = steps.length - 1;
     const currentStepConfig = steps[this.styleFinderStep];
     if (!currentStepConfig) {
@@ -906,174 +882,62 @@ class StyleFinderApp {
         return;
     }
     let html = "";
-
     if (currentStepConfig.type === 'trait' && this.styleFinderRole) {
         const traitSet = (this.styleFinderRole === 'dominant' ? this.domFinderTraits : this.subFinderTraits);
         const currentTraitIndex = traitSet.findIndex(t => t.name === currentStepConfig.trait);
         const questionsLeft = traitSet.length - (currentTraitIndex + 1);
-        if(this.elements.progressTracker) {
-            this.elements.progressTracker.style.display = 'block';
-            this.elements.progressTracker.innerHTML = `Trait Insights Remaining: ${questionsLeft}`;
-        }
+        if(this.elements.progressTracker) { this.elements.progressTracker.style.display = 'block'; this.elements.progressTracker.innerHTML = `Trait Insights Remaining: ${questionsLeft}`; }
     } else if (currentStepConfig.type === 'guidingPreference' || currentStepConfig.type === 'userKeyTraits') {
-        if(this.elements.progressTracker) {
-            this.elements.progressTracker.style.display = 'block';
-            this.elements.progressTracker.innerHTML = `Refining Your Path...`;
-        }
+        if(this.elements.progressTracker) { this.elements.progressTracker.style.display = 'block'; this.elements.progressTracker.innerHTML = `Refining Your Path...`; }
     } else {
         if(this.elements.progressTracker) this.elements.progressTracker.style.display = 'none';
     }
-
     switch (currentStepConfig.type) {
-      case 'welcome':
-        html += `
-          <h2>The Oracle of Archetypes Awaits...</h2>
-          <p>Embark on a journey to unveil the resonant energies within you. Answer with your heart, and let your true self emerge.</p>
-          <button class="cta-button" onclick="styleFinderApp.nextStyleFinderStep()">Begin the Unveiling!</button>
-        `;
-        break;
-      case 'role':
-        html += `
-          <h2>Choose Your Foundational Current</h2>
-          <p>Which fundamental energy calls to you more strongly at this moment in your journey?</p>
-          <div class="role-buttons">
-            <button onclick="styleFinderApp.setStyleFinderRole('submissive')">The Yielding Heart (Submissive)</button>
-            <button onclick="styleFinderApp.setStyleFinderRole('dominant')">The Guiding Hand (Dominant)</button>
-          </div>
-        `;
-        break;
+      case 'welcome': html = `<h2>The Oracle of Archetypes Awaits...</h2><p>Embark on a journey to unveil the resonant energies within you. Answer with your heart, and let your true self emerge.</p><button class="cta-button" onclick="styleFinderApp.nextStyleFinderStep()">Begin the Unveiling!</button>`; break;
+      case 'role': html = `<h2>Choose Your Foundational Current</h2><p>Which fundamental energy calls to you more strongly at this moment in your journey?</p><div class="role-buttons"><button onclick="styleFinderApp.setStyleFinderRole('submissive')">The Yielding Heart (Submissive)</button><button onclick="styleFinderApp.setStyleFinderRole('dominant')">The Guiding Hand (Dominant)</button></div>`; break;
       case 'guidingPreference':
-        html += `<h2>Select Your Guiding Path</h2>`;
-        html += `<p>Within your chosen current of <strong>${this.styleFinderRole}</strong>, which of these paths resonates most deeply with your core desires right now? This will help illuminate your unique archetype.</p>`;
-        html += `<div class="preference-options">`;
-        (this.guidingPreferences[this.styleFinderRole] || []).forEach(pref => {
-            html += `<button onclick="styleFinderApp.setGuidingPreference('${pref.id}')">${pref.text}</button>`;
-        });
-        html += `</div>`;
-        html += `<div class="navigation-buttons" style="margin-top:15px;"><button onclick="styleFinderApp.prevStyleFinderStep()">Back to Role</button></div>`;
-        break;
+        html = `<h2>Select Your Guiding Path</h2><p>Within your chosen current of <strong>${this.styleFinderRole}</strong>, which of these paths resonates most deeply with your core desires right now? This will help illuminate your unique archetype.</p><div class="preference-options">`;
+        (this.guidingPreferences[this.styleFinderRole] || []).forEach(pref => { html += `<button onclick="styleFinderApp.setGuidingPreference('${pref.id}')">${pref.text}</button>`; });
+        html += `</div><div class="navigation-buttons" style="margin-top:15px;"><button onclick="styleFinderApp.prevStyleFinderStep()">Back to Role</button></div>`; break;
       case 'trait':
         const traitSet = (this.styleFinderRole === 'dominant' ? this.domFinderTraits : this.subFinderTraits);
         const traitObj = traitSet.find(t => t.name === currentStepConfig.trait);
         if (!traitObj) { html = "<p>Error: Trait not found.</p>"; break; }
-
         const currentValue = this.styleFinderAnswers.traits[traitObj.name] !== undefined ? this.styleFinderAnswers.traits[traitObj.name] : 5;
         const footnoteSet = (this.styleFinderRole === 'dominant' ? this.domTraitFootnotes : this.subTraitFootnotes);
-        
         const firstTraitStepIndex = steps.findIndex(s => s.type === 'trait');
         const isFirstTraitQuestion = this.styleFinderStep === firstTraitStepIndex;
-
         const descArray = this.sliderDescriptions[traitObj.name] || ["Description missing"];
         const currentDesc = descArray[currentValue - 1] || traitObj.name;
         const traitDisplayName = traitObj.name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-
-        html += `
-          <h2>The Oracle Ponders: ${traitDisplayName}<span class="info-icon" onclick="styleFinderApp.showTraitInfo('${traitObj.name}')">ℹ️</span></h2>
-          <p>${traitObj.desc}</p>
-          ${isFirstTraitQuestion ? '<p><em>Slide to express your affinity. (1 = Not At All, 10 = Absolutely Me)</em></p>' : ''}
-          <input type="range" min="1" max="10" value="${currentValue}" class="trait-slider" 
-                 oninput="styleFinderApp.setStyleFinderTrait('${traitObj.name}', this.value); 
-                          const descriptions = styleFinderApp.sliderDescriptions['${traitObj.name}'];
-                          if (descriptions && descriptions[this.value - 1]) { document.getElementById('desc-${traitObj.name}').textContent = descriptions[this.value - 1]; }
-                          styleFinderApp.updateDashboard();">
-          <div id="desc-${traitObj.name}" class="slider-description">${currentDesc}</div>
-          <p class="slider-footnote">${footnoteSet[traitObj.name]}</p>
-          <div class="navigation-buttons" style="margin-top: 15px;">
-            <button onclick="styleFinderApp.nextStyleFinderStep('${traitObj.name}')">Continue the Path</button>
-            <button onclick="styleFinderApp.prevStyleFinderStep()">Reconsider</button>
-          </div>
-        `;
-        break;
+        html = `<h2>The Oracle Ponders: ${traitDisplayName}<span class="info-icon" onclick="styleFinderApp.showTraitInfo('${traitObj.name}')">ℹ️</span></h2><p>${traitObj.desc}</p>${isFirstTraitQuestion ? "<p><em>Slide to express your affinity. (1 = Not At All, 10 = Absolutely Me)</em></p>" : ''}<input type="range" min="1" max="10" value="${currentValue}" class="trait-slider" oninput="styleFinderApp.setStyleFinderTrait('${traitObj.name}', this.value); const descriptions = styleFinderApp.sliderDescriptions['${traitObj.name}']; if (descriptions && descriptions[this.value - 1]) { document.getElementById('desc-${traitObj.name}').textContent = descriptions[this.value - 1]; } styleFinderApp.updateDashboard();"><div id="desc-${traitObj.name}" class="slider-description">${currentDesc}</div><p class="slider-footnote">${footnoteSet[traitObj.name]}</p><div class="navigation-buttons" style="margin-top: 15px;"><button onclick="styleFinderApp.nextStyleFinderStep('${traitObj.name}')">Continue the Path</button><button onclick="styleFinderApp.prevStyleFinderStep()">Reconsider</button></div>`; break;
       case 'userKeyTraits':
-        html += `<h2>Identify Your Core Resonances</h2>`;
-        html += `<p>From the aspects you've reflected upon, select up to <strong>three</strong> that feel most central to your being or are most important to you in a dynamic. This will help the Oracle fine-tune your archetype.</p>`;
-        html += `<div class="key-traits-selection">`;
+        html = `<h2>Identify Your Core Resonances</h2><p>From the aspects you've reflected upon, select up to <strong>three</strong> that feel most central to your being or are most important to you in a dynamic. This will help the Oracle fine-tune your archetype.</p><div class="key-traits-selection">`;
         const allAnsweredTraits = this.styleFinderRole === 'submissive' ? this.subFinderTraits : this.domFinderTraits;
-        allAnsweredTraits.forEach(trait => {
-            const traitDisplayName = trait.name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-            const isChecked = this.styleFinderAnswers.userDefinedKeyTraits.includes(trait.name);
-            html += `<label class="key-trait-label">
-                       <input type="checkbox" name="userKeyTrait" value="${trait.name}" ${isChecked ? 'checked' : ''} onchange="styleFinderApp.handleUserKeyTraitSelection(this)">
-                       ${traitDisplayName}
-                     </label>`;
-        });
-        html += `</div>`;
-        html += `<p id="key-trait-feedback" style="color: #e74c75; font-size:0.9em; min-height:1.2em;">Select up to 3 core traits.</p>`;
-        html += `<div class="navigation-buttons" style="margin-top: 15px;">
-                    <button onclick="styleFinderApp.nextStyleFinderStep()" class="cta-button">Confirm Core Traits</button>
-                    <button onclick="styleFinderApp.prevStyleFinderStep()">Back to Traits</button>
-                 </div>`;
-        break;
+        allAnsweredTraits.forEach(trait => { const traitDisplayName = trait.name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()); const isChecked = this.styleFinderAnswers.userDefinedKeyTraits.includes(trait.name); html += `<label class="key-trait-label"><input type="checkbox" name="userKeyTrait" value="${trait.name}" ${isChecked ? 'checked' : ''} onchange="styleFinderApp.handleUserKeyTraitSelection(this)"> ${traitDisplayName}</label>`; });
+        html += `</div><p id="key-trait-feedback" style="color: #e74c75; font-size:0.9em; min-height:1.2em;">Select up to 3 core traits.</p><div class="navigation-buttons" style="margin-top: 15px;"><button onclick="styleFinderApp.nextStyleFinderStep()" class="cta-button">Confirm Core Traits</button><button onclick="styleFinderApp.prevStyleFinderStep()">Back to Traits</button></div>`; break;
       case 'roundSummary':
-        const topTraits = Object.entries(this.styleFinderAnswers.traits)
-          .sort((a, b) => b[1] - a[1])
-          .slice(0, 3)
-          .map(([trait]) => trait.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()));
-        html += `
-          <h2>${currentStepConfig.round}: The Tapestry Emerges</h2>
-          <p>The threads of your choices are weaving a pattern. Here's a glimpse of your emerging self:</p>
-          <div id="summary-dashboard">${this.generateSummaryDashboard()}</div>
-          ${topTraits.length ? `<p><em>Your Most Resonant Traits So Far:</em> ${topTraits.join(', ')}</p>` : ''}
-          ${this.styleFinderAnswers.userDefinedKeyTraits.length > 0 ? `<p><em>Your Chosen Core Traits:</em> ${this.styleFinderAnswers.userDefinedKeyTraits.map(t => t.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())).join(', ')}</p>` : ''}
-          <div class="navigation-buttons" style="margin-top:15px;">
-            <button class="cta-button" onclick="styleFinderApp.nextStyleFinderStep()">Behold My Archetype!</button>
-            <button onclick="styleFinderApp.prevStyleFinderStep()">Revisit Core Traits</button>
-          </div>
-        `;
-        break;
+        const topTraits = Object.entries(this.styleFinderAnswers.traits).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([trait]) => trait.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()));
+        html = `<h2>${currentStepConfig.round}: The Tapestry Emerges</h2><p>The threads of your choices are weaving a pattern. Here's a glimpse of your emerging self:</p><div id="summary-dashboard">${this.generateSummaryDashboard()}</div>${topTraits.length ? `<p><em>Your Most Resonant Traits So Far:</em> ${topTraits.join(', ')}</p>` : ''}${this.styleFinderAnswers.userDefinedKeyTraits.length > 0 ? `<p><em>Your Chosen Core Traits:</em> ${this.styleFinderAnswers.userDefinedKeyTraits.map(t => t.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())).join(', ')}</p>` : ''}<div class="navigation-buttons" style="margin-top:15px;"><button class="cta-button" onclick="styleFinderApp.nextStyleFinderStep()">Behold My Archetype!</button><button onclick="styleFinderApp.prevStyleFinderStep()">Revisit Core Traits</button></div>`; break;
       case 'result':
         this.calculateStyleFinderResult();
-        if (Object.keys(this.styleFinderScores).length === 0) {
-            html = `<h2>An Enigma!</h2><p>It seems the Oracle needs more input to discern your archetype. Please restart and explore your answers.</p><button onclick="styleFinderApp.startOver()">Restart the Journey</button>`;
-            break;
-        }
+        if (Object.keys(this.styleFinderScores).length === 0) { html = `<h2>An Enigma!</h2><p>It seems the Oracle needs more input... Please restart.</p><button onclick="styleFinderApp.startOver()">Restart</button>`; break; }
         const sortedResults = Object.entries(this.styleFinderScores).sort((a, b) => b[1] - a[1]);
-        if (sortedResults.length === 0 || !sortedResults[0] || !sortedResults[0][0] || sortedResults[0][1] <= 0 ) {
-             html = `<h2>A Path Unclear!</h2><p>Your unique constellation of traits is still forming, or perhaps your guiding preference and trait answers created a unique balance! A fresh start on the journey might bring new clarity, or embrace the mystery!</p><button onclick="styleFinderApp.startOver()">Restart the Journey</button>`;
-             break;
-        }
+        if (sortedResults.length === 0 || !sortedResults[0] || !sortedResults[0][0] || sortedResults[0][1] <= 0 ) { html = `<h2>A Path Unclear!</h2><p>Your unique constellation... A fresh start might bring clarity!</p><button onclick="styleFinderApp.startOver()">Restart</button>`; break; }
         const topStyle = sortedResults[0][0];
         const styleData = this.styleDescriptions[topStyle];
         const matchData = this.dynamicMatches[topStyle] ? this.dynamicMatches[topStyle].primary : null;
-
-        if (!styleData || !styleData.title) {
-            html = `<h2>Data Anomaly!</h2><p>Apologies, seeker! Information for the archetype '${topStyle}' is currently veiled. The Oracle's scribes (developers) are working to illuminate it. Please try again later or explore anew.</p><button onclick="styleFinderApp.startOver()">Restart the Journey</button>`;
-            break;
-        }
+        if (!styleData || !styleData.title) { html = `<h2>Data Anomaly!</h2><p>Information for '${topStyle}' is veiled...</p><button onclick="styleFinderApp.startOver()">Restart</button>`; break; }
         this.quizCompletedOnce = true;
-        if (this.elements.returnToResultsBtn) {
-            this.elements.returnToResultsBtn.style.display = 'inline-block';
-        }
-        this.topArchetypesForCuration = sortedResults.slice(0, 5).map(([name, score]) => ({
-            name: name, score: score, data: this.styleDescriptions[name]
-        })).filter(arch => arch.data && arch.data.title);
-
-        html += `
-          <div class="result-section fade-in">
-            <h2>🌟 Your Primary Archetype: ${styleData.title} ${styleData.icon || ""} 🌟</h2>
-            ${styleData.flavorText ? `<p class="flavor-text"><em>"${styleData.flavorText}"</em></p>` : ""}
-            <div class="result-subsection"><h3>Essence</h3><p>${styleData.essence}</p></div>
-            ${matchData ? `<div class="result-subsection dynamic-match-section"><h3>Primary Dynamic Resonance: With ${matchData.partnerStyle}</h3><p><strong>Dynamic Signature:</strong> ${matchData.dynamicName || "A Potent Pairing"}</p><p>${matchData.description || "This pairing creates a special synergy."}</p>${matchData.interactionFocus && matchData.interactionFocus.length > 0 ? `<p><strong>Key Interaction Harmonics:</strong></p><ul>${matchData.interactionFocus.map(item => `<li>${item}</li>`).join('')}</ul>` : ""}</div>` : `<p><em>Dynamic match information is being woven by the Fates...</em></p>`}
-            <p style="margin-top:20px;"><em>Your journey with this archetype can deepen. Explore its full profile, blend its essence with other resonances to craft your unique constellation, or venture into the Playground for interactive exploration.</em></p>
-            <div class="result-buttons">
-              <button onclick="styleFinderApp.showFullDetails('${topStyle}')">Explore ${styleData.title || topStyle} Deeper</button>
-              <button class="cta-button" onclick="styleFinderApp.enterCurationMode()">Curate Your Constellation</button>
-              <button class="cta-button" onclick="styleFinderApp.openPlaygroundFromQuiz()">Enter the Playground</button>
-            </div>
-            <div class="result-buttons" style="margin-top:10px;">
-              <button onclick="styleFinderApp.startOver()">Restart the Journey</button>
-            </div>
-          </div>`;
+        if (this.elements.returnToResultsBtn) { this.elements.returnToResultsBtn.style.display = 'inline-block'; }
+        this.topArchetypesForCuration = sortedResults.slice(0, 5).map(([name, score]) => ({ name: name, score: score, data: this.styleDescriptions[name] })).filter(arch => arch.data && arch.data.title);
+        html = `<div class="result-section fade-in"><h2>🌟 Your Primary Archetype: ${styleData.title} ${styleData.icon || ""} 🌟</h2>${styleData.flavorText ? `<p class="flavor-text"><em>"${styleData.flavorText}"</em></p>` : ""}<div class="result-subsection"><h3>Essence</h3><p>${styleData.essence}</p></div>${matchData ? `<div class="result-subsection dynamic-match-section"><h3>Primary Dynamic Resonance: With ${matchData.partnerStyle}</h3><p><strong>Dynamic Signature:</strong> ${matchData.dynamicName || "A Potent Pairing"}</p><p>${matchData.description || "This pairing creates a special synergy."}</p>${matchData.interactionFocus && matchData.interactionFocus.length > 0 ? `<p><strong>Key Interaction Harmonics:</strong></p><ul>${matchData.interactionFocus.map(item => `<li>${item}</li>`).join('')}</ul>` : ""}</div>` : `<p><em>Dynamic match information is being woven...</em></p>`}<p style="margin-top:20px;"><em>Your journey can deepen...</em></p><div class="result-buttons"><button onclick="styleFinderApp.showFullDetails('${topStyle}')">Explore ${styleData.title || topStyle} Deeper</button><button class="cta-button" onclick="styleFinderApp.enterCurationMode()">Curate Your Constellation</button><button class="cta-button" onclick="styleFinderApp.openPlaygroundFromQuiz()">Enter the Playground</button></div><div class="result-buttons" style="margin-top:10px;"><button onclick="styleFinderApp.startOver()">Restart the Journey</button></div></div>`;
         setTimeout(() => { if (typeof confetti === 'function') { confetti({ particleCount: 150, spread: 90, origin: { y: 0.5 } }); } }, 300);
         break;
     }
     if(this.elements.stepContent) this.elements.stepContent.innerHTML = html;
-    
-    if (currentStepConfig.type === 'trait') {
-      this.updateDashboard();
-    } else {
-      if(this.elements.dashboard) this.elements.dashboard.style.display = 'none';
-    }
+    if (currentStepConfig && currentStepConfig.type === 'trait') { this.updateDashboard(); }
+    else { if(this.elements.dashboard) this.elements.dashboard.style.display = 'none'; }
   }
 
   setStyleFinderRole(role) {
