@@ -636,3 +636,238 @@ body[data-theme="dark"] .curated-result-display h4 {
 
   .curation-buttons button { min-width: 100%; } /* Stack buttons on very small screens */
 }
+/* ... (Previous CSS) ... */
+
+/* --- CURATION SCREEN REFINEMENTS --- */
+.curation-header {
+  margin-bottom: 20px;
+  text-align: center;
+}
+.curation-header h2 { /* Already styled by #step-content h2 */
+  margin-bottom: 10px;
+}
+.curation-header p {
+  font-size: 1.05em;
+  margin-bottom: 0;
+}
+
+.curation-main-content {
+  display: flex;
+  flex-direction: column; /* Default stack for mobile */
+  gap: 20px;
+  width: 100%;
+}
+
+/* Tab Navigation for Archetype Exploration */
+.tab-navigation {
+  display: flex;
+  flex-wrap: wrap; /* Allow tabs to wrap on smaller screens */
+  margin-bottom: 15px;
+  border-bottom: 2px solid #ffc2d9;
+}
+body[data-theme="dark"] .tab-navigation {
+  border-bottom-color: #5a3a56;
+}
+.tab-button {
+  background-color: transparent;
+  color: #7a5a6e;
+  padding: 10px 15px;
+  border: none;
+  border-bottom: 3px solid transparent; /* For active state */
+  cursor: pointer;
+  font-size: 0.95em;
+  font-weight: bold;
+  margin: 0 5px -2px 0; /* Overlap border slightly, remove bottom margin */
+  border-radius: 5px 5px 0 0; /* Rounded top corners */
+  transition: background-color 0.2s, color 0.2s, border-bottom-color 0.2s;
+}
+body[data-theme="dark"] .tab-button {
+  color: #d8b8cb;
+}
+.tab-button:hover {
+  background-color: rgba(255,112,150,0.1);
+  color: #e74c75;
+  transform: none; /* Override general button hover */
+  box-shadow: none;
+}
+body[data-theme="dark"] .tab-button:hover {
+  background-color: rgba(248,225,233,0.1);
+  color: #ff85a6;
+}
+.tab-button.active {
+  background-color: #fff7fa; /* Match modal content */
+  color: #e74c75;
+  border-bottom: 3px solid #e74c75;
+  transform: none;
+  box-shadow: none;
+}
+body[data-theme="dark"] .tab-button.active {
+  background-color: #3b233a; /* Match modal content dark */
+  color: #ff85a6;
+  border-bottom-color: #ff85a6;
+}
+
+.tab-content {
+  display: none; /* Hidden by default, shown by JS */
+  padding: 15px;
+  border: 1px solid #ffc2d9;
+  border-top: none; /* Border already handled by tab-navigation */
+  border-radius: 0 0 8px 8px;
+  background-color: #fff; /* Slightly different from modal for depth */
+  text-align: left;
+}
+.tab-content.active {
+  display: block;
+  animation: fadeIn 0.3s ease-in-out; /* Fade in active tab */
+}
+body[data-theme="dark"] .tab-content {
+  border-color: #5a3a56;
+  background-color: #4a2c46;
+}
+
+.tab-content h3 { /* Title within tab */
+  font-size: 1.3em;
+  color: #e74c75;
+  margin-bottom: 10px;
+}
+body[data-theme="dark"] .tab-content h3 {
+  color: #ff85a6;
+}
+.tab-content .flavor-text {
+  font-size: 1.05em !important; /* Ensure it's not too big in tabs */
+  margin: 10px 0 !important;
+  padding-left: 10px;
+}
+.tab-content p {
+  font-size: 0.95em;
+  margin-bottom: 10px;
+}
+
+h4.curation-section-title { /* For sections like "Core Motivations" within tabs */
+  font-size: 1.1em;
+  color: #3b233a;
+  margin-top: 15px;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px dotted #ffc2d9;
+}
+body[data-theme="dark"] h4.curation-section-title {
+  color: #f8e1e9;
+  border-bottom-color: #5a3a56;
+}
+
+ul.selectable-list {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 10px;
+}
+ul.selectable-list li {
+  padding: 6px 0;
+  font-size: 0.9em;
+  border-bottom: 1px solid #f8e1e9; /* Lighter separator */
+}
+body[data-theme="dark"] ul.selectable-list li {
+  border-bottom-color: #42253e;
+}
+ul.selectable-list li:last-child {
+  border-bottom: none;
+}
+ul.selectable-list label {
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  color: #3b233a;
+}
+body[data-theme="dark"] ul.selectable-list label {
+  color: #f8e1e9;
+}
+ul.selectable-list input[type="checkbox"] {
+  margin-right: 10px;
+  margin-top: 4px;
+  accent-color: #e74c75;
+  transform: scale(1.1);
+}
+
+.archetype-exploration-tabs {
+  /* Max height for scrolling if many archetypes/long content */
+  max-height: 50vh; /* Adjust as needed */
+  overflow-y: auto;
+  padding-right: 5px; /* For scrollbar */
+}
+
+.curation-customization-area {
+  padding: 15px;
+  background-color: rgba(255,112,150,0.03);
+  border-radius: 10px;
+  border: 1px solid rgba(255,112,150,0.1);
+  /* Max height for scrolling for inputs and selected items */
+  max-height: 50vh; /* Adjust as needed */
+  overflow-y: auto;
+}
+body[data-theme="dark"] .curation-customization-area {
+  background-color: rgba(248,225,233,0.03);
+  border-color: rgba(248,225,233,0.1);
+}
+
+
+#selected-elements-display {
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: rgba(0,0,0,0.02);
+  border-radius: 5px;
+}
+#selected-elements-display h3 { font-size: 1.2em; margin-bottom: 10px; }
+#selected-elements-list li {
+  padding: 4px 0; font-size: 0.9em; border-bottom: 1px dotted rgba(0,0,0,0.1);
+  color: #3b233a;
+}
+body[data-theme="dark"] #selected-elements-list li {
+  border-bottom-color: rgba(255,255,255,0.1);
+  color: #f8e1e9;
+}
+#selected-elements-list li:last-child { border-bottom: none; }
+
+
+.custom-archetype-form input[type="text"],
+.custom-archetype-form textarea {
+  width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px;
+  border: 1px solid #ffc2d9; font-size: 1em; font-family: inherit;
+  background-color: #fff; color: #3b233a;
+}
+.custom-archetype-form textarea { min-height: 100px; }
+/* ... (focus styles and dark theme for inputs remain same) ... */
+
+
+.curation-buttons {
+  display: flex; justify-content: space-around; flex-wrap: wrap; margin-top: 10px;
+}
+.curation-buttons button { flex-grow: 1; margin: 5px; min-width: 180px; }
+
+/* Final Curated Result Display */
+.curated-result-display h3 { font-size: 1.6em; color: #e74c75; margin: 15px 0 10px 0; }
+body[data-theme="dark"] .curated-result-display h3 { color: #ff85a6; }
+.curated-result-display h4 { font-size: 1.2em; margin-top: 20px; margin-bottom: 8px; color: #7a5a6e; }
+body[data-theme="dark"] .curated-result-display h4 { color: #d8b8cb; }
+.curated-result-display .result-subsection p { text-align: left; font-size: 1.05em; }
+
+
+/* Responsive adjustments for curation layout */
+@media (min-width: 900px) { /* Wider screens for side-by-side curation */
+  .curation-main-content {
+    flex-direction: row;
+    align-items: flex-start; /* Align tops */
+  }
+  .archetype-exploration-tabs {
+    flex: 3; /* Takes more space, e.g., 60% */
+    margin-right: 20px; /* Space between columns */
+    margin-bottom: 0; /* No bottom margin when side-by-side */
+    max-height: 70vh; /* More height for scrolling if needed */
+  }
+  .curation-customization-area {
+    flex: 2; /* Takes less space, e.g., 40% */
+    position: sticky; /* Keep customization area in view while scrolling archetypes */
+    top: 20px; /* Adjust based on your layout */
+    max-height: calc(85vh - 40px); /* Example calc for sticky positioning */
+  }
+}
+/* ... (Rest of existing responsive CSS) ... */
