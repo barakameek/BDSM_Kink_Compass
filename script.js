@@ -887,7 +887,7 @@ class StyleFinderApp {
     this.addEventListeners();
   }
 
- 
+
   initElements() {
     this.elements = {
       styleFinderBtn: document.getElementById('style-finder-btn'),
@@ -898,35 +898,35 @@ class StyleFinderApp {
       feedback: document.getElementById('feedback'),
       dashboard: document.getElementById('dashboard'),
       themeToggle: document.getElementById('theme-toggle')
+      // NO openPlaygroundBtn here, that's handled globally or after DOMContentLoaded
     };
     if (this.elements.styleFinderBtn) {
         this.elements.styleFinderBtn.textContent = "Unveil Your Archetype";
     }
   }
 
-  addEventListeners() {
+  addEventListeners() { // These are for the QUIZ MODAL
     this.elements.styleFinderBtn.addEventListener('click', () => {
       this.styleFinderActive = true;
       this.styleFinderStep = 0;
       this.styleFinderRole = null;
-      this.styleFinderAnswers = { traits: {}, guidingPreference: null, userDefinedKeyTraits: [] }; // Reset here
+      this.styleFinderAnswers = { traits: {}, guidingPreference: null, userDefinedKeyTraits: [] };
       this.styleFinderScores = {};
       this.hasRenderedDashboard = false;
-      this.curationModeActive = false;
-      this.topArchetypesForCuration = [];
-      this.selectedCuratedElements = {};
-      this.customArchetypeName = "";
-      this.customArchetypeDescription = "";
-
+      this.curationModeActive = false; // Ensure curation is off
       this.elements.styleFinder.style.display = 'flex';
       this.renderStyleFinder();
       this.showFeedback("The journey of discovery begins...");
     });
+
     this.elements.closeStyleFinder.addEventListener('click', () => {
         this.styleFinderActive = false;
         this.curationModeActive = false;
         this.elements.styleFinder.style.display = 'none';
+        // If playground is active, we might want to show it, or show main page.
+        // For now, just closes modal. Playground visibility is separate.
     });
+
     this.elements.themeToggle.addEventListener('click', () => {
       const currentTheme = document.body.getAttribute('data-theme') || 'light';
       const newTheme = currentTheme === 'light' ? 'dark' : 'light';
@@ -935,152 +935,7 @@ class StyleFinderApp {
     });
   }
 
-  computeCurrentScores() {
-    let scores = {};
-    if (!this.styleFinderRole) return scores;
-    const roleStyles = this.styles[this.styleFinderRole];
-    roleStyles.forEach(style => { scores[style] = 0; });
-
-    if (this.styleFinderAnswers.guidingPreference && this.guidingPreferences[this.styleFinderRole]) {
-        const preference = this.guidingPreferences[this.styleFinderRole].find(p => p.id === this.styleFinderAnswers.guidingPreference);
-        if (preference && preference.archetypes) {
-            preference.archetypes.forEach(arch => {
-                if (scores[arch] !== undefined) {
-                    scores[arch] += 25;
-                }
-            });
-        }
-    }
-    const styleKeyTraits = { /* ... (The FULL styleKeyTraits object from previous response) ... */
-        'Brat': { primary: ['rebellion', 'mischief', 'playfulness'], secondary: ['adaptability', 'confidence', 'exploration'] },
-        'Little': { primary: ['innocence', 'dependence', 'affection', 'playfulness'], secondary: ['vulnerability', 'receptiveness', 'sensuality'] },
-        'Rope Bunny': { primary: ['sensuality', 'submissionDepth', 'painTolerance', 'receptiveness', 'exploration'], secondary: ['vulnerability', 'adaptability'] },
-        'Masochist': { primary: ['painTolerance', 'submissionDepth', 'craving', 'receptiveness'], secondary: ['vulnerability', 'devotion', 'exploration'] },
-        'Pet': { primary: ['affection', 'playfulness', 'devotion', 'dependence', 'obedience'], secondary: ['service', 'innocence', 'receptiveness'] },
-        'Slave': { primary: ['service', 'devotion', 'submissionDepth', 'obedience', 'tidiness'], secondary: ['politeness', 'receptiveness', 'vulnerability'] },
-        'Submissive': { primary: ['obedience', 'submissionDepth', 'vulnerability', 'receptiveness', 'dependence'], secondary: ['politeness', 'affection', 'devotion'] },
-        'Switch': { primary: ['adaptability', 'exploration', 'playfulness', 'confidence', 'empathy'], secondary: ['leadership', 'obedience', 'authority', 'receptiveness'] },
-        'Puppy': { primary: ['playfulness', 'devotion', 'affection', 'obedience', 'receptiveness'], secondary: ['dependence', 'service', 'innocence'] },
-        'Kitten': { primary: ['sensuality', 'mischief', 'affection', 'playfulness', 'adaptability'], secondary: ['exploration', 'innocence', 'receptiveness'] },
-        'Princess': { primary: ['sensuality', 'innocence', 'dependence', 'affection', 'service'], secondary: ['tidiness', 'politeness', 'craving'] },
-        'Prey': { primary: ['exploration', 'vulnerability', 'rebellion', 'craving', 'adaptability'], secondary: ['sensuality', 'playfulness'] },
-        'Toy': { primary: ['submissionDepth', 'adaptability', 'service', 'receptiveness', 'playfulness'], secondary: ['sensuality', 'obedience', 'vulnerability'] },
-        'Doll': { primary: ['vulnerability', 'dependence', 'sensuality', 'tidiness', 'obedience', 'receptiveness'], secondary: ['politeness', 'submissionDepth'] },
-        'Bunny': { primary: ['playfulness', 'innocence', 'affection', 'vulnerability', 'sensuality'], secondary: ['dependence', 'receptiveness'] },
-        'Servant': { primary: ['service', 'obedience', 'devotion', 'tidiness', 'politeness'], secondary: ['receptiveness', 'submissionDepth'] },
-        'Playmate': { primary: ['playfulness', 'mischief', 'exploration', 'adaptability', 'affection'], secondary: ['sensuality', 'rebellion', 'confidence'] },
-        'Babygirl': { primary: ['dependence', 'innocence', 'affection', 'vulnerability', 'receptiveness'], secondary: ['playfulness', 'sensuality', 'obedience'] },
-        'Captive': { primary: ['submissionDepth', 'vulnerability', 'exploration', 'craving', 'dependence'], secondary: ['painTolerance', 'receptiveness', 'obedience'] },
-        'Thrall': { primary: ['devotion', 'submissionDepth', 'dependence', 'obedience', 'receptiveness'], secondary: ['service', 'vulnerability', 'politeness'] },
-        'Puppet': { primary: ['receptiveness', 'adaptability', 'obedience', 'submissionDepth', 'sensuality'], secondary: ['vulnerability', 'playfulness', 'dependence'] },
-        'Maid': { primary: ['tidiness', 'politeness', 'service', 'obedience', 'devotion'], secondary: ['receptiveness', 'submissionDepth'] },
-        'Painslut': { primary: ['painTolerance', 'craving', 'submissionDepth', 'exploration', 'receptiveness'], secondary: ['devotion', 'vulnerability', 'obedience'] },
-        'Bottom': { primary: ['receptiveness', 'painTolerance', 'submissionDepth', 'vulnerability', 'adaptability'], secondary: ['sensuality', 'obedience'] },
-        'Disciplinarian': { primary: ['discipline', 'authority', 'precision', 'patience', 'control'], secondary: ['confidence', 'leadership'] },
-        'Master': { primary: ['authority', 'possession', 'dominanceDepth', 'leadership', 'confidence', 'discipline'], secondary: ['care', 'patience', 'control'] },
-        'Nurturer': { primary: ['care', 'empathy', 'patience', 'affection', 'protection'], secondary: ['authority', 'confidence'] },
-        'Sadist': { primary: ['sadism', 'intensity', 'control', 'precision', 'empathy'], secondary: ['creativity', 'confidence', 'patience'] },
-        'Owner': { primary: ['possession', 'control', 'dominanceDepth', 'authority', 'care'], secondary: ['discipline', 'patience', 'leadership'] },
-        'Dominant': { primary: ['authority', 'confidence', 'leadership', 'control', 'dominanceDepth'], secondary: ['boldness', 'intensity'] },
-        'Assertive': { primary: ['boldness', 'intensity', 'authority', 'confidence', 'leadership'], secondary: ['control', 'dominanceDepth'] },
-        'Strict': { primary: ['discipline', 'control', 'precision', 'authority', 'leadership'], secondary: ['confidence'] },
-        'Mistress': { primary: ['confidence', 'creativity', 'dominanceDepth', 'authority', 'sensuality', 'possession'], secondary: ['intensity', 'discipline'] },
-        'Daddy': { primary: ['care', 'possession', 'empathy', 'authority', 'discipline', 'protection'], secondary: ['patience', 'affection', 'leadership'] },
-        'Mommy': { primary: ['care', 'patience', 'empathy', 'affection', 'discipline', 'protection'], secondary: ['authority', 'sensuality', 'leadership'] },
-        'Rigger': { primary: ['creativity', 'precision', 'control', 'patience', 'sensuality'], secondary: ['sadism', 'authority', 'intensity'] },
-        'Hunter': { primary: ['boldness', 'leadership', 'intensity', 'creativity', 'possession', 'patience'], secondary: ['sadism', 'control', 'authority'] },
-        'Trainer': { primary: ['patience', 'discipline', 'leadership', 'care', 'precision', 'authority'], secondary: ['confidence', 'empathy', 'control'] },
-        'Puppeteer': { primary: ['control', 'creativity', 'precision', 'dominanceDepth', 'patience'], secondary: ['intensity', 'authority', 'empathy'] },
-        'Protector': { primary: ['care', 'authority', 'possession', 'boldness', 'patience', 'leadership'], secondary: ['empathy', 'confidence', 'intensity'] },
-        'Caretaker': { primary: ['care', 'empathy', 'patience', 'affection', 'protection', 'devotion'], secondary: ['sensuality', 'dependence'] },
-        'Sir': { primary: ['authority', 'confidence', 'leadership', 'discipline', 'politeness', 'control'], secondary: ['patience', 'precision', 'integrity'] },
-        'Goddess': { primary: ['confidence', 'intensity', 'dominanceDepth', 'authority', 'possession', 'creativity'], secondary: ['sensuality', 'control', 'leadership'] },
-        'Commander': { primary: ['authority', 'intensity', 'dominanceDepth', 'leadership', 'precision', 'boldness'], secondary: ['confidence', 'discipline', 'control', 'strategy'] }
-    };
-
-    Object.keys(this.styleFinderAnswers.traits).forEach(traitName => {
-        const rating = this.styleFinderAnswers.traits[traitName] || 0;
-        // Apply user-defined key trait bonus
-        const userKeyTraitBonus = this.styleFinderAnswers.userDefinedKeyTraits.includes(traitName) ? 1.5 : 1.0;
-
-        (this.styles[this.styleFinderRole] || []).forEach(style => {
-            if (scores[style] === undefined) scores[style] = 0;
-            const styleTraitsDef = styleKeyTraits[style] || { primary: [], secondary: [] };
-            if (styleTraitsDef.primary.includes(traitName)) {
-                scores[style] += rating * 2.0 * userKeyTraitBonus;
-            } else if (styleTraitsDef.secondary.includes(traitName)) {
-                scores[style] += rating * 1.0 * userKeyTraitBonus;
-            }
-        });
-    });
-    return scores;
-  }
-
-  updateDashboard() { // Logic unchanged
-    const currentStepConfig = this.getCurrentStepConfig();
-    if (!this.styleFinderRole || !currentStepConfig || currentStepConfig.type !== 'trait' ) {
-      this.elements.dashboard.style.display = 'none';
-      return;
-    }
-    this.elements.dashboard.style.display = 'block';
-
-    const scores = this.computeCurrentScores();
-    const sortedScores = Object.entries(scores).sort((a, b) => b[1] - a[1]);
-
-    if (!this.previousScores) this.previousScores = {};
-    const previousPositions = {};
-    Object.entries(this.previousScores)
-        .sort((a, b) => b[1] - a[1])
-        .forEach(([style], index) => { previousPositions[style] = index; });
-
-    const isFirstRenderForTraits = !this.hasRenderedDashboard;
-    let dashboardHTML = "<div class='dashboard-header'>✨ Whispers of Your Archetype ✨</div>";
-    sortedScores.slice(0, 4).forEach(([style, score], index) => {
-      const prevPos = previousPositions[style] !== undefined ? previousPositions[style] : index;
-      const movement = prevPos - index;
-      let moveIndicator = '';
-      if (this.previousScores[style] && movement !== 0 && prevPos < 4) {
-          if (movement > 0) moveIndicator = '<span class="move-up">↑</span>';
-          else if (movement < 0) moveIndicator = '<span class="move-down">↓</span>';
-      }
-
-      const prevScoreVal = this.previousScores[style] || 0;
-      const deltaValue = score - prevScoreVal;
-      let delta = '';
-      if (Math.abs(deltaValue) > 0.1) {
-        delta = `<span class="score-delta ${deltaValue > 0 ? 'positive' : 'negative'}">${deltaValue > 0 ? '+' : ''}${(deltaValue).toFixed(1)}</span>`;
-      }
-
-      const animationStyle = isFirstRenderForTraits || !this.previousScores[style] ? 'style="animation: slideIn 0.3s ease;"' : '';
-      const icon = (this.styleDescriptions[style] && this.styleDescriptions[style].icon) || '🌟';
-      dashboardHTML += `
-        <div class="dashboard-item ${index === 0 ? 'top-archetype' : ''}" ${animationStyle}>
-          <span class="style-name">${icon} ${style}</span>
-          <span class="dashboard-score">${score.toFixed(1)} ${delta} ${moveIndicator}</span>
-        </div>
-      `;
-    });
-
-    this.elements.dashboard.innerHTML = dashboardHTML;
-    this.previousScores = { ...scores };
-    if(currentStepConfig.type === 'trait') this.hasRenderedDashboard = true;
-  }
-
-  getTotalSteps() {
-    const steps = [];
-    steps.push({ type: 'welcome' });
-    steps.push({ type: 'role' });
-    if (this.styleFinderRole) {
-        steps.push({ type: 'guidingPreference' });
-        const traitSet = (this.styleFinderRole === 'dominant' ? this.domFinderTraits : this.subFinderTraits);
-        traitSet.forEach(trait => steps.push({ type: 'trait', trait: trait.name }));
-        steps.push({ type: 'userKeyTraits' }); // NEW STEP for weighted trait importance
-    }
-    steps.push({ type: 'roundSummary', round: 'Traits' });
-    steps.push({ type: 'result' });
-    return steps.length;
-  }
-
+  // MODIFIED renderStyleFinder to include a different button for Playground on result screen
   renderStyleFinder() {
     if (!this.styleFinderActive || !this.elements.stepContent) return;
     
@@ -1089,23 +944,17 @@ class StyleFinderApp {
         return;
     }
 
-    const steps = [];
-    steps.push({ type: 'welcome' });
-    steps.push({ type: 'role' });
-    if (this.styleFinderRole) {
-        steps.push({ type: 'guidingPreference' });
-        const traitSet = (this.styleFinderRole === 'dominant' ? this.domFinderTraits : this.subFinderTraits);
-        traitSet.forEach(trait => steps.push({ type: 'trait', trait: trait.name }));
-        steps.push({ type: 'userKeyTraits' }); // NEW STEP
-    }
-    steps.push({ type: 'roundSummary', round: 'Final Glimpse' });
-    steps.push({ type: 'result' });
+    const steps = this.getQuizStepsArray(); // Use helper
 
     if (this.styleFinderStep >= steps.length) this.styleFinderStep = steps.length - 1;
     const currentStepConfig = steps[this.styleFinderStep];
-    if (!currentStepConfig) return;
+    if (!currentStepConfig) {
+        console.error("Invalid step configuration for step:", this.styleFinderStep);
+        return;
+    }
     let html = "";
 
+    // Progress Tracker Logic
     if (currentStepConfig.type === 'trait' && this.styleFinderRole) {
         const traitSet = (this.styleFinderRole === 'dominant' ? this.domFinderTraits : this.subFinderTraits);
         const currentTraitIndex = traitSet.findIndex(t => t.name === currentStepConfig.trait);
@@ -1119,15 +968,16 @@ class StyleFinderApp {
         this.elements.progressTracker.style.display = 'none';
     }
 
+
     switch (currentStepConfig.type) {
-      case 'welcome': // Unchanged
+      case 'welcome':
         html += `
           <h2>The Oracle of Archetypes Awaits...</h2>
           <p>Embark on a journey to unveil the resonant energies within you. Answer with your heart, and let your true self emerge.</p>
           <button class="cta-button" onclick="styleFinderApp.nextStyleFinderStep()">Begin the Unveiling!</button>
         `;
         break;
-      case 'role': // Unchanged
+      case 'role':
         html += `
           <h2>Choose Your Foundational Current</h2>
           <p>Which fundamental energy calls to you more strongly at this moment in your journey?</p>
@@ -1137,7 +987,7 @@ class StyleFinderApp {
           </div>
         `;
         break;
-      case 'guidingPreference': // Unchanged
+      case 'guidingPreference':
         html += `<h2>Select Your Guiding Path</h2>`;
         html += `<p>Within your chosen current of <strong>${this.styleFinderRole}</strong>, which of these paths resonates most deeply with your core desires right now? This will help illuminate your unique archetype.</p>`;
         html += `<div class="preference-options">`;
@@ -1145,9 +995,9 @@ class StyleFinderApp {
             html += `<button onclick="styleFinderApp.setGuidingPreference('${pref.id}')">${pref.text}</button>`;
         });
         html += `</div>`;
-        html += `<button onclick="styleFinderApp.prevStyleFinderStep()" style="background: #ccc; margin-top:15px;">Back to Role</button>`;
+        html += `<div class="navigation-buttons" style="margin-top:15px;"><button onclick="styleFinderApp.prevStyleFinderStep()">Back to Role</button></div>`;
         break;
-      case 'trait': // Unchanged
+      case 'trait':
         const traitSet = (this.styleFinderRole === 'dominant' ? this.domFinderTraits : this.subFinderTraits);
         const traitObj = traitSet.find(t => t.name === currentStepConfig.trait);
         if (!traitObj) { html = "<p>Error: Trait not found.</p>"; break; }
@@ -1173,19 +1023,18 @@ class StyleFinderApp {
                           styleFinderApp.updateDashboard();">
           <div id="desc-${traitObj.name}" class="slider-description">${currentDesc}</div>
           <p class="slider-footnote">${footnoteSet[traitObj.name]}</p>
-          <div style="margin-top: 15px;">
+          <div class="navigation-buttons" style="margin-top: 15px;">
             <button onclick="styleFinderApp.nextStyleFinderStep('${traitObj.name}')">Continue the Path</button>
-            <button onclick="styleFinderApp.prevStyleFinderStep()" style="background: #ccc; margin-left: 10px;">Reconsider</button>
+            <button onclick="styleFinderApp.prevStyleFinderStep()">Reconsider</button>
           </div>
         `;
         break;
-      case 'userKeyTraits': // NEW STEP
+      case 'userKeyTraits':
         html += `<h2>Identify Your Core Resonances</h2>`;
         html += `<p>From the aspects you've reflected upon, select up to <strong>three</strong> that feel most central to your being or are most important to you in a dynamic. This will help the Oracle fine-tune your archetype.</p>`;
         html += `<div class="key-traits-selection">`;
         const allAnsweredTraits = this.styleFinderRole === 'submissive' ? this.subFinderTraits : this.domFinderTraits;
         allAnsweredTraits.forEach(trait => {
-            // Only show traits that were actually part of the quiz (though currently all are)
             const traitDisplayName = trait.name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
             const isChecked = this.styleFinderAnswers.userDefinedKeyTraits.includes(trait.name);
             html += `<label class="key-trait-label">
@@ -1195,12 +1044,12 @@ class StyleFinderApp {
         });
         html += `</div>`;
         html += `<p id="key-trait-feedback" style="color: #e74c75; font-size:0.9em; min-height:1.2em;"></p>`;
-        html += `<div style="margin-top: 15px;">
+        html += `<div class="navigation-buttons" style="margin-top: 15px;">
                     <button onclick="styleFinderApp.nextStyleFinderStep()" class="cta-button">Confirm Core Traits</button>
-                    <button onclick="styleFinderApp.prevStyleFinderStep()" style="background: #ccc;">Back to Traits</button>
+                    <button onclick="styleFinderApp.prevStyleFinderStep()">Back to Traits</button>
                  </div>`;
         break;
-      case 'roundSummary': // Unchanged
+      case 'roundSummary':
         const topTraits = Object.entries(this.styleFinderAnswers.traits)
           .sort((a, b) => b[1] - a[1])
           .slice(0, 3)
@@ -1211,11 +1060,13 @@ class StyleFinderApp {
           <div id="summary-dashboard">${this.generateSummaryDashboard()}</div>
           ${topTraits.length ? `<p><em>Your Most Resonant Traits So Far:</em> ${topTraits.join(', ')}</p>` : ''}
           ${this.styleFinderAnswers.userDefinedKeyTraits.length > 0 ? `<p><em>Your Chosen Core Traits:</em> ${this.styleFinderAnswers.userDefinedKeyTraits.map(t => t.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())).join(', ')}</p>` : ''}
-          <button class="cta-button" onclick="styleFinderApp.nextStyleFinderStep()">Behold My Archetype!</button>
-          <button onclick="styleFinderApp.prevStyleFinderStep()" style="background: #ccc;">Revisit Core Traits</button>
+          <div class="navigation-buttons" style="margin-top:15px;">
+            <button class="cta-button" onclick="styleFinderApp.nextStyleFinderStep()">Behold My Archetype!</button>
+            <button onclick="styleFinderApp.prevStyleFinderStep()">Revisit Core Traits</button>
+          </div>
         `;
         break;
-      case 'result': // Unchanged from previous, already includes curation button
+      case 'result':
         this.calculateStyleFinderResult();
         if (Object.keys(this.styleFinderScores).length === 0) {
             html = `<h2>An Enigma!</h2><p>It seems the Oracle needs more input to discern your archetype. Please restart and explore your answers.</p><button onclick="styleFinderApp.startOver()">Restart the Journey</button>`;
@@ -1245,12 +1096,18 @@ class StyleFinderApp {
             ${styleData.flavorText ? `<p class="flavor-text"><em>"${styleData.flavorText}"</em></p>` : ""}
             <div class="result-subsection"><h3>Essence</h3><p>${styleData.essence}</p></div>
             ${matchData ? `<div class="result-subsection dynamic-match-section"><h3>Primary Dynamic Resonance: With ${matchData.partnerStyle}</h3><p><strong>Dynamic Signature:</strong> ${matchData.dynamicName || "A Potent Pairing"}</p><p>${matchData.description || "This pairing creates a special synergy."}</p>${matchData.interactionFocus && matchData.interactionFocus.length > 0 ? `<p><strong>Key Interaction Harmonics:</strong></p><ul>${matchData.interactionFocus.map(item => `<li>${item}</li>`).join('')}</ul>` : ""}</div>` : `<p><em>Dynamic match information is being woven by the Fates...</em></p>`}
-            <p><em>For a deeper understanding of this Archetype, select "Explore Deeper". To explore your other strong resonances and craft a personalized style, choose "Curate Your Constellation".</em></p>
+            
+            <p style="margin-top:20px;"><em>Your journey with this archetype can deepen. Explore its full profile, blend its essence with other resonances to craft your unique constellation, or venture into the Playground for interactive exploration.</em></p>
+            
             <div class="result-buttons">
               <button onclick="styleFinderApp.showFullDetails('${topStyle}')">Explore ${styleData.title || topStyle} Deeper</button>
               <button class="cta-button" onclick="styleFinderApp.enterCurationMode()">Curate Your Constellation</button>
+              <!-- NEW: Button to directly open playground from results -->
+              <button class="cta-button" onclick="styleFinderApp.openPlaygroundFromQuiz()">Enter the Playground</button>
             </div>
-            <div class="result-buttons" style="margin-top:10px;"><button onclick="styleFinderApp.startOver()">Restart the Journey</button></div>
+            <div class="result-buttons" style="margin-top:10px;">
+              <button onclick="styleFinderApp.startOver()">Restart the Journey</button>
+            </div>
           </div>`;
         setTimeout(() => { if (typeof confetti === 'function') { confetti({ particleCount: 150, spread: 90, origin: { y: 0.5 } }); } }, 300);
         break;
@@ -1263,50 +1120,67 @@ class StyleFinderApp {
     }
   }
 
+  // Helper to get the quiz steps array consistently
+  getQuizStepsArray() {
+    const steps = [];
+    steps.push({ type: 'welcome' });
+    steps.push({ type: 'role' });
+    if (this.styleFinderRole) {
+        steps.push({ type: 'guidingPreference' });
+        const traitSet = (this.styleFinderRole === 'dominant' ? this.domFinderTraits : this.subFinderTraits);
+        traitSet.forEach(trait => steps.push({ type: 'trait', trait: trait.name }));
+        steps.push({ type: 'userKeyTraits' });
+    }
+    steps.push({ type: 'roundSummary', round: 'Final Glimpse' });
+    steps.push({ type: 'result' });
+    return steps;
+  }
+
+
   setStyleFinderRole(role) {
     this.styleFinderRole = role;
     this.styleFinderAnswers.role = role;
     this.styleFinderAnswers.traits = {};
     this.styleFinderAnswers.guidingPreference = null;
-    this.styleFinderAnswers.userDefinedKeyTraits = []; // Reset here
+    this.styleFinderAnswers.userDefinedKeyTraits = [];
     this.previousScores = {};
     this.hasRenderedDashboard = false;
     this.nextStyleFinderStep();
   }
 
-  setGuidingPreference(preferenceId) { // Unchanged
+  setGuidingPreference(preferenceId) {
     this.styleFinderAnswers.guidingPreference = preferenceId;
     this.showFeedback(`Path chosen: ${preferenceId.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}!`);
     this.nextStyleFinderStep();
   }
 
-  setStyleFinderTrait(trait, value) { // Unchanged
+  setStyleFinderTrait(trait, value) {
     this.styleFinderAnswers.traits[trait] = parseInt(value, 10);
   }
 
-  // NEW METHOD for Weighted Trait Importance
   handleUserKeyTraitSelection(checkboxElement) {
     const traitName = checkboxElement.value;
     const feedbackEl = document.getElementById('key-trait-feedback');
     if (checkboxElement.checked) {
         if (this.styleFinderAnswers.userDefinedKeyTraits.length < 3) {
             this.styleFinderAnswers.userDefinedKeyTraits.push(traitName);
-            if(feedbackEl) feedbackEl.textContent = "";
+            if(feedbackEl) feedbackEl.textContent = `${3 - this.styleFinderAnswers.userDefinedKeyTraits.length} more core traits can be selected.`;
         } else {
-            checkboxElement.checked = false; // Prevent checking more than 3
-            if(feedbackEl) feedbackEl.textContent = "You can select up to 3 core traits.";
+            checkboxElement.checked = false;
+            if(feedbackEl) feedbackEl.textContent = "You have selected the maximum of 3 core traits.";
         }
     } else {
         this.styleFinderAnswers.userDefinedKeyTraits = this.styleFinderAnswers.userDefinedKeyTraits.filter(t => t !== traitName);
-        if(feedbackEl) feedbackEl.textContent = "";
+        if(feedbackEl) feedbackEl.textContent = `${3 - this.styleFinderAnswers.userDefinedKeyTraits.length} more core traits can be selected.`;
     }
-    // console.log("Selected Key Traits:", this.styleFinderAnswers.userDefinedKeyTraits);
+    if (this.styleFinderAnswers.userDefinedKeyTraits.length === 0 && feedbackEl) {
+        feedbackEl.textContent = "Select up to 3 core traits.";
+    }
   }
 
-
-  nextStyleFinderStep(currentTraitOrStep = null) { // Modified to check for userKeyTraits step
+  nextStyleFinderStep(currentInput = null) { // Renamed currentTraitOrStep for clarity
     const currentStepConfig = this.getCurrentStepConfig();
-    if (currentStepConfig && currentStepConfig.type === 'trait' && currentTraitOrStep && this.styleFinderAnswers.traits[currentTraitOrStep] === undefined) {
+    if (currentStepConfig && currentStepConfig.type === 'trait' && currentInput && this.styleFinderAnswers.traits[currentInput] === undefined) {
       this.showFeedback("Please slide to express your affinity first!");
       return;
     }
@@ -1314,18 +1188,19 @@ class StyleFinderApp {
         this.showFeedback("Please select a guiding path to continue.");
         return;
     }
-    // No specific validation needed for userKeyTraits before proceeding, as selection is optional (though encouraged)
+    // For 'userKeyTraits', we allow proceeding even if none are selected.
     this.styleFinderStep++;
     this.renderStyleFinder();
   }
   
-  prevStyleFinderStep() { // Modified to handle new step
+  prevStyleFinderStep() {
     if (this.styleFinderStep > 0) {
       this.styleFinderStep--;
       const newStepConfig = this.getCurrentStepConfig();
+      // Reset answers for steps "after" the new current step to avoid inconsistencies
       if (newStepConfig.type === 'role') {
+          this.styleFinderRole = null; // This effectively resets subsequent steps
           this.styleFinderAnswers.guidingPreference = null;
-          this.styleFinderRole = null;
           this.styleFinderAnswers.traits = {};
           this.styleFinderAnswers.userDefinedKeyTraits = [];
           this.previousScores = {};
@@ -1336,36 +1211,26 @@ class StyleFinderApp {
           this.previousScores = {};
           this.hasRenderedDashboard = false;
       } else if (newStepConfig.type === 'trait' && this.styleFinderAnswers.userDefinedKeyTraits.length > 0) {
-          // If going back from userKeyTraits to the last trait question, clear userKeyTraits
-          const previousStepIsAlsoTrait = this.getCurrentStepConfig().type === 'trait';
-          if(!previousStepIsAlsoTrait){ // This means we are coming FROM userKeyTraits step
-             // No, this logic is tricky. Better to clear on entering userKeyTraits if coming from summary.
-             // For now, just going back is fine.
+          // If going back from userKeyTraits selection TO the last trait question, clear the key traits.
+          // This ensures that if they change a trait slider, their key trait selection might need re-evaluation.
+          // Check if the PREVIOUS step was 'userKeyTraits'
+          const stepsArray = this.getQuizStepsArray();
+          if (this.styleFinderStep + 1 < stepsArray.length && stepsArray[this.styleFinderStep + 1].type === 'userKeyTraits') {
+            // this.styleFinderAnswers.userDefinedKeyTraits = []; // Optionally clear if desired
           }
       }
       this.renderStyleFinder();
     }
   }
 
-  getCurrentStepConfig() { // Modified for new step
-      const steps = [];
-      steps.push({ type: 'welcome' });
-      steps.push({ type: 'role' });
-      if (this.styleFinderRole) {
-          steps.push({ type: 'guidingPreference' });
-          const traitSet = (this.styleFinderRole === 'dominant' ? this.domFinderTraits : this.subFinderTraits);
-          traitSet.forEach(trait => steps.push({ type: 'trait', trait: trait.name }));
-          steps.push({ type: 'userKeyTraits' });
-      }
-      steps.push({ type: 'roundSummary', round: 'Final Glimpse' });
-      steps.push({ type: 'result' });
-      return steps[this.styleFinderStep];
+  getCurrentStepConfig() {
+      return this.getQuizStepsArray()[this.styleFinderStep];
   }
 
-  startOver() { // Unchanged from previous, already resets curation
+  startOver() {
     this.styleFinderStep = 0;
     this.styleFinderRole = null;
-    this.styleFinderAnswers = { traits: {}, guidingPreference: null, userDefinedKeyTraits: [] }; // Ensure reset
+    this.styleFinderAnswers = { traits: {}, guidingPreference: null, userDefinedKeyTraits: [] };
     this.styleFinderScores = {};
     this.hasRenderedDashboard = false;
     this.previousScores = null;
@@ -1374,15 +1239,22 @@ class StyleFinderApp {
     this.selectedCuratedElements = {};
     this.customArchetypeName = "";
     this.customArchetypeDescription = "";
+    
+    // If playground exists and is visible, hide it
+    if (this.playgroundApp && document.getElementById('playgroundContainer').style.display !== 'none') {
+        this.playgroundApp.hidePlayground();
+    }
+
+    this.elements.styleFinder.style.display = 'flex'; // Ensure quiz modal is shown
     this.renderStyleFinder();
     this.showFeedback("A fresh journey begins!");
   }
 
-  calculateStyleFinderResult() { // Unchanged
+  calculateStyleFinderResult() {
     this.styleFinderScores = this.computeCurrentScores();
   }
 
-  generateSummaryDashboard() { // Modified to show userKeyTraits if selected
+  generateSummaryDashboard() {
     const scores = this.computeCurrentScores();
     const sortedScores = Object.entries(scores).sort((a, b) => b[1] - a[1]).slice(0, 5);
     let html = '';
@@ -1403,13 +1275,13 @@ class StyleFinderApp {
     return html;
   }
 
-  showFeedback(message) { // Unchanged
+  showFeedback(message) {
     this.elements.feedback.innerHTML = message;
     this.elements.feedback.classList.add('feedback-animation');
     setTimeout(() => this.elements.feedback.classList.remove('feedback-animation'), 500);
   }
 
-  showTraitInfo(trait) { // Unchanged
+  showTraitInfo(trait) {
     const explanation = this.traitExplanations[trait] || "No extra info available!";
     const traitDisplayName = trait.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
     const popup = document.createElement('div');
@@ -1422,7 +1294,7 @@ class StyleFinderApp {
     document.body.appendChild(popup);
   }
 
-  showFullDetails(styleName) { // Unchanged
+  showFullDetails(styleName) {
     const styleData = this.styleDescriptions[styleName];
     if (!styleData || !styleData.title) {
         alert("Detailed information for this archetype is currently veiled.");
@@ -1482,30 +1354,24 @@ class StyleFinderApp {
     document.body.appendChild(popup);
   }
 
-  // --- Curation Methods (Unchanged from previous full script that introduced them) ---
-  escapeJsString(str) { /* ... */ if (typeof str !== 'string') return ''; return str.replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n'); }
-  enterCurationMode() { /* ... */ this.curationModeActive = true; this.selectedCuratedElements = {}; this.customArchetypeName = ""; this.customArchetypeDescription = ""; this.renderCurationScreen(); }
-  exitCurationMode() { /* ... */
+  // --- Curation Methods ---
+  escapeJsString(str) { if (typeof str !== 'string') return ''; return str.replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n'); }
+  enterCurationMode() { this.curationModeActive = true; this.selectedCuratedElements = {}; this.customArchetypeName = ""; this.customArchetypeDescription = ""; this.renderCurationScreen(); }
+  
+  exitCurationMode() { // MODIFIED: Takes user back to their main quiz result display
     this.curationModeActive = false;
-    let resultStepIndex = this.getTotalSteps() -1; // This needs to point to the 'result' step before any potential *curation specific* steps were added to the main flow
-    const steps = [];
-    steps.push({ type: 'welcome' });
-    steps.push({ type: 'role' });
-    if (this.styleFinderRole) {
-        steps.push({ type: 'guidingPreference' });
-        const traitSet = (this.styleFinderRole === 'dominant' ? this.domFinderTraits : this.subFinderTraits);
-        traitSet.forEach(trait => steps.push({ type: 'trait', trait: trait.name }));
-        steps.push({ type: 'userKeyTraits' }); // Important: include new step here for accurate indexing
+    // Find the 'result' step index within the quiz flow
+    const resultStepIndex = this.getQuizStepsArray().findIndex(s => s.type === 'result');
+    if (resultStepIndex !== -1) {
+        this.styleFinderStep = resultStepIndex;
+    } else {
+        // Fallback, though should always find 'result'
+        this.styleFinderStep = this.getQuizStepsArray().length - 1;
     }
-    steps.push({ type: 'roundSummary', round: 'Final Glimpse' });
-    steps.push({ type: 'result' }); // This is the target step
-    resultStepIndex = steps.findIndex(s => s.type === 'result');
+    this.renderStyleFinder(); // Re-render the main quiz result page
+  }
 
-    if (resultStepIndex !== -1) { this.styleFinderStep = resultStepIndex; }
-    else { this.styleFinderStep = this.getTotalSteps() - 1; } // Fallback
-    this.renderStyleFinder();
-   }
-  renderCurationScreen() { /* ... (The full tabbed curation screen render logic from previous) ... */
+  renderCurationScreen() {
     this.elements.dashboard.style.display = 'none';
     this.elements.progressTracker.style.display = 'none';
     let html = `<div class="curation-header"><h2>Craft Your Unique Archetype Constellation</h2>`;
@@ -1520,7 +1386,7 @@ class StyleFinderApp {
     html += `</div>`;
     this.topArchetypesForCuration.forEach((arch, index) => {
         if (!arch.data) return;
-        html += `<div id="curation-tab-${this.escapeJsString(arch.name)}" class="tab-content ${index === 0 ? 'active' : ''}">`;
+        html += `<div id="curation-tab-${this.escapeJsString(arch.name).replace(/[^a-zA-Z0-9_-]/g, '')}" class="tab-content ${index === 0 ? 'active' : ''}">`; // Sanitize ID
         html += `<h3>${arch.data.title} (Score: ${arch.score.toFixed(1)})</h3>`;
         if (arch.data.flavorText) html += `<p class="flavor-text"><em>"${arch.data.flavorText}"</em></p>`;
         html += `<p><strong>Essence:</strong> ${arch.data.essence}</p>`;
@@ -1533,7 +1399,7 @@ class StyleFinderApp {
             if (section.items && section.items.length > 0) {
                 html += `<h4 class="curation-section-title">${section.title}:</h4><ul class="selectable-list">`;
                 section.items.forEach(item => {
-                    const uniqueId = `${section.type}-${arch.name}-${this.escapeJsString(item.substring(0,20)).replace(/\s/g,'')}`;
+                    const uniqueId = `${section.type}-${arch.name}-${this.escapeJsString(item.substring(0,20)).replace(/[^a-zA-Z0-9_-]/g, '')}`; // Sanitize uniqueId
                     const isChecked = !!this.selectedCuratedElements[uniqueId];
                     html += `<li><label><input type="checkbox" data-type="${section.type}" data-source="${arch.name}" data-text="${this.escapeJsString(item)}" onchange="styleFinderApp.handleElementSelection(this, '${this.escapeJsString(uniqueId)}')" ${isChecked ? 'checked' : ''}> ${item}</label></li>`;
                 });
@@ -1556,19 +1422,21 @@ class StyleFinderApp {
     html += `</div></div>`;
     html += `</div>`;
     html += `</div>`;
-    html += `<div class="navigation-buttons" style="margin-top: 20px;"><button onclick="styleFinderApp.exitCurationMode()">Back to Primary Result</button></div>`;
+    // MODIFIED: Changed button text for clarity
+    html += `<div class="navigation-buttons" style="margin-top: 20px;">
+                <button onclick="styleFinderApp.exitCurationMode()">Back to Primary Quiz Result</button>
+             </div>`;
     this.elements.stepContent.innerHTML = html;
     this.updateSelectedElementsDisplay();
     if (document.getElementById('customArchetypeDescriptionTextarea')) {
         document.getElementById('customArchetypeDescriptionTextarea').value = this.customArchetypeDescription;
     }
-    if (this.topArchetypesForCuration.length > 0) {
+    if (this.topArchetypesForCuration.length > 0 && this.topArchetypesForCuration[0].name) {
         this.openCurationTab(null, this.topArchetypesForCuration[0].name, true);
     }
   }
-  openCurationTab(evt, archetypeName, isInitialCall = false) { /* ... (Unchanged tab logic) ... */
+  openCurationTab(evt, archetypeName, isInitialCall = false) {
     let i, tabcontent, tablinks;
-    // Ensure elements.stepContent is available and contains the necessary classes
     if (!this.elements.stepContent) return;
 
     tabcontent = this.elements.stepContent.getElementsByClassName("tab-content");
@@ -1581,8 +1449,7 @@ class StyleFinderApp {
       tablinks[i].classList.remove("active");
     }
     
-    // Need to escape special characters in archetypeName if it's used directly in querySelector
-    const safeArchetypeName = archetypeName.replace(/[^a-zA-Z0-9_-]/g, '\\$&');
+    const safeArchetypeName = archetypeName.replace(/[^a-zA-Z0-9_-]/g, ''); // Simpler sanitization for ID
     const currentTabContent = document.getElementById("curation-tab-" + safeArchetypeName);
 
     if (currentTabContent) {
@@ -1594,7 +1461,6 @@ class StyleFinderApp {
       evt.currentTarget.classList.add("active");
     } else if (isInitialCall && tablinks.length > 0) {
         for (i = 0; i < tablinks.length; i++) {
-            // Match based on a data attribute or a more robust way if names can have spaces/special chars
             if (tablinks[i].getAttribute('onclick').includes(`'${this.escapeJsString(archetypeName)}'`)) {
                 tablinks[i].classList.add("active");
                 break;
@@ -1602,19 +1468,20 @@ class StyleFinderApp {
         }
     }
   }
-  handleElementSelection(checkboxElement, uniqueId) { /* ... */
-    const { type, source, text } = checkboxElement.dataset;
-    const unescapedText = this.unescapeJsString(text); // Make sure to use unescaped text for storage
+  handleElementSelection(checkboxElement, uniqueId) {
+    const type = checkboxElement.dataset.type;
+    const source = checkboxElement.dataset.source;
+    const text = this.unescapeJsString(checkboxElement.dataset.text); // Unescape for storage and display
 
     if (checkboxElement.checked) {
-        this.selectedCuratedElements[uniqueId] = { type, text: unescapedText, source };
+        this.selectedCuratedElements[uniqueId] = { type, text, source };
     } else {
         delete this.selectedCuratedElements[uniqueId];
     }
     this.updateSelectedElementsDisplay();
   }
-  unescapeJsString(str) { /* ... */ if (typeof str !== 'string') return ''; return str.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\n/g, '\n'); }
-  updateSelectedElementsDisplay() { /* ... */
+  unescapeJsString(str) { if (typeof str !== 'string') return ''; return str.replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\n/g, '\n'); }
+  updateSelectedElementsDisplay() {
     const listElement = document.getElementById('selected-elements-list');
     if (!listElement) return;
     listElement.innerHTML = '';
@@ -1627,11 +1494,11 @@ class StyleFinderApp {
         listElement.appendChild(li);
     });
   }
-  updateCustomDescriptionWithSelections() { /* ... */
+  updateCustomDescriptionWithSelections() {
     const textarea = document.getElementById('customArchetypeDescriptionTextarea');
     if (!textarea) return;
     let desc = "My unique archetype is a blend of these resonant aspects:\n\n";
-    const elementsByTypeAndSource = {}; // Group by source then type
+    const elementsByTypeAndSource = {};
     Object.values(this.selectedCuratedElements).forEach(item => {
         if (!elementsByTypeAndSource[item.source]) elementsByTypeAndSource[item.source] = {};
         if (!elementsByTypeAndSource[item.source][item.type]) elementsByTypeAndSource[item.source][item.type] = [];
@@ -1641,14 +1508,15 @@ class StyleFinderApp {
     for (const source in elementsByTypeAndSource) {
         desc += `From ${source}:\n`;
         for (const type in elementsByTypeAndSource[source]) {
-            desc += `  As a ${type}:\n${elementsByTypeAndSource[source][type].join("\n  ")}\n`;
+            const typeDisplay = type.charAt(0).toUpperCase() + type.slice(1) + (type.endsWith('s') ? '' : 's'); // Make plural for display
+            desc += `  ${typeDisplay}:\n${elementsByTypeAndSource[source][type].map(t => `    ${t}`).join("\n")}\n`; // Indent items
         }
         desc += `\n`;
     }
     textarea.value = desc.trim() || "Reflecting on my chosen elements...";
     this.customArchetypeDescription = textarea.value;
   }
-  finalizeCuration() { /* ... */
+  finalizeCuration() {
     const nameInput = document.getElementById('customArchetypeNameInput');
     const descTextarea = document.getElementById('customArchetypeDescriptionTextarea');
     if (nameInput) this.customArchetypeName = nameInput.value.trim();
@@ -1659,7 +1527,7 @@ class StyleFinderApp {
     if (!this.customArchetypeDescription && Object.keys(this.selectedCuratedElements).length > 0) { this.updateCustomDescriptionWithSelections(); }
     this.renderCuratedResultScreen();
   }
-  renderCuratedResultScreen() { /* ... */
+  renderCuratedResultScreen() {
     this.elements.dashboard.style.display = 'none'; this.elements.progressTracker.style.display = 'none';
     let html = `<div class="curated-result-display result-section fade-in">`;
     html += `<h2>✨ Your Curated Archetype ✨</h2>`;
@@ -1676,17 +1544,17 @@ class StyleFinderApp {
     html += `</div>`;
     html += `<div class="navigation-buttons" style="margin-top: 20px;">`;
     html += `<button onclick="styleFinderApp.refineCuration()">Refine Curation</button>`;
-    html += `<button onclick="styleFinderApp.exitCurationModeAndRestart()">Start New Journey</button>`;
+    html += `<button onclick="styleFinderApp.exitCurationModeAndRestart()">Start New Journey</button>`; // This was exitCurationModeAndRestart
     html += `</div>`;
     html += `</div>`;
     this.elements.stepContent.innerHTML = html;
   }
-  copyCuratedToClipboard() { /* ... */
+  copyCuratedToClipboard() {
     const textToCopy = `My Curated Archetype: ${this.customArchetypeName}\n\nDescription:\n${this.customArchetypeDescription}`;
     navigator.clipboard.writeText(textToCopy).then(() => { this.showFeedback("Curated archetype copied!"); })
     .catch(err => { this.showFeedback("Failed to copy."); console.error('Failed to copy: ', err); });
   }
-  downloadCuratedAsText() { /* ... (Full method from previous correct response) ... */
+  downloadCuratedAsText() {
     const textToDownload = `My Curated Archetype: ${this.customArchetypeName}\n\nDescription:\n${this.customArchetypeDescription}\n\nSelected Elements:\n`;
     let elementsText = "";
     Object.values(this.selectedCuratedElements).forEach(item => {
@@ -1702,9 +1570,47 @@ class StyleFinderApp {
     document.body.removeChild(anchor); URL.revokeObjectURL(anchor.href);
     this.showFeedback("Curated archetype text file downloading!");
   }
-  refineCuration() { /* ... */ this.renderCurationScreen(); }
-  exitCurationModeAndRestart() { /* ... */ this.curationModeActive = false; this.startOver(); }
+  refineCuration() { this.renderCurationScreen(); }
+  exitCurationModeAndRestart() { this.curationModeActive = false; this.startOver(); }
 
-}
+  // NEW: Method to open playground from quiz results
+  openPlaygroundFromQuiz() {
+    this.elements.styleFinder.style.display = 'none'; // Hide quiz modal
+    if (typeof PlaygroundApp !== 'undefined') {
+        if (!this.playgroundApp) {
+            this.playgroundApp = new PlaygroundApp(this);
+            this.playgroundApp.initializePlayground('playgroundContainer');
+        }
+        this.playgroundApp.showPlayground();
+    } else {
+        console.error("PlaygroundApp class not found.");
+        alert("Playground is currently unavailable.");
+    }
+  }
 
+} // End of StyleFinderApp class
+
+// --- GLOBAL INSTANTIATION AND SETUP ---
 const styleFinderApp = new StyleFinderApp();
+
+// Playground related setup (button listener)
+document.addEventListener('DOMContentLoaded', () => {
+    const openPlaygroundBtn = document.getElementById('open-playground-btn');
+    if (openPlaygroundBtn) {
+        openPlaygroundBtn.addEventListener('click', () => {
+            if (typeof PlaygroundApp !== 'undefined') {
+                if (!styleFinderApp.playgroundApp) { // Use the global styleFinderApp instance
+                    styleFinderApp.playgroundApp = new PlaygroundApp(styleFinderApp);
+                    styleFinderApp.playgroundApp.initializePlayground('playgroundContainer');
+                }
+                styleFinderApp.playgroundApp.showPlayground();
+                if (styleFinderApp.elements.styleFinder) {
+                   styleFinderApp.elements.styleFinder.style.display = 'none';
+                }
+            } else {
+                console.error("PlaygroundApp class not found.");
+                alert("Playground feature is not available at the moment. Please ensure all scripts are loaded correctly.");
+            }
+        });
+    }
+});
