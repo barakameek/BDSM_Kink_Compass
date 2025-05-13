@@ -1023,69 +1023,86 @@ class StyleFinderApp {
     navigator.clipboard.writeText(textToCopy).then(() => { this.showFeedback("Curated archetype copied!"); })
     .catch(err => { this.showFeedback("Failed to copy."); console.error('Failed to copy: ', err); });
   }
-  downloadCuratedAsText() {
+downloadCuratedAsText() {
     const textToDownload = `My Curated Archetype: ${this.customArchetypeName}\n\nDescription:\n${this.customArchetypeDescription}\n\nSelected Elements:\n`;
     let elementsText = "";
     Object.values(this.selectedCuratedElements).forEach(item => {
         elementsText += `- (${item.source} - ${item.type}): ${item.text}\n`;
     });
     const fullText = textToDownload + (elementsText || "Description self-authored without direct element selection.");
+
     const blob = new Blob([fullText], { type: 'text/plain;charset=utf-8' });
     const anchor = document.createElement('a');
     const sanitizedFilename = (this.customArchetypeName || "My_Archetype").replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_-]/g, '');
     anchor.download = `${sanitizedFilename}.txt`;
     anchor.href = URL.createObjectURL(blob);
-    anchor.style.display = 'none'; document.body.appendChild(anchor); anchor.click();
-    document.body.removeChild(anchor); URL.revokeObjectURL(anchor.href);
+    anchor.style.display = 'none';
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+    URL.revokeObjectURL(anchor.href);
     this.showFeedback("Curated archetype text file downloading!");
   }
-  refineCuration() { this.renderCurationScreen(); }
-  exitCurationModeAndRestart() { this.curationModeActive = false; this.startOver(); }
 
-openPlaygroundFromQuiz() {
-    this.lastQuizStepBeforePlayground = this.styleFinderStep; // Store the current step (should be 'result')
-    if (this.elements.styleFinder) this.elements.styleFinder.style.display = 'none'; // Hide quiz modal
+  refineCuration() {
+    this.renderCurationScreen();
+  }
 
+  exitCurationModeAndRestart() {
+    this.curationModeActive = false;
+    this.startOver(); // This will reset everything and show the welcome screen of the quiz.
+  }
+
+  // Method to open playground from quiz results screen
+  openPlaygroundFromQuiz() {
+    if (this.elements.styleFinder) {
+        this.elements.styleFinder.style.display = 'none'; // Hide quiz modal
+    }
+
+    // Check if PlaygroundApp class is defined (meaning playground.js has loaded)
     if (typeof PlaygroundApp !== 'undefined') {
+        // If playgroundApp instance doesn't exist on styleFinderApp, create it
         if (!this.playgroundApp) {
-            this.playgroundApp = new PlaygroundApp(this); // `this` is styleFinderApp
+            this.playgroundApp = new PlaygroundApp(this); // Pass `this` (the styleFinderApp instance)
             this.playgroundApp.initializePlayground('playgroundContainer');
         }
         this.playgroundApp.showPlayground();
     } else {
-        console.error("PlaygroundApp class not found.");
-        alert("Playground is currently unavailable.");
+        console.error("PlaygroundApp class not found. Ensure playground.js is loaded AFTER script.js.");
+        alert("Playground feature is not available at the moment. Please ensure all scripts are loaded correctly.");
     }
-}
+  }
 
-showQuizModalAtLastStep() {
-    if (this.elements.styleFinder) {
-        this.elements.styleFinder.style.display = 'flex';
-        // If we have a stored last step (e.g., the result step), go there
-        if (this.lastQuizStepBeforePlayground !== null) {
-            this.styleFinderStep = this.lastQuizStepBeforePlayground;
-        }
-        // Ensure curation mode is off if we are just viewing results
-        this.curationModeActive = false;
-        this.renderStyleFinder(); // Re-render the quiz content
-    }
-}
-// --- GLOBAL INSTANTIATION AND SETUP ---
-const styleFinderApp = new StyleFinderApp(); // Create the main app instance
+} // End of StyleFinderApp class
 
-// Playground related setup (button listener on the main page)
+// --- GLOBAL INSTANTIATION ---
+// This creates the one and only instance of StyleFinderApp for the page.
+const styleFinderApp = new StyleFinderApp();
+
+// --- GLOBAL EVENT LISTENERS (if any are needed outside the classes) ---
+
+// Listener for the generic Playground Button (if you decide to keep one on the main page)
+// If you have REMOVED the #open-playground-btn from your main HTML page
+// (because Playground is now primarily accessed from quiz results),
+// then this entire 'DOMContentLoaded' block can be removed or commented out.
 document.addEventListener('DOMContentLoaded', () => {
-    const openPlaygroundBtn = document.getElementById('open-playground-btn');
-    if (openPlaygroundBtn) {
-        openPlaygroundBtn.addEventListener('click', () => {
-            if (typeof PlaygroundApp !== 'undefined') { // Check if PlaygroundApp class is loaded
-                if (!styleFinderApp.playgroundApp) { // Use the global styleFinderApp instance
+    const openPlaygroundBtnMainPage = document.getElementById('open-playground-btn');
+    if (openPlaygroundBtnMainPage) {
+        openPlaygroundBtnMainPage.addEventListener('click', () => {
+            // Check if PlaygroundApp class is defined
+            if (typeof PlaygroundApp !== 'undefined') {
+                // If playgroundApp instance doesn't exist on styleFinderApp, create it
+                // This ensures it's created only once and associated with the main app instance
+                if (!styleFinderApp.playgroundApp) {
                     styleFinderApp.playgroundApp = new PlaygroundApp(styleFinderApp);
                     styleFinderApp.playgroundApp.initializePlayground('playgroundContainer');
                 }
                 styleFinderApp.playgroundApp.showPlayground();
-                if (styleFinderApp.elements.styleFinder) { // Ensure quiz modal exists
-                   styleFinderApp.elements.styleFinder.style.display = 'none'; // Hide quiz modal
+
+                // Optionally hide the quiz modal if it happens to be open,
+                // though typically this button is on the main page when quiz isn't active.
+                if (styleFinderApp.elements.styleFinder && styleFinderApp.elements.styleFinder.style.display !== 'none') {
+                   styleFinderApp.elements.styleFinder.style.display = 'none';
                 }
             } else {
                 console.error("PlaygroundApp class not found. Ensure playground.js is loaded AFTER script.js.");
