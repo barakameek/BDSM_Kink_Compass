@@ -1489,33 +1489,40 @@ class StyleFinderApp {
   }
 
 
-  renderCurationScreen() {
-    this.elements.dashboard.style.display = 'none'; // Hide dashboard in curation
-    this.elements.progressTracker.style.display = 'none'; // Hide progress tracker
-    let html = `<h2>Craft Your Unique Archetype Constellation</h2>`;
-    html += `<p>Explore your top ${this.topArchetypesForCuration.length} archetypes. Select the elements that resonate most to build your personalized style. You can then name it and describe it in your own words.</p>`;
+   renderCurationScreen() {
+    this.elements.dashboard.style.display = 'none';
+    this.elements.progressTracker.style.display = 'none';
+    let html = `<div class="curation-header"><h2>Craft Your Unique Archetype Constellation</h2>`;
+    html += `<p>Explore your top ${this.topArchetypesForCuration.length} archetypes. Select elements that resonate, then name and describe your unique blend.</p></div>`;
 
-    html += `<div class="curation-container">`;
-    // Part 1: Archetype Exploration & Selection
-    html += `<div class="archetype-exploration-area">`;
-    this.topArchetypesForCuration.forEach(arch => {
-        if (!arch.data) return; // Skip if data is missing
-        html += `<details class="curation-archetype-card">`; // Using <details> for accordion
-        html += `<summary><h3>${arch.data.title} ${arch.data.icon || ""} (Score: ${arch.score.toFixed(1)})</h3></summary>`;
-        html += `<div class="archetype-details-content">`;
+    html += `<div class="curation-main-content">`; // New wrapper for better layout control
+
+    // Part 1: Archetype Exploration & Selection - Using Tabs
+    html += `<div class="archetype-exploration-tabs">`;
+    html += `<div class="tab-navigation">`;
+    this.topArchetypesForCuration.forEach((arch, index) => {
+        if (!arch.data) return;
+        html += `<button class="tab-button ${index === 0 ? 'active' : ''}" onclick="styleFinderApp.openCurationTab(event, '${arch.name}')">${arch.data.icon || '🌟'} ${arch.name}</button>`;
+    });
+    html += `</div>`; // End tab-navigation
+
+    this.topArchetypesForCuration.forEach((arch, index) => {
+        if (!arch.data) return;
+        html += `<div id="curation-tab-${arch.name}" class="tab-content ${index === 0 ? 'active' : ''}">`;
+        // -- Content of each archetype card (details, checkboxes) would go here --
+        // -- This is similar to the <details> content but now in a tab panel --
+        html += `<h3>${arch.data.title} (Score: ${arch.score.toFixed(1)})</h3>`;
         if (arch.data.flavorText) html += `<p class="flavor-text"><em>"${arch.data.flavorText}"</em></p>`;
         html += `<p><strong>Essence:</strong> ${arch.data.essence}</p>`;
 
         const selectableSections = [
             { title: "Core Motivations", items: arch.data.coreMotivations, type: 'motivation' },
             { title: "Key Characteristics", items: arch.data.keyCharacteristics, type: 'characteristic' },
-            { title: "Strengths in a Dynamic", items: arch.data.strengthsInDynamic, type: 'strength' },
-            // { title: "Pathways to Exploration", items: arch.data.pathwaysToExploration, type: 'pathway' } // Maybe too much?
+            { title: "Strengths in a Dynamic", items: arch.data.strengthsInDynamic, type: 'strength' }
         ];
-
         selectableSections.forEach(section => {
             if (section.items && section.items.length > 0) {
-                html += `<h4>${section.title}:</h4><ul>`;
+                html += `<h4 class="curation-section-title">${section.title}:</h4><ul class="selectable-list">`;
                 section.items.forEach(item => {
                     const uniqueId = `${section.type}-${arch.name}-${this.escapeJsString(item.substring(0,20)).replace(/\s/g,'')}`;
                     const isChecked = !!this.selectedCuratedElements[uniqueId];
@@ -1524,38 +1531,71 @@ class StyleFinderApp {
                 html += `</ul>`;
             }
         });
-        html += `</div></details>`; // End archetype-details-content and details
+        html += `</div>`; // End tab-content
     });
-    html += `</div>`; // End archetype-exploration-area
+    html += `</div>`; // End archetype-exploration-tabs
 
-    // Part 2: Selected Elements & Customization
-    html += `<div class="curation-customization-area">`;
+    // Part 2: Selected Elements & Customization (could be in a separate, always visible column or below tabs)
+    html += `<div class="curation-customization-area">`; // This area might need to be scrollable
     html += `<div id="selected-elements-display" class="result-subsection"><h3>Your Selected Building Blocks:</h3><ul id="selected-elements-list"></ul></div>`;
     
     html += `<div class="custom-archetype-form result-subsection">`;
     html += `<h3>Name Your Unique Archetype:</h3>`;
     html += `<input type="text" id="customArchetypeNameInput" placeholder="e.g., The Playful Nurturing Imp" value="${this.customArchetypeName}" oninput="styleFinderApp.customArchetypeName = this.value">`;
     html += `<h3>Craft Your Personal Description:</h3>`;
-    html += `<textarea id="customArchetypeDescriptionTextarea" rows="8" placeholder="Combine your selected elements or write freely about what this unique blend means to you...">${this.customArchetypeDescription}</textarea>`;
+    html += `<textarea id="customArchetypeDescriptionTextarea" rows="6" placeholder="Combine selected elements or write freely...">${this.customArchetypeDescription}</textarea>`; // Reduced rows for compactness
     html += `<div class="curation-buttons">`;
     html += `<button class="cta-button" onclick="styleFinderApp.finalizeCuration()">Finalize My Archetype</button>`;
     html += `<button onclick="styleFinderApp.updateCustomDescriptionWithSelections()">Auto-fill Description</button>`;
     html += `</div></div>`;
-
     html += `</div>`; // End curation-customization-area
-    html += `</div>`; // End curation-container
+
+    html += `</div>`; // End curation-main-content
 
     html += `<div class="navigation-buttons" style="margin-top: 20px;">
                 <button onclick="styleFinderApp.exitCurationMode()">Back to Primary Result</button>
              </div>`;
 
     this.elements.stepContent.innerHTML = html;
-    this.updateSelectedElementsDisplay(); // Populate selected elements if any
-    if (document.getElementById('customArchetypeDescriptionTextarea')) { // Pre-populate if coming back
+    this.updateSelectedElementsDisplay();
+    if (document.getElementById('customArchetypeDescriptionTextarea')) {
         document.getElementById('customArchetypeDescriptionTextarea').value = this.customArchetypeDescription;
+    }
+    // Activate the first tab by default (if not already handled by CSS)
+    if (this.topArchetypesForCuration.length > 0) {
+        this.openCurationTab(null, this.topArchetypesForCuration[0].name, true); // Pass true for initial call
     }
   }
 
+  openCurationTab(evt, archetypeName, isInitialCall = false) {
+    let i, tabcontent, tablinks;
+    tabcontent = this.elements.stepContent.getElementsByClassName("tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+      tabcontent[i].classList.remove("active");
+    }
+    tablinks = this.elements.stepContent.getElementsByClassName("tab-button");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].classList.remove("active");
+    }
+    const currentTabContent = document.getElementById("curation-tab-" + archetypeName);
+    if (currentTabContent) {
+        currentTabContent.style.display = "block";
+        currentTabContent.classList.add("active");
+    }
+    
+    if (evt && evt.currentTarget) {
+      evt.currentTarget.classList.add("active");
+    } else if (isInitialCall && tablinks.length > 0) {
+        // On initial call, find the button corresponding to the first archetype and activate it
+        for (i = 0; i < tablinks.length; i++) {
+            if (tablinks[i].textContent.includes(archetypeName)) {
+                tablinks[i].classList.add("active");
+                break;
+            }
+        }
+    }
+  }
   handleElementSelection(checkboxElement, uniqueId) {
     const { type, source, text } = checkboxElement.dataset;
     if (checkboxElement.checked) {
