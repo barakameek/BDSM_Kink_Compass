@@ -27,6 +27,7 @@
                 <h2>Welcome to Your Kink Atlas</h2>
                 <p>Embark on a personal journey of exploration and understanding. All your data is stored locally in this browser.</p>
                 <p><strong>Important:</strong> Your Kink Atlas data is saved only in this browser. If you clear your browser data or switch devices, your Atlas will be reset unless you export it.</p>
+                <p>You can manage content preferences, including the display of advanced or taboo kinks, in the <button class="inline-nav-btn" data-view-target="settings-view">Settings</button> page.</p>
                 <button id="start-exploring-btn">Start Exploring</button>
                 <div class="data-management">
                     <button id="export-data-btn">Export My Atlas Data</button>
@@ -60,7 +61,6 @@
                     <h3 id="modal-kink-name">Kink Name</h3>
                     <p id="modal-kink-category">Category: </p>
 
-                    <!-- Kink Description Area in Modal -->
                     <div id="modal-kink-description-summary" class="kink-description-summary">
                         {Kink description summary will appear here}
                     </div>
@@ -70,7 +70,6 @@
                             {Fuller description and safety notes will appear here}
                         </div>
                     </details>
-                    <!-- END Kink Description Area -->
 
                     <div id="modal-kink-rating">
                         <!-- Rating options here -->
@@ -82,9 +81,6 @@
                     <div id="modal-profile-management" style="margin-top: 15px;">
                         <h4>Include in Profiles:</h4>
                         <label><input type="checkbox" data-profile-id="shareable"> Shareable Profile</label>
-                        -->
-                        <!-- More profiles dynamically added here -->
-                    <!--
                     </div>
                     -->
                     
@@ -130,17 +126,31 @@
             <!-- Settings/About View (hidden by default) -->
             <section id="settings-view" class="view">
                 <h2>Settings & About</h2>
-                <p>Kink Atlas <span id="app-version">v0.1.4</span></p> <!-- Updated version -->
+                <p>Kink Atlas <span id="app-version">v0.1.5</span></p> <!-- Updated version -->
                 <p>This app stores all data locally in your browser. No data is sent to any server.</p>
-                <h3>Data Management</h3>
-                <button id="export-data-settings-btn">Export My Atlas Data</button>
-                <label for="import-file-settings-input" class="button-like-label">Import My Atlas Data</label>
-                <input type="file" id="import-file-settings-input" accept=".json" style="display: none;">
+                
+                <h3 style="margin-top:20px;">Data Management</h3>
+                <div class="settings-group">
+                    <button id="export-data-settings-btn">Export My Atlas Data</button>
+                    <label for="import-file-settings-input" class="button-like-label">Import My Atlas Data</label>
+                    <input type="file" id="import-file-settings-input" accept=".json" style="display: none;">
+                </div>
+
+                <!-- NEW: Content Preferences Section -->
+                <h3 style="margin-top:20px;">Content Preferences</h3>
+                <div class="settings-group">
+                    <div class="setting-item">
+                        <input type="checkbox" id="setting-show-taboo-kinks" name="show-taboo-kinks">
+                        <label for="setting-show-taboo-kinks" class="checkbox-label">Display Advanced/Taboo Kinks (View with Discretion)</label>
+                    </div>
+                    <p class="setting-description">Enabling this option will show kinks that may be considered highly explicit, taboo, or involve higher psychological/physical risks. Please ensure you are comfortable viewing such content.</p>
+                </div>
+                <!-- END NEW -->
                 
                 <!-- Future: Profile Management UI -->
                 <!--
                 <h3 style="margin-top:20px;">Manage Profiles</h3>
-                <div id="profile-management-area">
+                <div id="profile-management-area" class="settings-group">
                     <p>Create and manage your shareable kink profiles here.</p>
                     <button id="create-new-profile-btn">Create New Profile</button>
                     <div id="existing-profiles-list"></div>
@@ -148,19 +158,19 @@
                 -->
 
                 <h3 style="margin-top:20px;">Themes (Future Feature)</h3>
-                <p>Theme selection will be available here in a future update.</p>
+                <div class="settings-group">
+                    <p>Theme selection will be available here in a future update.</p>
+                </div>
             </section>
 
         </main>
 
-        <!-- Footer Area (optional) -->
         <footer id="main-footer">
             <p>© <span id="current-year">2024</span> Kink Atlas. For personal exploration.</p>
         </footer>
 
     </div> <!-- /#app-container -->
 
-    <!-- SCRIPT LOADING ORDER IS CRUCIAL HERE -->
     <script src="js/data.js"></script>
     <script src="js/app.js"></script>
 </body>
