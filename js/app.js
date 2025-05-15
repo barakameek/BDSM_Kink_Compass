@@ -15,8 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
             settings: {
                 showTabooKinks: false,
                 summaryNoteStyle: 'icon',
-                currentTheme: 'dark', // 'dark' or 'light'
-                // sidebarCollapsed: false, // No longer used with top-nav
+                currentTheme: 'dark', 
+                sidebarCollapsed: false, // No longer used, but kept for data structure consistency for now
                 summaryFilters: { categories: [], ratingTypes: [], hasNotesOnly: false }
             },
             journalEntries: [],
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         body: document.body,
         appContainer: document.getElementById('app-container'),
         mainHeader: document.getElementById('main-header'),
-        mainNav: document.getElementById('main-nav'), // Back in main-header
+        mainNav: document.getElementById('main-nav'), 
         themeToggleBtn: document.getElementById('theme-toggle-btn'),
         mainContent: document.getElementById('main-content'),
         views: document.querySelectorAll('.view'),
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         applyTheme(newTheme);
         saveUserData();
     }
-
+    
     // --- DATA INITIALIZATION & LOCALSTORAGE ---
     function initializeKinkData() { 
         if (typeof KINK_DEFINITIONS === 'undefined') { console.error("KINK_DEFINITIONS not found."); alert("Critical error: Kink data not found."); return false; }
@@ -121,7 +121,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 showTabooKinks: loadedData.settings?.showTabooKinks || false,
                 summaryNoteStyle: loadedData.settings?.summaryNoteStyle || 'icon',
                 summaryFilters: loadedData.settings?.summaryFilters || { categories: [], ratingTypes: [], hasNotesOnly: false },
-                currentTheme: loadedData.settings?.currentTheme || 'dark'
+                currentTheme: loadedData.settings?.currentTheme || 'dark',
+                sidebarCollapsed: loadedData.settings?.sidebarCollapsed || false 
             };
             state.userData.journalEntries = Array.isArray(loadedData.journalEntries) ? loadedData.journalEntries : [];
         } else {
@@ -130,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 settings: { 
                     showTabooKinks: false, summaryNoteStyle: 'icon', 
                     summaryFilters: { categories: [], ratingTypes: [], hasNotesOnly: false }, 
-                    currentTheme: 'dark'
+                    currentTheme: 'dark', sidebarCollapsed: false 
                 },
                 journalEntries: [],
             };
@@ -287,7 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 galaxyHTML += `<div class="galaxy-category"><h3><span class="category-icon">${category.icon || ''}</span> ${category.name}</h3><div class="kink-list">`;
                 kinksInCategory.sort((a,b) => a.name.localeCompare(b.name)).forEach(kink => {
                     const kinkUserData = getKinkUserData(kink.id);
-                    let ratingKey = kinkUserData.rating || 'none'; // Ensure 'none' if no rating
+                    let ratingKey = kinkUserData.rating || 'none'; 
                     let ratingClass = `rating-${ratingKey.toLowerCase().replace(/[^a-z0-9_]/g, '-').replace(/\s+/g, '-')}`;
                     
                     galaxyHTML += `<div class="kink-star ${ratingClass}" data-kink-id="${kink.id}">
@@ -328,7 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (const key in ratingOptions) { 
             const btn = document.createElement('button'); btn.textContent = ratingOptions[key]; btn.dataset.ratingKey = key;
             btn.classList.add('rating-btn', `rating-btn-${key.replace(/[^a-z0-9_]/g, '-').replace(/\s+/g, '-')}`);
-            if(kinkUserData.rating === key) btn.classList.add('active-rating');
+            if(kinkUserData.rating === key) btn.classList.add('rating-btn-active'); // Apply active class for styling
             btn.addEventListener('click', ()=>handleKinkRating(kinkId, key==='clear_rating'?null:key));
             if(DOMElements.modalKinkRating) DOMElements.modalKinkRating.appendChild(btn);
         }
@@ -385,9 +386,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentKinkData = getKinkUserData(kinkId); const notes = currentKinkData.notes;
         const ratingChanged = setKinkUserData(kinkId, ratingKey, notes);
         if (ratingChanged) saveUserData();
-        if(DOMElements.modalKinkRating) DOMElements.modalKinkRating.querySelectorAll('button').forEach(btn => {
-            btn.classList.remove('active-rating');
-            if (btn.dataset.ratingKey === ratingKey && ratingKey !== null) btn.classList.add('active-rating');
+        if(DOMElements.modalKinkRating) DOMElements.modalKinkRating.querySelectorAll('button.rating-btn').forEach(btn => {
+            btn.classList.remove('rating-btn-active'); // General active class
+            if (btn.dataset.ratingKey === ratingKey && ratingKey !== null) btn.classList.add('rating-btn-active');
         });
     }
     
@@ -677,13 +678,12 @@ document.addEventListener('DOMContentLoaded', () => {
                                 summaryNoteStyle: importedData.settings?.summaryNoteStyle || 'icon',
                                 summaryFilters: importedData.settings?.summaryFilters || { categories: [], ratingTypes: [], hasNotesOnly: false },
                                 currentTheme: importedData.settings?.currentTheme || 'dark',
-                                // sidebarCollapsed: importedData.settings?.sidebarCollapsed || false, // No sidebar
+                                sidebarCollapsed: false // No sidebar
                             },
                             journalEntries: Array.isArray(importedData.journalEntries) ? importedData.journalEntries : []
                         };
                         if (state.kinks.length === 0) initializeKinkData();
                         applyTheme(state.userData.settings.currentTheme); 
-                        // applySidebarState(state.userData.settings.sidebarCollapsed); // No sidebar
                         if (DOMElements.settingShowTabooKinksCheckbox) DOMElements.settingShowTabooKinksCheckbox.checked = state.userData.settings.showTabooKinks;
                         applyGlobalKinkFilters(); populateProfileSelectors(); renderExistingProfilesList(); populateSummaryFilterControls(); saveUserData();
                         alert("Kink Atlas data imported successfully!"); switchView(state.currentView || 'galaxy-view');
@@ -704,8 +704,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if(DOMElements.startExploringBtn) DOMElements.startExploringBtn.addEventListener('click', () => switchView('galaxy-view'));
         if(DOMElements.inlineNavToSettingsBtn) DOMElements.inlineNavToSettingsBtn.addEventListener('click', (e) => { e.preventDefault(); switchView(e.target.dataset.viewTarget); });
         if(DOMElements.themeToggleBtn) DOMElements.themeToggleBtn.addEventListener('click', toggleTheme);
-        // if(DOMElements.sidebarToggleBtnHeader) DOMElements.sidebarToggleBtnHeader.addEventListener('click', toggleSidebar); // No sidebar
-        // if(DOMElements.sidebarToggleBtnFooter) DOMElements.sidebarToggleBtnFooter.addEventListener('click', toggleSidebar); // No sidebar
         if(DOMElements.modalCloseBtn) DOMElements.modalCloseBtn.addEventListener('click', () => closeKinkDetailModal());
         if(DOMElements.saveModalBtn) DOMElements.saveModalBtn.addEventListener('click', () => closeKinkDetailModal());
         window.addEventListener('click', (event) => { if (DOMElements.kinkDetailModal && DOMElements.kinkDetailModal.style.display === 'block' && event.target === DOMElements.kinkDetailModal) closeKinkDetailModal(); });
