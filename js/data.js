@@ -216,7 +216,7 @@ const KINK_DEFINITIONS = [
     {
         id: "fluid_semen_facials_body_01", name: "Semen on Face/Body (Facials, etc.)", category_id: "fluid_play",
         description: "Applying semen to a partner's face or body as an erotic act. Detailed research and description needed.",
-        common_terms: ["Cum shot", "Facial"], safety_notes: ["CRITICAL: STI risks are primary concern; know partner's status and use barriers in preceding acts if status unknown/risk present. Explicit consent for where semen is placed. Hygiene."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["semen_play_01", "exhibitionism_01"]} // Semen_play_01 is broader
+        common_terms: ["Cum shot", "Facial"], safety_notes: ["CRITICAL: STI risks are primary concern; know partner's status and use barriers in preceding acts if status unknown/risk present. Explicit consent for where semen is placed. Hygiene."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["semen_play_01", "exhibitionism_01"] // Semen_play_01 is broader
     },
     {
         id: "fluid_menstrual_blood_play_01", name: "Menstrual Blood Play (Consensual)", category_id: "fluid_play", isTaboo: true, isHighRisk: true,
