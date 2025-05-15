@@ -674,3 +674,37 @@ document.addEventListener('DOMContentLoaded', () => {
     init();
 
 }); // End DOMContentLoaded
+ function updateNavButtons() {
+        if (!DOMElements.mainNav) return; // Guard clause
+        const navButtons = DOMElements.mainNav.querySelectorAll('button');
+        navButtons.forEach(btn => {
+            if (btn.dataset.view === state.currentView) {
+                btn.classList.add('active-nav-btn');
+            } else {
+                btn.classList.remove('active-nav-btn');
+            }
+        });
+    }
+    // ***** END OF FUNCTION TO ADD *****
+
+    function switchView(viewId) {
+        if (!document.getElementById(viewId)) {
+            console.error(`View with ID "${viewId}" not found in HTML.`);
+            return;
+        }
+        state.currentView = viewId;
+        DOMElements.views.forEach(view => {
+            view.classList.remove('active-view');
+            if (view.id === viewId) view.classList.add('active-view');
+        });
+        updateNavButtons(); // THIS LINE (AROUND 304) WAS CAUSING THE ERROR
+        applyKinkFilters(); 
+
+        if (viewId === 'galaxy-view') renderKinkGalaxy();
+        if (viewId === 'academy-view') renderAcademyIndex(); 
+        if (viewId === 'journal-view') renderJournalEntries();
+        if (viewId === 'summary-view') renderSummaryForActiveProfile(); 
+        if (viewId === 'settings-view') renderExistingProfilesList(); 
+
+        console.log(`Switched to view: ${viewId}`);
+    }
