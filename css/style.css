@@ -2,30 +2,41 @@
 
 /* --- VARIABLES & GLOBAL RESETS --- */
 :root {
-    --primary-color: #9b59b6;
-    --secondary-color: #8e44ad;
-    --accent-color: #e74c3c;
-    --text-color: #ecf0f1;
-    --bg-color: #2c3e50;
-    --bg-color-light: #34495e; /* Slightly lighter than main bg */
-    --bg-color-lighter: #4a627a; /* Even lighter, for cards/pills */
-    --border-color: #4a627a;
-    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    --modal-bg: rgba(0, 0, 0, 0.7);
-    --success-color: #2ecc71;
+    --primary-color: #a664c8; /* Slightly softer, more sophisticated purple */
+    --secondary-color: #8e44ad; /* Kept for hover states, a bit deeper */
+    --accent-color: #e74c3c; /* Vivid accent for CTAs or highlights */
+    --text-color: #e0e0e0; /* Slightly off-white for softer text on dark bg */
+    --text-color-muted: #a0a0a0; /* For less important text */
+    --bg-color: #222831; /* Dark, almost charcoal background */
+    --bg-color-light: #2d343e; /* Panels, slightly lighter */
+    --bg-color-lighter: #39424e; /* Cards, interactive elements */
+    --border-color: #454e59; /* Subtle borders */
+    --font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Roboto for a modern feel */
+    --modal-bg: rgba(0, 0, 0, 0.75); /* Darker modal overlay */
+    --success-color: #27ae60; /* Refined green */
     --warning-color: #f39c12;
-    --danger-color: #e74c3c;
+    --danger-color: #c0392b; /* Slightly deeper red */
 
-    --rating-want-to-try: #3498db; /* Blue */
-    --rating-favorite: #2ecc71;   /* Green */
-    --rating-like-it: #1abc9c;    /* Teal */
-    --rating-curious-about: #f1c40f; /* Yellow */
-    --rating-soft-limit: #e67e22;  /* Orange */
-    --rating-hard-limit: #c0392b;  /* Red */
-    --rating-not-for-me: #95a5a6;  /* Grey */
+    /* Rating specific colors - ensure good contrast */
+    --rating-want-to-try: #2980b9;   /* Refined Blue */
+    --rating-favorite: var(--success-color);
+    --rating-like-it: #16a085;    /* Refined Teal */
+    --rating-curious-about: #f1c40f;
+    --rating-soft-limit: #d35400;  /* Deeper Orange */
+    --rating-hard-limit: var(--danger-color);
+    --rating-not-for-me: #7f8c8d;  /* Neutral Grey */
 
-    --header-height: 60px;
+    --header-height: 65px; /* Slightly taller header */
+    --border-radius-small: 4px;
+    --border-radius-medium: 6px;
+    --border-radius-large: 8px;
+    --box-shadow-light: 0 2px 4px rgba(0,0,0,0.2);
+    --box-shadow-medium: 0 4px 8px rgba(0,0,0,0.25);
 }
+
+/* Import Roboto font (optional, if you want to host it or rely on CDN) */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
 
 * {
     box-sizing: border-box;
@@ -33,20 +44,25 @@
     padding: 0;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: var(--font-family);
     background-color: var(--bg-color);
     color: var(--text-color);
-    line-height: 1.6;
+    line-height: 1.65; /* Slightly more spacious line height */
     display: flex;
     flex-direction: column;
     min-height: 100vh;
     overflow-x: hidden;
+    font-weight: 300; /* Lighter default font weight */
 }
 
 #app-container {
     width: 100%;
-    max-width: 1600px;
+    max-width: 1800px; /* Wider for larger screens */
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -56,327 +72,401 @@ body {
 /* --- TYPOGRAPHY --- */
 h1, h2, h3, h4, h5, h6 {
     color: var(--primary-color);
-    margin-bottom: 0.75em;
-    line-height: 1.2;
+    margin-bottom: 0.8em; /* Consistent bottom margin */
+    line-height: 1.3;
+    font-weight: 500; /* Medium weight for headings */
 }
-h1 { font-size: 2.5em; }
-h2 { font-size: 2em; }
-h3 { font-size: 1.75em; }
+h1 { font-size: 2.6em; letter-spacing: -0.5px; }
+h2 { font-size: 2.1em; }
+h3 { font-size: 1.8em; }
+h4 { font-size: 1.5em; }
 
-a { color: var(--accent-color); text-decoration: none; }
-a:hover { text-decoration: underline; }
-p { margin-bottom: 1em; }
+
+a { color: var(--accent-color); text-decoration: none; transition: color 0.2s ease-in-out; }
+a:hover { color: var(--primary-color); text-decoration: underline; }
+p { margin-bottom: 1.2em; } /* More space after paragraphs */
 
 /* --- LAYOUT & MAIN SECTIONS --- */
 #main-header {
-    background-color: var(--bg-color-light);
-    padding: 0 20px;
+    background-color: var(--bg-color); /* Header matches main bg for seamless look */
+    padding: 0 30px; /* More padding */
     height: var(--header-height);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 2px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color); /* Thinner border */
+    box-shadow: var(--box-shadow-light);
+    position: sticky; /* Sticky header */
+    top: 0;
+    z-index: 900;
 }
-#main-header h1 { margin-bottom: 0; font-size: 1.8em; cursor: pointer;}
+#main-header h1 {
+    margin-bottom: 0;
+    font-size: 2em; /* Slightly larger */
+    cursor: pointer;
+    font-weight: 700; /* Bold title */
+    letter-spacing: 1px;
+}
 #main-nav button {
-    background: none; border: 1px solid var(--primary-color); color: var(--primary-color);
-    padding: 8px 15px; margin-left: 10px; cursor: pointer; border-radius: 4px;
-    font-size: 0.9em; transition: background-color 0.3s, color 0.3s;
+    background: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 10px 18px; /* More padding */
+    margin-left: 12px;
+    cursor: pointer;
+    border-radius: var(--border-radius-medium);
+    font-size: 0.95em;
+    font-weight: 500;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, transform 0.1s ease;
+    letter-spacing: 0.5px;
 }
-#main-nav button:hover, #main-nav button.active-nav-btn {
-    background-color: var(--primary-color); color: var(--text-color);
+#main-nav button:hover {
+    background-color: var(--primary-color);
+    color: white;
+    transform: translateY(-1px);
 }
-#main-content { padding: 20px; flex-grow: 1; overflow-y: auto; }
+#main-nav button.active-nav-btn {
+    background-color: var(--primary-color);
+    color: white;
+    box-shadow: 0 0 10px rgba(var(--primary-color), 0.5); /* Glow effect */
+}
+
+#main-content { padding: 30px; flex-grow: 1; overflow-y: auto; }
+
 #main-footer {
-    background-color: var(--bg-color-light); text-align: center; padding: 15px 20px;
-    font-size: 0.9em; color: #bdc3c7; border-top: 1px solid var(--border-color);
+    background-color: var(--bg-color); /* Footer matches main bg */
+    text-align: center;
+    padding: 20px; /* More padding */
+    font-size: 0.9em;
+    color: var(--text-color-muted);
+    border-top: 1px solid var(--border-color);
 }
 
 /* --- VIEW MANAGEMENT --- */
-.view { display: none; padding: 15px; border-radius: 5px; animation: fadeIn 0.5s ease-in-out; }
+.view {
+    display: none;
+    padding: 20px; /* More padding around views */
+    border-radius: var(--border-radius-large);
+    animation: fadeInView 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smoother animation */
+    background-color: var(--bg-color-light); /* Default view background */
+}
 .view.active-view { display: block; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+@keyframes fadeInView {
+    from { opacity: 0; transform: translateY(15px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
 
 /* --- BUTTONS & FORMS --- */
 button, .button-like-label, .back-button {
-    background-color: var(--primary-color); color: var(--text-color); border: none;
-    padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1em;
-    transition: background-color 0.3s ease; margin-top: 10px; margin-right: 10px;
+    background-color: var(--primary-color);
+    color: white; /* Ensure text is white on primary bg */
+    border: none;
+    padding: 12px 24px; /* Generous padding */
+    border-radius: var(--border-radius-medium);
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 500;
+    transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+    margin-top: 10px;
+    margin-right: 10px;
+    letter-spacing: 0.5px;
+    box-shadow: var(--box-shadow-light);
 }
-button:hover, .button-like-label:hover, .back-button:hover { background-color: var(--secondary-color); }
-button:disabled { background-color: #7f8c8d; cursor: not-allowed; }
-.button-like-label { display: inline-block; }
-.back-button { margin-bottom: 15px; background-color: var(--bg-color-lighter); }
+button:hover, .button-like-label:hover, .back-button:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--box-shadow-medium);
+}
+button:active, .button-like-label:active, .back-button:active {
+    transform: translateY(0px);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+button:disabled {
+    background-color: var(--border-color);
+    color: var(--text-color-muted);
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+.button-like-label { display: inline-block; text-align: center; }
+.back-button {
+    background-color: var(--bg-color-lighter);
+    color: var(--text-color);
+    margin-bottom: 20px; /* More space below back button */
+}
+.back-button:hover { background-color: var(--border-color); }
 
 
 input[type="text"], input[type="email"], input[type="password"], textarea {
-    width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid var(--border-color);
-    background-color: var(--bg-color); color: var(--text-color); border-radius: 4px;
+    width: 100%;
+    padding: 12px 15px; /* More padding */
+    margin-bottom: 15px; /* More margin */
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    border-radius: var(--border-radius-medium);
+    font-size: 1em;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
-textarea { min-height: 100px; resize: vertical; }
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-color), 0.2); /* Focus ring */
+}
+textarea { min-height: 120px; resize: vertical; }
 
 /* --- WELCOME VIEW & DATA MANAGEMENT --- */
-#welcome-view .data-management { margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--border-color); }
+#welcome-view .data-management { margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border-color); }
 
 /* --- KINK GALAXY VIEW --- */
-#kink-galaxy-visualization {
-    padding: 10px 0;
-}
-
+#kink-galaxy-visualization { padding: 10px 0; }
 .galaxy-category {
     background-color: var(--bg-color-light);
-    padding: 20px;
-    margin-bottom: 25px;
-    border-radius: 8px;
+    padding: 25px; /* More padding */
+    margin-bottom: 30px; /* More space between categories */
+    border-radius: var(--border-radius-large);
     border: 1px solid var(--border-color);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: var(--box-shadow-medium);
 }
-
 .galaxy-category h3 {
     color: var(--primary-color);
     margin-top: 0;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--secondary-color);
+    margin-bottom: 20px; /* More space below category title */
+    padding-bottom: 15px; /* More space for border */
+    border-bottom: 2px solid var(--secondary-color); /* Thicker, more prominent border */
     display: flex;
     align-items: center;
+    font-size: 1.6em; /* Larger category titles */
 }
-.galaxy-category h3 span { /* For icon if you use span for it */
-    margin-right: 10px;
-    font-size: 1.2em;
-}
-
-
-.kink-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-}
-
+.galaxy-category h3 span { margin-right: 12px; font-size: 1.3em; }
+.kink-list { display: flex; flex-wrap: wrap; gap: 15px; } /* More gap */
 .kink-star {
     background-color: var(--bg-color-lighter);
     color: var(--text-color);
-    padding: 8px 15px;
-    border-radius: 20px;
+    padding: 10px 18px; /* More padding */
+    border-radius: 25px; /* More rounded pills */
     cursor: pointer;
     border: 2px solid transparent;
-    transition: background-color 0.2s, transform 0.2s, border-color 0.2s, box-shadow 0.2s;
-    font-size: 0.95em;
+    transition: background-color 0.2s ease, transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    font-size: 1em; /* Slightly larger kink names */
+    font-weight: 400;
     display: inline-flex;
     align-items: center;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    box-shadow: var(--box-shadow-light);
     text-align: left;
-    line-height: 1.3;
+    line-height: 1.4;
 }
-
 .kink-star:hover {
     background-color: var(--secondary-color);
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.02); /* Add slight scale on hover */
     border-color: var(--accent-color);
     color: white;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    box-shadow: var(--box-shadow-medium);
 }
-
 .kink-star-rating-badge {
-    font-size: 0.75em;
+    font-size: 0.8em; /* Slightly larger badge */
     color: white;
-    padding: 3px 8px;
-    border-radius: 10px;
-    margin-left: 10px;
+    padding: 4px 10px; /* More padding */
+    border-radius: 15px; /* More rounded badge */
+    margin-left: 12px;
     white-space: nowrap;
-    font-weight: bold;
+    font-weight: 500; /* Medium weight badge text */
     flex-shrink: 0;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+/* Rating-specific styles for kink-star pills (same logic, colors from variables) */
+.rating-want-to-try { background-color: var(--rating-want-to-try); border-color: var(--rating-want-to-try); color: white; }
+.rating-want-to-try .kink-star-rating-badge { background-color: rgba(0,0,0,0.25); }
+.rating-favorite { background-color: var(--rating-favorite); border-color: var(--rating-favorite); color: white; }
+.rating-favorite .kink-star-rating-badge { background-color: rgba(0,0,0,0.25); }
+.rating-like-it { background-color: var(--rating-like-it); border-color: var(--rating-like-it); color: white; }
+.rating-like-it .kink-star-rating-badge { background-color: rgba(0,0,0,0.25); }
+.rating-curious-about { background-color: var(--rating-curious-about); border-color: var(--rating-curious-about); color: #2c3e50; } /* Darker text for yellow */
+.rating-curious-about .kink-star-rating-badge { background-color: rgba(0,0,0,0.15); color: #2c3e50; }
+.rating-soft-limit { background-color: var(--rating-soft-limit); border-color: var(--rating-soft-limit); color: white; }
+.rating-soft-limit .kink-star-rating-badge { background-color: rgba(0,0,0,0.25); }
+.rating-hard-limit { background-color: var(--rating-hard-limit); border-color: var(--rating-hard-limit); color: white; }
+.rating-hard-limit .kink-star-rating-badge { background-color: rgba(0,0,0,0.25); }
+.rating-not-for-me { background-color: var(--rating-not-for-me); border-color: var(--rating-not-for-me); color: var(--bg-color); opacity: 0.85; }
+.rating-not-for-me .kink-star-rating-badge { background-color: rgba(0,0,0,0.1); color: var(--bg-color); }
+.rating-none { /* Style for unrated kinks, if needed */
+    border: 2px dashed var(--border-color); /* Example for unrated */
 }
 
-/* Rating-specific styles for kink-star pills - ENHANCED */
-.rating-want-to-try {
-    background-color: var(--rating-want-to-try);
-    border-color: var(--rating-want-to-try);
-    color: white;
-}
-.rating-want-to-try .kink-star-rating-badge { background-color: rgba(0,0,0,0.2); }
-
-.rating-favorite {
-    background-color: var(--rating-favorite);
-    border-color: var(--rating-favorite);
-    color: white;
-}
-.rating-favorite .kink-star-rating-badge { background-color: rgba(0,0,0,0.2); }
-
-.rating-like-it {
-    background-color: var(--rating-like-it);
-    border-color: var(--rating-like-it);
-    color: white;
-}
-.rating-like-it .kink-star-rating-badge { background-color: rgba(0,0,0,0.2); }
-
-.rating-curious-about {
-    background-color: var(--rating-curious-about);
-    border-color: var(--rating-curious-about);
-    color: #333;
-}
-.rating-curious-about .kink-star-rating-badge { background-color: rgba(0,0,0,0.1); color: #333; }
-
-
-.rating-soft-limit {
-    background-color: var(--rating-soft-limit);
-    border-color: var(--rating-soft-limit);
-    color: white;
-}
-.rating-soft-limit .kink-star-rating-badge { background-color: rgba(0,0,0,0.2); }
-
-.rating-hard-limit {
-    background-color: var(--rating-hard-limit);
-    border-color: var(--rating-hard-limit);
-    color: white;
-}
-.rating-hard-limit .kink-star-rating-badge { background-color: rgba(0,0,0,0.2); }
-
-.rating-not-for-me {
-    background-color: var(--rating-not-for-me);
-    border-color: var(--rating-not-for-me);
-    color: #333;
-    opacity: 0.8;
-}
-.rating-not-for-me .kink-star-rating-badge { background-color: rgba(0,0,0,0.1); color: #333;}
-
-
-.no-kinks-in-category { font-style: italic; color: #95a5a6; padding: 10px 0; }
-#kink-filters { padding: 10px; background-color: var(--bg-color-light); border-radius: 4px; margin-top: 20px;}
+.no-kinks-in-category { font-style: italic; color: var(--text-color-muted); padding: 10px 0; }
+#kink-filters { padding: 15px; background-color: var(--bg-color-light); border-radius: var(--border-radius-medium); margin-top: 25px;}
 
 
 /* --- KINK DETAIL MODAL --- */
 .modal {
     display: none; position: fixed; z-index: 1000; left: 0; top: 0;
     width: 100%; height: 100%; overflow: auto; background-color: var(--modal-bg);
-    animation: fadeInModal 0.3s ease-out;
+    animation: fadeInModal 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); /* Smoother modal fade */
 }
 @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
 .modal-content {
-    background-color: var(--bg-color-light); margin: 10% auto; padding: 25px;
-    border: 1px solid var(--border-color); border-radius: 8px; width: 80%; max-width: 600px;
-    position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    animation: slideInModal 0.3s ease-out;
+    background-color: var(--bg-color-light); margin: 5% auto; padding: 30px; /* More padding */
+    border: 1px solid var(--border-color); border-radius: var(--border-radius-large); width: 90%; max-width: 750px; /* Wider modal */
+    position: relative; box-shadow: var(--box-shadow-medium);
+    animation: slideInModal 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncier slide-in */
+    max-height: 85vh; /* Slightly less max height */
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden; /* Let internal content scroll */
 }
-@keyframes slideInModal { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes slideInModal { from { transform: translateY(-60px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+
 .close-modal-btn {
-    color: #aaa; float: right; font-size: 28px; font-weight: bold; line-height: 1;
+    color: var(--text-color-muted); position: absolute; top: 15px; right: 20px;
+    font-size: 32px; /* Larger close button */
+    font-weight: 300; /* Lighter weight */
+    line-height: 1;
+    padding: 5px; /* Clickable area */
+    transition: color 0.2s ease, transform 0.2s ease;
 }
-.close-modal-btn:hover, .close-modal-btn:focus { color: var(--text-color); text-decoration: none; cursor: pointer; }
-#modal-kink-name { margin-top: 0; }
-#modal-kink-rating { margin: 15px 0; display: flex; flex-wrap: wrap; gap: 10px; }
-#modal-kink-rating button { margin-top: 0; margin-right: 0; }
-#modal-kink-rating button.active-rating { background-color: var(--accent-color); color: white; border: 1px solid var(--accent-color); }
+.close-modal-btn:hover, .close-modal-btn:focus { color: var(--accent-color); transform: rotate(90deg); }
+
+#modal-kink-name { margin-top: 0; font-size: 2em; } /* Larger modal title */
+#modal-kink-category { margin-bottom: 15px; font-size: 1em; color: var(--text-color-muted);}
+
+.kink-description-summary {
+    font-size: 0.95em; margin-bottom: 12px; padding: 12px 15px;
+    background-color: var(--bg-color); border-radius: var(--border-radius-medium);
+    max-height: 100px; overflow-y: auto; border: 1px solid var(--border-color);
+}
+.kink-description-details { margin-bottom: 20px; }
+.kink-description-details summary {
+    cursor: pointer; color: var(--primary-color); font-weight: 500;
+    padding: 8px 0; display: inline-block; /* Better click area */
+    transition: color 0.2s ease;
+}
+.kink-description-details summary:hover { color: var(--accent-color); }
+.kink-description-details summary::marker { font-size: 0.8em; } /* Style disclosure triangle */
+#modal-kink-description-full-content {
+    font-size: 0.9em; padding: 15px; background-color: var(--bg-color);
+    border-radius: var(--border-radius-medium); margin-top: 8px; max-height: 180px; overflow-y: auto;
+    border: 1px solid var(--border-color);
+}
+#modal-kink-description-full-content h4 {
+    font-size: 1.1em; color: var(--warning-color); margin-top: 12px; margin-bottom: 8px;
+}
+#modal-kink-description-full-content ul { padding-left: 20px; margin-bottom: 0; }
+#modal-kink-description-full-content li { margin-bottom: 5px; }
+
+
+#modal-kink-rating { margin: 20px 0; display: flex; flex-wrap: wrap; gap: 12px; }
+#modal-kink-rating button {
+    margin-top: 0; margin-right: 0;
+    border: 2px solid var(--border-color); /* Visible base border */
+    padding: 10px 15px;
+    background-color: var(--bg-color-lighter);
+    color: var(--text-color);
+    font-weight: 500;
+    border-radius: var(--border-radius-medium);
+    transition: all 0.2s ease-in-out; /* Smooth all transitions */
+}
+#modal-kink-rating button:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+/* Distinct styles for active rating buttons in modal */
+#modal-kink-rating button.active-rating.rating-btn-want-to-try { background-color: var(--rating-want-to-try); border-color: var(--rating-want-to-try); color: white; box-shadow: 0 0 8px var(--rating-want-to-try); }
+#modal-kink-rating button.active-rating.rating-btn-favorite { background-color: var(--rating-favorite); border-color: var(--rating-favorite); color: white; box-shadow: 0 0 8px var(--rating-favorite); }
+#modal-kink-rating button.active-rating.rating-btn-like-it { background-color: var(--rating-like-it); border-color: var(--rating-like-it); color: white; box-shadow: 0 0 8px var(--rating-like-it); }
+#modal-kink-rating button.active-rating.rating-btn-curious-about { background-color: var(--rating-curious-about); border-color: var(--rating-curious-about); color: #2c3e50; box-shadow: 0 0 8px var(--rating-curious-about); }
+#modal-kink-rating button.active-rating.rating-btn-soft-limit { background-color: var(--rating-soft-limit); border-color: var(--rating-soft-limit); color: white; box-shadow: 0 0 8px var(--rating-soft-limit); }
+#modal-kink-rating button.active-rating.rating-btn-hard-limit { background-color: var(--rating-hard-limit); border-color: var(--rating-hard-limit); color: white; box-shadow: 0 0 8px var(--rating-hard-limit); }
+#modal-kink-rating button.active-rating.rating-btn-not-for-me { background-color: var(--rating-not-for-me); border-color: var(--rating-not-for-me); color: var(--bg-color); box-shadow: 0 0 8px var(--rating-not-for-me); }
+#modal-kink-rating button.rating-btn-clear-rating { /* Special style for clear button */
+    border-color: var(--text-color-muted);
+    color: var(--text-color-muted);
+    background-color: transparent;
+}
+#modal-kink-rating button.rating-btn-clear-rating:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    background-color: rgba(var(--accent-color), 0.1);
+}
+
+#modal-kink-notes { flex-grow: 1; min-height: 100px; margin-bottom: 20px; } /* Increased bottom margin */
+#save-modal-btn { width: 100%; } /* Make save button full width in modal */
+
 
 /* --- ACADEMY VIEW --- */
-#academy-content-area { /* Styles for displaying learning modules, glossary lists */ }
+#academy-content-area { }
 .academy-index-list { list-style: none; padding-left: 0; }
-.academy-index-list li a { display: block; padding: 8px 0; border-bottom: 1px dotted var(--border-color); }
-.academy-index-list li a:hover { background-color: var(--bg-color-lighter); }
+.academy-index-list > h3 { margin-top: 30px; /* More space for main Academy headings */ }
+.academy-index-list li a {
+    display: block; padding: 10px 15px; /* More padding */
+    border-bottom: 1px solid var(--border-color);
+    border-radius: var(--border-radius-small);
+    margin-bottom: 5px; /* Space between links */
+    transition: background-color 0.2s ease, padding-left 0.2s ease;
+}
+.academy-index-list li a:hover { background-color: var(--bg-color-lighter); padding-left: 20px; }
 .academy-kink-list { padding-left: 20px; }
-#academy-content-area dl dt { font-weight: bold; color: var(--primary-color); margin-top: 0.8em; }
-#academy-content-area dl dd { margin-left: 1.5em; margin-bottom: 0.5em; }
-
+#academy-content-area dl dt { font-weight: 500; color: var(--primary-color); margin-top: 1em; font-size: 1.1em;}
+#academy-content-area dl dd { margin-left: 1.8em; margin-bottom: 0.8em; color: var(--text-color-muted); }
+#academy-content-area article h2, #academy-content-area section h2 { /* Assuming module titles are h2 */
+    border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px;
+}
 
 /* --- JOURNAL VIEW --- */
-#journal-entries-container { margin-top: 20px; }
+#journal-entries-container { margin-top: 25px; }
 .journal-entry-item {
-    background-color: var(--bg-color); padding: 15px; border-radius: 4px;
-    margin-bottom: 15px; border-left: 4px solid var(--primary-color);
+    background-color: var(--bg-color); padding: 20px; border-radius: var(--border-radius-medium);
+    margin-bottom: 20px; border-left: 5px solid var(--primary-color);
+    box-shadow: var(--box-shadow-light);
 }
-.journal-entry-item h5 { margin-top: 0; margin-bottom: 0.5em; color: #bdc3c7; font-size: 0.9em;}
-.journal-entry-content { margin-bottom: 10px; }
-.journal-prompts-container { margin-bottom: 20px; padding: 15px; background-color: var(--bg-color-light); border-radius: 5px;}
+.journal-entry-item h5 { margin-top: 0; margin-bottom: 0.8em; color: var(--text-color-muted); font-size: 0.95em; font-weight: 400; }
+.journal-entry-content { margin-bottom: 15px; line-height: 1.7; }
+.journal-prompts-container { margin-bottom: 25px; padding: 20px; background-color: var(--bg-color-light); border-radius: var(--border-radius-medium);}
 .journal-prompts-container ul { list-style: none; padding-left: 0; }
 .journal-prompts-container .prompt-button {
     display: block; width: 100%; text-align: left;
-    margin-bottom: 8px; background-color: var(--bg-color-lighter);
+    margin-bottom: 10px; background-color: var(--bg-color-lighter);
+    color: var(--text-color);
 }
+.journal-prompts-container .prompt-button:hover { background-color: var(--border-color); }
 
 /* --- SUMMARY VIEW --- */
-#summary-view h2 {
-    margin-bottom: 20px;
-}
-
-.summary-controls {
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid var(--border-color);
-}
-
+#summary-view h2 { margin-bottom: 25px; }
+.summary-controls { margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); }
 #summary-content-area {
-    background-color: var(--bg-color);
-    padding: 20px;
-    border-radius: 5px;
-    border: 1px solid var(--border-color);
+    background-color: var(--bg-color); padding: 25px;
+    border-radius: var(--border-radius-large); border: 1px solid var(--border-color);
 }
-
-.summary-category-block {
-    margin-bottom: 25px;
-    padding-bottom: 15px;
-    border-bottom: 1px dashed var(--border-color);
-}
-.summary-category-block:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
-}
-
-.summary-category-block h3 {
-    color: var(--primary-color);
-    margin-bottom: 10px;
-    font-size: 1.5em;
-}
-
+.summary-category-block { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px dashed var(--border-color); }
+.summary-category-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.summary-category-block h3 { color: var(--primary-color); margin-bottom: 15px; font-size: 1.6em; }
 .summary-kink-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--bg-color-light);
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 12px 0; border-bottom: 1px solid var(--bg-color-light);
 }
-.summary-kink-item:last-child {
-    border-bottom: none;
-}
-
-.summary-kink-name {
-    font-weight: bold;
-    flex-basis: 40%;
-}
-
+.summary-kink-item:last-child { border-bottom: none; }
+.summary-kink-name { font-weight: 500; flex-basis: 38%; font-size: 1.05em;}
 .summary-kink-rating {
-    flex-basis: 20%;
-    text-align: center;
-    font-style: italic;
-    padding: 3px 8px;
-    border-radius: 4px;
-    color: white;
-    margin: 0 10px; /* Add some horizontal margin */
+    flex-basis: 22%; text-align: center; font-weight: 500;
+    padding: 5px 10px; border-radius: var(--border-radius-small); color: white;
+    margin: 0 15px; letter-spacing: 0.5px;
 }
-
-.summary-kink-notes {
-    flex-basis: 40%;
-    font-size: 0.9em;
-    color: #bdc3c7;
-    padding-left: 15px;
-    white-space: pre-wrap;
-}
-.summary-kink-notes p:last-child {
-    margin-bottom: 0;
-}
-
-/* Rating specific background colors for summary items */
+.summary-kink-notes { flex-basis: 38%; font-size: 0.95em; color: var(--text-color-muted); padding-left: 15px; white-space: pre-wrap; line-height: 1.5;}
+.summary-kink-notes p:last-child { margin-bottom: 0; }
+/* Rating specific background colors for summary items (same logic as Kink Galaxy pills) */
 .summary-rating-want-to-try { background-color: var(--rating-want-to-try); }
 .summary-rating-favorite { background-color: var(--rating-favorite); }
 .summary-rating-like-it { background-color: var(--rating-like-it); }
-.summary-rating-curious-about { background-color: var(--rating-curious-about); color: #333 !important; }
+.summary-rating-curious-about { background-color: var(--rating-curious-about); color: #2c3e50 !important; }
 .summary-rating-soft-limit { background-color: var(--rating-soft-limit); }
 .summary-rating-hard-limit { background-color: var(--rating-hard-limit); }
-.summary-rating-not-for-me { background-color: var(--rating-not-for-me); color: #333 !important; }
-
+.summary-rating-not-for-me { background-color: var(--rating-not-for-me); color: #2c3e50 !important; }
 
 /* --- SETTINGS VIEW --- */
-#settings-view h3 { margin-top: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; }
+#settings-view h3 { margin-top: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
 
 /* --- UTILITY CLASSES --- */
 .hidden { display: none !important; }
@@ -385,98 +475,72 @@ textarea { min-height: 100px; resize: vertical; }
 /* --- PRINT STYLES for Summary View --- */
 @media print {
     body {
-        background-color: white !important;
-        color: black !important;
-        font-size: 10pt;
-        -webkit-print-color-adjust: exact !important; /* Chrome, Safari, Edge */
-        print-color-adjust: exact !important; /* Firefox */
+        background-color: white !important; color: black !important; font-size: 9pt; /* Smaller for print */
+        -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
     }
     #main-header, #main-nav, #main-footer, .summary-controls, #kink-filters,
     #welcome-view .data-management button, #welcome-view .data-management label,
     #settings-view, #journal-view, #academy-view, #galaxy-view, #welcome-view,
-    .galaxy-category h3 + .kink-list + .no-kinks-in-category /* Hide 'no kinks' message if category has kinks */
-     {
-        display: none !important;
-    }
+    .kink-filters, /* Also hide kink filters if they exist */
+    .galaxy-category h3 + .kink-list + .no-kinks-in-category { display: none !important; }
 
     #app-container, #main-content, #summary-view, #summary-content-area {
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        border: none !important;
-        box-shadow: none !important;
+        width: 100% !important; max-width: 100% !important; margin: 0 !important;
+        padding: 0 !important; border: none !important; box-shadow: none !important;
         background-color: white !important;
     }
-    .view { animation: none !important; display: none !important; } /* Hide all views */
-    #summary-view.active-view { display: block !important; } /* Only show summary view */
+    .view { animation: none !important; display: none !important; }
+    #summary-view.active-view { display: block !important; }
 
-
-    .summary-category-block h3, .summary-kink-name {
-        color: black !important;
-    }
+    .summary-category-block h3, .summary-kink-name { color: black !important; }
     .summary-kink-rating {
-        border: 1px solid #ccc; /* Add border for print if colors are removed/lightened */
-        color: black !important; /* Ensure text is black for print */
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
+        border: 1px solid #999 !important; /* Ensure border for ratings */
+        color: black !important;
+        -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+        padding: 2px 4px !important; /* Reduce padding for print */
+        margin: 0 5px !important; /* Reduce margin */
+        font-size: 0.9em !important;
     }
-    .summary-kink-notes {
-        color: #333 !important;
-    }
-
-    /* Keep rating colors for print, or use a light grey if colors are an issue */
+    .summary-kink-notes { color: #333 !important; font-size: 0.85em !important; }
     .summary-rating-want-to-try { background-color: var(--rating-want-to-try) !important; }
     .summary-rating-favorite { background-color: var(--rating-favorite) !important; }
     .summary-rating-like-it { background-color: var(--rating-like-it) !important; }
-    .summary-rating-curious-about { background-color: var(--rating-curious-about) !important; color: #333 !important; }
+    .summary-rating-curious-about { background-color: var(--rating-curious-about) !important; color: #2c3e50 !important; }
     .summary-rating-soft-limit { background-color: var(--rating-soft-limit) !important; }
     .summary-rating-hard-limit { background-color: var(--rating-hard-limit) !important; }
-    .summary-rating-not-for-me { background-color: var(--rating-not-for-me) !important; color: #333 !important; }
-
-    /* Ensure links are styled for print if any remain visible */
+    .summary-rating-not-for-me { background-color: var(--rating-not-for-me) !important; color: #2c3e50 !important; }
     a { color: #0000EE !important; text-decoration: underline !important; }
 }
 
-
 /* --- RESPONSIVE DESIGN --- */
 @media (max-width: 768px) {
-    #main-header { flex-direction: column; height: auto; padding: 15px; }
-    #main-header h1 { margin-bottom: 10px; }
-    #main-nav { width: 100%; display: flex; justify-content: space-around; }
-    #main-nav button { margin-left: 0; flex-grow: 1; margin: 5px; }
-    .modal-content { width: 90%; margin: 20% auto; }
-    h1 { font-size: 2em; } h2 { font-size: 1.75em; }
-
-    .summary-kink-item {
-        flex-direction: column; /* Stack items in summary on small screens */
-        align-items: stretch; /* Make items take full width */
-    }
+    #main-header { flex-direction: column; height: auto; padding: 15px 20px; }
+    #main-header h1 { margin-bottom: 10px; font-size: 1.8em; }
+    #main-nav { width: 100%; display: flex; flex-wrap: wrap; justify-content: center; } /* Allow nav buttons to wrap */
+    #main-nav button { margin: 5px; flex-grow: 0; /* Don't force grow if wrapping */ padding: 8px 12px; font-size: 0.9em;}
+    .modal-content { width: 95%; margin: 10% auto; padding: 20px; }
+    h1 { font-size: 2.2em; } h2 { font-size: 1.8em; }
+    .summary-kink-item { flex-direction: column; align-items: stretch; }
     .summary-kink-name, .summary-kink-rating, .summary-kink-notes {
-        flex-basis: auto; /* Reset flex-basis */
-        width: 100%;
-        text-align: left; /* Align rating text left on small screens */
-        margin: 5px 0; /* Adjust margin */
-        padding-left: 0; /* Reset padding for notes */
+        flex-basis: auto; width: 100%; text-align: left; margin: 6px 0; padding-left: 0;
     }
-    .summary-kink-rating { margin-left: 0; margin-right: 0; }
-
+    .summary-kink-rating { margin-left: 0; margin-right: 0; text-align: center; }
+    #modal-kink-rating { gap: 8px; } /* Slightly less gap for modal buttons */
+    #modal-kink-rating button { padding: 8px 10px; font-size: 0.9em; }
 }
 @media (max-width: 480px) {
-    body { font-size: 15px; }
-    #main-content { padding: 10px; }
+    body { font-size: 14px; } /* Smaller base for very small screens */
+    #main-content { padding: 15px; }
     button, .button-like-label, .back-button {
-        padding: 10px 15px; font-size: 0.95em; width: 100%;
-        margin-bottom: 10px; margin-right: 0;
+        padding: 10px 18px; font-size: 0.95em; width: 100%;
+        margin-bottom: 12px; margin-right: 0;
     }
     #welcome-view .data-management button,
     #welcome-view .data-management .button-like-label,
     #modal-kink-rating button,
     .journal-prompts-container .prompt-button,
-    .journal-entry-item button
-     {
-        width: auto;
-        margin-right: 10px;
-    }
+    .journal-entry-item button { width: auto; margin-right: 8px; }
     .journal-entry-item button { margin-bottom: 0; }
+    .kink-star { padding: 8px 12px; font-size: 0.9em; } /* Smaller kink pills */
+    .kink-star-rating-badge { padding: 3px 6px; font-size: 0.7em; margin-left: 8px;}
 }
