@@ -27,7 +27,7 @@
                 <h2>Welcome to Your Kink Atlas</h2>
                 <p>Embark on a personal journey of exploration and understanding. All your data is stored locally in this browser.</p>
                 <p><strong>Important:</strong> Your Kink Atlas data is saved only in this browser. If you clear your browser data or switch devices, your Atlas will be reset unless you export it.</p>
-                <p>You can manage content preferences, including the display of advanced or taboo kinks, in the <button class="inline-nav-btn" data-view-target="settings-view">Settings</button> page.</p>
+                <p>You can manage content preferences, including the display of advanced or higher-risk kinks, in the <button class="inline-nav-btn" data-view-target="settings-view">Settings</button> page. You can also create different profiles for sharing there.</p>
                 <button id="start-exploring-btn">Start Exploring</button>
                 <div class="data-management">
                     <button id="export-data-btn">Export My Atlas Data</button>
@@ -38,19 +38,21 @@
 
             <!-- Kink Galaxy View (hidden by default) -->
             <section id="galaxy-view" class="view">
-                <h2>My Kink Galaxy</h2>
+                <div class="view-header">
+                    <h2>My Kink Galaxy</h2>
+                    <div class="profile-selector-container">
+                        <label for="profile-select-galaxy">Viewing Profile:</label>
+                        <select id="profile-select-galaxy">
+                            <!-- Options will be populated by JS -->
+                            <option value="personal">My Personal Atlas (All Rated)</option>
+                        </select>
+                    </div>
+                </div>
                 <div id="kink-galaxy-visualization">
                     <p>Loading Kink Galaxy...</p>
                 </div>
                 <div id="kink-filters">
                     <h4>Filters (Coming Soon)</h4>
-                    <!-- Future: Profile selection dropdown -->
-                    <!--
-                    <label for="profile-select-galaxy">Viewing Profile:</label>
-                    <select id="profile-select-galaxy">
-                        <option value="personal">My Personal Atlas</option>
-                    </select>
-                    -->
                 </div>
             </section>
 
@@ -76,29 +78,31 @@
                     </div>
                     <textarea id="modal-kink-notes" placeholder="My private notes, fantasies, conditions..."></textarea>
                     
-                    <!-- Future: Add to Profile Checkboxes -->
-                    <!--
-                    <div id="modal-profile-management" style="margin-top: 15px;">
+                    <div id="modal-profile-assignment" class="modal-section" style="margin-top: 15px;">
                         <h4>Include in Profiles:</h4>
-                        <label><input type="checkbox" data-profile-id="shareable"> Shareable Profile</label>
+                        <div id="modal-profile-checkboxes-container">
+                            <!-- Profile checkboxes will be populated by JS -->
+                            <p class="no-profiles-note" style="display:none;">No custom profiles created yet. Visit Settings to add some.</p>
+                        </div>
                     </div>
-                    -->
                     
-                    <button id="save-modal-btn" style="margin-top: 15px;">Save & Close</button>
+                    <button id="save-modal-btn" style="margin-top: 20px;">Save & Close</button>
                 </div>
             </div>
 
             <!-- Summary View -->
             <section id="summary-view" class="view">
-                <h2>My Kink Summary</h2>
+                <div class="view-header">
+                    <h2>My Kink Summary</h2>
+                    <div class="profile-selector-container">
+                        <label for="profile-select-summary">Viewing Profile:</label>
+                        <select id="profile-select-summary">
+                             <!-- Options will be populated by JS -->
+                            <option value="personal">My Personal Atlas (All Rated)</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="summary-controls">
-                    <!-- Future: Profile selection dropdown for summary -->
-                    <!--
-                    <label for="profile-select-summary">Select Profile to View:</label>
-                    <select id="profile-select-summary">
-                         <option value="personal">My Personal Atlas (All Rated)</option>
-                    </select>
-                    -->
                     <button id="print-summary-btn">Print/Save as PDF</button>
                 </div>
                 <div id="summary-content-area">
@@ -126,7 +130,7 @@
             <!-- Settings/About View (hidden by default) -->
             <section id="settings-view" class="view">
                 <h2>Settings & About</h2>
-                <p>Kink Atlas <span id="app-version">v0.1.5</span></p> <!-- Updated version -->
+                <p>Kink Atlas <span id="app-version">v0.1.6</span></p> <!-- Updated version -->
                 <p>This app stores all data locally in your browser. No data is sent to any server.</p>
                 
                 <h3 style="margin-top:20px;">Data Management</h3>
@@ -136,26 +140,28 @@
                     <input type="file" id="import-file-settings-input" accept=".json" style="display: none;">
                 </div>
 
-                <!-- NEW: Content Preferences Section -->
                 <h3 style="margin-top:20px;">Content Preferences</h3>
                 <div class="settings-group">
                     <div class="setting-item">
                         <input type="checkbox" id="setting-show-taboo-kinks" name="show-taboo-kinks">
-                        <label for="setting-show-taboo-kinks" class="checkbox-label">Display Advanced/Taboo Kinks (View with Discretion)</label>
+                        <label for="setting-show-taboo-kinks" class="checkbox-label">Display Advanced/Higher-Risk Kinks</label>
                     </div>
-                    <p class="setting-description">Enabling this option will show kinks that may be considered highly explicit, taboo, or involve higher psychological/physical risks. Please ensure you are comfortable viewing such content.</p>
+                    <p class="setting-description">Enabling this option will show kinks that may be considered explicit, involve higher psychological/physical risks, or explore themes often considered taboo. Please ensure you are comfortable viewing such content. Your preferences are saved locally.</p>
                 </div>
-                <!-- END NEW -->
                 
-                <!-- Future: Profile Management UI -->
-                <!--
-                <h3 style="margin-top:20px;">Manage Profiles</h3>
+                <h3 style="margin-top:20px;">Manage Kink Profiles</h3>
                 <div id="profile-management-area" class="settings-group">
-                    <p>Create and manage your shareable kink profiles here.</p>
-                    <button id="create-new-profile-btn">Create New Profile</button>
-                    <div id="existing-profiles-list"></div>
+                    <p>Create and manage custom profiles (e.g., for sharing with partners or friends). The "My Personal Atlas" profile always shows all your rated kinks based on content settings.</p>
+                    <div class="profile-creation-form">
+                        <input type="text" id="new-profile-name" placeholder="New Profile Name (e.g., Shareable)">
+                        <button id="create-new-profile-btn">Create Profile</button>
+                    </div>
+                    <h4>Existing Custom Profiles:</h4>
+                    <ul id="existing-profiles-list">
+                        <!-- List of profiles with delete buttons will be populated by JS -->
+                        <li class="no-custom-profiles-note">No custom profiles created yet.</li>
+                    </ul>
                 </div>
-                -->
 
                 <h3 style="margin-top:20px;">Themes (Future Feature)</h3>
                 <div class="settings-group">
