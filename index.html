@@ -1,69 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BDSM Archetype Oracle & Playground</title>
-  <link rel="stylesheet" href="styles.css">
-  <!-- Example Favicon Link (replace with your actual favicon) -->
-  <!-- <link rel="icon" href="favicon.ico" type="image/x-icon"> -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kink Atlas - Your Personal Journey</title>
+    <!-- Link to your main CSS file (we'll create this next) -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Favicon (optional, but good for polish) -->
+    <!-- <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon"> -->
 </head>
-<body data-theme="light">
+<body>
 
-  <header class="app-header">
-    <h1>Discover Your Inner Archetype</h1>
-    <p class="subtitle">Navigate the realms of desire, uncover your unique BDSM resonance, and explore interactive scenarios in the Playground.</p>
-  </header>
+    <div id="app-container">
 
-  <main class="app-main">
-    <button id="style-finder-btn" class="cta-button">Unveil Your Archetype</button>
-    
-    <!-- Button to open the Playground - accessible from the start -->
-    <button id="open-playground-btn" style="margin-top: 15px;">Enter the Archetype Playground</button>
+        <!-- Header/Navigation Area -->
+        <header id="main-header">
+            <h1>Kink Atlas</h1>
+            <nav id="main-nav">
+                <!-- Navigation links will be dynamically added or hardcoded here -->
+                <!-- Example: <button data-view="galaxy">Galaxy</button> -->
+            </nav>
+        </header>
 
-    <!-- Button to return to results - initially hidden -->
-    <button id="return-to-results-btn" style="display: none; margin-top: 15px;">View My Last Archetype Result</button>
-  </main>
+        <!-- Main Content Area (this will change based on the view) -->
+        <main id="main-content">
+            <!-- Initial welcome message or default view -->
+            <section id="welcome-view" class="view active-view">
+                <h2>Welcome to Your Kink Atlas</h2>
+                <p>Embark on a personal journey of exploration and understanding. All your data is stored locally in this browser.</p>
+                <p><strong>Important:</strong> Your Kink Atlas data is saved only in this browser. If you clear your browser data or switch devices, your Atlas will be reset unless you export it.</p>
+                <button id="start-exploring-btn">Start Exploring</button>
+                <div class="data-management">
+                    <button id="export-data-btn">Export My Atlas</button>
+                    <label for="import-file-input" class="button-like-label">Import My Atlas</label>
+                    <input type="file" id="import-file-input" accept=".json" style="display: none;">
+                </div>
+            </section>
 
-  <!-- Theme Toggle Button -->
-  <button id="theme-toggle" aria-label="Toggle Dark Mode">🌙</button>
+            <!-- Kink Galaxy View (hidden by default) -->
+            <section id="galaxy-view" class="view">
+                <h2>My Kink Galaxy</h2>
+                <div id="kink-galaxy-visualization">
+                    <!-- The interactive galaxy will be rendered here by JavaScript -->
+                </div>
+                <div id="kink-filters">
+                    <!-- Filters for the galaxy (e.g., by category, by rating) -->
+                </div>
+            </section>
 
-  <!-- Quiz & Curation Modal -->
-  <div id="style-finder" class="modal" role="dialog" aria-modal="true">
-    <div class="modal-content">
-      <span id="close-style-finder" role="button" tabindex="0" aria-label="Close Archetype Oracle">×</span>
-      <h2 id="modal-main-title" class="visually-hidden">Archetype Discovery Process</h2>
-      <div id="progress-tracker" aria-live="polite"></div>
-      <div id="step-content">
-        <!-- Content for Quiz, Curation, and final Curated Result will be dynamically inserted here by script.js -->
-      </div>
-      <p id="feedback" aria-live="assertive"></p>
-      <div id="dashboard">
-        <!-- Dashboard content (live scores during quiz) will be dynamically inserted here -->
-      </div>
-    </div>
-  </div>
+            <!-- Kink Detail Modal (hidden by default, managed by JS) -->
+            <div id="kink-detail-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close-modal-btn">×</span>
+                    <h3 id="modal-kink-name">Kink Name</h3>
+                    <p id="modal-kink-category">Category: </p>
+                    <div id="modal-kink-rating">
+                        <!-- Rating options here -->
+                    </div>
+                    <textarea id="modal-kink-notes" placeholder="My private notes, fantasies, conditions..."></textarea>
+                    <div id="modal-kink-info-link">
+                        <!-- Link to Academy entry -->
+                    </div>
+                </div>
+            </div>
 
-  <!-- Playground Container (initially hidden) -->
-  <div id="playgroundContainer" class="playground-container-main" role="region" aria-labelledby="playground-main-title" style="display: none;">
-    <!-- Static, visually hidden title for the region, for accessibility -->
-    <h2 id="playground-main-title" class="visually-hidden">Archetype Playground</h2>
-    <!-- Actual visible header and content are managed by playground.js -->
-    <!-- Playground content (header, nav, activity area) will be dynamically injected here by playground.js -->
-  </div>
+            <!-- Academy View (hidden by default) -->
+            <section id="academy-view" class="view">
+                <h2>The Academy of Desire</h2>
+                <div id="academy-content-area">
+                    <!-- Learning modules, glossary, etc., will be loaded here -->
+                </div>
+            </section>
 
+            <!-- Journal View (hidden by default) -->
+            <section id="journal-view" class="view">
+                <h2>My Reflective Chamber</h2>
+                <div id="journal-entries">
+                    <!-- Journal entries and prompts will go here -->
+                </div>
+                <button id="new-journal-entry-btn">New Entry</button>
+            </section>
 
-  <!-- External confetti library for result celebration -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-  
-  <!-- Scripts: Order is important! -->
-  <script src="script.js"></script>      <!-- Defines StyleFinderApp and creates styleFinderApp instance -->
-  <script src="playground.js"></script>  <!-- Defines PlaygroundApp class -->
+            <!-- Settings/About View (hidden by default) -->
+            <section id="settings-view" class="view">
+                <h2>Settings & About</h2>
+                <p>Kink Atlas v0.1</p>
+                <p>This app stores all data locally in your browser. No data is sent to any server.</p>
+                <h3>Data Management</h3>
+                <button id="export-data-settings-btn">Export My Atlas</button>
+                <label for="import-file-settings-input" class="button-like-label">Import My Atlas</label>
+                <input type="file" id="import-file-settings-input" accept=".json" style="display: none;">
+                <h3>Themes (Future Feature)</h3>
+                <!-- Theme selection options -->
+            </section>
 
-  <footer class="app-footer">
-    <p>© 2024 BDSM Archetype Oracle. For entertainment and self-exploration purposes only. Ages 18+.</p>
-    <p>Please use responsibly and remember that communication and consent are paramount in all interactions.</p>
-  </footer>
+        </main>
 
+        <!-- Footer Area (optional) -->
+        <footer id="main-footer">
+            <p>© <span id="current-year"></span> Kink Atlas. For personal exploration.</p>
+        </footer>
+
+    </div> <!-- /#app-container -->
+
+    <!-- Link to your main JavaScript file (we'll create this later) -->
+    <!-- Place at the end of body for better perceived page load performance -->
+    <!-- <script src="js/data.js"></script> --> <!-- If you use a separate JS data file -->
+    <script src="js/app.js"></script>
 </body>
 </html>
