@@ -15,8 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
             settings: {
                 showTabooKinks: false,
                 summaryNoteStyle: 'icon',
-                currentTheme: 'dark',
-                sidebarCollapsed: true, // Should be false if not using sidebar, or handled by CSS only
+                currentTheme: 'dark', // 'dark' or 'light'
+                // sidebarCollapsed: false, // No longer used with top-nav
                 summaryFilters: { categories: [], ratingTypes: [], hasNotesOnly: false }
             },
             journalEntries: [],
@@ -28,14 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const DOMElements = {
         body: document.body,
         appContainer: document.getElementById('app-container'),
-        // Sidebar elements are removed as we reverted to top-nav
-        // sidebar: document.getElementById('sidebar'), 
-        // pageContentWrapper: document.getElementById('page-content-wrapper'),
-        // sidebarToggleBtnHeader: document.getElementById('sidebar-toggle-btn-header'),
-        // sidebarToggleBtnFooter: document.getElementById('sidebar-toggle-btn-footer'),
-        // appTitleSidebar: document.getElementById('app-title-sidebar'),
         mainHeader: document.getElementById('main-header'),
-        // currentViewTitleHeader: document.getElementById('current-view-title'), // No longer used with top-nav only
         mainNav: document.getElementById('main-nav'), // Back in main-header
         themeToggleBtn: document.getElementById('theme-toggle-btn'),
         mainContent: document.getElementById('main-content'),
@@ -111,10 +104,6 @@ document.addEventListener('DOMContentLoaded', () => {
         saveUserData();
     }
 
-    // --- SIDEBAR MANAGEMENT (No longer used with top-nav, kept for reference if re-added) ---
-    // function applySidebarState(collapsed) { /* ... */ }
-    // function toggleSidebar() { /* ... */ }
-
     // --- DATA INITIALIZATION & LOCALSTORAGE ---
     function initializeKinkData() { 
         if (typeof KINK_DEFINITIONS === 'undefined') { console.error("KINK_DEFINITIONS not found."); alert("Critical error: Kink data not found."); return false; }
@@ -132,8 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showTabooKinks: loadedData.settings?.showTabooKinks || false,
                 summaryNoteStyle: loadedData.settings?.summaryNoteStyle || 'icon',
                 summaryFilters: loadedData.settings?.summaryFilters || { categories: [], ratingTypes: [], hasNotesOnly: false },
-                currentTheme: loadedData.settings?.currentTheme || 'dark',
-                sidebarCollapsed: loadedData.settings?.sidebarCollapsed || false 
+                currentTheme: loadedData.settings?.currentTheme || 'dark'
             };
             state.userData.journalEntries = Array.isArray(loadedData.journalEntries) ? loadedData.journalEntries : [];
         } else {
@@ -142,13 +130,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 settings: { 
                     showTabooKinks: false, summaryNoteStyle: 'icon', 
                     summaryFilters: { categories: [], ratingTypes: [], hasNotesOnly: false }, 
-                    currentTheme: 'dark', sidebarCollapsed: false 
+                    currentTheme: 'dark'
                 },
                 journalEntries: [],
             };
         }
         applyTheme(state.userData.settings.currentTheme); 
-        // applySidebarState(state.userData.settings.sidebarCollapsed); // No sidebar
         if (DOMElements.settingShowTabooKinksCheckbox) DOMElements.settingShowTabooKinksCheckbox.checked = state.userData.settings.showTabooKinks;
         populateProfileSelectors();
         renderExistingProfilesList();
@@ -172,7 +159,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let baseKinks = [...state.kinks];
         if (!state.userData.settings.showTabooKinks) baseKinks = baseKinks.filter(kink => !kink.isTaboo);
         state.filteredKinksForDisplay = baseKinks;
-        console.log(`Applied global filters. ${state.filteredKinksForDisplay.length} kinks available after global filtering.`);
     }
     function getKinksForActiveProfileView() { 
         const activeProfileId = state.userData.activeProfileId;
@@ -252,10 +238,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- VIEW MANAGEMENT ---
     function updateNavButtons() { 
         if (!DOMElements.mainNav) return;
-        const navButtons = DOMElements.mainNav.querySelectorAll('button'); // Nav items are now buttons in top-nav
-        navButtons.forEach(btn => {
-            btn.classList.toggle('active-nav-btn', btn.dataset.view === state.currentView);
-        });
+        const navButtons = DOMElements.mainNav.querySelectorAll('button');
+        navButtons.forEach(btn => btn.classList.toggle('active-nav-btn', btn.dataset.view === state.currentView));
     }
     function switchView(viewId) { 
         if (!document.getElementById(viewId)) { console.error(`View ID "${viewId}" not found.`); return; }
@@ -263,8 +247,6 @@ document.addEventListener('DOMContentLoaded', () => {
         DOMElements.views.forEach(view => view.classList.toggle('active-view', view.id === viewId));
         updateNavButtons(); 
         applyGlobalKinkFilters(); 
-
-        // Removed currentViewTitleHeader logic as it's not in top-nav structure
         if (viewId === 'galaxy-view') renderKinkGalaxy();
         if (viewId === 'academy-view') renderAcademyIndex();
         if (viewId === 'journal-view') renderJournalEntries();
@@ -283,17 +265,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!DOMElements.mainNav) return;
         DOMElements.mainNav.innerHTML = '';
         navItems.forEach(item => {
-            const button = document.createElement('button'); // Using buttons for top nav
-            button.id = item.id; button.textContent = item.text; button.dataset.view = item.viewId;
-            button.addEventListener('click', () => switchView(item.viewId)); 
-            DOMElements.mainNav.appendChild(button);
+            const button = document.createElement('button'); button.id = item.id; button.textContent = item.text; button.dataset.view = item.viewId;
+            button.addEventListener('click', () => switchView(item.viewId)); DOMElements.mainNav.appendChild(button);
         });
     }
 
     // --- KINK GALAXY RENDERING (Pill Based) ---
     function renderKinkGalaxy() { 
-        if (!DOMElements.kinkGalaxyViz) return; 
-        DOMElements.kinkGalaxyViz.innerHTML = '';
+        if (!DOMElements.kinkGalaxyViz) return; DOMElements.kinkGalaxyViz.innerHTML = '';
         const categories = KINK_CATEGORIES; let galaxyHTML = ''; 
         const kinksToList = getKinksForActiveProfileView();
         
@@ -308,8 +287,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 galaxyHTML += `<div class="galaxy-category"><h3><span class="category-icon">${category.icon || ''}</span> ${category.name}</h3><div class="kink-list">`;
                 kinksInCategory.sort((a,b) => a.name.localeCompare(b.name)).forEach(kink => {
                     const kinkUserData = getKinkUserData(kink.id);
-                    let ratingClass = kinkUserData.rating ? `rating-${kinkUserData.rating.toLowerCase().replace(/[^a-z0-9_]/g, '-').replace(/\s+/g, '-')}` : 'rating-none';
-                    // This is for pill display
+                    let ratingKey = kinkUserData.rating || 'none'; // Ensure 'none' if no rating
+                    let ratingClass = `rating-${ratingKey.toLowerCase().replace(/[^a-z0-9_]/g, '-').replace(/\s+/g, '-')}`;
+                    
                     galaxyHTML += `<div class="kink-star ${ratingClass}" data-kink-id="${kink.id}">
                                     ${kink.name}
                                     ${kink.isHighRisk ? ' <span class="risk-indicator-high" title="High Risk">🔥</span>':''}
@@ -485,7 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const arrow = document.createElement('span'); arrow.classList.add('accordion-arrow'); arrow.innerHTML = '▼'; rgSummary.appendChild(arrow);
                 rgDetails.appendChild(rgSummary);
                 rgSummary.addEventListener('click', (e) => { 
-                    e.preventDefault(); // Prevent default details toggle to manage it smoothly
+                    e.preventDefault(); 
                     rgDetails.open = !rgDetails.open;
                     arrow.innerHTML = rgDetails.open ? '▼' : '▸';
                 });
@@ -697,7 +677,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 summaryNoteStyle: importedData.settings?.summaryNoteStyle || 'icon',
                                 summaryFilters: importedData.settings?.summaryFilters || { categories: [], ratingTypes: [], hasNotesOnly: false },
                                 currentTheme: importedData.settings?.currentTheme || 'dark',
-                                sidebarCollapsed: importedData.settings?.sidebarCollapsed || false,
+                                // sidebarCollapsed: importedData.settings?.sidebarCollapsed || false, // No sidebar
                             },
                             journalEntries: Array.isArray(importedData.journalEntries) ? importedData.journalEntries : []
                         };
