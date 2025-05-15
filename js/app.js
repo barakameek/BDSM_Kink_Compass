@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalKinkRating: document.getElementById('modal-kink-rating'),
         modalKinkNotes: document.getElementById('modal-kink-notes'),
         modalKinkInfoLink: document.getElementById('modal-kink-info-link'),
-        saveModalBtn: document.getElementById('save-modal-btn'), // Added this button
+        saveModalBtn: document.getElementById('save-modal-btn'),
 
         // Academy View
         academyView: document.getElementById('academy-view'),
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Journal View
         journalView: document.getElementById('journal-view'),
-        journalEntriesContainer: document.getElementById('journal-entries-container'), // Corrected ID used here
+        journalEntriesContainer: document.getElementById('journal-entries-container'),
         newJournalEntryBtn: document.getElementById('new-journal-entry-btn'),
 
         // Settings View
@@ -67,7 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- DATA INITIALIZATION & LOCALSTORAGE ---
     function initializeKinkData() {
-        // Ensure KINK_DEFINITIONS is available (from data.js)
         if (typeof KINK_DEFINITIONS === 'undefined') {
             console.error("KINK_DEFINITIONS not found. Make sure data.js is loaded before app.js and is correct.");
             alert("Critical error: Kink data not found. App cannot start.");
@@ -84,11 +83,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const savedUserData = localStorage.getItem('kinkAtlasUserData');
         if (savedUserData) {
             state.userData = JSON.parse(savedUserData);
-            // Ensure journalEntries is always an array
             if (!Array.isArray(state.userData.journalEntries)) {
                 state.userData.journalEntries = [];
             }
-            // Apply saved ratings and notes to the main kinks array
             state.kinks.forEach(kink => {
                 if (state.userData.kinkRatings && state.userData.kinkRatings[kink.id]) {
                     kink.userRating = state.userData.kinkRatings[kink.id].rating;
@@ -101,9 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 journalEntries: [],
             };
         }
-        // if (state.userData.lastView) {
-        // state.currentView = state.userData.lastView;
-        // }
     }
 
     function saveUserData() {
@@ -116,7 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
             }
         });
-        // state.userData.lastView = state.currentView;
         localStorage.setItem('kinkAtlasUserData', JSON.stringify(state.userData));
         console.log("User data saved.");
     }
@@ -136,12 +129,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         updateNavButtons();
 
-        // Render content for the new view if needed
         if (viewId === 'galaxy-view') renderKinkGalaxy();
         if (viewId === 'academy-view') renderAcademyIndex();
-        if (viewId === 'journal-view') renderJournalEntries(); // This was the problematic call
-        // Settings view doesn't need a specific render function on switch for now
-
+        if (viewId === 'journal-view') renderJournalEntries();
         console.log(`Switched to view: ${viewId}`);
     }
 
@@ -214,8 +204,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         DOMElements.kinkGalaxyViz.querySelectorAll('.kink-star').forEach(star => {
             star.addEventListener('click', (e) => {
+                console.log("Kink star clicked:", e.currentTarget); // DEBUG
                 const kinkId = e.currentTarget.dataset.kinkId;
-                openKinkDetailModal(kinkId);
+                console.log("Retrieved kinkId:", kinkId); // DEBUG
+                if (kinkId) {
+                    openKinkDetailModal(kinkId);
+                } else {
+                    console.error("kinkId is undefined for clicked star."); // DEBUG
+                }
             });
         });
     }
@@ -227,7 +223,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- KINK DETAIL MODAL ---
     function openKinkDetailModal(kinkId) {
+        console.log("openKinkDetailModal called with kinkId:", kinkId); // DEBUG
         const kink = state.kinks.find(k => k.id === kinkId);
+        console.log("Found kink object for modal:", kink); // DEBUG
         if (!kink) {
             console.error("Kink not found for modal:", kinkId);
             return;
@@ -258,12 +256,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (academyLink) {
             academyLink.addEventListener('click', (e) => {
                 e.preventDefault();
-                closeKinkDetailModal(false); // Close without re-rendering galaxy yet
+                closeKinkDetailModal(false);
                 renderAcademyArticle(kink.id);
                 switchView('academy-view');
             });
         }
-        DOMElements.kinkDetailModal.style.display = 'block';
+        if (DOMElements.kinkDetailModal) {
+            DOMElements.kinkDetailModal.style.display = 'block';
+            console.log("Modal display set to block."); // DEBUG
+        } else {
+            console.error("kinkDetailModal DOM element is null!"); // DEBUG
+        }
     }
 
     function closeKinkDetailModal(saveAndRenderGalaxy = true) {
@@ -273,11 +276,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 kink.userNotes = DOMElements.modalKinkNotes.value.trim();
             }
         }
-        DOMElements.kinkDetailModal.style.display = 'none';
+        if (DOMElements.kinkDetailModal) {
+            DOMElements.kinkDetailModal.style.display = 'none';
+        }
         state.currentOpenKinkId = null;
         if (saveAndRenderGalaxy) {
             saveUserData();
-            if (state.currentView === 'galaxy-view') { // Only re-render galaxy if it's the active view
+            if (state.currentView === 'galaxy-view') {
                 renderKinkGalaxy();
             }
         }
@@ -295,7 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     DOMElements.modalCloseBtn.addEventListener('click', () => closeKinkDetailModal());
-    DOMElements.saveModalBtn.addEventListener('click', () => closeKinkDetailModal()); // Save & Close button also uses this
+    DOMElements.saveModalBtn.addEventListener('click', () => closeKinkDetailModal());
     window.addEventListener('click', (event) => {
         if (event.target === DOMElements.kinkDetailModal) {
             closeKinkDetailModal();
@@ -351,15 +356,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         DOMElements.academyContentArea.appendChild(indexList);
     }
-
-    function createBackButton(targetFunction) {
+    
+    function createBackButton(targetFunction, text = 'Back') {
         const button = document.createElement('button');
-        button.classList.add('back-to-academy-index'); // Or a more generic class
-        button.innerHTML = '« Back';
+        button.classList.add('back-button'); 
+        button.innerHTML = `« ${text}`;
         button.addEventListener('click', (e) => {
             e.preventDefault();
             if (targetFunction) targetFunction();
-            else renderAcademyIndex(); // Default back action
+            else renderAcademyIndex(); 
         });
         return button;
     }
@@ -368,8 +373,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!DOMElements.academyContentArea) return;
         const category = KINK_CATEGORIES[categoryId];
         if (!category) return;
-        DOMElements.academyContentArea.innerHTML = ''; // Clear first
-        DOMElements.academyContentArea.appendChild(createBackButton(renderAcademyIndex));
+        DOMElements.academyContentArea.innerHTML = ''; 
+        DOMElements.academyContentArea.appendChild(createBackButton(renderAcademyIndex, 'Back to Academy Index'));
         const title = document.createElement('h2');
         title.innerHTML = `${category.icon || ''} ${category.name}`;
         DOMElements.academyContentArea.appendChild(title);
@@ -381,6 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
         DOMElements.academyContentArea.appendChild(subTitle);
         
         const kinkListUl = document.createElement('ul');
+        kinkListUl.classList.add('academy-kink-list'); // For styling
         state.kinks.filter(k => k.category_id === categoryId).forEach(kink => {
             const li = document.createElement('li');
             const a = document.createElement('a');
@@ -398,8 +404,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const module = ACADEMY_MODULES.find(m => m.id === moduleId);
         if (!module) return;
 
-        DOMElements.academyContentArea.innerHTML = ''; // Clear first
-        DOMElements.academyContentArea.appendChild(createBackButton(renderAcademyIndex));
+        DOMElements.academyContentArea.innerHTML = ''; 
+        DOMElements.academyContentArea.appendChild(createBackButton(renderAcademyIndex, 'Back to Academy Index'));
         let contentHTML = `<h2>${module.icon || ''} ${module.title}</h2>`;
         module.content.forEach(item => {
             switch (item.type) {
@@ -408,16 +414,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'list': contentHTML += `<ul>${item.items.map(liText => `<li>${liText}</li>`).join('')}</ul>`; break;
             }
         });
-        DOMElements.academyContentArea.innerHTML += contentHTML; // Append generated content
+        DOMElements.academyContentArea.innerHTML += contentHTML; 
     }
 
     function renderAcademyArticle(kinkId) {
         if (!DOMElements.academyContentArea) return;
         const kink = state.kinks.find(k => k.id === kinkId);
         
-        DOMElements.academyContentArea.innerHTML = ''; // Clear first
+        DOMElements.academyContentArea.innerHTML = ''; 
         const previousCategory = kink ? KINK_CATEGORIES[kink.category_id] : null;
-        DOMElements.academyContentArea.appendChild(createBackButton(previousCategory ? () => renderAcademyCategory(kink.category_id) : renderAcademyIndex));
+        DOMElements.academyContentArea.appendChild(createBackButton(previousCategory ? () => renderAcademyCategory(kink.category_id) : renderAcademyIndex, previousCategory ? `Back to ${previousCategory.name}` : 'Back to Academy Index'));
 
         if (!kink) {
             DOMElements.academyContentArea.innerHTML += `<p>Kink information not found.</p>`;
@@ -446,8 +452,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderGlossary() {
         if (!DOMElements.academyContentArea) return;
-        DOMElements.academyContentArea.innerHTML = ''; // Clear first
-        DOMElements.academyContentArea.appendChild(createBackButton(renderAcademyIndex));
+        DOMElements.academyContentArea.innerHTML = ''; 
+        DOMElements.academyContentArea.appendChild(createBackButton(renderAcademyIndex, 'Back to Academy Index'));
         let glossaryHTML = `<h2>Glossary of Terms</h2><dl>`;
         const sortedTerms = Object.keys(GLOSSARY_TERMS).sort((a, b) => GLOSSARY_TERMS[a].term.localeCompare(GLOSSARY_TERMS[b].term));
         sortedTerms.forEach(key => {
@@ -460,11 +466,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- JOURNAL ---
     function renderJournalEntries() {
-        if (!DOMElements.journalEntriesContainer) { // Check if the container exists
+        if (!DOMElements.journalEntriesContainer) {
             console.error("Journal entries container not found in DOM.");
             return;
         }
-        DOMElements.journalEntriesContainer.innerHTML = ''; // Clear previous entries
+        DOMElements.journalEntriesContainer.innerHTML = '';
         if (!state.userData.journalEntries || state.userData.journalEntries.length === 0) {
             DOMElements.journalEntriesContainer.innerHTML = `<p>No journal entries yet. Use prompts or start fresh!</p>`;
         }
@@ -484,10 +490,10 @@ document.addEventListener('DOMContentLoaded', () => {
             promptsList.appendChild(li);
         });
         promptsContainer.appendChild(promptsList);
-        DOMElements.journalEntriesContainer.appendChild(promptsContainer); // Add prompts first
+        DOMElements.journalEntriesContainer.appendChild(promptsContainer);
 
         state.userData.journalEntries.slice().reverse().forEach((entry, arrayIndex) => {
-            const originalIndex = state.userData.journalEntries.length - 1 - arrayIndex; // Index in the original array
+            const originalIndex = state.userData.journalEntries.length - 1 - arrayIndex;
             const entryDiv = document.createElement('div');
             entryDiv.classList.add('journal-entry-item');
             entryDiv.innerHTML = `
@@ -567,8 +573,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (confirm("This will overwrite your current Atlas data. Are you sure you want to import?")) {
                             state.userData = importedData;
                             if (!Array.isArray(state.userData.journalEntries)) state.userData.journalEntries = [];
-                            initializeKinkData(); // Reset kink data to defaults first, then apply user data
-                            loadUserData(); // This will re-apply the newly imported data over the initialized kinks
+                            initializeKinkData();
+                            loadUserData();
                             saveUserData();
                             alert("Kink Atlas data imported successfully!");
                             switchView(state.userData.lastView || 'galaxy-view');
@@ -595,9 +601,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (DOMElements.currentYearSpan) DOMElements.currentYearSpan.textContent = new Date().getFullYear();
     }
     function updateAppVersion() {
-        if (DOMElements.appVersionSpan) DOMElements.appVersionSpan.textContent = "v0.1.1"; // Example
+        if (DOMElements.appVersionSpan) DOMElements.appVersionSpan.textContent = "v0.1.2"; // Updated version
     }
-
 
     // --- INITIALIZATION CALL ---
     function init() {
@@ -608,10 +613,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loadUserData();
         setupNavigation();
         switchView(state.currentView || 'welcome-view');
-
-        // Optional: Save data periodically or on unload
-        // window.addEventListener('beforeunload', saveUserData);
-
         console.log("Kink Atlas Ready.");
     }
 
