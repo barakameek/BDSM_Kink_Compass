@@ -1,7 +1,7 @@
-/* Kink Atlas - css/style.css - Playful & Polished Expression Theme */
+/* Kink Atlas - css/style.css - Playful & Polished Expression Theme - FINAL FULL VERSION */
 
 /* --- FONT IMPORT --- */
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Open+Sans:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Open+Sans:wght@400;600&family=Great+Vibes&family=EB+Garamond&display=swap');
 
 /* --- THEME VARIABLES --- */
 :root {
@@ -16,8 +16,8 @@
     --bg-element-dark: #718096;     /* Lighter Slate for interactive elements */
     --border-color-dark: #5a6578;   
     --modal-bg-overlay-dark: rgba(26, 32, 44, 0.85);
-    --shadow-color-umbra-dark: rgba(0,0,0,0.2); /* Softer umbra */
-    --shadow-color-penumbra-dark: rgba(0,0,0,0.14); /* Softer penumbra */
+    --shadow-color-umbra-dark: rgba(0,0,0,0.2); 
+    --shadow-color-penumbra-dark: rgba(0,0,0,0.14);
 
     /* Light Theme */
     --primary-accent-light: #f670a0; 
@@ -67,6 +67,9 @@
 
     --font-body: 'Open Sans', sans-serif;
     --font-heading: 'Nunito', sans-serif;
+    --font-certificate-title: 'Great Vibes', cursive; 
+    --font-certificate-body: 'EB Garamond', serif; 
+
     --header-height-main: 65px;
     --border-radius: 8px; 
     --transition-main: 0.2s ease-in-out;
@@ -121,7 +124,7 @@ p { margin-bottom: 1.1em; }
 
 /* --- MAIN HEADER & TOP NAVIGATION --- */
 #main-header {
-    background-color: var(--panel-bg-color); /* Use panel bg for header */
+    background-color: var(--panel-bg-color); 
     padding: 0 25px; height: var(--header-height-main);
     display: flex; justify-content: space-between; align-items: center;
     border-bottom: 1px solid var(--main-border-color); box-shadow: var(--box-shadow-main);
@@ -138,7 +141,7 @@ p { margin-bottom: 1.1em; }
     background: transparent; border: none; color: var(--text-muted);
     padding: 10px 15px; cursor: pointer; border-radius: var(--border-radius);
     font-size: 0.95rem; font-weight: 600; letter-spacing: 0.5px;
-    transition: color var(--transition-main), background-color var(--transition-main);
+    transition: color var(--transition-main), background-color var(--transition-main), border-bottom-color var(--transition-main);
     border-bottom: 3px solid transparent;
 }
 #main-nav button:hover { color: var(--primary-accent); background-color: var(--element-bg-color); }
@@ -148,7 +151,7 @@ p { margin-bottom: 1.1em; }
 }
 #theme-toggle-btn {
     background: transparent; color: var(--text-muted);
-    border: 1px solid transparent; padding: 8px; margin-left: 15px; cursor: pointer;
+    border: none; padding: 8px; margin-left: 15px; cursor: pointer;
     border-radius: 50%; width: 40px; height: 40px;
     font-size: 1.4rem; line-height: 1;
     display: flex; align-items: center; justify-content: center;
@@ -169,6 +172,7 @@ p { margin-bottom: 1.1em; }
     animation: fadeInView 0.5s var(--transition-timing);
     background-color: var(--panel-bg-color); border: 1px solid var(--main-border-color);
     margin-bottom: 30px; box-shadow: var(--box-shadow-main);
+    transition: background-color var(--transition-main), border-color var(--transition-main);
 }
 .view.active-view { display: block !important; }
 @keyframes fadeInView { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -195,7 +199,7 @@ input[type="text"]:focus, textarea:focus, select:focus {
 textarea { min-height: 100px; resize: vertical; line-height: 1.5; }
 select {
     appearance: none; -webkit-appearance: none; -moz-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23a0aec0' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23a0aec0' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
     background-repeat: no-repeat; background-position: right 12px center;
     padding-right: 35px; 
 }
@@ -211,8 +215,7 @@ button, .button-like-label {
     font-size: 0.9rem; font-weight: 700; transition: all var(--transition-main);
     margin-top: 10px; margin-right: 10px; text-transform: uppercase;
     display: inline-flex; align-items: center; justify-content: center;
-    box-shadow: 0 1px 3px var(--shadow-umbra);
-    letter-spacing: 0.5px;
+    box-shadow: 0 1px 3px var(--shadow-umbra); letter-spacing: 0.5px;
 }
 button:hover, .button-like-label:hover { background-color: var(--secondary-accent); transform: translateY(-1px); box-shadow: 0 2px 5px var(--shadow-umbra); }
 button:active, .button-like-label:active { transform: translateY(0px); box-shadow: inset 0 1px 2px rgba(0,0,0,0.2); }
@@ -229,14 +232,14 @@ button.btn-secondary:hover { background-color: var(--main-border-color); color: 
 .inline-nav-btn:hover { color: var(--primary-accent); background: none; transform: none; box-shadow: none; }
 
 /* --- WELCOME PAGE --- */
-#welcome-view { text-align: left; padding: 30px 40px; } 
-#welcome-view h2 { text-align: center; margin-bottom: 30px; font-size: 2.2rem; }
-#welcome-view p { font-size: 1.05rem; line-height: 1.8; margin-bottom: 1.5em; }
-.welcome-actions { margin: 30px 0; text-align: center; }
-#welcome-view .data-management { margin-top: 35px; padding-top: 25px; border-top: 1px solid var(--main-border-color); text-align: center; }
+#welcome-view { text-align: center; padding: 30px 40px; } 
+#welcome-view h2 { margin-bottom: 25px; font-size: 2.2rem; }
+#welcome-view p { font-size: 1.05rem; line-height: 1.8; max-width: 700px; margin-left: auto; margin-right: auto; }
+.welcome-actions { margin: 25px 0; }
+#welcome-view .data-management { margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--main-border-color); }
 #welcome-view .data-management button, #welcome-view .data-management .button-like-label { margin: 8px; }
 
-/* --- KINK GALAXY (PILLS WITH FULL BACKGROUND COLOR) --- */
+/* --- KINK GALAXY (PILLS WITH FULL BACKGROUND COLOR - REINFORCED) --- */
 #kink-galaxy-visualization { padding: 15px 0; }
 .galaxy-category { margin-bottom: 30px; }
 .galaxy-category h3 {
@@ -251,32 +254,35 @@ button.btn-secondary:hover { background-color: var(--main-border-color); color: 
     transition: all var(--transition-main);
     font-size: 0.9rem; font-weight: 600; display: inline-flex;
     align-items: center; box-shadow: 0 1px 2px var(--shadow-umbra);
-    background-color: var(--element-bg-color); color: var(--text-main);
-    border: 1px solid var(--main-border-color);
+    background-color: var(--element-bg-color); /* Default for .rating-none */
+    color: var(--text-main); /* Default for .rating-none */
+    border: 1px solid var(--main-border-color); /* Default for .rating-none */
 }
-.kink-star:hover { transform: translateY(-2px); box-shadow: 0 2px 4px var(--shadow-umbra); border-color: var(--primary-accent); }
+.kink-star:hover { transform: translateY(-2px); box-shadow: 0 2px 4px var(--shadow-umbra); }
 .kink-star-rating-badge {
     font-size: 0.75rem; padding: 2px 7px; border-radius: 10px;
     margin-left: 8px; white-space: nowrap; font-weight: 700; flex-shrink: 0;
 }
-/* Galaxy Pill Colors - These selectors should be specific enough */
-.kink-star.rating-want-to-try { background-color: var(--rating-bg-want-to-try); border-color: var(--rating-bg-want-to-try); color: var(--rating-text-want-to-try); }
-.kink-star.rating-want-to-try .kink-star-rating-badge { background-color: rgba(255,255,255,0.15); color:var(--rating-text-want-to-try); }
-.kink-star.rating-favorite { background-color: var(--rating-bg-favorite); border-color: var(--rating-bg-favorite); color: var(--rating-text-favorite); }
-.kink-star.rating-favorite .kink-star-rating-badge { background-color: rgba(255,255,255,0.15); color:var(--rating-text-favorite); }
-.kink-star.rating-like-it { background-color: var(--rating-bg-like-it); border-color: var(--rating-bg-like-it); color: var(--rating-text-like-it); }
-.kink-star.rating-like-it .kink-star-rating-badge { background-color: rgba(255,255,255,0.15); color:var(--rating-text-like-it); }
-.kink-star.rating-curious-about { background-color: var(--rating-bg-curious-about); border-color: var(--rating-bg-curious-about); color: var(--rating-text-curious-about); }
-.kink-star.rating-curious-about .kink-star-rating-badge { background-color: rgba(0,0,0,0.1); color: var(--rating-text-curious-about); }
-.kink-star.rating-soft-limit { background-color: var(--rating-bg-soft-limit); border-color: var(--rating-bg-soft-limit); color: var(--rating-text-soft-limit); }
-.kink-star.rating-soft-limit .kink-star-rating-badge { background-color: rgba(255,255,255,0.15); color:var(--rating-text-soft-limit); }
-.kink-star.rating-hard-limit { background-color: var(--rating-bg-hard-limit); border-color: var(--rating-bg-hard-limit); color: var(--rating-text-hard-limit); }
-.kink-star.rating-hard-limit .kink-star-rating-badge { background-color: rgba(255,255,255,0.15); color:var(--rating-text-hard-limit); }
-.kink-star.rating-not-for-me { background-color: var(--rating-bg-not-for-me); border-color: var(--rating-bg-not-for-me); color: var(--rating-text-not-for-me); opacity: 0.85; }
-.kink-star.rating-not-for-me .kink-star-rating-badge { background-color: rgba(0,0,0,0.1); color: var(--rating-text-not-for-me); }
-.kink-star.rating-none { /* Uses base .kink-star styles */ }
+/* Galaxy Pill Colors - Using descendant selectors for specificity */
+#kink-galaxy-visualization .kink-list .kink-star.rating-want-to-try { background-color: var(--rating-bg-want-to-try); border-color: var(--rating-bg-want-to-try); color: var(--rating-text-want-to-try); }
+#kink-galaxy-visualization .kink-list .kink-star.rating-want-to-try .kink-star-rating-badge { background-color: rgba(255,255,255,0.15); color:var(--rating-text-want-to-try); }
+#kink-galaxy-visualization .kink-list .kink-star.rating-favorite { background-color: var(--rating-bg-favorite); border-color: var(--rating-bg-favorite); color: var(--rating-text-favorite); }
+#kink-galaxy-visualization .kink-list .kink-star.rating-favorite .kink-star-rating-badge { background-color: rgba(255,255,255,0.15); color:var(--rating-text-favorite); }
+#kink-galaxy-visualization .kink-list .kink-star.rating-like-it { background-color: var(--rating-bg-like-it); border-color: var(--rating-bg-like-it); color: var(--rating-text-like-it); }
+#kink-galaxy-visualization .kink-list .kink-star.rating-like-it .kink-star-rating-badge { background-color: rgba(255,255,255,0.15); color:var(--rating-text-like-it); }
+#kink-galaxy-visualization .kink-list .kink-star.rating-curious-about { background-color: var(--rating-bg-curious-about); border-color: var(--rating-bg-curious-about); color: var(--rating-text-curious-about); }
+#kink-galaxy-visualization .kink-list .kink-star.rating-curious-about .kink-star-rating-badge { background-color: rgba(0,0,0,0.1); color: var(--rating-text-curious-about); }
+#kink-galaxy-visualization .kink-list .kink-star.rating-soft-limit { background-color: var(--rating-bg-soft-limit); border-color: var(--rating-bg-soft-limit); color: var(--rating-text-soft-limit); }
+#kink-galaxy-visualization .kink-list .kink-star.rating-soft-limit .kink-star-rating-badge { background-color: rgba(255,255,255,0.15); color:var(--rating-text-soft-limit); }
+#kink-galaxy-visualization .kink-list .kink-star.rating-hard-limit { background-color: var(--rating-bg-hard-limit); border-color: var(--rating-bg-hard-limit); color: var(--rating-text-hard-limit); }
+#kink-galaxy-visualization .kink-list .kink-star.rating-hard-limit .kink-star-rating-badge { background-color: rgba(255,255,255,0.15); color:var(--rating-text-hard-limit); }
+#kink-galaxy-visualization .kink-list .kink-star.rating-not-for-me { background-color: var(--rating-bg-not-for-me); border-color: var(--rating-bg-not-for-me); color: var(--rating-text-not-for-me); opacity: 0.85; }
+#kink-galaxy-visualization .kink-list .kink-star.rating-not-for-me .kink-star-rating-badge { background-color: rgba(0,0,0,0.1); color: var(--rating-text-not-for-me); }
 
-/* --- KINK DETAIL MODAL (Fixed Overlay) --- */
+.no-kinks-in-category { font-style: italic; color: var(--text-muted); padding: 10px 0; }
+#kink-filters { padding: 15px; background-color: var(--panel-bg-color); border-radius: var(--border-radius); margin-top: 20px; border: 1px solid var(--main-border-color);}
+
+/* --- KINK DETAIL MODAL (FIXED POSITIONING & Active Button Style) --- */
 .modal {
     display: none; position: fixed; z-index: 1000; left: 0; top: 0;
     width: 100%; height: 100%; background-color: var(--modal-overlay-bg);
@@ -286,41 +292,80 @@ button.btn-secondary:hover { background-color: var(--main-border-color); color: 
     background-color: var(--panel-bg-color); margin: 5vh auto; padding: 25px 30px;
     border: 1px solid var(--main-border-color); border-radius: var(--border-radius-large); 
     width: 90%; max-width: 700px; position: relative; box-shadow: var(--box-shadow-medium);
-    animation: slideInModal 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Softer pop */
+    animation: slideInModal 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     max-height: 90vh; display: flex; flex-direction: column; overflow-y: auto;
 }
-.close-modal-btn { /* Styles as before */ }
-#modal-kink-name { /* Styles as before */ }
-#modal-kink-category { /* Styles as before */ }
-.kink-description-summary { /* Styles as before */ }
-.kink-description-details { /* Styles as before */ }
-#modal-kink-description-full-content { /* Styles as before */ }
-#modal-kink-rating { /* Styles as before */ }
-#modal-kink-rating button { /* Styles as before */ }
-/* Active rating button styles for modal */
-#modal-kink-rating button.active-rating.rating-btn-want-to-try { background-color: var(--rating-bg-want-to-try); border-color: var(--rating-bg-want-to-try); color: var(--rating-text-want-to-try); }
-#modal-kink-rating button.active-rating.rating-btn-favorite { background-color: var(--rating-bg-favorite); border-color: var(--rating-bg-favorite); color: var(--rating-text-favorite); }
-#modal-kink-rating button.active-rating.rating-btn-like-it { background-color: var(--rating-bg-like-it); border-color: var(--rating-bg-like-it); color: var(--rating-text-like-it); }
-#modal-kink-rating button.active-rating.rating-btn-curious-about { background-color: var(--rating-bg-curious-about); border-color: var(--rating-bg-curious-about); color: var(--rating-text-curious-about); }
-#modal-kink-rating button.active-rating.rating-btn-soft-limit { background-color: var(--rating-bg-soft-limit); border-color: var(--rating-bg-soft-limit); color: var(--rating-text-soft-limit); }
-#modal-kink-rating button.active-rating.rating-btn-hard-limit { background-color: var(--rating-bg-hard-limit); border-color: var(--rating-bg-hard-limit); color: var(--rating-text-hard-limit); }
-#modal-kink-rating button.active-rating.rating-btn-not-for-me { background-color: var(--rating-bg-not-for-me); border-color: var(--rating-bg-not-for-me); color: var(--rating-text-not-for-me); }
-#modal-kink-notes { /* Styles as before */ }
-.modal-save-btn { /* Styles as before */ }
-#modal-profile-assignment { /* Styles as before */ }
-#modal-profile-checkboxes-container .profile-checkbox-item { /* Styles as before */ }
-/* General checkbox label style in settings will cover these */
+.close-modal-btn {
+    color: var(--text-muted); position: absolute; top: 15px; right: 20px;
+    font-size: 1.8rem; font-weight: bold; line-height: 1; padding: 5px;
+    cursor: pointer; transition: color 0.2s ease, transform 0.2s ease;
+}
+.close-modal-btn:hover { color: var(--accent-color); transform: scale(1.1); }
+#modal-kink-name { margin-top: 0; font-size: 1.8rem; margin-bottom: 0.3em;}
+#modal-kink-category { margin-bottom: 15px; font-size: 0.95rem; color: var(--text-muted);}
+.kink-description-summary { font-size: 0.95rem; margin-bottom: 10px; padding: 10px; background-color: var(--body-bg-color); border-radius: var(--border-radius); max-height: 100px; overflow-y: auto; border: 1px solid var(--main-border-color); }
+.kink-description-details { margin-bottom: 15px; }
+.kink-description-details summary { cursor: pointer; color: var(--primary-accent); font-weight: 600; padding: 5px 0; font-size: 1rem; }
+.kink-description-details summary:hover { color: var(--accent-color); }
+#modal-kink-description-full-content { font-size: 0.9rem; padding: 10px 15px; background-color: var(--body-bg-color); border-radius: var(--border-radius); margin-top: 5px; max-height: 180px; overflow-y: auto; border: 1px solid var(--main-border-color); }
+#modal-kink-description-full-content h4 { font-size: 1rem; color: var(--warning-color); margin-top: 10px; margin-bottom: 5px; font-weight: 600; }
+#modal-kink-description-full-content ul { padding-left: 20px; margin-bottom: 0; }
+#modal-kink-description-full-content li { margin-bottom: 5px; }
+#modal-kink-rating { margin: 20px 0; display: flex; flex-wrap: wrap; gap: 10px; }
+#modal-kink-rating button {
+    margin: 0; border: 2px solid var(--main-border-color); padding: 10px 15px;
+    background-color: var(--element-bg-color); color: var(--text-main); font-weight: 500;
+    border-radius: var(--border-radius); transition: all var(--transition-main);
+    text-transform: none; letter-spacing: normal; font-size: 0.9rem;
+}
+#modal-kink-rating button:hover { border-color: var(--primary-accent); transform: translateY(-1px); }
+#modal-kink-rating button.rating-btn-active { /* NEW class for active modal button */
+    font-weight: 700;
+    box-shadow: 0 0 8px var(--primary-accent); /* Generic active shadow, specific colors below */
+}
+#modal-kink-rating button.rating-btn-active.rating-btn-want-to-try { background-color: var(--rating-bg-want-to-try); border-color: var(--rating-bg-want-to-try); color: var(--rating-text-want-to-try); }
+#modal-kink-rating button.rating-btn-active.rating-btn-favorite { background-color: var(--rating-bg-favorite); border-color: var(--rating-bg-favorite); color: var(--rating-text-favorite); }
+#modal-kink-rating button.rating-btn-active.rating-btn-like-it { background-color: var(--rating-bg-like-it); border-color: var(--rating-bg-like-it); color: var(--rating-text-like-it); }
+#modal-kink-rating button.rating-btn-active.rating-btn-curious-about { background-color: var(--rating-bg-curious-about); border-color: var(--rating-bg-curious-about); color: var(--rating-text-curious-about); }
+#modal-kink-rating button.rating-btn-active.rating-btn-soft-limit { background-color: var(--rating-bg-soft-limit); border-color: var(--rating-bg-soft-limit); color: var(--rating-text-soft-limit); }
+#modal-kink-rating button.rating-btn-active.rating-btn-hard-limit { background-color: var(--rating-bg-hard-limit); border-color: var(--rating-bg-hard-limit); color: var(--rating-text-hard-limit); }
+#modal-kink-rating button.rating-btn-active.rating-btn-not-for-me { background-color: var(--rating-bg-not-for-me); border-color: var(--rating-bg-not-for-me); color: var(--rating-text-not-for-me); }
+#modal-kink-rating button.rating-btn-clear-rating { border-color: var(--text-muted); color: var(--text-muted); background-color: transparent; }
+#modal-kink-rating button.rating-btn-clear-rating:hover { border-color: var(--accent-color); color: var(--accent-color); }
+#modal-kink-notes { min-height: 100px; margin-bottom: 20px; }
+.modal-save-btn { width: 100%; padding: 12px; font-size: 1rem; }
+#modal-profile-assignment { margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--main-border-color); }
+#modal-profile-assignment h4 { margin-bottom: 8px; font-size: 1rem; color: var(--text-headings); font-weight: 500; }
+#modal-profile-checkboxes-container .profile-checkbox-item { display: block; margin-bottom: 6px; }
+/* General checkbox label style will apply */
 
 /* Notes Popover Modal */
-#notes-popover-modal .modal-content { /* Styles as before */ }
-#notes-popover-modal h4 { /* Styles as before */ }
-#notes-popover-content { /* Styles as before */ }
-#notes-popover-close-btn { /* Styles as before */ }
+#notes-popover-modal.modal { padding: 0; background-color: rgba(0,0,0,0.5); }
+#notes-popover-modal .modal-content {
+    background-color: var(--panel-bg-color); padding: 20px;
+    border-radius: var(--border-radius-medium); box-shadow: var(--box-shadow-medium);
+    max-width: 400px; width: 85%; border: 1px solid var(--main-border-color);
+    margin: auto; animation: fadeInModal 0.2s;
+}
+#notes-popover-modal h4 { margin-top: 0; margin-bottom: 10px; color: var(--primary-accent); font-size: 1.1rem; }
+#notes-popover-content { font-size: 0.9rem; max-height: 200px; overflow-y: auto; line-height: 1.5; white-space: pre-wrap; }
+#notes-popover-close-btn { position: absolute; top: 8px; right: 8px; background: none; border: none; font-size: 1.3rem; color: var(--text-muted); cursor: pointer; }
+#notes-popover-close-btn:hover { color: var(--accent-color); }
 
 /* --- SUMMARY PAGE --- */
-.summary-filters { /* Styles from previous, ensure background is var(--element-bg-color) or similar */ }
+.summary-filters { 
+    background-color: var(--body-bg-color); padding: 15px; margin-bottom: 20px;
+    border-radius: var(--border-radius); border: 1px solid var(--main-border-color);
+}
 #toggle-summary-filters-btn { margin-bottom: 15px; }
-#summary-content-area { /* Basic styling for now */ }
+.summary-filters h4 { margin-top: 0; margin-bottom: 10px; font-size: 1.1rem; }
+.filter-section { margin-bottom: 10px; }
+.filter-section legend { font-weight: 600; margin-bottom: 5px; font-size: 1rem; }
+.filter-checkbox-group { display: flex; flex-wrap: wrap; gap: 8px 12px; }
+.filter-checkbox-item { display: flex; align-items: center; } /* Uses general .checkbox-label */
+.filter-actions { margin-top: 15px; text-align: right; }
+.summary-controls { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--main-border-color); }
+#summary-content-area { }
 .summary-rating-group { margin-bottom: 20px; }
 .summary-rating-group > summary { /* Accordion title */
     display: flex; justify-content: space-between; align-items: center;
@@ -343,7 +388,24 @@ button.btn-secondary:hover { background-color: var(--main-border-color); color: 
     display: inline-flex; align-items: center; border: 1px solid var(--main-border-color);
 }
 .summary-kink-pill .category-dot { width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; background-color: var(--category-color-default); flex-shrink: 0;}
-/* ... (All .category-dot-ID rules from previous CSS) ... */
+.category-dot-impact { background-color: var(--category-color-impact); }
+.category-dot-bondage { background-color: var(--category-color-bondage); }
+.category-dot-power_exchange { background-color: var(--category-color-power_exchange); }
+.category-dot-sensation { background-color: var(--category-color-sensation); }
+.category-dot-psychological { background-color: var(--category-color-psychological); }
+.category-dot-edge_play { background-color: var(--category-color-edge_play); }
+.category-dot-fluid_play { background-color: var(--category-color-fluid_play); }
+.category-dot-medical_play { background-color: var(--category-color-medical_play); }
+.category-dot-object_insertion { background-color: var(--category-color-object_insertion); }
+.category-dot-fetishism_specific { background-color: var(--category-color-fetishism_specific); }
+.category-dot-verbal_play { background-color: var(--category-color-verbal_play); }
+.category-dot-sensory_modification { background-color: var(--category-color-sensory_modification); }
+.category-dot-exhibition_voyeurism { background-color: var(--category-color-exhibition_voyeurism); }
+.category-dot-animal_play { background-color: var(--category-color-animal_play); }
+.category-dot-food_play { background-color: var(--category-color-food_play); }
+.category-dot-spiritual_ritual { background-color: var(--category-color-spiritual_ritual); }
+.category-dot-endurance_ordeals { background-color: var(--category-color-endurance_ordeals); }
+.category-dot-taboo_conceptual { background-color: var(--category-color-taboo_conceptual); }
 .summary-kink-pill .summary-kink-pill-name { font-weight: 600; }
 .summary-kink-pill .notes-indicator { margin-left: 6px; font-size: 0.8em; color: var(--primary-accent); cursor: pointer; }
 .summary-kink-pill .notes-indicator:hover { color: var(--accent-color); }
@@ -351,15 +413,177 @@ button.btn-secondary:hover { background-color: var(--main-border-color); color: 
 /* --- JOURNAL VIEW --- */
 #journal-view h2.view-title-main { text-align: left; }
 .journal-actions { text-align: left; margin-bottom: 20px; }
-/* ... (All Journal styles from previous complete CSS, adapted to new theme vars) ... */
+.journal-entry-item {
+    background-color: var(--body-bg-color); padding: 20px; border-radius: var(--border-radius);
+    margin-bottom: 20px; border-left: 4px solid var(--primary-accent);
+    box-shadow: var(--box-shadow-light);
+}
+.journal-entry-item h5 { margin-top: 0; margin-bottom: 0.8em; color: var(--text-muted); font-size: 0.9rem; font-weight: 400; }
+.journal-entry-content { margin-bottom: 15px; line-height: 1.7; }
+.journal-item-actions { margin-top:10px; text-align: right; }
+.journal-item-actions button { padding: 6px 12px; font-size: 0.85rem; text-transform: none; margin-top: 0; margin-left: 8px; box-shadow: none;}
+.journal-item-actions .delete-journal-entry { background-color: var(--danger-color); }
+.journal-item-actions .delete-journal-entry:hover { background-color: #a02a1a; }
+.journal-prompts-container { margin-bottom: 25px; padding: 20px; background-color: var(--panel-bg-color); border-radius: var(--border-radius); }
+.journal-prompts-container ul { list-style: none; padding-left: 0; }
+.journal-prompts-container .prompt-button { display: block; width: 100%; text-align: left; margin-bottom: 10px; background-color: var(--element-bg-color); color: var(--text-main); font-weight: 500; text-transform: none; }
+.journal-prompts-container .prompt-button:hover { background-color: var(--main-border-color); }
 
 /* --- SETTINGS VIEW --- */
-/* ... (All Settings styles from previous complete CSS: .settings-group, custom checkbox, profile management, adapted to new theme vars) ... */
-.risk-indicator-high, .risk-indicator-taboo { /* Styles as before */ }
+#settings-view h3 { margin-top: 25px; border-bottom: 1px solid var(--main-border-color); padding-bottom: 8px; font-size: 1.4rem;}
+.settings-group {
+    padding: 15px 0; margin-bottom: 20px;
+    border-bottom: 1px dashed var(--main-border-color);
+}
+.settings-group:last-child { border-bottom: none; }
+.setting-item { display: flex; align-items: center; margin-bottom: 10px; }
+.checkbox-label { /* General custom checkbox style */
+    position: relative; padding-left: 30px; cursor: pointer; font-size: 1rem; 
+    user-select: none; display: inline-flex; align-items: center; min-height: 22px;
+}
+.checkbox-label::before { /* Custom checkbox box */
+    content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+    width: 20px; height: 20px; border: 2px solid var(--main-border-color);
+    background-color: var(--body-bg-color); border-radius: var(--border-radius-small);
+    transition: all var(--transition-main);
+}
+.checkbox-label::after { /* Custom checkmark */
+    content: ''; position: absolute; left: 6px; top: 50%;    
+    width: 6px; height: 12px; border: solid white;
+    border-width: 0 2px 2px 0; transform: translateY(-60%) rotate(45deg) scale(0);
+    transition: transform var(--transition-main);
+}
+input[type="checkbox"]:checked + .checkbox-label::before {
+    background-color: var(--primary-accent); border-color: var(--primary-accent);
+}
+input[type="checkbox"]:checked + .checkbox-label::after {
+    transform: translateY(-60%) rotate(45deg) scale(1);
+}
+input[type="checkbox"]:focus + .checkbox-label::before {
+    box-shadow: 0 0 0 3px rgba(var(--primary-accent), 0.25);
+}
+.setting-description { font-size: 0.9rem; color: var(--text-muted); margin-left: 0; margin-top: 5px; max-width: 600px; line-height: 1.5; }
+.profile-creation-form { display: flex; gap: 10px; align-items: center; margin-bottom: 20px; }
+.profile-creation-form input[type="text"] { flex-grow: 1; margin-bottom: 0; }
+.profile-creation-form button { margin-top: 0; padding: 12px 20px; flex-shrink: 0; }
+#existing-profiles-list { list-style: none; padding-left: 0; }
+#existing-profiles-list li {
+    background-color: var(--element-bg-color); padding: 12px 15px;
+    margin-bottom: 8px; border-radius: var(--border-radius);
+    display: flex; justify-content: space-between; align-items: center;
+    border: 1px solid var(--main-border-color);
+}
+#existing-profiles-list li span { font-weight: 500; font-size: 1rem; }
+#existing-profiles-list .delete-profile-btn {
+    background-color: var(--danger-color); color: white; padding: 6px 12px;
+    font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.25px;
+    margin: 0 0 0 10px; box-shadow: none; border-radius: var(--border-radius-small);
+}
+#existing-profiles-list .delete-profile-btn:hover { background-color: #a02a1a; transform: scale(1.05); }
+.no-custom-profiles-note { font-style: italic; color: var(--text-muted); padding: 8px 0;}
 
-/* --- PRINT STYLES for Summary ("Certificate") --- */
-@media print { /* ... (All refined print styles from previous CSS, ensure they target the new accordion structure if needed for expansion) ... */ }
+/* Risk Indicators */
+.risk-indicator-high, .risk-indicator-taboo {
+    font-size: 0.8em; margin-left: 5px; padding: 2px 5px; 
+    border-radius: var(--border-radius-small); font-weight: bold; vertical-align: middle;
+}
+.risk-indicator-high { background-color: var(--danger-color); color: white; }
+.risk-indicator-taboo { background-color: var(--warning-color); color: var(--bg-main-dark); }
+
+
+/* --- PRINT STYLES for Summary ("Certificate of Self-Discovery") --- */
+@media print {
+    body { font-family: var(--font-certificate-body), serif; font-size: 9pt; line-height: 1.2; background-color: white !important; color: black !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    #main-header, #main-footer, .summary-controls .profile-selector-container, #toggle-summary-filters-btn, #summary-filters-container, 
+    .view:not(#summary-view), #theme-toggle-btn, .view-header button, .data-management, .welcome-actions, .journal-actions, #kink-filters,
+    #modal-kink-detail, #notes-popover-modal /* Ensure all modals are hidden */
+     { display: none !important; }
+    
+    #app-container, #main-content { width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+    .view { display: none !important; animation: none !important; border: none !important; padding: 0 !important; background-color: white !important; box-shadow: none !important;}
+    #summary-view.active-view { display: block !important; padding: 10mm !important; border: 5px solid black; /* Simple certificate border */ }
+
+    #summary-view > .view-header { display: block !important; text-align: center; border-bottom: none !important; margin-bottom: 5mm !important;}
+    #summary-view > .view-header > h2.view-title-main {
+        font-family: var(--font-certificate-title), cursive; font-size: 26pt !important; color: black !important;
+        margin-bottom: 5mm !important; padding-bottom: 3mm; border-bottom: 2px solid black; display: block;
+    }
+    #summary-view > .view-header > .profile-selector-container { display: none !important; }
+    .summary-controls #print-summary-btn { display: none !important; }
+
+    #summary-content-area { column-count: 2; column-gap: 8mm; padding: 0 !important; }
+    .summary-rating-group { margin-bottom: 5mm !important; padding-bottom: 3mm !important; border-bottom: 1px solid #ccc !important; page-break-inside: avoid; }
+    .summary-rating-group > summary { /* Style as a heading for print */
+        font-size: 11pt !important; margin-bottom: 2mm !important; padding: 2mm 0 !important; color: black !important; 
+        font-weight: bold; list-style: none; background-color: transparent !important; border: none !important;
+    }
+    .summary-rating-group > summary .accordion-kink-count, 
+    .summary-rating-group > summary .accordion-arrow { display: none !important; }
+    .summary-kink-list-accordion-content { display: block !important; padding: 0 !important; border: none !important; background:none !important;}
+    .summary-kink-pills-list { display: block; } /* Stack pills vertically */
+    .summary-kink-pill {
+        display: block; padding: 1px 0 !important; font-size: 8pt !important; border: none !important; 
+        background-color: transparent !important; color: black !important; margin: 0 0 1.5mm 0 !important;
+        border-radius: 0 !important;
+    }
+    .summary-kink-pill .category-dot { 
+        display: inline-block; width: 6px; height: 6px; border-radius: 50%; 
+        margin-right: 4px; vertical-align: middle; border: 1px solid #666;
+        -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+    }
+    .category-dot-impact { background-color: var(--category-color-impact) !important; }
+    /* ... (all other .category-dot-id rules with !important for print) ... */
+    .category-dot-bondage { background-color: var(--category-color-bondage) !important; }
+    .category-dot-power_exchange { background-color: var(--category-color-power_exchange) !important; }
+    /* ... etc. for all categories */
+
+    .summary-kink-pill .summary-kink-pill-name { font-weight: normal !important; }
+    .summary-kink-pill .notes-indicator { display: none !important; }
+    a { color: #0000EE !important; text-decoration: underline !important; }
+}
 
 /* --- RESPONSIVE DESIGN --- */
-@media (max-width: 768px) { /* ... (All Tablet responsive styles, adapting top-nav) ... */ }
-@media (max-width: 480px) { /* ... (All Mobile responsive styles) ... */ }
+@media (max-width: 768px) { 
+    html { font-size: 15px; } 
+    #main-header { flex-direction: row; height: auto; padding: 10px 15px; }
+    #main-header h1 { font-size: 1.5rem; margin-right: auto; }
+    .header-controls { margin-left: auto; }
+    #main-nav { /* Initial state for mobile - can be toggled by JS */ display: none; }
+    #main-nav.mobile-active { 
+        display: flex; flex-direction: column; position: absolute;
+        top: var(--header-height-main); left: 0; right: 0;
+        background-color: var(--panel-bg-color); box-shadow: var(--box-shadow-medium);
+        padding: 10px 0; z-index: 890; /* Below header */
+    }
+    #main-nav.mobile-active button { width: 100%; margin: 0; text-align: center; border-bottom: 1px solid var(--main-border-color); border-radius:0; padding: 12px 15px;}
+    #main-nav.mobile-active button:last-child { border-bottom: none; }
+    /* You'll need a hamburger toggle button in HTML for mobile nav */
+    /* For now, theme toggle remains */
+    #theme-toggle-btn { margin-left: 10px; } 
+
+    .view-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .profile-selector-container { width: 100%; }
+    .profile-selector-container select { width: 100%; min-width: auto; }
+    
+    .modal-content { width: 95%; margin: 5vh auto; padding: 20px; max-height: 85vh;}
+    #modal-kink-name {font-size: 1.6rem;}
+
+    .summary-filters .filter-checkbox-group { flex-direction: column; align-items: flex-start; }
+    .summary-filters .filter-checkbox-item { display: block; width: 100%; }
+    @media print { #summary-content-area { column-count: 1; } } 
+}
+@media (max-width: 480px) {
+    html { font-size: 14px; }
+    #main-content { padding: 20px 15px; } 
+    button, .button-like-label { padding: 10px 18px; font-size: 0.9rem; width: 100%; margin-bottom: 12px; margin-right: 0; }
+    #welcome-view .data-management button, #welcome-view .data-management .button-like-label,
+    #modal-kink-rating button, .journal-prompts-container .prompt-button,
+    .journal-item-actions button { width: auto; margin-right: 8px; margin-bottom: 8px;}
+    .journal-item-actions button:last-child {margin-right: 0;}
+    .kink-star { padding: 8px 12px; font-size: 0.85rem; }
+    .kink-star-rating-badge { padding: 3px 6px; font-size: 0.7rem; margin-left: 6px;}
+    #modal-kink-name { font-size: 1.5rem; }
+    .checkbox-label { padding-left: 28px; font-size: 0.95rem; } 
+    .checkbox-label::before { width: 18px; height: 18px; }
+    .checkbox-label::after { left: 5px; width: 5px; height: 10px; }
+}
