@@ -461,7 +461,7 @@ const KINK_DEFINITIONS = [
         id: "death_play_rp_01", name: "Death / Necro Play Roleplay (Simulated/Fantasy)", category_id: "taboo_conceptual", isTaboo: true, isHighRisk: true,
         description: "Roleplaying scenarios involving simulated death, dying, or interaction with a 'dead' or unresponsive partner (consensually feigning). Explores themes of loss, power, grief, or specific necrophilic fantasies in a purely symbolic and safe context.",
         common_terms: ["Necrophilia fantasy play", "Thanatophilia (erotic interest in death)"], safety_notes: ["CRITICAL: All aspects are SIMULATED. No actual harm or risk to life. Explicit consent for all actions. Clear signals for the 'dead' partner to indicate distress or end scene. Psychological intensity can be extreme. Extensive aftercare to de-role and process heavy emotions. Not for individuals with sensitivities to death/grief or unstable mental states. Focus on fantasy exploration.", "Breath play is NOT a safe way to simulate unresponsiveness for this and carries separate EXTREME risks."], common_misconceptions: ["Involves actual dead bodies (ABSOLUTELY NOT).", "Promotes harmful acts (It's a contained fantasy for consenting adults)."], related_kinks_ids: ["objectification_01", "fear_play_01", "psychological", "breath_play_01" /* Only if breath play is a SEPARATE negotiated element with its own safety, not to simulate death itself for long periods */]}
-    }
+    
 ]; // This should be well over 80 structured kinks now.
 
 // --- ACADEMY MODULES ---
