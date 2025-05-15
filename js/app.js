@@ -3,32 +3,39 @@
 // --- DOMContentLoaded ---
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- STATE MANAGEMENT (no changes needed here for this step) ---
+    // --- STATE MANAGEMENT ---
     const state = {
         currentView: 'welcome-view',
         kinks: [],
         userData: {
             kinkRatings: {},
             journalEntries: [],
+            // lastView: 'welcome-view'
         },
         currentOpenKinkId: null,
     };
 
-    // --- DOM ELEMENTS CACHING (Add new elements) ---
+    // --- DOM ELEMENTS CACHING ---
     const DOMElements = {
-        // ... (previous elements)
         appContainer: document.getElementById('app-container'),
         mainHeader: document.getElementById('main-header'),
         mainNav: document.getElementById('main-nav'),
         mainContent: document.getElementById('main-content'),
         views: document.querySelectorAll('.view'),
+
+        // Welcome View
         welcomeView: document.getElementById('welcome-view'),
         startExploringBtn: document.getElementById('start-exploring-btn'),
         exportDataBtn: document.getElementById('export-data-btn'),
         importFileInput: document.getElementById('import-file-input'),
+        importFileLabel: document.querySelector('label[for="import-file-input"]'),
+
+        // Galaxy View
         galaxyView: document.getElementById('galaxy-view'),
         kinkGalaxyViz: document.getElementById('kink-galaxy-visualization'),
         kinkFilters: document.getElementById('kink-filters'),
+
+        // Kink Detail Modal
         kinkDetailModal: document.getElementById('kink-detail-modal'),
         modalCloseBtn: document.querySelector('.close-modal-btn'),
         modalKinkName: document.getElementById('modal-kink-name'),
@@ -37,28 +44,33 @@ document.addEventListener('DOMContentLoaded', () => {
         modalKinkNotes: document.getElementById('modal-kink-notes'),
         modalKinkInfoLink: document.getElementById('modal-kink-info-link'),
         saveModalBtn: document.getElementById('save-modal-btn'),
+
+        // Academy View
         academyView: document.getElementById('academy-view'),
         academyContentArea: document.getElementById('academy-content-area'),
+
+        // Journal View
         journalView: document.getElementById('journal-view'),
         journalEntriesContainer: document.getElementById('journal-entries-container'),
         newJournalEntryBtn: document.getElementById('new-journal-entry-btn'),
         
-        // NEW for Summary View
+        // Summary View
         summaryView: document.getElementById('summary-view'),
         summaryContentArea: document.getElementById('summary-content-area'),
         printSummaryBtn: document.getElementById('print-summary-btn'),
 
+        // Settings View
         settingsView: document.getElementById('settings-view'),
         appVersionSpan: document.getElementById('app-version'),
         exportDataSettingsBtn: document.getElementById('export-data-settings-btn'),
         importFileSettingsInput: document.getElementById('import-file-settings-input'),
+        importFileSettingsLabel: document.querySelector('label[for="import-file-settings-input"]'),
+
+        // Footer
         currentYearSpan: document.getElementById('current-year'),
     };
 
-    // --- DATA INITIALIZATION & LOCALSTORAGE (no changes) ---
-    // ... (function initializeKinkData() ... )
-    // ... (function loadUserData() ... )
-    // ... (function saveUserData() ... )
+    // --- DATA INITIALIZATION & LOCALSTORAGE ---
     function initializeKinkData() {
         if (typeof KINK_DEFINITIONS === 'undefined') {
             console.error("KINK_DEFINITIONS not found. Make sure data.js is loaded before app.js and is correct.");
@@ -91,6 +103,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 journalEntries: [],
             };
         }
+        // if (state.userData.lastView) {
+        // state.currentView = state.userData.lastView;
+        // }
     }
 
     function saveUserData() {
@@ -103,11 +118,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
             }
         });
+        // state.userData.lastView = state.currentView;
         localStorage.setItem('kinkAtlasUserData', JSON.stringify(state.userData));
         console.log("User data saved.");
     }
 
-    // --- VIEW MANAGEMENT (Modify switchView) ---
+    // --- VIEW MANAGEMENT ---
     function switchView(viewId) {
         if (!document.getElementById(viewId)) {
             console.error(`View with ID "${viewId}" not found in HTML.`);
@@ -125,11 +141,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (viewId === 'galaxy-view') renderKinkGalaxy();
         if (viewId === 'academy-view') renderAcademyIndex();
         if (viewId === 'journal-view') renderJournalEntries();
-        if (viewId === 'summary-view') renderPersonalSummary(); // NEW CALL
+        if (viewId === 'summary-view') renderPersonalSummary(); // Call for summary view
 
         console.log(`Switched to view: ${viewId}`);
     }
-    // ... (function updateNavButtons() ... )
+
     function updateNavButtons() {
         const navButtons = DOMElements.mainNav.querySelectorAll('button');
         navButtons.forEach(btn => {
@@ -141,12 +157,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-
-    // --- NAVIGATION (Add new nav item) ---
+    // --- NAVIGATION ---
     function setupNavigation() {
         const navItems = [
             { id: 'nav-galaxy', text: 'Galaxy', viewId: 'galaxy-view' },
-            { id: 'nav-summary', text: 'Summary', viewId: 'summary-view' }, // NEW NAV ITEM
+            { id: 'nav-summary', text: 'Summary', viewId: 'summary-view' }, // Added Summary
             { id: 'nav-academy', text: 'Academy', viewId: 'academy-view' },
             { id: 'nav-journal', text: 'Journal', viewId: 'journal-view' },
             { id: 'nav-settings', text: 'Settings', viewId: 'settings-view' },
@@ -162,12 +177,18 @@ document.addEventListener('DOMContentLoaded', () => {
             DOMElements.mainNav.appendChild(button);
         });
 
-        DOMElements.startExploringBtn.addEventListener('click', () => switchView('galaxy-view'));
-        DOMElements.mainHeader.querySelector('h1').addEventListener('click', () => {
-            switchView(Object.keys(state.userData.kinkRatings).length > 0 ? 'galaxy-view' : 'welcome-view');
-        });
+        if(DOMElements.startExploringBtn) DOMElements.startExploringBtn.addEventListener('click', () => switchView('galaxy-view'));
+        if(DOMElements.mainHeader) {
+            const h1Title = DOMElements.mainHeader.querySelector('h1');
+            if (h1Title) {
+                h1Title.addEventListener('click', () => {
+                    switchView(Object.keys(state.userData.kinkRatings).length > 0 ? 'galaxy-view' : 'welcome-view');
+                });
+            }
+        }
     }
-    // ... (Kink Galaxy, Modal, Academy, Journal functions remain mostly the same, I will only show new function or critical changes)
+
+    // --- KINK GALAXY RENDERING ---
     function renderKinkGalaxy() {
         if (!DOMElements.kinkGalaxyViz) {
             console.error("kinkGalaxyViz element not found for rendering.");
@@ -187,7 +208,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 galaxyHTML += `<p class="no-kinks-in-category">No kinks defined for this category yet.</p>`;
             } else {
                 kinksInCategory.forEach(kink => {
-                    let ratingClass = kink.userRating ? `rating-${kink.userRating.toLowerCase().replace(/[^a-z0-9_]/g, '-').replace(/\s+/g, '-')}` : ''; // Make class names more robust
+                    // Ensure ratingClass is always valid for CSS
+                    let ratingClass = kink.userRating ? `rating-${kink.userRating.toLowerCase().replace(/[^a-z0-9_]/g, '-').replace(/\s+/g, '-')}` : 'rating-none';
                     galaxyHTML += `<div class="kink-star ${ratingClass}" data-kink-id="${kink.id}">
                                     ${kink.name}
                                     ${kink.userRating ? `<span class="kink-star-rating-badge">${formatRating(kink.userRating)}</span>` : ''}
@@ -214,7 +236,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!ratingKey) return '';
         return ratingKey.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
     }
-    
+
+    // --- KINK DETAIL MODAL ---
     function openKinkDetailModal(kinkId) {
         const kink = state.kinks.find(k => k.id === kinkId);
         if (!kink) {
@@ -247,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (academyLink) {
             academyLink.addEventListener('click', (e) => {
                 e.preventDefault();
-                closeKinkDetailModal(false);
+                closeKinkDetailModal(false); // Close without re-rendering galaxy yet
                 renderAcademyArticle(kink.id);
                 switchView('academy-view');
             });
@@ -292,14 +315,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if(DOMElements.modalCloseBtn) DOMElements.modalCloseBtn.addEventListener('click', () => closeKinkDetailModal());
     if(DOMElements.saveModalBtn) DOMElements.saveModalBtn.addEventListener('click', () => closeKinkDetailModal());
     window.addEventListener('click', (event) => {
-        if (event.target === DOMElements.kinkDetailModal) {
+        if (DOMElements.kinkDetailModal && event.target === DOMElements.kinkDetailModal) {
             closeKinkDetailModal();
         }
     });
 
-    // Academy and Journal functions (renderAcademyIndex, renderAcademyCategory, etc.) remain unchanged from the previous full version.
-    // ... (All Academy functions) ...
-    // ... (All Journal functions) ...
+    // --- ACADEMY RENDERING ---
     function renderAcademyIndex() {
         if (!DOMElements.academyContentArea) return;
         DOMElements.academyContentArea.innerHTML = '<h2>Knowledge Base</h2>';
@@ -456,6 +477,7 @@ document.addEventListener('DOMContentLoaded', () => {
         DOMElements.academyContentArea.innerHTML += glossaryHTML;
     }
 
+    // --- JOURNAL ---
     function renderJournalEntries() {
         if (!DOMElements.journalEntriesContainer) {
             console.error("Journal entries container not found in DOM.");
@@ -470,16 +492,18 @@ document.addEventListener('DOMContentLoaded', () => {
         promptsContainer.classList.add('journal-prompts-container');
         promptsContainer.innerHTML = '<h4>Need Inspiration? Try a Prompt:</h4>';
         const promptsList = document.createElement('ul');
-        JOURNAL_PROMPTS.slice(0, 5).forEach(promptText => {
-            const li = document.createElement('li');
-            const promptBtn = document.createElement('button');
-            promptBtn.classList.add('prompt-button');
-            promptBtn.textContent = promptText.substring(0, 50) + "...";
-            promptBtn.title = promptText;
-            promptBtn.addEventListener('click', () => createNewJournalEntry(promptText));
-            li.appendChild(promptBtn);
-            promptsList.appendChild(li);
-        });
+        if (typeof JOURNAL_PROMPTS !== 'undefined' && JOURNAL_PROMPTS.length > 0) {
+            JOURNAL_PROMPTS.slice(0, 5).forEach(promptText => {
+                const li = document.createElement('li');
+                const promptBtn = document.createElement('button');
+                promptBtn.classList.add('prompt-button');
+                promptBtn.textContent = promptText.substring(0, 50) + "...";
+                promptBtn.title = promptText;
+                promptBtn.addEventListener('click', () => createNewJournalEntry(promptText));
+                li.appendChild(promptBtn);
+                promptsList.appendChild(li);
+            });
+        }
         promptsContainer.appendChild(promptsList);
         DOMElements.journalEntriesContainer.appendChild(promptsContainer);
 
@@ -534,10 +558,14 @@ document.addEventListener('DOMContentLoaded', () => {
             renderJournalEntries();
         }
     }
-    // --- NEW: SUMMARY PAGE FUNCTIONS ---
+
+    // --- SUMMARY PAGE FUNCTIONS ---
     function renderPersonalSummary() {
-        if (!DOMElements.summaryContentArea) return;
-        DOMElements.summaryContentArea.innerHTML = ''; // Clear previous
+        if (!DOMElements.summaryContentArea) {
+            console.error("Summary content area not found!");
+            return;
+        }
+        DOMElements.summaryContentArea.innerHTML = '';
 
         const ratedKinks = state.kinks.filter(kink => kink.userRating);
         if (ratedKinks.length === 0) {
@@ -545,7 +573,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Group by category for better organization
         const summaryByCat = {};
         ratedKinks.forEach(kink => {
             const catId = kink.category_id;
@@ -578,14 +605,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const ratingSpan = document.createElement('span');
                 ratingSpan.classList.add('summary-kink-rating');
-                ratingSpan.classList.add(`summary-rating-${kink.userRating.toLowerCase().replace(/[^a-z0-9_]/g, '-').replace(/\s+/g, '-')}`);
+                // Ensure rating class is valid
+                let ratingClass = kink.userRating ? `summary-rating-${kink.userRating.toLowerCase().replace(/[^a-z0-9_]/g, '-').replace(/\s+/g, '-')}` : '';
+                ratingSpan.classList.add(ratingClass);
                 ratingSpan.textContent = formatRating(kink.userRating);
 
                 const notesSpan = document.createElement('span');
                 notesSpan.classList.add('summary-kink-notes');
-                // Sanitize notes slightly if needed, or use a library for more robust HTML generation from text
                 notesSpan.innerHTML = kink.userNotes ? kink.userNotes.replace(/\n/g, '<br>') : '<em>No notes.</em>';
-
 
                 itemDiv.appendChild(nameSpan);
                 itemDiv.appendChild(ratingSpan);
@@ -602,10 +629,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-
-    // --- IMPORT / EXPORT DATA (no changes from previous full version) ---
-    // ... (function exportData() ... )
-    // ... (function importData() ... )
+    // --- IMPORT / EXPORT DATA ---
     function exportData() {
         try {
             const dataStr = JSON.stringify(state.userData);
@@ -635,7 +659,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             state.userData = importedData;
                             if (!Array.isArray(state.userData.journalEntries)) state.userData.journalEntries = [];
                             initializeKinkData();
-                            loadUserData();
+                            loadUserData(); // Re-apply loaded data to the fresh kink structure
                             saveUserData();
                             alert("Kink Atlas data imported successfully!");
                             switchView(state.userData.lastView || 'galaxy-view');
@@ -647,7 +671,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.error("Error importing data:", error);
                     alert("Error importing data. The file may be corrupted or not a valid Kink Atlas backup.");
                 }
-                event.target.value = null;
+                if(event.target) event.target.value = null; // Reset file input
             };
             reader.readAsText(file);
         }
@@ -662,7 +686,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (DOMElements.currentYearSpan) DOMElements.currentYearSpan.textContent = new Date().getFullYear();
     }
     function updateAppVersion() {
-        if (DOMElements.appVersionSpan) DOMElements.appVersionSpan.textContent = "v0.1.3"; // Updated version
+        if (DOMElements.appVersionSpan) DOMElements.appVersionSpan.textContent = "v0.1.3";
     }
 
     // --- INITIALIZATION CALL ---
