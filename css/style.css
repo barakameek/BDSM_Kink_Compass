@@ -2,18 +2,18 @@
 
 /* --- VARIABLES & GLOBAL RESETS --- */
 :root {
-    --primary-color: #b376d1; /* Slightly more vibrant, yet sophisticated purple */
-    --secondary-color: #8e44ad; /* Deeper purple for accents/hovers */
-    --accent-color: #ff6b6b;   /* Softer, modern red/coral accent */
-    --text-color: #e8e8e8;     /* Light grey for main text */
-    --text-color-headings: #f5f5f5; /* Brighter white for headings */
-    --text-color-muted: #a0a7b0;  /* Muted grey for less important text */
-    --bg-color: #1e2227;       /* Very dark, almost black, cool grey */
-    --bg-color-light: #2a2f36; /* Panels, slightly lighter, cool grey */
-    --bg-color-lighter: #363c45;/* Cards, interactive elements */
-    --border-color: #404852;   /* Subtle borders, slightly more visible */
+    --primary-color: #b376d1; 
+    --secondary-color: #8e44ad; 
+    --accent-color: #ff6b6b;   
+    --text-color: #e8e8e8;     
+    --text-color-headings: #f5f5f5; 
+    --text-color-muted: #a0a7b0;  
+    --bg-color: #1e2227;       
+    --bg-color-light: #2a2f36; 
+    --bg-color-lighter: #363c45;
+    --border-color: #404852;   
     --font-family: 'Roboto', 'Segoe UI', Helvetica, Arial, sans-serif;
-    --modal-bg: rgba(10, 12, 15, 0.85); /* Darker, more opaque modal overlay */
+    --modal-bg: rgba(10, 12, 15, 0.85); 
     
     --success-color: #2ecc71;
     --warning-color: #f39c12;
@@ -120,7 +120,7 @@ p { margin-bottom: 1.3em; }
     align-items: center;
     border-bottom: 1px solid var(--border-color);
     box-shadow: var(--box-shadow-medium); /* More prominent shadow */
-    position: sticky;
+    position: sticky; /* Sticky header */
     top: 0;
     z-index: 900;
 }
@@ -180,8 +180,8 @@ p { margin-bottom: 1.3em; }
     display: none;
     padding: 25px;
     border-radius: var(--border-radius-large); /* More rounded views */
-    animation: fadeInView 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    background-color: var(--bg-color-light);
+    animation: fadeInView 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smoother animation */
+    background-color: var(--bg-color-light); /* Default view background */
     border: 1px solid var(--border-color); /* Add subtle border to views */
 }
 .view.active-view { display: block; }
@@ -191,8 +191,69 @@ p { margin-bottom: 1.3em; }
     to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
+.view-header { /* For Galaxy and Summary view titles + profile selectors */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+    gap: 15px; /* Add gap for wrapped items */
+}
+.view-header h2 {
+    margin-bottom: 0; /* Remove bottom margin as .view-header handles it */
+    flex-grow: 1; /* Allow title to take space */
+}
+.profile-selector-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0; /* Prevent shrinking on small screens */
+}
+.profile-selector-container label {
+    font-weight: 500;
+    color: var(--text-color-muted);
+    white-space: nowrap; /* Prevent label from wrapping */
+}
+/* General input and select styling (also applied to profile selectors) */
+input[type="text"], input[type="email"], input[type="password"], textarea, select {
+    width: 100%;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    border-radius: var(--border-radius-medium);
+    font-size: 1rem;
+    transition: border-color var(--transition-speed) var(--transition-timing), box-shadow var(--transition-speed) var(--transition-timing);
+}
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(var(--primary-color), 0.25);
+}
+textarea { min-height: 150px; resize: vertical; line-height: 1.6; }
 
-/* --- BUTTONS & FORMS --- */
+.profile-selector-container select {
+    background-color: var(--bg-color-lighter);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    padding: 10px 15px; /* Adjusted padding for select */
+    border-radius: var(--border-radius-medium);
+    font-size: 0.95rem;
+    min-width: 220px; /* Give it some base width */
+    margin-bottom: 0; /* Remove bottom margin if used in profile-selector-container */
+    /* Custom arrow for select */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23a0a7b0' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    padding-right: 45px; /* Make space for custom arrow */
+}
+
+
+/* --- BUTTONS --- */
 button, .button-like-label, .back-button {
     background-color: var(--primary-color);
     color: white;
@@ -208,6 +269,9 @@ button, .button-like-label, .back-button {
     letter-spacing: 0.75px; /* More spacing for button text */
     text-transform: uppercase; /* Uppercase button text */
     box-shadow: var(--box-shadow-light);
+    display: inline-flex; /* For aligning icon and text if needed */
+    align-items: center;
+    justify-content: center;
 }
 button:hover, .button-like-label:hover, .back-button:hover {
     background-color: var(--secondary-color);
@@ -225,7 +289,7 @@ button:disabled {
     box-shadow: none;
     transform: none;
 }
-.button-like-label { display: inline-block; text-align: center; }
+.button-like-label { display: inline-flex; text-align: center; } /* Changed to inline-flex */
 .back-button {
     background-color: var(--bg-color-lighter);
     color: var(--text-color);
@@ -235,45 +299,15 @@ button:disabled {
 }
 .back-button:hover { background-color: var(--border-color); }
 
-/* Inline nav button (e.g., welcome page to settings) */
 .inline-nav-btn {
-    background: none;
-    border: none;
-    color: var(--accent-color);
-    padding: 0;
-    margin: 0;
-    text-decoration: underline;
-    cursor: pointer;
-    font-size: inherit; /* Inherit font size from paragraph */
-    font-weight: inherit;
-    text-transform: none;
-    box-shadow: none;
+    background: none; border: none; color: var(--accent-color); padding: 0; margin: 0;
+    text-decoration: underline; cursor: pointer; font-size: inherit; font-weight: inherit;
+    text-transform: none; box-shadow: none; display: inline; /* For use within paragraphs */
 }
 .inline-nav-btn:hover {
-    color: var(--primary-color);
-    background: none;
-    transform: none;
-    box-shadow: none;
+    color: var(--primary-color); background: none; transform: none; box-shadow: none;
 }
 
-
-input[type="text"], input[type="email"], input[type="password"], textarea {
-    width: 100%;
-    padding: 14px 18px;
-    margin-bottom: 18px;
-    border: 1px solid var(--border-color);
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    border-radius: var(--border-radius-medium);
-    font-size: 1rem;
-    transition: border-color var(--transition-speed) var(--transition-timing), box-shadow var(--transition-speed) var(--transition-timing);
-}
-input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, textarea:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 4px rgba(var(--primary-color), 0.25);
-}
-textarea { min-height: 150px; resize: vertical; line-height: 1.6; }
 
 /* --- WELCOME VIEW --- */
 #welcome-view p { font-size: 1.1rem; }
@@ -282,75 +316,49 @@ textarea { min-height: 150px; resize: vertical; line-height: 1.6; }
 /* --- KINK GALAXY VIEW --- */
 #kink-galaxy-visualization { padding: 15px 0; }
 .galaxy-category {
-    background-color: transparent; /* Remove category bg for cleaner look */
-    padding: 0; /* Remove padding, manage with h3 and kink-list */
-    margin-bottom: 40px;
-    border: none; /* Remove category border */
-    box-shadow: none;
+    background-color: transparent; padding: 0; margin-bottom: 40px;
+    border: none; box-shadow: none;
 }
 .galaxy-category h3 {
-    color: var(--primary-color);
-    margin-top: 0;
-    margin-bottom: 25px;
-    padding-bottom: 15px;
-    border-bottom: 2px solid var(--secondary-color);
-    display: flex;
-    align-items: center;
-    font-size: 1.8rem;
-    font-weight: 700;
+    color: var(--primary-color); margin-top: 0; margin-bottom: 25px;
+    padding-bottom: 15px; border-bottom: 2px solid var(--secondary-color);
+    display: flex; align-items: center; font-size: 1.8rem; font-weight: 700;
 }
-.galaxy-category h3 span { margin-right: 15px; font-size: 1.4em; }
+.galaxy-category h3 span { margin-right: 15px; font-size: 1.4em; } /* For icon */
 .kink-list { display: flex; flex-wrap: wrap; gap: 18px; }
-.kink-star {
-    background-color: var(--bg-color-lighter);
-    color: var(--text-color);
-    padding: 12px 20px;
-    border-radius: 30px;
-    cursor: pointer;
-    border: 2px solid var(--border-color); /* Base border more visible */
-    transition: all var(--transition-speed) var(--transition-timing);
-    font-size: 1rem;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    box-shadow: var(--box-shadow-light);
-    text-align: left;
-    line-height: 1.4;
+.kink-star { /* This is the "pill" */
+    background-color: var(--bg-color-lighter); color: var(--text-color);
+    padding: 12px 20px; border-radius: 30px; cursor: pointer;
+    border: 2px solid var(--border-color); transition: all var(--transition-speed) var(--transition-timing);
+    font-size: 1rem; font-weight: 500; display: inline-flex;
+    align-items: center; box-shadow: var(--box-shadow-light);
+    text-align: left; line-height: 1.4;
 }
 .kink-star:hover {
-    background-color: var(--secondary-color);
-    transform: translateY(-3px) scale(1.03);
-    border-color: var(--accent-color);
-    color: white;
-    box-shadow: 0 5px 10px rgba(0,0,0,0.25);
+    background-color: var(--secondary-color); transform: translateY(-3px) scale(1.03);
+    border-color: var(--accent-color); color: white; box-shadow: 0 5px 10px rgba(0,0,0,0.25);
 }
 .kink-star-rating-badge {
-    font-size: 0.85em;
-    color: white;
-    padding: 5px 12px;
-    border-radius: 20px;
-    margin-left: 15px;
-    white-space: nowrap;
-    font-weight: 700;
-    flex-shrink: 0;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
+    font-size: 0.85em; color: white; padding: 5px 12px;
+    border-radius: 20px; margin-left: 15px; white-space: nowrap;
+    font-weight: 700; flex-shrink: 0; box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
 }
-/* Rating-specific styles for kink-star pills (same logic, colors from variables) */
-.rating-want-to-try { background-color: var(--rating-want-to-try); border-color: var(--rating-want-to-try); color: white; }
-.rating-want-to-try .kink-star-rating-badge { background-color: rgba(0,0,0,0.3); }
-.rating-favorite { background-color: var(--rating-favorite); border-color: var(--rating-favorite); color: white; }
-.rating-favorite .kink-star-rating-badge { background-color: rgba(0,0,0,0.3); }
-.rating-like-it { background-color: var(--rating-like-it); border-color: var(--rating-like-it); color: white; }
-.rating-like-it .kink-star-rating-badge { background-color: rgba(0,0,0,0.3); }
-.rating-curious-about { background-color: var(--rating-curious-about); border-color: var(--rating-curious-about); color: #222831; }
-.rating-curious-about .kink-star-rating-badge { background-color: rgba(0,0,0,0.2); color: #222831; }
-.rating-soft-limit { background-color: var(--rating-soft-limit); border-color: var(--rating-soft-limit); color: white; }
-.rating-soft-limit .kink-star-rating-badge { background-color: rgba(0,0,0,0.3); }
-.rating-hard-limit { background-color: var(--rating-hard-limit); border-color: var(--rating-hard-limit); color: white; }
-.rating-hard-limit .kink-star-rating-badge { background-color: rgba(0,0,0,0.3); }
-.rating-not-for-me { background-color: var(--rating-not-for-me); border-color: var(--rating-not-for-me); color: var(--bg-color); opacity: 0.9; }
-.rating-not-for-me .kink-star-rating-badge { background-color: rgba(0,0,0,0.15); color: var(--bg-color); }
-.rating-none { border: 2px dashed var(--border-color); }
+/* Kink Star Pill Colors based on Rating */
+.rating-want-to-try { background-color: var(--rating-want-to-try) !important; border-color: var(--rating-want-to-try) !important; color: white !important; }
+.rating-want-to-try .kink-star-rating-badge { background-color: rgba(0,0,0,0.3) !important; }
+.rating-favorite { background-color: var(--rating-favorite) !important; border-color: var(--rating-favorite) !important; color: white !important; }
+.rating-favorite .kink-star-rating-badge { background-color: rgba(0,0,0,0.3) !important; }
+.rating-like-it { background-color: var(--rating-like-it) !important; border-color: var(--rating-like-it) !important; color: white !important; }
+.rating-like-it .kink-star-rating-badge { background-color: rgba(0,0,0,0.3) !important; }
+.rating-curious-about { background-color: var(--rating-curious-about) !important; border-color: var(--rating-curious-about) !important; color: var(--bg-color) !important; }
+.rating-curious-about .kink-star-rating-badge { background-color: rgba(0,0,0,0.2) !important; color: var(--bg-color) !important; }
+.rating-soft-limit { background-color: var(--rating-soft-limit) !important; border-color: var(--rating-soft-limit) !important; color: white !important; }
+.rating-soft-limit .kink-star-rating-badge { background-color: rgba(0,0,0,0.3) !important; }
+.rating-hard-limit { background-color: var(--rating-hard-limit) !important; border-color: var(--rating-hard-limit) !important; color: white !important; }
+.rating-hard-limit .kink-star-rating-badge { background-color: rgba(0,0,0,0.3) !important; }
+.rating-not-for-me { background-color: var(--rating-not-for-me) !important; border-color: var(--rating-not-for-me) !important; color: var(--bg-color) !important; opacity: 0.9 !important; }
+.rating-not-for-me .kink-star-rating-badge { background-color: rgba(0,0,0,0.15) !important; color: var(--bg-color) !important; }
+.rating-none { border: 2px dashed var(--border-color); } /* Style for unrated kinks */
 
 .no-kinks-in-category { font-style: italic; color: var(--text-color-muted); padding: 15px 0; }
 #kink-filters { padding: 20px; background-color: var(--bg-color-light); border-radius: var(--border-radius-medium); margin-top: 30px;}
@@ -359,18 +367,20 @@ textarea { min-height: 150px; resize: vertical; line-height: 1.6; }
 /* --- KINK DETAIL MODAL --- */
 .modal {
     display: none; position: fixed; z-index: 1000; left: 0; top: 0;
-    width: 100%; height: 100%; overflow: auto; background-color: var(--modal-bg);
+    width: 100%; height: 100%; background-color: var(--modal-bg);
     animation: fadeInModal 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-    padding: 20px; /* Allow scrolling if modal content overflows viewport */
+    padding: 20px; /* Allows for viewport scrolling if modal is too tall */
+    overflow-y: auto; /* Add scroll to modal overlay if content overflows viewport */
 }
+@keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
 .modal-content {
     background-color: var(--bg-color-light); margin: 4% auto; padding: 35px;
     border: 1px solid var(--border-color); border-radius: var(--border-radius-large); width: 90%; max-width: 800px;
     position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.35);
     animation: slideInModal 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    max-height: 90vh;
+    max-height: 90vh; /* Content will scroll within this if it's taller */
     display: flex; flex-direction: column;
-    overflow-y: hidden; /* Let internal modal content scroll */
+    /* overflow-y: auto; /* Content specific scrolling handled by individual elements if needed, or this */
 }
 @keyframes slideInModal { from { transform: translateY(-70px) scale(0.9); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
 
@@ -378,6 +388,7 @@ textarea { min-height: 150px; resize: vertical; line-height: 1.6; }
     color: var(--text-color-muted); position: absolute; top: 20px; right: 25px;
     font-size: 36px; font-weight: 300; line-height: 1;
     padding: 8px; transition: color var(--transition-speed) var(--transition-timing), transform var(--transition-speed) var(--transition-timing);
+    cursor: pointer;
 }
 .close-modal-btn:hover, .close-modal-btn:focus { color: var(--accent-color); transform: rotate(180deg) scale(1.1); }
 
@@ -394,7 +405,7 @@ textarea { min-height: 150px; resize: vertical; line-height: 1.6; }
 .kink-description-details summary {
     cursor: pointer; color: var(--primary-color); font-weight: 700;
     padding: 10px 0; display: inline-block; transition: color var(--transition-speed) var(--transition-timing);
-    font-size: 1.1rem;
+    font-size: 1.1rem; list-style-position: inside; /* Better marker pos */
 }
 .kink-description-details summary:hover { color: var(--accent-color); }
 .kink-description-details summary::marker { font-size: 0.9em; }
@@ -419,7 +430,7 @@ textarea { min-height: 150px; resize: vertical; line-height: 1.6; }
     font-weight: 500;
     border-radius: var(--border-radius-medium);
     transition: all var(--transition-speed) var(--transition-timing);
-    text-transform: none; /* Normal case for rating buttons */
+    text-transform: none; 
     letter-spacing: 0.25px;
 }
 #modal-kink-rating button:hover {
@@ -444,19 +455,60 @@ textarea { min-height: 150px; resize: vertical; line-height: 1.6; }
 }
 
 #modal-kink-notes {
-    flex-grow: 1; /* This makes textarea take up space, but modal-content needs fixed height or internal scrolling solution */
     min-height: 120px; margin-bottom: 25px;
-    /* For the textarea to actually scroll if content overflows, its parent (.modal-content) needs a defined height
-       and overflow-y: auto, or the textarea itself needs to be part of a scrolling container within modal-content */
 }
 #save-modal-btn { width: 100%; padding: 15px; font-size: 1.1rem;}
 
-
-/* --- ACADEMY, JOURNAL, SUMMARY, SETTINGS (Basic structure styling) --- */
-/* These sections would benefit from more specific styling as their content grows */
-#academy-content-area, #journal-entries-container, #summary-content-area, #settings-view .settings-group {
+/* Modal Profile Assignment Styling */
+#modal-profile-assignment {
+    margin-top: 20px;
     padding-top: 15px;
+    border-top: 1px solid var(--border-color);
 }
+#modal-profile-assignment h4 {
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+    color: var(--text-color-headings);
+    font-weight: 500;
+}
+#modal-profile-checkboxes-container .profile-checkbox-item { /* Wrapper for each checkbox and label */
+    display: block; 
+    margin-bottom: 10px;
+}
+#modal-profile-checkboxes-container .checkbox-label { 
+    position: relative; padding-left: 35px; cursor: pointer;
+    font-size: 1rem; user-select: none; display: inline-flex;
+    align-items: center; min-height: 24px;
+}
+#modal-profile-checkboxes-container input[type="checkbox"] {
+    opacity: 0; width: 0; height: 0; position: absolute;
+}
+#modal-profile-checkboxes-container .checkbox-label::before { 
+    content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+    width: 22px; height: 22px; border: 2px solid var(--border-color);
+    background-color: var(--bg-color); border-radius: var(--border-radius-small);
+    transition: all var(--transition-speed) var(--transition-timing);
+}
+#modal-profile-checkboxes-container .checkbox-label::after { 
+    content: ''; position: absolute; left: 7px; top: 50%;    
+    width: 7px; height: 14px; border: solid white;
+    border-width: 0 3px 3px 0; transform: translateY(-60%) rotate(45deg) scale(0);
+    transition: transform var(--transition-speed) var(--transition-timing);
+}
+#modal-profile-checkboxes-container input[type="checkbox"]:checked + .checkbox-label::before {
+    background-color: var(--primary-color); border-color: var(--primary-color);
+}
+#modal-profile-checkboxes-container input[type="checkbox"]:checked + .checkbox-label::after {
+    transform: translateY(-60%) rotate(45deg) scale(1);
+}
+#modal-profile-checkboxes-container input[type="checkbox"]:focus + .checkbox-label::before {
+    box-shadow: 0 0 0 3px rgba(var(--primary-color), 0.25);
+}
+.no-profiles-note { font-style: italic; color: var(--text-color-muted); font-size: 0.9rem; }
+
+
+/* --- ACADEMY VIEW --- */
+#academy-content-area { padding-top: 15px; }
 .academy-index-list { list-style: none; padding-left: 0; }
 .academy-index-list > h3 { margin-top: 35px; font-size: 1.5rem; }
 .academy-index-list li a {
@@ -471,10 +523,21 @@ textarea { min-height: 150px; resize: vertical; line-height: 1.6; }
 .academy-kink-list { padding-left: 25px; }
 #academy-content-area dl dt { font-weight: 700; color: var(--primary-color); margin-top: 1.2em; font-size: 1.15em;}
 #academy-content-area dl dd { margin-left: 2em; margin-bottom: 1em; color: var(--text-color-muted); }
-#academy-content-area article h2, #academy-content-area section h2 { /* Assuming module titles are h2 */
+#academy-content-area article h2, #academy-content-area section h2 {
     border-bottom: 2px solid var(--border-color); padding-bottom: 12px; margin-bottom: 25px;
 }
+.risk-indicator-high, .risk-indicator-taboo {
+    font-size: 0.8em;
+    margin-left: 5px;
+    padding: 2px 5px;
+    border-radius: var(--border-radius-small);
+    font-weight: bold;
+}
+.risk-indicator-high { background-color: var(--danger-color); color: white; }
+.risk-indicator-taboo { background-color: var(--warning-color); color: var(--bg-color); }
 
+
+/* --- JOURNAL VIEW --- */
 #journal-entries-container { margin-top: 30px; }
 .journal-entry-item {
     background-color: var(--bg-color); padding: 25px; border-radius: var(--border-radius-medium);
@@ -483,6 +546,20 @@ textarea { min-height: 150px; resize: vertical; line-height: 1.6; }
 }
 .journal-entry-item h5 { margin-top: 0; margin-bottom: 1em; color: var(--text-color-muted); font-size: 1rem; font-weight: 400; }
 .journal-entry-content { margin-bottom: 18px; line-height: 1.75; }
+.journal-item-actions button { /* Make edit/delete buttons smaller */
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    text-transform: none;
+    margin-top: 10px;
+    margin-right: 8px;
+    box-shadow: none;
+}
+.journal-item-actions .delete-journal-entry {
+    background-color: var(--danger-color);
+}
+.journal-item-actions .delete-journal-entry:hover {
+    background-color: darkred;
+}
 .journal-prompts-container { margin-bottom: 30px; padding: 25px; background-color: var(--bg-color-light); border-radius: var(--border-radius-medium);}
 .journal-prompts-container ul { list-style: none; padding-left: 0; }
 .journal-prompts-container .prompt-button {
@@ -492,6 +569,7 @@ textarea { min-height: 150px; resize: vertical; line-height: 1.6; }
 }
 .journal-prompts-container .prompt-button:hover { background-color: var(--border-color); }
 
+/* --- SUMMARY VIEW --- */
 #summary-view h2 { margin-bottom: 30px; }
 .summary-controls { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); }
 #summary-content-area {
@@ -504,16 +582,19 @@ textarea { min-height: 150px; resize: vertical; line-height: 1.6; }
 .summary-kink-item {
     display: flex; justify-content: space-between; align-items: flex-start;
     padding: 15px 0; border-bottom: 1px solid var(--bg-color-light);
+    gap: 15px; /* Add gap between summary item parts */
 }
 .summary-kink-item:last-child { border-bottom: none; }
-.summary-kink-name { font-weight: 700; flex-basis: 35%; font-size: 1.1rem;}
+.summary-kink-name { font-weight: 700; flex: 2; font-size: 1.1rem;} /* Allow name to take more space */
 .summary-kink-rating {
-    flex-basis: 25%; text-align: center; font-weight: 700;
+    flex: 1; text-align: center; font-weight: 700;
     padding: 6px 12px; border-radius: var(--border-radius-medium); color: white;
-    margin: 0 18px; letter-spacing: 0.5px;
+    /* margin: 0 18px; */ /* Replaced by gap */
+    letter-spacing: 0.5px;
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    white-space: nowrap; /* Prevent rating text from wrapping */
 }
-.summary-kink-notes { flex-basis: 38%; font-size: 1rem; color: var(--text-color-muted); padding-left: 18px; white-space: pre-wrap; line-height: 1.6;}
+.summary-kink-notes { flex: 3; font-size: 1rem; color: var(--text-color-muted); /* padding-left: 18px; */ white-space: pre-wrap; line-height: 1.6;} /* Allow notes to take more space */
 .summary-kink-notes p:last-child { margin-bottom: 0; }
 /* Rating specific background colors for summary items (same logic as Kink Galaxy pills) */
 .summary-rating-want-to-try { background-color: var(--rating-want-to-try); }
@@ -524,76 +605,75 @@ textarea { min-height: 150px; resize: vertical; line-height: 1.6; }
 .summary-rating-hard-limit { background-color: var(--rating-hard-limit); }
 .summary-rating-not-for-me { background-color: var(--rating-not-for-me); color: #1e2227 !important; }
 
-
+/* --- SETTINGS VIEW --- */
 #settings-view h3 { margin-top: 30px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; font-size: 1.6rem;}
 .settings-group {
-    padding: 15px 0;
-    margin-bottom: 15px;
+    padding: 20px; margin-bottom: 25px;
+    background-color: var(--bg-color); border-radius: var(--border-radius-medium);
+    border: 1px solid var(--border-color);
 }
-.setting-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 12px;
-}
-/* Custom Checkbox for Taboo Setting */
-#setting-show-taboo-kinks {
-    opacity: 0; /* Hide original checkbox */
-    width: 0;
-    height: 0;
-    position: absolute;
-}
+.setting-item { display: flex; align-items: center; margin-bottom: 12px; }
+#setting-show-taboo-kinks { opacity: 0; width: 0; height: 0; position: absolute; }
 .checkbox-label {
-    position: relative;
-    padding-left: 35px; /* Space for custom checkbox */
-    cursor: pointer;
-    font-size: 1.05rem;
-    user-select: none;
-    display: inline-flex;
-    align-items: center;
-    min-height: 24px; /* Ensure label is tall enough for checkbox */
+    position: relative; padding-left: 35px; cursor: pointer;
+    font-size: 1.05rem; user-select: none; display: inline-flex;
+    align-items: center; min-height: 24px;
 }
-.checkbox-label::before { /* Custom checkbox box */
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 22px;
-    height: 22px;
-    border: 2px solid var(--border-color);
-    background-color: var(--bg-color);
-    border-radius: var(--border-radius-small);
+.checkbox-label::before {
+    content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+    width: 22px; height: 22px; border: 2px solid var(--border-color);
+    background-color: var(--bg-color); border-radius: var(--border-radius-small);
     transition: all var(--transition-speed) var(--transition-timing);
 }
-.checkbox-label::after { /* Custom checkmark */
-    content: '';
-    position: absolute;
-    left: 7px; /* Position checkmark inside box */
-    top: 50%;    
-    width: 7px;
-    height: 14px;
-    border: solid white;
-    border-width: 0 3px 3px 0;
-    transform: translateY(-50%) rotate(45deg) scale(0); /* Initially hidden and scaled down */
+.checkbox-label::after {
+    content: ''; position: absolute; left: 7px; top: 50%;    
+    width: 7px; height: 14px; border: solid white;
+    border-width: 0 3px 3px 0; transform: translateY(-60%) rotate(45deg) scale(0);
     transition: transform var(--transition-speed) var(--transition-timing);
 }
 #setting-show-taboo-kinks:checked + .checkbox-label::before {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
+    background-color: var(--primary-color); border-color: var(--primary-color);
 }
 #setting-show-taboo-kinks:checked + .checkbox-label::after {
-    transform: translateY(-60%) rotate(45deg) scale(1); /* Adjust Y offset for better centering of checkmark */
+    transform: translateY(-60%) rotate(45deg) scale(1);
 }
 #setting-show-taboo-kinks:focus + .checkbox-label::before {
     box-shadow: 0 0 0 3px rgba(var(--primary-color), 0.25);
 }
 .setting-description {
-    font-size: 0.9rem;
-    color: var(--text-color-muted);
-    margin-left: 0; /* Align with heading */
-    margin-top: 5px;
-    max-width: 600px; /* Limit width of description */
+    font-size: 0.9rem; color: var(--text-color-muted);
+    margin-left: 0; margin-top: 8px; max-width: 700px; line-height: 1.5;
 }
+
+.profile-creation-form {
+    display: flex; gap: 15px; align-items: center; margin-bottom: 25px;
+}
+.profile-creation-form input[type="text"] {
+    flex-grow: 1; margin-bottom: 0;
+}
+.profile-creation-form button {
+    margin-top: 0; padding: 14px 22px; flex-shrink: 0;
+}
+#existing-profiles-list { list-style: none; padding-left: 0; }
+#existing-profiles-list li {
+    background-color: var(--bg-color-lighter); padding: 15px 20px;
+    margin-bottom: 12px; border-radius: var(--border-radius-medium);
+    display: flex; justify-content: space-between; align-items: center;
+    border: 1px solid var(--border-color);
+    transition: background-color var(--transition-speed) var(--transition-timing);
+}
+#existing-profiles-list li:hover { background-color: var(--border-color); }
+#existing-profiles-list li span { font-weight: 500; font-size: 1.05rem; }
+#existing-profiles-list .delete-profile-btn {
+    background-color: var(--danger-color); color: white; padding: 8px 14px;
+    font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.25px;
+    margin: 0 0 0 15px; box-shadow: none; border-radius: var(--border-radius-small);
+}
+#existing-profiles-list .delete-profile-btn:hover {
+    background-color: #a02a1a; /* Darken delete button */
+    transform: scale(1.05);
+}
+.no-custom-profiles-note { font-style: italic; color: var(--text-color-muted); padding: 10px 0;}
 
 
 /* --- UTILITY CLASSES --- */
@@ -602,12 +682,12 @@ textarea { min-height: 150px; resize: vertical; line-height: 1.6; }
 
 /* --- PRINT STYLES for Summary View --- */
 @media print {
-    /* ... (Print styles remain largely the same as previous full CSS, ensure they are present) ... */
     body {
         background-color: white !important; color: black !important; font-size: 9pt;
         -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
     }
     #main-header, #main-nav, #main-footer, .summary-controls, #kink-filters,
+    .profile-selector-container, /* Hide profile selectors on print */
     #welcome-view .data-management button, #welcome-view .data-management label,
     #settings-view, #journal-view, #academy-view, #galaxy-view, #welcome-view,
     .kink-filters, .galaxy-category h3 + .kink-list + .no-kinks-in-category { display: none !important; }
@@ -620,44 +700,69 @@ textarea { min-height: 150px; resize: vertical; line-height: 1.6; }
     .view { animation: none !important; display: none !important; }
     #summary-view.active-view { display: block !important; }
 
-    .summary-category-block h3, .summary-kink-name { color: black !important; }
+    .summary-category-block h3, .summary-kink-name { color: black !important; font-size: 1.3em !important; }
+    .summary-kink-item { flex-direction: row; gap: 5px !important; font-size: 0.9em !important; padding: 5px 0 !important; } /* Tighter for print */
+    .summary-kink-name { flex-basis: 30% !important; font-weight: bold !important;}
     .summary-kink-rating {
+        flex-basis: 20% !important;
         border: 1px solid #999 !important; color: black !important;
         -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-        padding: 2px 4px !important; margin: 0 5px !important; font-size: 0.9em !important;
+        padding: 2px 4px !important; margin: 0 5px !important; font-size: 0.85em !important;
+        white-space: normal !important; /* Allow rating text to wrap if needed */
+        text-align: left !important;
     }
-    .summary-kink-notes { color: #333 !important; font-size: 0.85em !important; }
-    .summary-rating-want-to-try { background-color: var(--rating-want-to-try) !important; }
-    .summary-rating-favorite { background-color: var(--rating-favorite) !important; }
-    .summary-rating-like-it { background-color: var(--rating-like-it) !important; }
+    .summary-kink-notes { flex-basis: 50% !important; color: #333 !important; font-size: 0.85em !important; padding-left: 5px !important; }
+    /* Attempt to keep colors, otherwise they become light grey */
+    .summary-rating-want-to-try { background-color: var(--rating-want-to-try) !important; color: white !important; }
+    .summary-rating-favorite { background-color: var(--rating-favorite) !important; color: white !important; }
+    .summary-rating-like-it { background-color: var(--rating-like-it) !important; color: white !important; }
     .summary-rating-curious-about { background-color: var(--rating-curious-about) !important; color: #1e2227 !important; }
-    .summary-rating-soft-limit { background-color: var(--rating-soft-limit) !important; }
-    .summary-rating-hard-limit { background-color: var(--rating-hard-limit) !important; }
+    .summary-rating-soft-limit { background-color: var(--rating-soft-limit) !important; color: white !important; }
+    .summary-rating-hard-limit { background-color: var(--rating-hard-limit) !important; color: white !important; }
     .summary-rating-not-for-me { background-color: var(--rating-not-for-me) !important; color: #1e2227 !important; }
     a { color: #0000EE !important; text-decoration: underline !important; }
+    /* Attempt multi-column layout for print if content is still too long */
+    #summary-content-area { column-count: 2; column-gap: 20px; }
+    .summary-category-block { break-inside: avoid-column; } /* Try to keep categories together */
 }
 
 
 /* --- RESPONSIVE DESIGN --- */
+@media (max-width: 1024px) { /* Tablet and smaller */
+    .summary-kink-item { flex-wrap: wrap; } /* Allow summary items to wrap */
+    .summary-kink-name, .summary-kink-rating, .summary-kink-notes {
+        flex-basis: 100% !important; /* Stack them on smaller screens */
+        text-align: left !important;
+        margin: 5px 0 !important;
+    }
+    .summary-kink-rating { text-align: left !important; display: inline-block; width: auto; } /* Don't force rating to full width */
+}
+
 @media (max-width: 768px) {
-    html { font-size: 15px; } /* Slightly smaller base for better tablet scaling */
+    html { font-size: 15px; }
     #main-header { flex-direction: column; height: auto; padding: 15px 20px; }
     #main-header h1 { margin-bottom: 15px; font-size: 2rem; }
     #main-nav { width: 100%; display: flex; flex-wrap: wrap; justify-content: center; }
     #main-nav button { margin: 6px; flex-grow: 0; padding: 9px 15px; font-size: 0.95em;}
     .modal-content { width: 95%; margin: 5% auto; padding: 25px; max-height: 88vh; }
     h1 { font-size: 2.4rem; } h2 { font-size: 1.9rem; } h3 {font-size: 1.5rem;}
-    .summary-kink-item { flex-direction: column; align-items: stretch; }
-    .summary-kink-name, .summary-kink-rating, .summary-kink-notes {
-        flex-basis: auto; width: 100%; text-align: left; margin: 8px 0; padding-left: 0;
-    }
-    .summary-kink-rating { margin-left: 0; margin-right: 0; text-align: center; }
+    
+    .view-header { flex-direction: column; align-items: flex-start; gap: 15px; }
+    .profile-selector-container { width: 100%; }
+    .profile-selector-container select { width: 100%; min-width: auto; }
+    .profile-creation-form { flex-direction: column; align-items: stretch; }
+    .profile-creation-form input[type="text"], .profile-creation-form button { width: 100%; margin-bottom: 10px; }
+    .profile-creation-form button { margin-bottom: 0; }
+
     #modal-kink-rating { gap: 10px; }
     #modal-kink-rating button { padding: 10px 14px; font-size: 0.95em; }
+
+    /* For print summary, use single column on smaller screens */
+    @media print { #summary-content-area { column-count: 1; } }
 }
 @media (max-width: 480px) {
     html { font-size: 14px; }
-    #main-content { padding: 20px 15px; } /* Less horizontal padding */
+    #main-content { padding: 20px 15px; }
     button, .button-like-label, .back-button {
         padding: 12px 20px; font-size: 1rem; width: 100%;
         margin-bottom: 15px; margin-right: 0;
@@ -666,12 +771,14 @@ textarea { min-height: 150px; resize: vertical; line-height: 1.6; }
     #welcome-view .data-management .button-like-label,
     #modal-kink-rating button,
     .journal-prompts-container .prompt-button,
-    .journal-entry-item button { width: auto; margin-right: 10px; }
-    .journal-entry-item button { margin-bottom: 0; }
+    .journal-entry-item .journal-item-actions button { width: auto; margin-right: 10px; margin-bottom: 10px;}
+    .journal-entry-item .journal-item-actions button:last-child {margin-right: 0;}
+
+
     .kink-star { padding: 10px 15px; font-size: 0.95em; }
     .kink-star-rating-badge { padding: 4px 8px; font-size: 0.75em; margin-left: 10px;}
     #modal-kink-name { font-size: 1.8rem; }
-    .checkbox-label { padding-left: 30px; font-size: 1rem; } /* Adjust custom checkbox for smaller screens */
+    .checkbox-label { padding-left: 30px; font-size: 1rem; }
     .checkbox-label::before { width: 20px; height: 20px; }
     .checkbox-label::after { left: 6px; width: 6px; height: 12px; }
 }
