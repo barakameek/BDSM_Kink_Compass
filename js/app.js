@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 showTabooKinks: false,
                 summaryNoteStyle: 'icon',
                 currentTheme: 'dark', 
-                // sidebarCollapsed: false, // No longer used with top-nav
                 summaryFilters: { categories: [], ratingTypes: [], hasNotesOnly: false }
             },
             journalEntries: [],
@@ -122,7 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 summaryNoteStyle: loadedData.settings?.summaryNoteStyle || 'icon',
                 summaryFilters: loadedData.settings?.summaryFilters || { categories: [], ratingTypes: [], hasNotesOnly: false },
                 currentTheme: loadedData.settings?.currentTheme || 'dark',
-                // sidebarCollapsed: loadedData.settings?.sidebarCollapsed || false // No longer used
             };
             state.userData.journalEntries = Array.isArray(loadedData.journalEntries) ? loadedData.journalEntries : [];
         } else {
@@ -132,7 +130,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     showTabooKinks: false, summaryNoteStyle: 'icon', 
                     summaryFilters: { categories: [], ratingTypes: [], hasNotesOnly: false }, 
                     currentTheme: 'dark', 
-                    // sidebarCollapsed: false // No longer used
                 },
                 journalEntries: [],
             };
@@ -296,7 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     ${kink.name}
                                     ${kink.isHighRisk ? ' <span class="risk-indicator-high" title="High Risk">🔥</span>':''}
                                     ${kink.isTaboo && state.userData.settings.showTabooKinks ? ' <span class="risk-indicator-taboo" title="Advanced/Taboo">🚫</span>':''}
-                                    ${kinkUserData.rating ? `<span class="kink-star-rating-badge">${formatRating(kinkUserData.rating)}</span>` : ''}
+                                    ${kinkUserData.rating && ratingKey !== 'none' ? `<span class="kink-star-rating-badge">${formatRating(kinkUserData.rating)}</span>` : ''}
                                    </div>`;
                 });
                 galaxyHTML += `</div></div>`;
@@ -330,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (const key in ratingOptions) { 
             const btn = document.createElement('button'); btn.textContent = ratingOptions[key]; btn.dataset.ratingKey = key;
             btn.classList.add('rating-btn', `rating-btn-${key.replace(/[^a-z0-9_]/g, '-').replace(/\s+/g, '-')}`);
-            if(kinkUserData.rating === key) btn.classList.add('rating-btn-active'); // Add general active class
+            if(kinkUserData.rating === key) btn.classList.add('rating-btn-active'); // Add general active class for styling
             btn.addEventListener('click', ()=>handleKinkRating(kinkId, key==='clear_rating'?null:key));
             if(DOMElements.modalKinkRating) DOMElements.modalKinkRating.appendChild(btn);
         }
@@ -387,10 +384,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentKinkData = getKinkUserData(kinkId); const notes = currentKinkData.notes;
         const ratingChanged = setKinkUserData(kinkId, ratingKey, notes);
         if (ratingChanged) saveUserData();
-        if(DOMElements.modalKinkRating) DOMElements.modalKinkRating.querySelectorAll('button.rating-btn').forEach(btn => {
-            btn.classList.remove('rating-btn-active'); // General active class for modal buttons
-            if (btn.dataset.ratingKey === ratingKey && ratingKey !== null) btn.classList.add('rating-btn-active');
-        });
+        // Update visual feedback on modal buttons IMMEDIATELY
+        if(DOMElements.modalKinkRating) {
+            DOMElements.modalKinkRating.querySelectorAll('button.rating-btn').forEach(btn => {
+                btn.classList.remove('rating-btn-active'); // Remove general active class from all
+                if (btn.dataset.ratingKey === ratingKey && ratingKey !== null) {
+                    btn.classList.add('rating-btn-active'); // Add to the clicked one
+                }
+            });
+        }
     }
     
     // --- SUMMARY PAGE ---
