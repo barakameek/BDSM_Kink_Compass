@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showTabooKinks: false,
                 summaryNoteStyle: 'icon',
                 currentTheme: 'dark', 
-                sidebarCollapsed: false, // No longer used, but kept for data structure consistency for now
+                // sidebarCollapsed: false, // No longer used with top-nav
                 summaryFilters: { categories: [], ratingTypes: [], hasNotesOnly: false }
             },
             journalEntries: [],
@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 summaryNoteStyle: loadedData.settings?.summaryNoteStyle || 'icon',
                 summaryFilters: loadedData.settings?.summaryFilters || { categories: [], ratingTypes: [], hasNotesOnly: false },
                 currentTheme: loadedData.settings?.currentTheme || 'dark',
-                sidebarCollapsed: loadedData.settings?.sidebarCollapsed || false 
+                // sidebarCollapsed: loadedData.settings?.sidebarCollapsed || false // No longer used
             };
             state.userData.journalEntries = Array.isArray(loadedData.journalEntries) ? loadedData.journalEntries : [];
         } else {
@@ -131,7 +131,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 settings: { 
                     showTabooKinks: false, summaryNoteStyle: 'icon', 
                     summaryFilters: { categories: [], ratingTypes: [], hasNotesOnly: false }, 
-                    currentTheme: 'dark', sidebarCollapsed: false 
+                    currentTheme: 'dark', 
+                    // sidebarCollapsed: false // No longer used
                 },
                 journalEntries: [],
             };
@@ -310,7 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- KINK DETAIL MODAL ---
     function openKinkDetailModal(kinkId) { 
-        const kink = state.kinks.find(k => k.id === kinkId); if (!kink) return;
+        const kink = state.kinks.find(k => k.id === kinkId); if (!kink) {console.error(`Kink with ID ${kinkId} not found in state.kinks`); return;}
         const kinkUserData = getKinkUserData(kinkId); state.currentOpenKinkId = kinkId;
         if(DOMElements.modalKinkName) DOMElements.modalKinkName.textContent = kink.name; 
         if(DOMElements.modalKinkCategory) DOMElements.modalKinkCategory.textContent = `Category: ${KINK_CATEGORIES[kink.category_id]?.name || 'Unknown'}`;
@@ -329,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (const key in ratingOptions) { 
             const btn = document.createElement('button'); btn.textContent = ratingOptions[key]; btn.dataset.ratingKey = key;
             btn.classList.add('rating-btn', `rating-btn-${key.replace(/[^a-z0-9_]/g, '-').replace(/\s+/g, '-')}`);
-            if(kinkUserData.rating === key) btn.classList.add('rating-btn-active'); // Apply active class for styling
+            if(kinkUserData.rating === key) btn.classList.add('rating-btn-active'); // Add general active class
             btn.addEventListener('click', ()=>handleKinkRating(kinkId, key==='clear_rating'?null:key));
             if(DOMElements.modalKinkRating) DOMElements.modalKinkRating.appendChild(btn);
         }
@@ -387,7 +388,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const ratingChanged = setKinkUserData(kinkId, ratingKey, notes);
         if (ratingChanged) saveUserData();
         if(DOMElements.modalKinkRating) DOMElements.modalKinkRating.querySelectorAll('button.rating-btn').forEach(btn => {
-            btn.classList.remove('rating-btn-active'); // General active class
+            btn.classList.remove('rating-btn-active'); // General active class for modal buttons
             if (btn.dataset.ratingKey === ratingKey && ratingKey !== null) btn.classList.add('rating-btn-active');
         });
     }
@@ -678,12 +679,13 @@ document.addEventListener('DOMContentLoaded', () => {
                                 summaryNoteStyle: importedData.settings?.summaryNoteStyle || 'icon',
                                 summaryFilters: importedData.settings?.summaryFilters || { categories: [], ratingTypes: [], hasNotesOnly: false },
                                 currentTheme: importedData.settings?.currentTheme || 'dark',
-                                sidebarCollapsed: false // No sidebar
+                                // sidebarCollapsed: importedData.settings?.sidebarCollapsed || false, // No sidebar
                             },
                             journalEntries: Array.isArray(importedData.journalEntries) ? importedData.journalEntries : []
                         };
                         if (state.kinks.length === 0) initializeKinkData();
                         applyTheme(state.userData.settings.currentTheme); 
+                        // applySidebarState(state.userData.settings.sidebarCollapsed); // No sidebar
                         if (DOMElements.settingShowTabooKinksCheckbox) DOMElements.settingShowTabooKinksCheckbox.checked = state.userData.settings.showTabooKinks;
                         applyGlobalKinkFilters(); populateProfileSelectors(); renderExistingProfilesList(); populateSummaryFilterControls(); saveUserData();
                         alert("Kink Atlas data imported successfully!"); switchView(state.currentView || 'galaxy-view');
