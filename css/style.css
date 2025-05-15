@@ -1,4 +1,4 @@
-/* Kink Atlas - css/style.css - Playful & Polished Expression Theme - ABSOLUTELY FINAL FULL VERSION */
+/* Kink Atlas - css/style.css - Playful & Polished Expression Theme - Top Navigation - FINAL FULL VERSION */
 
 /* --- FONT IMPORT --- */
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Open+Sans:wght@400;600&family=Great+Vibes&family=EB+Garamond&display=swap');
@@ -23,6 +23,7 @@
     /* Light Theme */
     --primary-accent-light: #f670a0; 
     --secondary-accent-light: #f88cb7;
+    --accent-color-light: #e74c3c;   
     --text-color-light: #2d3748;     
     --text-color-headings-light: #1a202c; 
     --text-color-muted-light: #718096;  
@@ -37,7 +38,7 @@
     /* Default to Dark Theme Variables */
     --primary-accent: var(--primary-accent-dark);
     --secondary-accent: var(--secondary-accent-dark);
-    --accent-color: var(--accent-color-dark); /* Added this for general accent use */
+    --accent-color: var(--accent-color-dark);
     --text-main: var(--text-color-dark);
     --text-headings: var(--text-color-headings-dark);
     --text-muted: var(--text-color-muted-dark);
@@ -82,7 +83,7 @@
 body.light-theme {
     --primary-accent: var(--primary-accent-light);
     --secondary-accent: var(--secondary-accent-light);
-    --accent-color: var(--accent-color-light); /* Ensure accent also switches */
+    --accent-color: var(--accent-color-light);
     --text-main: var(--text-color-light);
     --text-headings: var(--text-color-headings-light);
     --text-muted: var(--text-color-muted-light);
@@ -95,7 +96,7 @@ body.light-theme {
     --shadow-penumbra: var(--shadow-color-penumbra-light);
     --rating-text-curious-about: #212529;
     --rating-text-not-for-me: #212529;
-    --category-color-taboo_conceptual: #718096; /* Lighter taboo dot for light theme */
+    --category-color-taboo_conceptual: #718096;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -258,16 +259,16 @@ button.btn-secondary:hover { background-color: var(--main-border-color); color: 
     transition: all var(--transition-main);
     font-size: 0.9rem; font-weight: 600; display: inline-flex;
     align-items: center; box-shadow: 0 1px 2px var(--shadow-umbra);
-    background-color: var(--element-bg-color) !important; /* Default, will be overridden */
-    color: var(--text-main) !important; /* Default, will be overridden */
-    border: 1px solid var(--main-border-color) !important; /* Default, will be overridden */
+    background-color: var(--element-bg-color) !important; 
+    color: var(--text-main) !important; 
+    border: 1px solid var(--main-border-color) !important; 
 }
-.kink-star:hover { transform: translateY(-2px); box-shadow: 0 2px 4px var(--shadow-umbra); }
+.kink-star:hover { transform: translateY(-2px); box-shadow: 0 2px 4px var(--shadow-umbra); border-color: var(--primary-accent) !important; }
 .kink-star-rating-badge {
     font-size: 0.75rem; padding: 2px 7px; border-radius: 10px;
     margin-left: 8px; white-space: nowrap; font-weight: 700; flex-shrink: 0;
 }
-/* Galaxy Pill Colors - Using !important TO FORCE OVERRIDE */
+/* Galaxy Pill Colors - Using !important TO FORCE OVERRIDE BASE .kink-star */
 #kink-galaxy-visualization .kink-list div.kink-star.rating-want-to-try { background-color: var(--rating-bg-want-to-try) !important; border-color: var(--rating-bg-want-to-try) !important; color: var(--rating-text-want-to-try) !important; }
 #kink-galaxy-visualization .kink-list div.kink-star.rating-want-to-try .kink-star-rating-badge { background-color: rgba(255,255,255,0.15) !important; color:var(--rating-text-want-to-try) !important; }
 #kink-galaxy-visualization .kink-list div.kink-star.rating-favorite { background-color: var(--rating-bg-favorite) !important; border-color: var(--rating-bg-favorite) !important; color: var(--rating-text-favorite) !important; }
@@ -282,8 +283,10 @@ button.btn-secondary:hover { background-color: var(--main-border-color); color: 
 #kink-galaxy-visualization .kink-list div.kink-star.rating-hard-limit .kink-star-rating-badge { background-color: rgba(255,255,255,0.15) !important; color:var(--rating-text-hard-limit) !important; }
 #kink-galaxy-visualization .kink-list div.kink-star.rating-not-for-me { background-color: var(--rating-bg-not-for-me) !important; border-color: var(--rating-bg-not-for-me) !important; color: var(--rating-text-not-for-me) !important; opacity: 0.85 !important; }
 #kink-galaxy-visualization .kink-list div.kink-star.rating-not-for-me .kink-star-rating-badge { background-color: rgba(0,0,0,0.1) !important; color: var(--rating-text-not-for-me) !important; }
-.kink-star.rating-none { /* Uses base .kink-star styles with !important removed from those base styles */ }
+/* .kink-star.rating-none will use the base .kink-star styles, which now have !important for default state */
 
+.no-kinks-in-category { font-style: italic; color: var(--text-muted); padding: 10px 0; }
+#kink-filters { padding: 15px; background-color: var(--panel-bg-color); border-radius: var(--border-radius); margin-top: 20px; border: 1px solid var(--main-border-color);}
 
 /* --- KINK DETAIL MODAL (FIXED POSITIONING & Active Button Style) --- */
 .modal {
@@ -297,6 +300,7 @@ button.btn-secondary:hover { background-color: var(--main-border-color); color: 
     width: 90%; max-width: 700px; position: relative; box-shadow: var(--box-shadow-medium);
     animation: slideInModal 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     max-height: 90vh; display: flex; flex-direction: column; overflow-y: auto;
+    transition: background-color var(--transition-main), border-color var(--transition-main);
 }
 .close-modal-btn {
     color: var(--text-muted); position: absolute; top: 15px; right: 20px;
@@ -322,9 +326,9 @@ button.btn-secondary:hover { background-color: var(--main-border-color); color: 
     text-transform: none; letter-spacing: normal; font-size: 0.9rem;
 }
 #modal-kink-rating button:hover { border-color: var(--primary-accent); transform: translateY(-1px); }
-#modal-kink-rating button.rating-btn-active { /* General active style for modal buttons */
+#modal-kink-rating button.rating-btn-active { 
     font-weight: 700;
-    /* Specific colors will be applied by more specific classes below */
+    /* Specific active colors are applied below based on rating type */
 }
 #modal-kink-rating button.rating-btn-active.rating-btn-want-to-try { background-color: var(--rating-bg-want-to-try); border-color: var(--rating-bg-want-to-try); color: var(--rating-text-want-to-try); }
 #modal-kink-rating button.rating-btn-active.rating-btn-favorite { background-color: var(--rating-bg-favorite); border-color: var(--rating-bg-favorite); color: var(--rating-text-favorite); }
@@ -340,6 +344,7 @@ button.btn-secondary:hover { background-color: var(--main-border-color); color: 
 #modal-profile-assignment { margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--main-border-color); }
 #modal-profile-assignment h4 { margin-bottom: 8px; font-size: 1rem; color: var(--text-headings); font-weight: 500; }
 #modal-profile-checkboxes-container .profile-checkbox-item { display: block; margin-bottom: 6px; }
+/* General checkbox label style will apply */
 
 /* Notes Popover Modal */
 #notes-popover-modal.modal { padding: 0; background-color: rgba(0,0,0,0.5); }
@@ -446,7 +451,7 @@ button.btn-secondary:hover { background-color: var(--main-border-color); color: 
 .academy-kink-list li a { font-weight: normal; border-bottom-style: dotted; }
 #academy-content-area dl dt { font-weight: 700; color: var(--primary-accent); margin-top: 1em; font-size: 1.1rem;}
 #academy-content-area dl dd { margin-left: 1.8em; margin-bottom: 0.8em; color: var(--text-muted); }
-#academy-content-area article h2, #academy-content-area section h2 { /* For module and kink article titles */
+#academy-content-area article h2, #academy-content-area section h2 { 
     border-bottom: 1px solid var(--main-border-color); padding-bottom: 10px; margin-bottom: 20px; font-size: 1.8rem;
 }
 .risk-indicator-high, .risk-indicator-taboo {
@@ -528,7 +533,7 @@ input[type="checkbox"]:focus + .checkbox-label::before {
         width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important;
         border: none !important; box-shadow: none !important; background-color: white !important;
     }
-    .view { animation: none !important; display: none !important; }
+    .view { display: none !important; animation: none !important; }
     #summary-view.active-view { display: block !important; padding: 10mm !important; border: 5px double #333; }
 
     #summary-view > .view-header { display: block !important; text-align: center; border-bottom: none !important; margin-bottom: 5mm !important;}
@@ -544,7 +549,7 @@ input[type="checkbox"]:focus + .checkbox-label::before {
     .summary-rating-group > summary { 
         font-size: 11pt !important; margin-bottom: 2mm !important; padding: 2mm 0 !important; color: black !important; 
         font-weight: bold; list-style: none; background-color: transparent !important; border: none !important;
-        display: block; /* Ensure it's not flex for print */
+        display: block; 
     }
     .summary-rating-group > summary .accordion-kink-count, 
     .summary-rating-group > summary .accordion-arrow { display: none !important; }
@@ -552,7 +557,7 @@ input[type="checkbox"]:focus + .checkbox-label::before {
     .summary-kink-pills-list { display: block; } 
     .summary-kink-pill {
         display: block; padding: 1px 0 !important; font-size: 8pt !important; border: none !important; 
-        background-color: transparent !important; color: black !important; margin: 0 0 1.5mm 10mm !important; /* Indent kink names */
+        background-color: transparent !important; color: black !important; margin: 0 0 1.5mm 10mm !important;
         border-radius: 0 !important;
     }
     .summary-kink-pill .category-dot { 
@@ -562,9 +567,31 @@ input[type="checkbox"]:focus + .checkbox-label::before {
     }
     .category-dot-impact { background-color: var(--category-color-impact) !important; }
     .category-dot-bondage { background-color: var(--category-color-bondage) !important; }
-    /* ... (all other .category-dot-id rules with !important for print) ... */
+    .category-dot-power_exchange { background-color: var(--category-color-power_exchange) !important; }
+    .category-dot-sensation { background-color: var(--category-color-sensation) !important; }
+    .category-dot-psychological { background-color: var(--category-color-psychological) !important; }
+    .category-dot-edge_play { background-color: var(--category-color-edge_play) !important; }
+    .category-dot-fluid_play { background-color: var(--category-color-fluid_play) !important; }
+    .category-dot-medical_play { background-color: var(--category-color-medical_play) !important; }
+    .category-dot-object_insertion { background-color: var(--category-color-object_insertion) !important; }
+    .category-dot-fetishism_specific { background-color: var(--category-color-fetishism_specific) !important; }
+    .category-dot-verbal_play { background-color: var(--category-color-verbal_play) !important; }
+    .category-dot-sensory_modification { background-color: var(--category-color-sensory_modification) !important; }
+    .category-dot-exhibition_voyeurism { background-color: var(--category-color-exhibition_voyeurism) !important; }
+    .category-dot-animal_play { background-color: var(--category-color-animal_play) !important; }
+    .category-dot-food_play { background-color: var(--category-color-food_play) !important; }
+    .category-dot-spiritual_ritual { background-color: var(--category-color-spiritual_ritual) !important; }
+    .category-dot-endurance_ordeals { background-color: var(--category-color-endurance_ordeals) !important; }
+    .category-dot-taboo_conceptual { background-color: var(--category-color-taboo_conceptual) !important; }
+    .category-dot-default { background-color: var(--category-color-default) !important;}
+
     .summary-kink-pill .summary-kink-pill-name { font-weight: normal !important; }
     .summary-kink-pill .notes-indicator { display: none !important; } 
+    #summary-view::after { /* "Issued to" and "Date" for certificate */
+        content: "Issued for Personal Exploration   Date: " attr(data-print-date);
+        display: block; text-align: center; margin-top: 10mm; font-size: 10pt;
+        font-style: italic;
+    }
     a { color: #0000EE !important; text-decoration: underline !important; }
 }
 
@@ -581,10 +608,19 @@ input[type="checkbox"]:focus + .checkbox-label::before {
     #main-header { flex-direction: row; height: auto; padding: 10px 15px; }
     #main-header h1 { font-size: 1.5rem; margin-right: auto; }
     .header-controls { margin-left: auto; }
-    /* Simple hide/show for nav on mobile can be done with JS if a hamburger is added */
-    /* For now, let's assume nav buttons might wrap or be fewer */
-    #main-nav button { margin-left: 5px; padding: 8px 10px; font-size: 0.85rem; }
-    #theme-toggle-btn { margin-left: 10px; width: 36px; height: 36px; font-size: 1.1rem; }
+    #main-nav { /* Hide by default, JS will toggle .mobile-active */ display: none; }
+    #main-nav.mobile-active { 
+        display: flex; flex-direction: column; position: absolute;
+        top: var(--header-height-main); left: 0; right: 0;
+        background-color: var(--panel-bg-color); box-shadow: var(--box-shadow-medium);
+        padding: 10px 0; z-index: 890; 
+    }
+    #main-nav.mobile-active button { width: 100%; margin: 0; text-align: center; border-bottom: 1px solid var(--main-border-color); border-radius:0; padding: 12px 15px;}
+    #main-nav.mobile-active button:last-child { border-bottom: none; }
+    /* You'll need a hamburger toggle button in HTML to control .mobile-active if you want this behavior */
+    /* For now, theme toggle remains, and main-nav might just wrap if space is an issue, or you reduce button count/padding */
+
+    #theme-toggle-btn { margin-left: 10px; } 
 
     .view-header { flex-direction: column; align-items: flex-start; gap: 10px; }
     .profile-selector-container { width: 100%; }
