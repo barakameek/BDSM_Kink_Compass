@@ -343,22 +343,33 @@ button:disabled {
     border-radius: 20px; margin-left: 15px; white-space: nowrap;
     font-weight: 700; flex-shrink: 0; box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
 }
-/* Kink Star Pill Colors based on Rating */
 .rating-want-to-try { background-color: var(--rating-want-to-try) !important; border-color: var(--rating-want-to-try) !important; color: white !important; }
 .rating-want-to-try .kink-star-rating-badge { background-color: rgba(0,0,0,0.3) !important; }
+
 .rating-favorite { background-color: var(--rating-favorite) !important; border-color: var(--rating-favorite) !important; color: white !important; }
 .rating-favorite .kink-star-rating-badge { background-color: rgba(0,0,0,0.3) !important; }
+
 .rating-like-it { background-color: var(--rating-like-it) !important; border-color: var(--rating-like-it) !important; color: white !important; }
 .rating-like-it .kink-star-rating-badge { background-color: rgba(0,0,0,0.3) !important; }
-.rating-curious-about { background-color: var(--rating-curious-about) !important; border-color: var(--rating-curious-about) !important; color: var(--bg-color) !important; }
+
+.rating-curious-about { background-color: var(--rating-curious-about) !important; border-color: var(--rating-curious-about) !important; color: var(--bg-color) !important; } /* Dark text for yellow */
 .rating-curious-about .kink-star-rating-badge { background-color: rgba(0,0,0,0.2) !important; color: var(--bg-color) !important; }
+
 .rating-soft-limit { background-color: var(--rating-soft-limit) !important; border-color: var(--rating-soft-limit) !important; color: white !important; }
 .rating-soft-limit .kink-star-rating-badge { background-color: rgba(0,0,0,0.3) !important; }
+
 .rating-hard-limit { background-color: var(--rating-hard-limit) !important; border-color: var(--rating-hard-limit) !important; color: white !important; }
 .rating-hard-limit .kink-star-rating-badge { background-color: rgba(0,0,0,0.3) !important; }
+
 .rating-not-for-me { background-color: var(--rating-not-for-me) !important; border-color: var(--rating-not-for-me) !important; color: var(--bg-color) !important; opacity: 0.9 !important; }
 .rating-not-for-me .kink-star-rating-badge { background-color: rgba(0,0,0,0.15) !important; color: var(--bg-color) !important; }
-.rating-none { border: 2px dashed var(--border-color); } /* Style for unrated kinks */
+
+.rating-none { /* Style for unrated kinks, if different from base .kink-star */
+    border: 2px dashed var(--border-color); 
+    background-color: var(--bg-color-lighter); /* Ensure it has the default pill background */
+    color: var(--text-color); /* Ensure it has default text color */
+}
+
 
 .no-kinks-in-category { font-style: italic; color: var(--text-color-muted); padding: 15px 0; }
 #kink-filters { padding: 20px; background-color: var(--bg-color-light); border-radius: var(--border-radius-medium); margin-top: 30px;}
