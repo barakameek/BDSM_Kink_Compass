@@ -165,7 +165,238 @@ const KINK_DEFINITIONS = [
     {id: "psych_amnesia_rp_01", name: "Amnesia Roleplay", category_id: "psychological", description: "Roleplaying a scenario where one partner has 'lost their memory' and the other guides or manipulates their understanding of self/reality.", common_terms: [], safety_notes: ["CRITICAL: Define limits of manipulation. Potential for psychological distress. Safewords. Aftercare to re-ground in actual reality."], common_misconceptions: ["Research misconceptions"], related_kinks_ids: ["mind_control_rp_01", "gaslighting_rp_01"]},
 
     // More Edge Play (Total 8, current 8 detailed or structured)
+{
+        id: "sensation_vibrators_specific_01", name: "Vibrators (Specific Toys/Techniques)", category_id: "sensation",
+        description: "Exploring specific types of vibrators (wand, bullet, G-spot, prostate) and techniques for varied sensations. Detailed research and description needed.",
+        common_terms: ["Research common terms"], safety_notes: ["CRITICAL: Research all safety notes (body-safe materials, hygiene, intensity levels)."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["vibrator_play_01"]
+    },
+    {
+        id: "sensation_needles_superficial_01", name: "Needle Sensation Play (Superficial)", category_id: "sensation", isHighRisk: true,
+        description: "Using single, sterile needles for very superficial pricking or tracing on the skin for sensation, distinct from play piercing. Detailed research and description needed.",
+        common_terms: ["Pinpoint sensation"], safety_notes: ["CRITICAL: STERILITY. Superficial only, avoid deep insertion. Risk of infection. Knowledge of skin layers. See Play Piercing for related risks."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["play_piercing_01", "wartenberg_wheel_01"]
+    },
+    {
+        id: "sensation_brushes_textures_01", name: "Brushes & Textures Play", category_id: "sensation",
+        description: "Using various brushes (soft, stiff), fabrics (silk, velvet, burlap), or textured objects across the skin to evoke different sensations. Detailed research and description needed.",
+        common_terms: ["Feather play", "Silk ties (for sensation)"], safety_notes: ["CRITICAL: Check for skin sensitivities or allergies to materials. Ensure objects are clean."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["sensation_play_general_01", "tickling_01"]
+    },
+    {
+        id: "sensation_static_electricity_01", name: "Static Electricity Play", category_id: "sensation", isHighRisk: true,
+        description: "Generating and using static electricity for light shocking sensations (e.g., with balloons, specific materials, or violet wands without direct contact). Detailed research and description needed.",
+        common_terms: ["Violet wand (indirect/ozone)"], safety_notes: ["CRITICAL: Can be startling. Avoid near sensitive electronics or individuals with pacemakers if using stronger generating devices. Understand how different devices work. See E-stim for related risks."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["electrostim_01", "sensation_play_general_01"]}
+    },
 
+    // --- Psychological & Roleplay ---
+    {
+        id: "psych_forced_confession_rp_01", name: "Forced Confession Roleplay", category_id: "psychological", isHighRisk: true,
+        description: "A roleplay scenario where one partner is pressured or manipulated into 'confessing' to real or fictional wrongdoings or desires. Detailed research and description needed.",
+        common_terms: ["Truth extraction RP"], safety_notes: ["CRITICAL: Boundaries on psychological pressure. Safewords. Aftercare. Distinguish from real coercion. Risk of emotional distress."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["interrogation_rp_01", "gaslighting_rp_01", "power_exchange"]
+    },
+    {
+        id: "psych_memory_play_rp_01", name: "Memory Play Roleplay", category_id: "psychological", isHighRisk: true, isTaboo: true,
+        description: "Roleplay involving the manipulation, alteration, or implantation of 'memories' in a partner. Highly psychological and consensual. Detailed research and description needed.",
+        common_terms: ["False memory RP", "Reality alteration"], safety_notes: ["CRITICAL: EXTREME trust. Clear boundaries on what memories can be 'played' with. Safewords and de-roling essential. High risk of psychological distress or confusion. Aftercare to re-ground in reality."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["mind_control_rp_01", "gaslighting_rp_01"]}
+    },
+    {
+        id: "psych_dream_interpretation_rp_01", name: "Dream Interpretation Roleplay (Erotic/Control)", category_id: "psychological",
+        description: "One partner interprets the other's dreams (real or invented for the scene) in a way that serves a power dynamic or erotic narrative. Detailed research and description needed.",
+        common_terms: [], safety_notes: ["CRITICAL: Establish if interpretations are 'binding' within the RP. Respect emotional content of real dreams. Avoid unqualified psychoanalysis."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["power_exchange", "mind_control_rp_01", "spiritual_ritual"]}
+    },
+    {
+        id: "psych_loyalty_tests_rp_01", name: "Loyalty Tests Roleplay", category_id: "psychological", isHighRisk: true,
+        description: "Scenarios designed to test a submissive's loyalty, devotion, or obedience, often involving difficult choices or emotional pressure. Detailed research and description needed.",
+        common_terms: ["Tests of devotion"], safety_notes: ["CRITICAL: Negotiate limits of tests. Avoid genuine emotional harm or forcing violation of hard limits. Safewords crucial. Aftercare. Intent is play, not actual distrust."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["power_exchange", "interrogation_rp_01", "endurance_ordeals"]}
+    },
+
+    // --- Edge Play ---
+    // Sleep Deprivation and Water Sports (Extreme - breath holding) were already added as placeholders in Endurance and Edge Play respectively in the last big data.js
+    // Sensory Overload Endurance can be covered by existing "Sensory Overload" and "Endurance & Ordeals" category combination.
+
+    // --- Fluid Play ---
+    {
+        id: "fluid_semen_facials_body_01", name: "Semen on Face/Body (Facials, etc.)", category_id: "fluid_play",
+        description: "Applying semen to a partner's face or body as an erotic act. Detailed research and description needed.",
+        common_terms: ["Cum shot", "Facial"], safety_notes: ["CRITICAL: STI risks are primary concern; know partner's status and use barriers in preceding acts if status unknown/risk present. Explicit consent for where semen is placed. Hygiene."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["semen_play_01", "exhibitionism_01"]} // Semen_play_01 is broader
+    },
+    {
+        id: "fluid_menstrual_blood_play_01", name: "Menstrual Blood Play (Consensual)", category_id: "fluid_play", isTaboo: true, isHighRisk: true,
+        description: "Incorporating menstrual blood into sexual activity (e.g., smearing, oral contact). Detailed research and description needed.",
+        common_terms: ["Blood moon play"], safety_notes: ["CRITICAL: High hygiene risk. Risk of bloodborne pathogens if not monogamous and both partners tested. Explicit consent. Avoid if active infections present. Can be emotionally charged."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["blood_play_01", "fluid_play"]}
+    },
+
+    // --- Medical Play ---
+    {
+        id: "medical_gynaecological_exam_rp_01", name: "Gynaecological Exam Roleplay", category_id: "medical_play",
+        description: "Roleplaying a gynaecological examination, often involving speculum use and examination of vulva/vagina. Detailed research and description needed.",
+        common_terms: ["Stirrups RP"], safety_notes: ["CRITICAL: See Medical Exam RP and Speculum Play safety. Consent for all procedures. Use clean/sterile props. Gentle technique."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["medical_exam_rp_01", "speculum_play_01", "object_insertion"]}
+    },
+    {
+        id: "medical_prostate_exam_rp_01", name: "Prostate Exam Roleplay", category_id: "medical_play",
+        description: "Roleplaying a prostate examination, typically involving digital rectal examination. Detailed research and description needed.",
+        common_terms: [], safety_notes: ["CRITICAL: See Medical Exam RP and Anal Play safety (lube, gentleness). Consent for rectal insertion. Cleanliness."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["medical_exam_rp_01", "anal_play_01", "object_insertion"]}
+    },
+    // Forced Medication RP (Placebos ONLY) was already added as a placeholder
+
+    // --- Object Insertion ---
+    {
+        id: "object_double_vaginal_01", name: "Double Vaginal Penetration (Toys/Body Parts)", category_id: "object_insertion",
+        description: "Simultaneous penetration of the vagina with two objects (e.g., two dildos, dildo and fingers). Detailed research and description needed.",
+        common_terms: ["DV"], safety_notes: ["CRITICAL: Requires significant arousal, relaxation, and lubrication. Go slowly. Risk of tearing if forced. Communicate constantly. Body-safe toys."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["vaginal_penetration_01", "dildo_play_01"]}
+    },
+    {
+        id: "object_double_anal_01", name: "Double Anal Penetration (Toys/Body Parts)", category_id: "object_insertion", isHighRisk: true,
+        description: "Simultaneous penetration of the anus with two objects. Requires extensive preparation and care. Detailed research and description needed.",
+        common_terms: ["DAP"], safety_notes: ["CRITICAL: All Anal Play safety applies, amplified. Extreme amounts of lube. Very slow stretching and preparation over time. High risk of tearing or sphincter damage. Communicate constantly. Body-safe toys with flared bases if applicable."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["anal_play_01", "dildo_play_01", "fisting_01"]}
+    },
+    // Speculum (Anal/Vaginal) is already covered by speculum_play_01
+
+    // --- Specific Fetishism ---
+    // Amputee Devoteeism (Apotemnophilia if wanting to be one - very different/complex)
+    {
+        id: "fetish_amputee_devotee_01", name: "Amputee Devoteeism", category_id: "fetishism_specific", isTaboo: true,
+        description: "Sexual or romantic attraction to people with amputations. Detailed research and description needed.",
+        common_terms: ["Devoteeism"], safety_notes: ["CRITICAL: Focus on respectful admiration and attraction, not exploitation or objectification. Consent and agency of the amputee individual is paramount. Understand the difference between attraction and BIID (Body Integrity Identity Disorder - a desire to be an amputee, which is a complex psychological condition not typically considered a kink in itself)."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["fetish_disability_devotee_01"]}
+    },
+    // Navel Fetish, Armpit Fetish, Body Odor Fetish, Plushophilia, Smoking Fetish were already added as placeholders or detailed.
+    {
+        id: "fetish_body_odor_01", name: "Body Odor Fetish (Olfactophilia variant)", category_id: "fetishism_specific",
+        description: "Sexual arousal from specific human body odors (e.g., sweat, genital scent). Detailed research and description needed.",
+        common_terms: ["Musk fetish"], safety_notes: ["CRITICAL: Hygiene and consent. Preferences for specific odors or levels of cleanliness. Can overlap with sweat play."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["sweat_play_01", "armpit_fetish_01", "foot_fetish_01"]}
+    },
+
+
+    // --- Verbal Play ---
+    // Threatening Language (in RP), Gaslighting (Consensual, in RP), Sissification Talk
+    {
+        id: "verbal_threats_rp_01", name: "Threatening Language (Roleplay)", category_id: "verbal_play", isHighRisk: true,
+        description: "Using threats (of pain, punishment, exposure, etc.) within a roleplay scenario for arousal or power dynamics. Must be clearly distinguished from real threats. Detailed research and description needed.",
+        common_terms: ["Fear talk"], safety_notes: ["CRITICAL: Explicit consent for types of threats. Safewords essential to distinguish play from real fear/distress. Aftercare. High potential for emotional impact."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["fear_play_01", "degradation_verbal_01", "power_exchange"]}
+    },
+    // Gaslighting RP already exists: gaslighting_rp_01
+    {
+        id: "verbal_sissification_talk_01", name: "Sissification Talk / Forced Feminization Dialogue", category_id: "verbal_play", isTaboo: true,
+        description: "Verbal elements of forced feminization, including assigning feminine names/pronouns, demeaning masculine traits, praising feminine ones. Detailed research and description needed.",
+        common_terms: ["Sissy talk"], safety_notes: ["CRITICAL: Consent for specific language and themes. Potential for dysphoria or emotional distress if not carefully negotiated. Aftercare. See Forced Feminization (Power Exchange)."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["forced_feminization_01", "degradation_verbal_01", "humiliation_01", "crossdressing_01"]}
+    },
+
+    // --- Sensory Modification ---
+    // White Noise Torture (RP), Extreme Temperature Fluctuation (non-damaging), Disorientation Play
+    {
+        id: "sensory_white_noise_rp_01", name: "White Noise / Auditory Overload (Roleplay)", category_id: "sensory_modification", isHighRisk: true,
+        description: "Using continuous white noise or other overwhelming auditory stimuli for sensory overload or psychological disorientation in a scene. Detailed research and description needed.",
+        common_terms: ["Sound torture RP"], safety_notes: ["CRITICAL: Risk of hearing damage if volume is too high for too long. Psychological distress. Safewords. Limit duration."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["sensory_overload_01", "interrogation_rp_01"]}
+    },
+    {
+        id: "sensory_temp_fluctuation_01", name: "Extreme Temperature Fluctuation (Non-Damaging)", category_id: "sensory_modification", isHighRisk: true,
+        description: "Rapidly alternating between safe warm and cool sensations (e.g., warm cloths, ice) on the skin to create intense or confusing sensory input. Detailed research and description needed.",
+        common_terms: ["Fire and Ice (variant)"], safety_notes: ["CRITICAL: Avoid extreme temperatures that could cause burns or frostnip. Monitor skin. Communication essential. See Temperature Play."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["temperature_play_01", "sensation_play_general_01"]}
+    },
+    {
+        id: "sensory_disorientation_play_01", name: "Disorientation Play", category_id: "sensory_modification", isHighRisk: true,
+        description: "Using various techniques (e.g., spinning, blindfolding combined with sound changes, unstable surfaces) to induce a state of physical or mental disorientation. Detailed research and description needed.",
+        common_terms: [], safety_notes: ["CRITICAL: High risk of falls or injury if physical disorientation is involved. Nausea/vomiting risk. Psychological distress. Constant monitoring. Safewords. Gradual introduction."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["sensory_deprivation_01", "sensory_overload_01", "bondage" ]}
+    },
+
+    // --- Exhibitionism/Voyeurism ---
+    // Upskirt/Downblouse (Consensual, with partner), Secret Public Exhibitionism (risky)
+    {
+        id: "exhivoy_upskirt_downblouse_partner_01", name: "Upskirt/Downblouse Play (Consensual Partner)", category_id: "exhibition_voyeurism",
+        description: "One partner consensually allows or arranges for another partner to get glimpses under their clothing in a teasing or power exchange manner. Detailed research and description needed.",
+        common_terms: [], safety_notes: ["CRITICAL: Explicit consent from the person whose clothing is involved. This is about play between consenting partners, NOT non-consensual acts. Boundaries on location/situation."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["exhibitionism_01", "voyeurism_01", "tease_denial_01"]}
+    },
+    // Secret Public Exhibitionism covered by public_semi_public_play_01
+
+    // --- Animal Play ---
+    // Furry Fandom Play, Other Animal Personas (wolf, dragon etc.)
+    // Furry Play already exists: furry_play_01
+    {
+        id: "animal_other_personas_rp_01", name: "Other Animal Personas Roleplay (Wolf, Dragon, etc.)", category_id: "animal_play",
+        description: "Embodying animal personas beyond common pet types (e.g., wolf, dragon, mythical creatures), often involving primal play or specific character traits. Detailed research and description needed.",
+        common_terms: ["Therianthropy (can overlap, but distinct identity concept)"], safety_notes: ["CRITICAL: See Primal Play and Pet Play safety. Negotiate behaviors associated with the chosen persona. Physical limits for intense movement or sounds."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["primal_play_01", "furry_play_01", "psychological"]}
+    },
+
+    // --- Food Play ---
+    // Cake Sitting, Food Gag, Icing Play
+    {
+        id: "food_cake_sitting_01", name: "Cake Sitting / Food Crushing", category_id: "food_play",
+        description: "Sitting on or crushing food items (often cakes, soft fruits) for erotic, messy, or humiliating effect. Detailed research and description needed.",
+        common_terms: ["Messy play"], safety_notes: ["CRITICAL: Ensure surface is safe (no sharp objects under food). Food allergies. Clean-up. Can be seen as wasteful by some."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["sploshing_01", "humiliation_01", "fetishism_specific"] // if specific food fetish
+    },
+    {
+        id: "food_gag_01", name: "Food Gag", category_id: "food_play", isHighRisk: true,
+        description: "Using food items (e.g., large fruit, bread) as a gag. Detailed research and description needed.",
+        common_terms: [], safety_notes: ["CRITICAL: HIGH CHOKING HAZARD. Food can break apart or swell with saliva. Ensure airway is never fully obstructed. Non-verbal safewords. Constant monitoring. Not recommended for beginners."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["gags_01", "sensory_modification", "edge_play"]}
+    },
+    {
+        id: "food_icing_frosting_play_01", name: "Icing/Frosting Play", category_id: "food_play",
+        description: "Using icing, frosting, whipped cream, or similar sweet, sticky substances on the body for licking, smearing, or decoration. Detailed research and description needed.",
+        common_terms: [], safety_notes: ["CRITICAL: Check for allergies (dairy, sugar). Hygiene if licked. Can be sticky and require thorough cleanup. Avoid getting large amounts in sensitive orifices (risk of yeast infections for vaginas)."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["food_body_01", "sploshing_01"]}
+    },
+
+    // --- Spiritual/Ritual ---
+    // Cleansing Rituals, Binding Spells (Symbolic RP), Invocation/Evocation RP
+    {
+        id: "ritual_cleansing_01", name: "Ritualistic Cleansing / Purification", category_id: "spiritual_ritual",
+        description: "Performing a symbolic cleansing or purification ritual as part of a BDSM scene, often to prepare a submissive or mark a transition. Detailed research and description needed.",
+        common_terms: ["Purification rite"], safety_notes: ["CRITICAL: Consent for all ritual elements. If water/liquids used, ensure safety (temperature, not forced ingestion). Symbolic meaning should be discussed. Aftercare."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["ritualistic_bdsm_01", "power_exchange"]}
+    },
+    {
+        id: "ritual_binding_spells_rp_01", name: "Binding Spells / Symbolic Magic Roleplay", category_id: "spiritual_ritual",
+        description: "Incorporating elements of 'spellcasting' or symbolic magic (e.g., tying knots with intent, drawing sigils, chanting) to represent binding a partner's will or creating an energetic connection. Detailed research and description needed.",
+        common_terms: ["Sex magic (can overlap)"], safety_notes: ["CRITICAL: Clearly fantasy/roleplay unless all parties share genuine esoteric beliefs and consent to actual ritual work. Respect boundaries around spiritual beliefs. Focus on consensual power exchange and psychological effect."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["ritualistic_bdsm_01", "mind_control_rp_01", "rope_bondage_01"]}
+    },
+    {
+        id: "ritual_invocation_evocation_rp_01", name: "Invocation/Evocation Roleplay (Deities/Spirits)", category_id: "spiritual_ritual", isHighRisk: true,
+        description: "Roleplay involving 'invoking' a deity/spirit into oneself or 'evoking' an entity, often for themes of possession, divine power, or oracular pronouncements. Detailed research and description needed.",
+        common_terms: ["Channeling RP"], safety_notes: ["CRITICAL: High psychological intensity. Clearly define nature of entity and limits of its 'influence'. Safewords and de-roling protocols essential. Aftercare. Not for those with sensitivities to religious/spiritual themes or unstable mental states."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["possession_rp_01", "power_exchange", "psychological"]}
+    },
+
+    // --- Endurance/Ordeals ---
+    // Public Humiliation Endurance, Prolonged Tease & Denial, Forced Standing/Kneeling
+    {
+        id: "end_public_humiliation_01", name: "Public Humiliation Endurance (Consensual)", category_id: "endurance_ordeals", isHighRisk: true, isTaboo: true,
+        description: "Enduring humiliating acts or attire in a pre-agreed semi-public or controlled 'public' setting for a set duration or until a goal is met. Detailed research and description needed.",
+        common_terms: ["Exposure challenge"], safety_notes: ["CRITICAL: See Public/Semi-Public Play and Humiliation safety. High legal/social risk if truly public. Negotiate acts, attire, location, duration, and safewords. Emotional distress risk. Aftercare."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["humiliation_01", "exhibitionism_01", "public_semi_public_play_01"]}
+    },
+    {
+        id: "end_prolonged_tease_denial_01", name: "Prolonged Tease & Denial / Orgasm Endurance", category_id: "endurance_ordeals", isHighRisk: true,
+        description: "Extending tease and denial play over very long periods (days, weeks) as an endurance challenge or deep power exchange. Detailed research and description needed.",
+        common_terms: ["Long-term denial"], safety_notes: ["CRITICAL: See Tease & Denial. Psychological and physical effects of very prolonged denial can be significant (irritability, distraction, 'blue balls'). Regular check-ins. Clear conditions for eventual release or end of denial period. Hydration."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["tease_denial_01", "denial_orgasm_01", "chastity_play_01", "power_exchange"]}
+    },
+    {
+        id: "end_forced_postures_01", name: "Forced Standing/Kneeling/Positions (Endurance)", category_id: "endurance_ordeals", isHighRisk: true,
+        description: "Requiring a partner to maintain specific, often uncomfortable, static postures (standing at attention, kneeling, specific yoga poses) for extended durations. Detailed research and description needed.",
+        common_terms: ["Posture training (extreme)"], safety_notes: ["CRITICAL: See Positional Endurance. Risk of joint/muscle strain, fainting, circulation issues. Set time limits. Monitor for distress. Allow safe release. Not for those with physical limitations."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["positional_endurance_01", "power_exchange", "protocol_play_01"]}
+    },
+
+    // --- Taboo/Conceptual ---
+    // Consensual Cannibalism Fantasy RP, Consensual DubCon RP, Bestiality Fantasy RP were previously structured here.
+    // Adding a few more. These are PURELY FANTASY/ROLEPLAY by consenting adults.
+    {
+        id: "taboo_voreaphilia_rp_01", name: "Voreaphilia Roleplay (Fantasy)", category_id: "taboo_conceptual", isTaboo: true,
+        description: "Purely fantasy-based roleplay involving being (or consuming) another, often in a non-gory, symbolic way (e.g., absorption, merging). Detailed research and description needed.",
+        common_terms: ["Vore", "Soft vore", "Hard vore (symbolic)"], safety_notes: ["CRITICAL: ABSOLUTELY FANTASY ONLY. No actual harm. Focus on psychological themes like power, helplessness, merging. Clear boundaries on realism and types of 'consumption'. Emotional intensity. Aftercare."], common_misconceptions: ["Involves actual eating of people (FALSE, SYMBOLIC FANTASY)."], related_kinks_ids: ["fear_play_01", "giant_tiny_fetish_01", "power_exchange", "consensual_cannibalism_fantasy_rp_01"]}
+    },
+    {
+        id: "taboo_insect_play_rp_01", name: "Insect/Bug Play Roleplay (Fantasy/Props)", category_id: "taboo_conceptual", isTaboo: true,
+        description: "Roleplay or fantasy involving insects or bugs in an erotic or power-exchange context, usually with props or imagined scenarios. Detailed research and description needed.",
+        common_terms: ["Formicophilia (attraction, distinct from play)"], safety_notes: ["CRITICAL: If using real (harmless, non-stinging/biting) insects, ensure their safety and ethical treatment. Most often this is with props or purely imagined. Allergies if real insects. Psychological impact of fear/disgust if part of play. Consent for type of interaction."], common_misconceptions: ["Always involves real insects being harmed (Should not in ethical play)."], related_kinks_ids: ["fear_play_01", "sensation_play_general_01", "humiliation_01"]}
+    },
+    {
+        id: "taboo_medical_nonconsent_rp_01", name: "Medical Non-Consent Roleplay (Simulated)", category_id: "taboo_conceptual", isTaboo: true, isHighRisk: true,
+        description: "A CNC scenario set in a medical context, where a 'patient' undergoes 'procedures' against their in-scene 'will'. Real consent to the entire scenario is paramount. Detailed research and description needed.",
+        common_terms: ["Forced examination RP"], safety_notes: ["CRITICAL: ALL CNC safety applies. Extreme trust. Clear safewords. Detailed negotiation of 'procedures', limits on physical interaction, and emotional boundaries. Aftercare. Use only safe props if any medical tools are involved."], common_misconceptions: ["Advocates for real medical abuse (FALSE, it's a specific consensual fantasy)."], related_kinks_ids: ["cnc_rp_01", "medical_exam_rp_01", "fear_play_01", "bondage"]}
+    },
+    {
+        id: "taboo_transformation_nonconsensual_rp_01", name: "Non-Consensual Transformation Roleplay (Simulated)", category_id: "taboo_conceptual", isTaboo: true, isHighRisk: true,
+        description: "A CNC scenario where one partner is 'transformed' (e.g., into an animal, object, different gender presentation) against their in-scene 'will'. Real consent to the scenario is paramount. Detailed research and description needed.",
+        common_terms: ["Forced TF RP"], safety_notes: ["CRITICAL: ALL CNC safety applies. Define limits of 'transformation' and methods used (e.g., verbal, symbolic, costume). Psychological intensity. Safewords. Extensive aftercare and de-roling."], common_misconceptions: ["Implies real belief in transformation (It's fantasy roleplay)."], related_kinks_ids: ["cnc_rp_01", "psych_conversion_fantasy_01", "forced_attire_01", "animal_play", "objectification_01"]}
+    },
+    {
+        id: "taboo_bestiality_fantasy_rp_01", name: "Bestiality Fantasy Roleplay (NO ACTUAL ANIMALS)", category_id: "taboo_conceptual", isTaboo: true,
+        description: "PURELY FANTASY-BASED roleplay or erotic storytelling involving sexual themes with animals. ABSOLUTELY NO ACTUAL ANIMALS ARE INVOLVED. This is about exploring a taboo thought or fantasy in a completely safe, human-only, consensual context. Detailed research and description needed.",
+        common_terms: ["Anthro RP (can overlap if one partner is an anthro animal)"], safety_notes: ["CRITICAL: 100% FANTASY. NO REAL ANIMALS. This cannot be stressed enough. Focus is on the psychological exploration of a taboo. All participants are consenting adults. If props (e.g., tails, ears, dildos) are used, they are just props. Clear distinction from illegal and harmful acts of bestiality."], common_misconceptions: ["Involves or promotes harm to animals (ABSOLUTELY FALSE if it's true fantasy RP)."], related_kinks_ids: ["animal_play", "furry_play_01", "psychological"]}
+    }
     // More Fluid Play (Total 6, current 6 detailed or structured)
 
     // More Medical Play (Total 8, current 8 detailed or structured)
