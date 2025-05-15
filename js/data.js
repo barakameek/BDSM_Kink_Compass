@@ -183,7 +183,7 @@ const KINK_DEFINITIONS = [
     {
         id: "sensation_static_electricity_01", name: "Static Electricity Play", category_id: "sensation", isHighRisk: true,
         description: "Generating and using static electricity for light shocking sensations (e.g., with balloons, specific materials, or violet wands without direct contact). Detailed research and description needed.",
-        common_terms: ["Violet wand (indirect/ozone)"], safety_notes: ["CRITICAL: Can be startling. Avoid near sensitive electronics or individuals with pacemakers if using stronger generating devices. Understand how different devices work. See E-stim for related risks."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["electrostim_01", "sensation_play_general_01"]}
+        common_terms: ["Violet wand (indirect/ozone)"], safety_notes: ["CRITICAL: Can be startling. Avoid near sensitive electronics or individuals with pacemakers if using stronger generating devices. Understand how different devices work. See E-stim for related risks."], common_misconceptions: ["Research common misconceptions"], related_kinks_ids: ["electrostim_01", "sensation_play_general_01"]
     },
 
     // --- Psychological & Roleplay ---
