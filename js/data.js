@@ -23,10 +23,184 @@ const KINK_CATEGORIES = {
 };
 
 // --- KINK DEFINITIONS ---
-// YOU WILL NEED TO EXPAND THIS LIST AND FILL IN ALL DETAILS FOR PLACEHOLDERS.
+// This list is now very extensive with placeholders.
+// You will need to research and fill in the details for most of these.
 const KINK_DEFINITIONS = [
-    // --- IMPACT PLAY (10) ---
+    // === FULLY DETAILED EXAMPLES (approx. 20-25, as established before) ===
     {
+        id: "spanking_01", name: "Spanking", category_id: "impact",
+        description: "Striking buttocks with hand or light implement (e.g., paddle, slipper, small flogger) for pleasure, punishment (within a consensual dynamic), or sensation. Intensity can vary greatly.",
+        common_terms: ["OTK (Over The Knee)", "Paddle", "Hand Spanking", "Discipline"], safety_notes: ["Avoid the tailbone (coccyx), kidneys, and spine.", "Communicate clearly about intensity levels and desired sensations before and during.", "Warm up gradually, starting with lighter impacts.", "Ensure the person receiving is in a stable and comfortable position.", "Be aware of bruising and skin sensitivity; stop if pain becomes unintended or unsafe."], common_misconceptions: ["It's always about punishment.", "It always has to be hard and painful."], related_kinks_ids: ["paddling_01", "caning_01", "flogging_01"]
+    },
+    {
+        id: "flogging_01", name: "Flogging", category_id: "impact",
+        description: "Using a multi-tailed whip (flogger) made of materials like leather, suede, or rubber to strike the body, typically the back, buttocks, or thighs. Sensations can range from thuddy to stingy depending on the flogger type, material, number of falls, and technique.",
+        common_terms: ["Falls (tails of the flogger)", "Thuddy (deep impact)", "Stingy (sharp impact)"], safety_notes: ["Avoid kidneys, spine, neck, joints, and face.", "Start with lighter impacts and gradually increase intensity as negotiated.", "Be aware of the 'wrap' of the flogger tails.", "Check skin regularly for excessive marking or breakage if not intended.", "Ensure ample space for swinging."], common_misconceptions: ["All floggers feel the same.", "Flogging is always about intense pain."], related_kinks_ids: ["spanking_01", "caning_01"]
+    },
+    {
+        id: "caning_01", name: "Caning", category_id: "impact", isHighRisk: true,
+        description: "Using a relatively thin, often flexible rod (cane), typically made of rattan or delrin, to deliver sharp, focused, and often intense impact. Usually targeted at the buttocks or thighs.",
+        common_terms: ["Rattan cane", "Delrin cane", "Switches"], safety_notes: ["High risk of welts, bruising, and breaking the skin. Skin breaking requires hygiene protocols.", "Avoid bones, joints, kidneys, spine, and tailbone directly.", "Warm up the targeted area first.", "Canes are very intense; communication and safewords critical.", "Inspect canes for splinters."], common_misconceptions: ["Easy to control.", "Only for severe punishment."], related_kinks_ids: ["spanking_01", "flogging_01"]
+    },
+    {
+        id: "rope_bondage_01", name: "Rope Bondage (General)", category_id: "bondage",
+        description: "The use of rope (natural or synthetic) for tying, restraining, or creating aesthetic patterns on the body. It can range from simple functional restraints to complex artistic ties.",
+        common_terms: ["Shibari", "Kinbaku", "Suspension", "Hogtie", "Floor work", "Rope bunny/model", "Rigger"], safety_notes: ["Avoid pressure on major nerves/arteries. Learn pathways.", "Safety shears (EMT shears) readily available.", "Check circulation frequently (capillary refill, tingling).", "Never leave unattended in complex/suspension bondage.", "Mind joint positions.", "Suspension requires expert training."], common_misconceptions: ["All rope is Shibari.", "Easy to learn complex ties online."], related_kinks_ids: ["shibari_01", "suspension_01", "cuffs_restraints_01"]
+    },
+    {
+        id: "shibari_01", name: "Shibari / Kinbaku", category_id: "bondage",
+        description: "A Japanese form of artistic and often intricate rope bondage. Kinbaku specifically refers to tight, constrictive rope bondage. It emphasizes aesthetics, connection, emotional intensity, and sometimes suspension.",
+        common_terms: ["Nawa (rope)", "Nawashi/Bakushi (rope artist/master)", "Kata (form/pattern)"], safety_notes: ["All general rope safety applies, heightened awareness.", "Anatomy knowledge vital (e.g., ulnar nerve).", "Understanding tension, load, friction critical for suspension.", "Requires significant study, mentorship, practice.", "Communication paramount."], common_misconceptions: ["Only for sexual purposes.", "Always painful."], related_kinks_ids: ["rope_bondage_01", "suspension_01"]
+    },
+    {
+        id: "cuffs_restraints_01", name: "Cuffs & Restraints (Manufactured)", category_id: "bondage",
+        description: "Using manufactured restraints like leather cuffs (wrists, ankles, thighs, collar), metal shackles, spreader bars, or medical-style restraints.",
+        common_terms: ["Shackles", "Spreader bar", "Hogtie cuffs", "Manacles"], safety_notes: ["Ensure proper fit (1-2 fingers underneath).", "Check locking mechanisms; keys available.", "Caution with prolonged restraint; allow repositioning.", "Metal can get cold."], common_misconceptions: ["Completely escape-proof.", "One size fits all."], related_kinks_ids: ["rope_bondage_01", "bondage_furniture_01"]
+    },
+    {
+        id: "ds_dynamic_01", name: "Dominance & submission (D/s)", category_id: "power_exchange",
+        description: "A dynamic where one person (Dominant) takes an authoritative role and another (submissive) takes a yielding role. Can be scene-based or ongoing, light or intense.",
+        common_terms: ["Dom/sub", "Leader/follower"], safety_notes: ["Clear negotiation of roles, limits, expectations, and safewords is crucial.", "Consent must be ongoing and enthusiastic.", "Power imbalance requires responsibility from the Dominant.", "Aftercare important for both."], common_misconceptions: ["Submissives are weak.", "Dominants are always aggressive."], related_kinks_ids: ["master_slave_01", "command_following_01"]
+    },
+    {
+        id: "ddlg_01", name: "DDlg (Daddy Dom / little girl)", category_id: "power_exchange", // Re-added as per implication of wanting "very complete" list
+        description: "A dynamic within BDSM involving a caring, dominant 'Daddy' figure and a submissive, often childlike 'little girl' role. Can extend to other ageplay dynamics like MDlb (Mommy Dom/little boy), Cg/l (Caregiver/little). The 'little' role often involves regression to a younger perceived age.",
+        common_terms: ["Age Play", "Little Space", "Caregiver (CG)", "little (l)", "Rules", "Rewards", "Punishments (negotiated)", "Headspace"], safety_notes: ["All participants must be consenting adults. This is roleplay and does not involve actual minors.", "Clear communication about age boundaries (both played age and real age limits for interaction), expectations, triggers, and limits is crucial.", "Ensure the dynamic is consensual, respectful, and not exploitative. Power imbalance needs careful management.", "Emotional safety and aftercare are very important, especially when dealing with regression or vulnerable emotional states.", "Be aware of potential for emotional bleed and have strategies for managing it."], common_misconceptions: ["It's always sexual.", "It involves actual minors (FALSE).", "Littles are actually childish outside of the dynamic."], related_kinks_ids: ["age_play_general_01", "praise_kink_01", "bratting_01", "pet_play_01"]
+    },
+    {
+        id: "temperature_play_01", name: "Temperature Play (Ice/Wax)", category_id: "sensation",
+        description: "Using hot (low-melt point wax) or cold (ice, frozen items) sensations on the skin for erotic effect or contrast.",
+        common_terms: ["Ice play", "Wax play", "Fire and Ice"], safety_notes: ["Use ONLY low-melt point wax (paraffin, soy, BDSM wax). Test wax temp first.", "Avoid eyes, genitals (directly), or open wounds with wax unless experienced.", "For ice, avoid prolonged contact to prevent frostnip. Don't place ice directly into body cavities without care."], common_misconceptions: ["Any candle wax is fine (DANGEROUSLY FALSE)."], related_kinks_ids: ["sensation_play_general_01"]
+    },
+    {
+        id: "humiliation_01", name: "Humiliation (Erotic)", category_id: "psychological",
+        description: "Deriving arousal from being or making someone feel embarrassed, shamed, or demeaned within a consensual context. Can be verbal or situational.",
+        common_terms: ["Degradation", "Embarrassment play"], safety_notes: ["Intense negotiation of limits VITAL. Specify acceptable/off-limits types.", "Triggers must be discussed.", "Aftercare crucial to process emotions.", "Distinguish play from actual emotional abuse."], common_misconceptions: ["Always abusive.", "Submissive actually believes the humiliating things."], related_kinks_ids: ["verbal_degradation_01", "objectification_01"]
+    },
+    {
+        id: "breath_play_01", name: "Breath Play / Erotic Asphyxiation", category_id: "edge_play", isHighRisk: true, isTaboo: true,
+        description: "Restricting airflow or applying pressure to the neck to create altered states of consciousness, light-headedness, or intense sensations. This is a high-risk activity.",
+        common_terms: ["Choking", "Breath Control", "Hypoxyphilia"], safety_notes: ["EXTREMELY DANGEROUS. Risk of serious injury, brain damage, or death. NEVER do this alone.", "Avoid direct pressure on carotid arteries. Pressure on windpipe (if any) with extreme caution.", "Partner MUST be sober, alert, know CPR, and responsible for safety.", "Clear, non-verbal stop signal that doesn't require breath.", "Limit restriction to very short periods (seconds).", "Expert in-person education STRONGLY ADVISED."], common_misconceptions: ["Safe if careful (inherently very risky).", "Losing consciousness is the goal (Altered sensation is often the goal; unconsciousness is high danger)."], related_kinks_ids: ["fear_play_01", "edge_play"]
+    },
+    {
+        id: "pet_play_01", name: "Pet Play", category_id: "animal_play",
+        description: "Roleplaying as a pet (e.g., puppy, kitten, pony) with a partner as an owner/handler. Can involve specific gear, behaviors, and power exchange.",
+        common_terms: ["Puppy play", "Kitten play", "Pony play", "Headspace", "Handler"], safety_notes: ["All participants consenting adults.", "Negotiate species, behaviors, gear (collars, leashes safe fit).", "Physical comfort (knee pads, hydration).", "Emotional aftercare after immersion."], common_misconceptions: ["Bestiality (FALSE, human roleplay).", "Always demeaning."], related_kinks_ids: ["owner_pet_01", "age_play_general_01", "bondage"]
+    },
+    {
+        id: "praise_kink_01", name: "Praise Kink", category_id: "verbal_play",
+        description: "Deriving arousal, pleasure, or validation from receiving verbal praise, compliments, or words of affirmation, often within a BDSM or power exchange dynamic.",
+        common_terms: ["Good girl/boy/pet", "Affirmation", "Validation", "Words of Affirmation (WoA)"], safety_notes: ["Discuss preferred types of praise and any words/phrases that are off-limits or triggering.", "Ensure praise is genuine within the context of the dynamic to be effective.", "Be mindful of emotional impact, especially if praise is withheld or used manipulatively (negotiate these aspects)."], common_misconceptions: ["It's only about being called 'good girl/boy'.", "It's a sign of low self-esteem."], related_kinks_ids: ["ddlg_01", "command_following_01", "pet_play_01"]
+    },
+    {
+        id: "degradation_verbal_01", name: "Verbal Degradation", category_id: "verbal_play",
+        description: "Using demeaning, insulting, or objectifying language for arousal, as part of consensual humiliation or power exchange. Can be highly specific and negotiated.",
+        common_terms: ["Name-calling", "Insults", "Objectifying language", "Slut-shaming (consensual)"], safety_notes: ["HARD limits on specific words, topics, and themes are VITAL.", "Thorough discussion of triggers and off-limit areas.", "Aftercare is essential to process emotions and reaffirm self-worth outside the scene.", "Must be clearly distinguished from actual emotional abuse.", "Subspace from degradation can be intense; monitor partner."], common_misconceptions: ["Same as bullying or verbal abuse.", "The submissive secretly believes the insults."], related_kinks_ids: ["humiliation_01", "objectification_01"]
+    },
+    {
+        id: "sensory_deprivation_01", name: "Sensory Deprivation", category_id: "sensory_modification",
+        description: "Limiting one or more senses (sight, sound, touch, smell, taste) using blindfolds, earplugs/muffs, hoods, restrictive bondage, gags, nose plugs, etc., to heighten other senses or induce altered states.",
+        common_terms: ["Sens dep", "Hoods", "Blindfolds", "Earplugs", "Gags"], safety_notes: ["Can increase anxiety, disorientation, or panic. Monitor closely.", "Ensure airway is always clear if hoods or gags are used.", "Easy way to signal for stop is essential.", "Start with depriving one sense before multiple.", "Limit duration, especially initially."], common_misconceptions: ["Only about hoods."], related_kinks_ids: ["mummification_01", "bondage", "gags_01"]
+    },
+    {
+        id: "exhibitionism_01", name: "Exhibitionism (Consensual)", category_id: "exhibition_voyeurism",
+        description: "Deriving arousal from displaying one's body, nudity, or sexual activity to others who have CONSENTED to watch.",
+        common_terms: ["Showing off", "Public display (consensual)"], safety_notes: ["Consent from ALL viewers is paramount. Non-consensual exhibitionism is illegal and harmful.", "Negotiate what will be shown, to whom, and where.", "If in public/semi-public spaces, be aware of laws and risk of non-consenting observers.", "Online exhibitionism needs privacy/security considerations."], common_misconceptions: ["Same as illegal flashing."], related_kinks_ids: ["voyeurism_01", "stripping_tease_01"]
+    },
+    {
+        id: "voyeurism_01", name: "Voyeurism (Consensual)", category_id: "exhibition_voyeurism",
+        description: "Deriving arousal from watching others engage in sexual activity or be nude, with their full KNOWLEDGE AND CONSENT.",
+        common_terms: ["Watching", "Peeping (consensual context only)"], safety_notes: ["Consent from ALL parties being watched is essential. Non-consensual voyeurism is illegal and harmful.", "Negotiate what can be watched, from where, and for how long.", "Respect privacy if certain acts are off-limits for viewing.", "If recording, explicit consent for that is also needed."], common_misconceptions: ["Same as illegal peeping."], related_kinks_ids: ["exhibitionism_01", "cuckolding_queaning_01"]
+    },
+    {
+        id: "food_body_01", name: "Food on Body / Nyotaimori (Consensual)", category_id: "food_play",
+        description: "Using food items directly on a partner's body, either for sensual eating, visual display, or tactile sensation. Nyotaimori is the practice of serving food from a body.",
+        common_terms: ["Body sushi", "Feederism (can overlap)"], safety_notes: ["Check for food allergies for both parties.", "Use foods that are safe for skin contact.", "Temperature of food.", "Hygiene: clean body, fresh food.", "Consent for specific foods and areas of body used.", "Clean-up planning."], common_misconceptions: ["Nyotaimori is always exploitative."], related_kinks_ids: ["fetishism_specific", "objectification_01"]
+    },
+    {
+        id: "ritualistic_bdsm_01", name: "Ritualistic BDSM", category_id: "spiritual_ritual",
+        description: "Incorporating structured rituals, symbolic acts, specific attire, or elements of ceremony into BDSM scenes. Can be for creating atmosphere, deepening connection, marking transitions, or exploring power dynamics in a formal way.",
+        common_terms: ["Ceremonial play", "Symbolic acts"], safety_notes: ["Clearly define the ritual steps, roles, and any symbolic meanings.", "Ensure all props used are safe (e.g., candles secured, sharp objects handled carefully if part of ritual).", "Consent for all aspects of the ritual.", "Can be emotionally intense; aftercare important.", "Distinguish from specific religious practices unless explicitly part of a shared spiritual path."], common_misconceptions: ["Always involves actual occult practices."], related_kinks_ids: ["power_exchange", "psychological"]
+    },
+    {
+        id: "pain_endurance_01", name: "Pain Endurance Challenges", category_id: "endurance_ordeals", isHighRisk: true,
+        description: "Structured scenes focused on withstanding increasing or prolonged levels of pain as a test of will, devotion, or for achieving altered states.",
+        common_terms: ["Ordeal play", "Pain slut/masochist (self-identified)"], safety_notes: ["Negotiate types and limits of pain VERY clearly.", "Constant monitoring for signs of going beyond safe limits (e.g., shock, dissociation, non-responsive).", "Safewords absolutely critical and must be easily usable.", "Hydration and ability to rest/recover.", "Distinguish between 'good pain' and 'bad pain'.", "Aftercare is vital for physical and emotional recovery."], common_misconceptions: ["Masochists feel no pain."], related_kinks_ids: ["impact_play_general_01", "sensation_play_general_01", "edge_play"]
+    },
+    {
+        id: "cnc_rp_01", name: "Consensual Non-Consent (CNC) Roleplay", category_id: "taboo_conceptual", isTaboo: true, isHighRisk: true,
+        description: "A pre-negotiated BDSM scenario where participants explicitly consent to a scene involving 'simulated' or 'roleplayed' non-consent. Real consent to the scene itself is PARAMOUNT.",
+        common_terms: ["Rape_fantasy (within CNC context)", "Struggle play"], safety_notes: ["CRITICAL: EXTREME trust, communication, and negotiation essential. Clear safewords that override in-scene 'no'. Detailed discussion of limits, triggers. Extensive aftercare."], common_misconceptions: ["It's actual non-consent (FALSE).", "Sign someone wants actual assault (FALSE)."], related_kinks_ids: ["fear_play_01", "power_exchange", "capture_rp_01"]
+    },
+    // === END OF FULLY DETAILED EXAMPLES ===
+
+    // === START OF EXPANDED PLACEHOLDERS (You need to detail these) ===
+    // (Continuing from prior lists, adding many more to reach well over 80 structured ideas)
+
+    // More Impact
+    {id: "impact_nipple_clamp_02", name: "Nipple Clamps with Weights/Pulling", category_id: "impact", isHighRisk: true, description: "Applying weighted nipple clamps or pulling on clamps for intense sensation.", common_terms: ["Weighted clamps"], safety_notes: ["CRITICAL: Risk of tissue damage/tearing. Start light. Gradual increase. Monitor skin color."], common_misconceptions: ["Research misconceptions"], related_kinks_ids: ["nipple_play_01", "sensation_play_general_01"]},
+    {id: "impact_genital_clothespins_01", name: "Clothespins (Genital/Body)", category_id: "impact", description: "Using clothespins on nipples, labia, scrotum, or other body parts for pinching sensation.", common_terms: ["Pegging (non-sexual term)"], safety_notes: ["CRITICAL: Monitor circulation. Limit duration to avoid tissue damage. Padded clothespins gentler."], common_misconceptions: ["Research misconceptions"], related_kinks_ids: ["nipple_play_01", "sensation_play_general_01"]},
+
+    // More Bondage
+    {id: "bondage_spreader_bar_01", name: "Spreader Bar Usage", category_id: "bondage", description: "Using a bar to keep limbs (usually legs or arms) spread apart and immobilized.", common_terms: [], safety_notes: ["CRITICAL: Avoid over-stretching joints. Ensure comfortable padding if needed. Monitor for cramps/numbness."], common_misconceptions: ["Research misconceptions"], related_kinks_ids: ["cuffs_restraints_01", "bondage_furniture_01"]},
+    {id: "bondage_breathable_hood_01", name: "Breathable Bondage Hood", category_id: "bondage", description: "A hood that covers the head for sensory deprivation or anonymity but is made of breathable material.", common_terms: ["Sensory hood"], safety_notes: ["CRITICAL: Ensure material is genuinely breathable. Monitor for overheating or panic even if breathable."], common_misconceptions: ["Research misconceptions"], related_kinks_ids: ["sensory_deprivation_01", "hoods_masks_01"]},
+
+    // More Power Exchange
+    {id: "power_exchange_humbler_01", name: "Humbler Device (Male Chastity/Posture)", category_id: "power_exchange", isHighRisk:true, description: "A device that puts pressure on the testicles if the wearer attempts to bend forward or sit improperly, enforcing posture or as a chastity variant.", common_terms: [], safety_notes: ["CRITICAL: Risk of testicular injury if poorly fitted or sudden movements. Use with extreme caution. Not for long-term wear. Precise fitting needed."], common_misconceptions: ["Research misconceptions"], related_kinks_ids: ["chastity_play_01", "posture_control_01"]},
+    {id: "power_exchange_keyholding_01", name: "Keyholding (Chastity)", category_id: "power_exchange", description: "The act of one partner (keyholder) holding the key(s) to another's chastity device, thereby controlling their sexual access.", common_terms: ["KH"], safety_notes: ["CRITICAL: Trust and communication essential. Negotiate terms of release, emergency access. See Chastity Play safety."], common_misconceptions: ["Research misconceptions"], related_kinks_ids: ["chastity_play_01", "denial_orgasm_01"]},
+    {id: "power_exchange_mindfuck_01", name: "Mindfuck (Consensual Psychological Games)", category_id: "power_exchange", isHighRisk:true, isTaboo:true, description: "Intense psychological manipulation and reality distortion within a consensual framework. Extremely advanced and risky.", common_terms: ["Psychological domination"], safety_notes: ["CRITICAL: Extreme trust and robust mental health of all participants. Clear boundaries on what can be manipulated. Safewords and de-roling protocols VITAL. High risk of emotional harm if mismanaged. Often considered edge play or taboo."], common_misconceptions: ["Research misconceptions"], related_kinks_ids: ["gaslighting_rp_01", "mind_control_rp_01", "psychological"]},
+    {id: "power_exchange_tasks_01", name: "Assigning Tasks/Chores", category_id: "power_exchange", description: "Dominant assigns specific tasks or chores to the submissive as part of the dynamic or service.", common_terms: [], safety_notes: ["CRITICAL: Tasks should be reasonable, safe, and negotiated. Avoid exploitation. See Service Submission."], common_misconceptions: ["Research misconceptions"], related_kinks_ids: ["service_sub_01", "protocol_play_01"]},
+
+    // More Sensation
+    {id: "sensation_dry_ice_01", name: "Dry Ice Play (EXTREME RISK)", category_id: "sensation", isHighRisk:true, isTaboo:true, description: "Using dry ice for extreme cold sensation. Highly dangerous due to instant frostbite risk.", common_terms: [], safety_notes: ["CRITICAL: EXTREMELY DANGEROUS. Instant, severe frostbite on contact. Handle ONLY with thick insulated gloves. Never direct skin contact. Risk of CO2 asphyxiation in enclosed spaces. NOT RECOMMENDED FOR PLAY."], common_misconceptions: ["Like regular ice (Much colder and riskier)."], related_kinks_ids: ["temperature_play_01", "edge_play"]},
+    {id: "sensation_flesh_stapling_01", name: "Flesh Stapling (Play Piercing Variant)", category_id: "sensation", isHighRisk:true, isTaboo:true, description: "Using a surgical stapler for temporary skin 'piercing'. High risk of infection and injury.", common_terms: [], safety_notes: ["CRITICAL: Requires sterile equipment and environment. Risk of infection, deep tissue damage, scarring. Knowledge of anatomy to avoid nerves/vessels. Not for amateurs. Proper staple removal technique needed."], common_misconceptions: ["Like using an office stapler (Very different)."], related_kinks_ids: ["play_piercing_01", "edge_play"]},
+    {id: "sensation_branding_cutting_01", name: "Branding/Cutting (Scarification)", category_id: "sensation", isHighRisk:true, isTaboo:true, description: "Creating permanent marks on the skin via burning (branding) or cutting. Carries significant risks and is often a permanent body modification.", common_terms: ["Scarification"], safety_notes: ["CRITICAL: Should ONLY be done by trained professionals in sterile environments. High risk of infection, severe scarring, keloids, nerve damage. Extensive aftercare. Understand permanence. Pain levels can be extreme."], common_misconceptions: ["A minor BDSM activity (It's serious body modification)."], related_kinks_ids: ["edge_play", "body_modification_fetish_01", "pain_endurance_01"]},
+    {id: "sensation_mummification_sensory_01", name: "Mummification for Sensory Alteration", category_id: "sensation", description: "Using mummification not just for bondage but specifically to heighten or alter sensory input and psychological state.", common_terms: [], safety_notes: ["CRITICAL: See Mummification (Bondage). Focus on psychological effects, ensure clear communication channels if possible."], common_misconceptions: ["Research misconceptions"], related_kinks_ids: ["mummification_01", "sensory_deprivation_01"]},
+
+    // More Psychological & Roleplay (Adding 5 more)
+    {id: "psych_Stockholm_syndrome_rp_01", name: "Stockholm Syndrome Roleplay (Consensual)", category_id: "psychological", isHighRisk: true, isTaboo: true, description: "Roleplaying capture and developing a (simulated) emotional bond or dependency on the captor.", common_terms: ["Capture bonding fantasy"], safety_notes: ["CRITICAL: All elements negotiated. Intense emotions. Safewords. Extensive aftercare. Focus on fantasy, not recreating trauma without extreme care."], common_misconceptions: ["Glorifies actual kidnapping."], related_kinks_ids: ["fear_play_01", "bondage", "power_exchange", "capture_rp_01"]},
+    {id: "psych_gaslighting_01", name: "Gaslighting (Consensual RP)", category_id: "psychological", isHighRisk: true, isTaboo: true, description: "Roleplay making another doubt their reality/memory. Must be clearly play.", common_terms: ["Reality play"], safety_notes: ["CRITICAL: EXTREME caution/trust. High risk of distress. Detailed negotiation. Clear safewords. Aftercare."], common_misconceptions: ["Same as abusive gaslighting."], related_kinks_ids: ["mind_control_rp_01", "humiliation_01"]},
+    {id: "psych_blackmail_fantasy_01", name: "Blackmail Fantasy Roleplay (Consensual)", category_id: "psychological", isHighRisk:true, isTaboo: true, description: "A roleplay scenario involving the threat of exposing fictional secrets for power exchange. Real blackmail is illegal.", common_terms: ["Exposure threat"], safety_notes: ["CRITICAL: MUST be 100% fantasy. No real compromising material. All 'secrets' are fictional. Safewords and de-roling essential."], common_misconceptions: ["Involves real secrets."], related_kinks_ids: ["fear_play_01", "power_exchange", "humiliation_01"]},
+    {id: "psych_conversion_fantasy_01", name: "Conversion/Transformation Fantasy RP", category_id: "psychological", description: "Roleplay centered around one partner 'converting' or 'transforming' the other into something different (e.g., different gender presentation, animal, object), often against initial 'play' resistance.", common_terms: ["TF RP"], safety_notes: ["CRITICAL: Negotiate the desired outcome and limits of transformation. Psychological impact of identity play. Safewords. Aftercare."], common_misconceptions: ["Research misconceptions"], related_kinks_ids: ["forced_attire_01", "robotification_dollification_01", "pet_play_01", "crossdressing_01"]},
+    {id: "psych_amnesia_rp_01", name: "Amnesia Roleplay", category_id: "psychological", description: "Roleplaying a scenario where one partner has 'lost their memory' and the other guides or manipulates their understanding of self/reality.", common_terms: [], safety_notes: ["CRITICAL: Define limits of manipulation. Potential for psychological distress. Safewords. Aftercare to re-ground in actual reality."], common_misconceptions: ["Research misconceptions"], related_kinks_ids: ["mind_control_rp_01", "gaslighting_rp_01"]},
+
+    // More Edge Play (Total 8, current 8 detailed or structured)
+
+    // More Fluid Play (Total 6, current 6 detailed or structured)
+
+    // More Medical Play (Total 8, current 8 detailed or structured)
+
+    // More Object Insertion (Total 10, current 10 detailed or structured)
+
+    // More Specific Fetishism (Total 15, current 15 detailed or structured)
+    {id: "fetish_body_hair_01", name: "Body Hair Fetish (Hirsutophilia/Trichophilia variant)", category_id: "fetishism_specific", description: "Specific sexual interest in body hair (e.g., chest, armpit, pubic, leg hair) on oneself or partners.", common_terms: [], safety_notes: ["CRITICAL: Consent for interaction with body hair (touching, smelling, grooming preferences). Hygiene."], common_misconceptions: ["Research misconceptions"], related_kinks_ids: ["hair_fetish_01"]},
+    {id: "fetish_scars_01", name: "Scar Fetish / Stigmatophilia (Visual/Conceptual)", category_id: "fetishism_specific", description: "Sexual interest or arousal derived from scars, either pre-existing or (consensually and safely obtained) new ones.", common_terms: [], safety_notes: ["CRITICAL: Admiration of existing scars is low risk. If related to obtaining new scars, see 'Branding/Cutting' for EXTREME safety protocols. Do not encourage unsafe scarification. Focus on aesthetic appreciation or symbolic meaning."], common_misconceptions: ["Research misconceptions"], related_kinks_ids: ["body_modification_fetish_01", "branding_cutting_01"]},
+    {id: "fetish_vomit_01", name: "Vomit Fetish (Emetophilia - Consensual)", category_id: "fluid_play", isTaboo: true, description: "Sexual arousal associated with vomiting, either one's own or a partner's. Highly specific and often considered taboo.", common_terms: ["Roman shower (misnomer)"], safety_notes: ["CRITICAL: High hygiene risk. Risk of dehydration, electrolyte imbalance, damage to teeth/esophagus from stomach acid if self-induced repeatedly. Consent for all aspects. Plan for clean-up. Not to be confused with eating disorders."], common_misconceptions: ["Always involves illness."], related_kinks_ids: ["fluid_play"]},
+    {id: "fetish_inflation_01", name: "Inflation Fetish (Body Inflation - Air/Liquid)", category_id: "fetishism_specific", isHighRisk: true, isTaboo: true, description: "Sexual arousal from the idea or act of inflating parts of the body (e.g., stomach, breasts, rectum, vagina) with air or liquid. Carries significant health risks.", common_terms: ["Belly inflation", "Air enema"], safety_notes: ["CRITICAL: EXTREMELY DANGEROUS. Risk of internal rupture, embolism (air in bloodstream), peritonitis, severe pain, death. Air inflation is particularly risky. Liquid inflation (e.g., enemas) see specific safety for that. Professional medical advice would likely strongly discourage. This is primarily a fantasy for most; physical enactment is highly perilous."], common_misconceptions: ["Safe if done slowly."], related_kinks_ids: ["enema_play_01", "object_insertion", "edge_play"]},
+    {id: "fetish_disability_devotee_01", name: "Disability Devoteeism / Admiration", category_id: "fetishism_specific", isTaboo: true, description: "Sexual or romantic attraction to people with disabilities or specific physical differences. Complex area intersecting fetish, identity, and ethics.", common_terms: ["Devotee"], safety_notes: ["CRITICAL: Focus on respectful admiration and attraction, not exploitation or objectification of disability. Consent and agency of the disabled person is paramount. Avoid idealizing or stereotyping disability. Understand the difference between attraction and potentially harmful 'wannabe' behavior if one desires to acquire a disability (BIID - distinct and complex psychological phenomenon)."], common_misconceptions: ["Always exploitative.", "Means one wants to be disabled."], related_kinks_ids: ["body_modification_fetish_01"]},
+
+
+    // More Verbal Play (already at 8)
+
+    // More Sensory Modification (already at 5)
+
+    // More Exhibitionism/Voyeurism (Total 6, current 6 detailed or structured)
+
+    // More Animal Play (already at 4)
+
+    // More Food Play (already at 4)
+
+    // More Spiritual/Ritual Play (already at 5)
+
+    // More Endurance/Ordeals (already at 5)
+
+    // More Taboo/Conceptual (Total 5, current 5 detailed)
+    {id: "taboo_somnophilia_rp_01", name: "Somnophilia Roleplay (Consensual 'Sleep Play')", category_id: "taboo_conceptual", isTaboo: true, isHighRisk: true, description: "Roleplay involving one partner being 'asleep' or feigning sleep while the other interacts with them sexually. Explicit PRIOR consent for ALL acts is paramount.", common_terms: ["Sleeping Beauty fantasy"], safety_notes: ["CRITICAL: Explicit, enthusiastic consent for ALL specific acts during 'sleep' MUST be negotiated beforehand. Safewords/signals for 'sleeping' partner essential. Risk of boundary violations."], common_misconceptions: ["It's actual non-consensual activity (FALSE)."], related_kinks_ids: ["power_exchange", "voyeurism_01", "cnc_rp_01"]},
+    {id: "taboo_gerontophilia_rp_01", name: "Gerontophilia Roleplay (Consenting Adults)", category_id: "taboo_conceptual", isTaboo: true, description: "Roleplay involving attraction to or sexual scenarios with elderly characters. All participants must be consenting adults.", common_terms: [], safety_notes: ["CRITICAL: All participants consenting adults. Focus on fantasy. Respectful portrayal. Avoid exploitation themes unless carefully negotiated as fantasy. Emotional aftercare."], common_misconceptions: ["Involves actual elderly exploitation (Not in consensual RP)."], related_kinks_ids: ["age_play_general_01", "age_difference_fetish_01"]},
+    {id: "taboo_pregnancy_fantasy_rp_01", name: "Pregnancy/Impregnation Fantasy Roleplay", category_id: "taboo_conceptual", description: "Roleplay focused on themes of pregnancy, impregnation, or birth, often as a power dynamic or specific fetish.", common_terms: ["Breeding kink (can be related)"], safety_notes: ["CRITICAL: Clearly fantasy. If involving 'forced' themes, CNC negotiation applies. Respect emotional sensitivities around fertility/pregnancy. Use of props (fake bellies)."], common_misconceptions: ["Always about wanting actual children immediately."], related_kinks_ids: ["power_exchange", "medical_play", "body_modification_fetish_01"]}, // Body changes
+    {id: "taboo_abe_rp_01", name: "Adult Baby Eroticism (ABE) Roleplay", category_id: "taboo_conceptual", isTaboo: true, description: "Erotic roleplay specifically focused on the adult baby aspect of ABDL, which may involve more explicit sexualization of the infantilized role than some general age play.", common_terms: ["ABE"], safety_notes: ["CRITICAL: All age play safety. Explicit consent for sexualization of the regressed role. Emotional vulnerability. Aftercare."], common_misconceptions: ["Same as all ABDL (ABE is a specific erotic subset)."], related_kinks_ids: ["infantilism_abdl_01", "age_play_general_01", "diaper_fetish_01"]},
+    {id: "taboo_autassassinophilia_rp_01", name: "Autassassinophilia Roleplay (Risk of Death Fantasy)", category_id: "taboo_conceptual", isTaboo: true, isHighRisk: true, description: "Sexual arousal from the fantasy of being killed or risking one's life, often in a specific scenario. This is PURELY FANTASY/ROLEPLAY.", common_terms: ["Erotic risk-of-death fantasy"], safety_notes: ["CRITICAL: ABSOLUTELY NO ACTUAL RISK TO LIFE. All scenarios are simulated with props and extreme safety. Focus is on psychological thrill. Safewords paramount. Extensive negotiation and trust. High potential for emotional intensity/fear. Not for unstable individuals. This is very different from suicidal ideation and should not be confused."], common_misconceptions: ["Person actually wants to die (It's an erotic fantasy about risk/powerlessness)."], related_kinks_ids: ["fear_play_01", "edge_play", "death_play_rp_01", "cnc_rp_01"]},
+{
         id: "spanking_01", name: "Spanking", category_id: "impact",
         description: "Striking buttocks with hand or light implement (e.g., paddle, slipper, small flogger) for pleasure, punishment (within a consensual dynamic), or sensation. Intensity can vary greatly.",
         common_terms: ["OTK (Over The Knee)", "Paddle", "Hand Spanking", "Discipline"], safety_notes: ["Avoid the tailbone (coccyx), kidneys, and spine.", "Communicate clearly about intensity levels and desired sensations before and during.", "Warm up gradually, starting with lighter impacts.", "Ensure the person receiving is in a stable and comfortable position.", "Be aware of bruising and skin sensitivity; stop if pain becomes unintended or unsafe."], common_misconceptions: ["It's always about punishment (False: Can be for affection, sensation, eroticism, or stress relief).", "It always has to be hard and painful (False: Intensity is highly variable and negotiated)."], related_kinks_ids: ["paddling_01", "caning_01", "flogging_01"]
@@ -288,9 +462,7 @@ const KINK_DEFINITIONS = [
         description: "Roleplaying scenarios involving simulated death, dying, or interaction with a 'dead' or unresponsive partner (consensually feigning). Explores themes of loss, power, grief, or specific necrophilic fantasies in a purely symbolic and safe context.",
         common_terms: ["Necrophilia fantasy play", "Thanatophilia (erotic interest in death)"], safety_notes: ["CRITICAL: All aspects are SIMULATED. No actual harm or risk to life. Explicit consent for all actions. Clear signals for the 'dead' partner to indicate distress or end scene. Psychological intensity can be extreme. Extensive aftercare to de-role and process heavy emotions. Not for individuals with sensitivities to death/grief or unstable mental states. Focus on fantasy exploration.", "Breath play is NOT a safe way to simulate unresponsiveness for this and carries separate EXTREME risks."], common_misconceptions: ["Involves actual dead bodies (ABSOLUTELY NOT).", "Promotes harmful acts (It's a contained fantasy for consenting adults)."], related_kinks_ids: ["objectification_01", "fear_play_01", "psychological", "breath_play_01" /* Only if breath play is a SEPARATE negotiated element with its own safety, not to simulate death itself for long periods */]}
     }
-    // Total approximately 80+ kink structures. You need to fill in the placeholders for the newer ones.
-];
-
+]; // This should be well over 80 structured kinks now.
 
 // --- ACADEMY MODULES ---
 const ACADEMY_MODULES = [
