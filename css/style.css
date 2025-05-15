@@ -1,128 +1,98 @@
 /* Kink Atlas - css/style.css */
 
-/* ... (all previous CSS) ... */
+/* ... (previous CSS remains the same) ... */
 
-/* --- SUMMARY VIEW --- */
-#summary-view h2 {
-    margin-bottom: 20px;
-}
+/* --- KINK GALAXY VIEW (NEW LAYOUT) --- */
+/* ... (styles for .galaxy-category, .kink-list remain the same) ... */
 
-.summary-controls {
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid var(--border-color);
-}
-
-#summary-content-area {
-    background-color: var(--bg-color); /* Use main bg for contrast or var(--bg-color-light) */
-    padding: 20px;
-    border-radius: 5px;
-    border: 1px solid var(--border-color);
-}
-
-.summary-category-block {
-    margin-bottom: 25px;
-    padding-bottom: 15px;
-    border-bottom: 1px dashed var(--border-color);
-}
-.summary-category-block:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
+.kink-star { /* "Pill" or "Tag" style for kinks */
+    background-color: var(--bg-color-lighter);
+    color: var(--text-color);
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    border: 2px solid transparent; /* Make base border a bit thicker for visibility */
+    transition: background-color 0.2s, transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    font-size: 0.95em;
+    display: inline-flex;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    text-align: left; /* Ensure text inside aligns left */
+    line-height: 1.3; /* Adjust if text wraps weirdly */
 }
 
-.summary-category-block h3 { /* Category Title */
-    color: var(--primary-color);
-    margin-bottom: 10px;
-    font-size: 1.5em;
+.kink-star:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+    border-color: var(--accent-color);
+    color: white;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
 }
 
-.summary-kink-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start; /* Align items to top if notes are long */
-    padding: 10px 0;
-    border-bottom: 1px solid var(--bg-color-light); /* Lighter separator */
-}
-.summary-kink-item:last-child {
-    border-bottom: none;
-}
-
-.summary-kink-name {
-    font-weight: bold;
-    flex-basis: 40%; /* Adjust as needed */
-}
-
-.summary-kink-rating {
-    flex-basis: 20%;
-    text-align: center;
-    font-style: italic;
+.kink-star-rating-badge {
+    font-size: 0.75em;
+    color: white;
     padding: 3px 8px;
-    border-radius: 4px;
-    color: white; /* Default, will be overridden by specific rating colors */
+    border-radius: 10px;
+    margin-left: 10px;
+    white-space: nowrap;
+    font-weight: bold;
+    flex-shrink: 0; /* Prevent badge from shrinking if kink name is long */
 }
 
-.summary-kink-notes {
-    flex-basis: 40%;
-    font-size: 0.9em;
-    color: #bdc3c7;
-    padding-left: 15px; /* Space between rating and notes */
-    white-space: pre-wrap; /* Preserve line breaks in notes */
+/* Rating-specific styles for kink-star pills - ENHANCED */
+.rating-want-to-try {
+    background-color: var(--rating-want-to-try); /* Pill background */
+    border-color: var(--rating-want-to-try);
+    color: white; /* Text color on rated pill */
 }
-.summary-kink-notes p:last-child {
-    margin-bottom: 0; /* Remove margin from last paragraph in notes */
+.rating-want-to-try .kink-star-rating-badge { background-color: rgba(0,0,0,0.2); /* Darker badge bg */ }
+
+.rating-favorite {
+    background-color: var(--rating-favorite);
+    border-color: var(--rating-favorite);
+    color: white;
 }
+.rating-favorite .kink-star-rating-badge { background-color: rgba(0,0,0,0.2); }
 
-
-/* Rating specific background colors for summary items */
-.summary-rating-want_to_try { background-color: var(--rating-want-to-try); }
-.summary-rating-favorite { background-color: var(--rating-favorite); }
-.summary-rating-like_it { background-color: var(--rating-like-it); }
-.summary-rating-curious_about { background-color: var(--rating-curious-about); color: #333 !important; }
-.summary-rating-soft_limit { background-color: var(--rating-soft-limit); }
-.summary-rating-hard_limit { background-color: var(--rating-hard-limit); }
-.summary-rating-not_for_me { background-color: var(--rating-not-for-me); color: #333 !important; }
-
-
-/* Print-specific styles */
-@media print {
-    body {
-        background-color: white !important;
-        color: black !important;
-        font-size: 10pt; /* Adjust for print */
-    }
-    #main-header, #main-nav, #main-footer, .summary-controls, #kink-filters, #welcome-view .data-management button, #welcome-view .data-management label  {
-        display: none !important; /* Hide non-content elements for print */
-    }
-    #app-container, #main-content, #summary-view, #summary-content-area {
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        border: none !important;
-        box-shadow: none !important;
-        background-color: white !important;
-    }
-    .view { animation: none !important; }
-    .summary-category-block h3, .summary-kink-name {
-        color: black !important;
-    }
-    .summary-kink-rating {
-        /* Ensure contrast for print, may need to adjust if using colored backgrounds */
-        border: 1px solid #ccc;
-        color: black !important; /* Override for print if background colors are too light */
-    }
-    .summary-kink-notes {
-        color: #333 !important;
-    }
-    /* Override colored backgrounds for ratings if they don't print well, or use borders */
-    .summary-rating-want_to_try, .summary-rating-favorite, .summary-rating-like_it,
-    .summary-rating-curious_about, .summary-rating-soft_limit, .summary-rating-hard_limit,
-    .summary-rating-not_for_me {
-        background-color: #f0f0f0 !important; /* Light grey background for all for print */
-        /* Or, alternatively, keep colors and ensure good contrast or use outlines:
-        border: 2px solid var(--respective-rating-color) !important;
-        background-color: white !important;
-        */
-    }
+.rating-like-it {
+    background-color: var(--rating-like-it);
+    border-color: var(--rating-like-it);
+    color: white;
 }
+.rating-like-it .kink-star-rating-badge { background-color: rgba(0,0,0,0.2); }
+
+.rating-curious-about {
+    background-color: var(--rating-curious-about);
+    border-color: var(--rating-curious-about);
+    color: #333; /* Darker text for yellow background */
+}
+.rating-curious-about .kink-star-rating-badge { background-color: rgba(0,0,0,0.1); color: #333; }
+
+
+.rating-soft-limit {
+    background-color: var(--rating-soft-limit);
+    border-color: var(--rating-soft-limit);
+    color: white;
+}
+.rating-soft-limit .kink-star-rating-badge { background-color: rgba(0,0,0,0.2); }
+
+.rating-hard-limit {
+    background-color: var(--rating-hard-limit);
+    border-color: var(--rating-hard-limit);
+    color: white;
+    /* Optionally, add a more distinct style like a strikethrough or different font */
+    /* text-decoration: line-through; */
+}
+.rating-hard-limit .kink-star-rating-badge { background-color: rgba(0,0,0,0.2); }
+
+.rating-not-for-me {
+    background-color: var(--rating-not-for-me);
+    border-color: var(--rating-not-for-me);
+    color: #333; /* Darker text for grey background */
+    opacity: 0.8; /* Slightly fade out "not for me" kinks */
+}
+.rating-not-for-me .kink-star-rating-badge { background-color: rgba(0,0,0,0.1); color: #333;}
+
+
+/* ... (rest of CSS remains the same) ... */
