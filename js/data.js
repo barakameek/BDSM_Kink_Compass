@@ -396,7 +396,7 @@ const KINK_DEFINITIONS = [
         id: "taboo_bestiality_fantasy_rp_01", name: "Bestiality Fantasy Roleplay (NO ACTUAL ANIMALS)", category_id: "taboo_conceptual", isTaboo: true,
         description: "PURELY FANTASY-BASED roleplay or erotic storytelling involving sexual themes with animals. ABSOLUTELY NO ACTUAL ANIMALS ARE INVOLVED. This is about exploring a taboo thought or fantasy in a completely safe, human-only, consensual context. Detailed research and description needed.",
         common_terms: ["Anthro RP (can overlap if one partner is an anthro animal)"], safety_notes: ["CRITICAL: 100% FANTASY. NO REAL ANIMALS. This cannot be stressed enough. Focus is on the psychological exploration of a taboo. All participants are consenting adults. If props (e.g., tails, ears, dildos) are used, they are just props. Clear distinction from illegal and harmful acts of bestiality."], common_misconceptions: ["Involves or promotes harm to animals (ABSOLUTELY FALSE if it's true fantasy RP)."], related_kinks_ids: ["animal_play", "furry_play_01", "psychological"]
-    }
+    },
     // More Fluid Play (Total 6, current 6 detailed or structured)
 
     // More Medical Play (Total 8, current 8 detailed or structured)
