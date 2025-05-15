@@ -672,8 +672,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     init();
-
-}); // End DOMContentLoaded
  function updateNavButtons() {
         if (!DOMElements.mainNav) return; // Guard clause
         const navButtons = DOMElements.mainNav.querySelectorAll('button');
@@ -708,3 +706,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
         console.log(`Switched to view: ${viewId}`);
     }
+
+}); // End DOMContentLoaded
