@@ -38,61 +38,95 @@ const KINK_CATEGORIES = {
         name: "Edge Play / Risk-Aware",
         description: "Activities that involve higher inherent risks and require significant knowledge, experience, and explicit, ongoing consent (e.g., breath play, knife play, fire play).",
         icon: "🔥"
+    },
+    "fluid_play": {
+        id: "fluid_play",
+        name: "Fluid Play",
+        description: "Activities involving bodily fluids. Requires careful attention to hygiene and health status.",
+        icon: "💧"
+    },
+    "medical_play": {
+        id: "medical_play",
+        name: "Medical Play",
+        description: "Roleplaying medical scenarios, often involving examinations, procedures, or specific medical fetishes. Can range from clinical to erotic.",
+        icon: "🩺"
+    },
+    "object_insertion": {
+        id: "object_insertion",
+        name: "Object Insertion",
+        description: "The insertion of objects (toys, fingers, etc.) into bodily orifices for pleasure or sensation. Hygiene and body-safe materials are crucial.",
+        icon: "🎯" // Placeholder icon
     }
-    // Add more categories as needed
+    // Add more categories as needed (e.g., Fetishism, Exhibitionism/Voyeurism, etc.)
 };
 
 // --- KINK DEFINITIONS ---
-// This will be your main database of kinks.
+// THIS IS WHERE YOU WILL ADD YOUR COMPREHENSIVE LIST OF KINKS.
+// For each kink, provide:
+// - id: A unique string identifier (e.g., "spanking_01")
+// - name: The common name of the kink.
+// - category_id: The id of the category it belongs to (from KINK_CATEGORIES).
+// - description: A clear, neutral explanation of the kink.
+// - common_terms: An array of related slang or terminology.
+// - safety_notes: An array of CRITICAL safety considerations and risk mitigation.
+// - common_misconceptions: An array of common misunderstandings about the kink.
+// - related_kinks_ids: An array of ids of other kinks that are often related.
 const KINK_DEFINITIONS = [
     {
         id: "spanking_01",
         name: "Spanking",
         category_id: "impact",
-        description: "Striking the buttocks with an open hand or a light implement for pleasure, punishment, or sensation.",
-        common_terms: ["OTK (Over The Knee)", "Paddle", "Hand Spanking"],
+        description: "Striking the buttocks with an open hand or a light implement (e.g., paddle, slipper, small flogger) for pleasure, punishment (within a consensual dynamic), or sensation. Intensity can vary greatly.",
+        common_terms: ["OTK (Over The Knee)", "Paddle", "Hand Spanking", "Discipline"],
         safety_notes: [
-            "Avoid the tailbone (coccyx) and kidneys.",
-            "Communicate about intensity levels.",
-            "Warm up gradually."
+            "Avoid the tailbone (coccyx), kidneys, and spine.",
+            "Communicate clearly about intensity levels and desired sensations before and during.",
+            "Warm up gradually, starting with lighter impacts.",
+            "Ensure the person receiving is in a stable and comfortable position.",
+            "Be aware of bruising and skin sensitivity; stop if pain becomes unintended or unsafe."
         ],
         common_misconceptions: [
-            "It's always about punishment (False, can be for affection, sensation, or eroticism).",
-            "It always has to be hard (False, intensity varies greatly)."
+            "It's always about punishment (False: Can be for affection, sensation, eroticism, or stress relief).",
+            "It always has to be hard and painful (False: Intensity is highly variable and negotiated)."
         ],
-        related_kinks_ids: ["paddling_01", "caning_01"]
+        related_kinks_ids: ["paddling_01", "caning_01", "flogging_01"]
     },
     {
         id: "rope_bondage_01",
         name: "Rope Bondage (General)",
         category_id: "bondage",
-        description: "The use of rope for tying, restraining, or creating aesthetic patterns on the body.",
-        common_terms: ["Shibari (Japanese artistic rope bondage)", "Suspension (if applicable)", "Hogtie"],
+        description: "The use of rope for tying, restraining, or creating aesthetic patterns on the body. It can range from simple restraints to complex artistic ties.",
+        common_terms: ["Shibari (Japanese artistic rope bondage)", "Suspension (if applicable)", "Hogtie", "Floor work"],
         safety_notes: [
-            "Avoid putting pressure on nerves or arteries (e.g., inside of elbows, wrists, neck).",
-            "Always have safety shears readily available and know how to use them.",
-            "Check for circulation frequently (capillary refill test).",
-            "Never leave someone unattended in complex or suspension bondage."
+            "Avoid putting pressure on major nerves or arteries (e.g., inside of elbows, armpits, wrists, neck, behind knees). Learn nerve pathways.",
+            "Always have safety shears (e.g., EMT shears) readily available and know how to use them without harming the person tied.",
+            "Check for circulation frequently (e.g., capillary refill test on fingers/toes, ask about tingling/numbness).",
+            "Never leave someone unattended in complex, restrictive, or suspension bondage.",
+            "Be mindful of joint positions to avoid strain or injury.",
+            "For suspension, seek expert in-person training due to high risks."
         ],
         common_misconceptions: [
-            "All rope bondage is Japanese Shibari (False, many styles exist).",
-            "It's easy to learn complex ties quickly (False, requires practice and safety knowledge)."
+            "All rope bondage is Japanese Shibari (False: Many styles and traditions exist worldwide).",
+            "It's easy to learn complex ties quickly from online videos (False: Requires dedicated practice, safety knowledge, and ideally in-person guidance)."
         ],
-        related_kinks_ids: ["shibari_01", "suspension_01", "sensory_deprivation_01"]
+        related_kinks_ids: ["shibari_01", "suspension_01", "sensory_deprivation_01", "cuffs_restraints_01"]
     },
     {
         id: "shibari_01",
         name: "Shibari / Kinbaku",
         category_id: "bondage",
-        description: "A Japanese form of artistic and often intricate rope bondage, emphasizing aesthetics, connection, and sometimes suspension.",
-        common_terms: ["Nawa (rope)", "Nawashi/Bakushi (rope artist)", "Rigger", "Rope Bunny"],
+        description: "A Japanese form of artistic and often intricate rope bondage. Kinbaku specifically refers to tight, constrictive rope bondage. It emphasizes aesthetics, connection, emotional intensity, and sometimes suspension.",
+        common_terms: ["Nawa (rope)", "Nawashi/Bakushi (rope artist/master)", "Rigger", "Rope Bunny/Model", "Kata (form/pattern)"],
         safety_notes: [
-            "Specific nerve pathways (e.g., ulnar nerve) are crucial to avoid.",
-            "Understanding rope tension and distribution is vital.",
-            "Requires significant study and practice, especially for suspension."
+            "All general rope bondage safety applies, often with heightened awareness due to complexity.",
+            "Specific nerve pathways (e.g., ulnar nerve) are crucial to avoid; knowledge of anatomy is vital.",
+            "Understanding rope tension, load distribution, and friction is critical, especially for suspension.",
+            "Requires significant study, mentorship, and practice.",
+            "Communication (verbal and non-verbal) is paramount."
         ],
         common_misconceptions: [
-            "It's only for sexual purposes (False, can be purely aesthetic, meditative, or about trust)."
+            "It's only for sexual purposes (False: Can be purely aesthetic, meditative, about trust, or a form of BDSM expression).",
+            "It's always painful (False: While it can be intense, the experience is negotiated and can focus on various sensations)."
         ],
         related_kinks_ids: ["rope_bondage_01", "suspension_01"]
     },
@@ -100,44 +134,84 @@ const KINK_DEFINITIONS = [
         id: "ddlg_01",
         name: "DDlg (Daddy Dom / little girl)",
         category_id: "power_exchange",
-        description: "A dynamic involving a caring, dominant 'Daddy' figure and a submissive, childlike 'little girl' role. Can extend to other ageplay dynamics (e.g., MDlb, Cg/l).",
-        common_terms: ["Age Play", "Little Space", "Caregiver", "Rules", "Rewards", "Punishments (negotiated)"],
+        description: "A dynamic within BDSM involving a caring, dominant 'Daddy' figure and a submissive, often childlike 'little girl' role. Can extend to other ageplay dynamics like MDlb (Mommy Dom/little boy), Cg/l (Caregiver/little). The 'little' role often involves regression to a younger perceived age.",
+        common_terms: ["Age Play", "Little Space", "Caregiver", "Rules", "Rewards", "Punishments (negotiated)", "Headspace"],
         safety_notes: [
-            "Clear communication about age boundaries and expectations is crucial.",
-            "Ensure the dynamic is consensual and not exploitative.",
-            "Emotional safety and aftercare are very important."
+            "All participants must be consenting adults. This is roleplay and does not involve actual minors.",
+            "Clear communication about age boundaries, expectations, triggers, and limits is crucial.",
+            "Ensure the dynamic is consensual, respectful, and not exploitative.",
+            "Emotional safety and aftercare are very important, especially when dealing with regression or vulnerable emotional states.",
+            "Be aware of potential for emotional bleed and have strategies for managing it."
         ],
         common_misconceptions: [
-            "It's always sexual (False, can be non-sexual and focused on care and comfort).",
-            "It involves actual minors (Absolutely false, all participants must be consenting adults)."
+            "It's always sexual (False: Can be non-sexual and focused on care, comfort, play, and emotional connection).",
+            "It involves actual minors (Absolutely false and illegal. All participants are consenting adults).",
+            "Littles are actually childish or immature outside of the dynamic (False: This is a chosen role and state of mind)."
         ],
-        related_kinks_ids: ["age_play_general_01", "pet_play_01"] // Example
+        related_kinks_ids: ["age_play_general_01", "pet_play_01", "praise_kink_01", "bratting_01"]
     },
     {
         id: "breath_play_01",
         name: "Breath Play / Erotic Asphyxiation",
         category_id: "edge_play",
-        description: "Restricting airflow to create altered states of consciousness or intense sensations. This is a high-risk activity.",
-        common_terms: ["Choking", "Breath Control", "Hypoxyphilia"],
+        description: "Restricting airflow or applying pressure to the neck to create altered states of consciousness, light-headedness, or intense sensations. This is a high-risk activity.",
+        common_terms: ["Choking", "Breath Control", "Hypoxyphilia", "Asphyxiation"],
         safety_notes: [
-            "EXTREMELY DANGEROUS. Risk of brain damage or death is significant if done incorrectly or without a knowledgeable, attentive partner.",
+            "EXTREMELY DANGEROUS. Risk of serious injury, brain damage, or death is significant if done incorrectly or without a knowledgeable, attentive, and sober partner.",
             "NEVER do this alone (auto-erotic asphyxiation is a leading cause of accidental death).",
-            "Avoid pressure on the carotid arteries in the neck (can cause stroke or rapid unconsciousness). Pressure should be on the windpipe, if at all, and very carefully.",
-            "The person applying restriction must be sober, alert, and know CPR.",
-            "Have a clear, non-verbal stop signal that doesn't require breath.",
-            "Limit duration of restriction to very short periods (seconds).",
-            "This app strongly advises seeking expert in-person education before attempting."
+            "Avoid direct pressure on the carotid arteries in the neck (sides of the neck), as this can cause rapid unconsciousness, stroke, or death. If pressure is applied to the neck, it should ideally be on the windpipe (trachea) from the front, and even then, with extreme caution and minimal force.",
+            "The person applying restriction MUST be sober, alert, fully understand the risks, and know CPR/emergency procedures. They are solely responsible for the other's safety.",
+            "Have a clear, easily performed, non-verbal stop signal that doesn't require breath (e.g., dropping an object, specific hand signal like snapping fingers if hands are free).",
+            "Limit duration of restriction to very short periods (mere seconds). Release immediately at any sign of distress or the stop signal.",
+            "This app strongly advises seeking expert in-person education from reputable sources before ever attempting. Many consider this too risky to engage in at all."
         ],
         common_misconceptions: [
-            "It's safe if you're careful (False, it's inherently risky but can be risk-reduced with extreme caution and knowledge)."
+            "It's safe if you're careful (False: It's inherently very risky, though risks can be *reduced* with extreme caution, knowledge, and a trusted partner. It is never truly 'safe').",
+            "Losing consciousness is the goal (False: For many, the goal is altered sensation before unconsciousness. Unconsciousness itself is a high-danger sign)."
         ],
-        related_kinks_ids: []
-    }
-    // ... Add MANY more kinks here!
+        related_kinks_ids: ["edge_play_general_01", "sensory_overload_01"]
+    },
+    {
+        id: "praise_kink_01",
+        name: "Praise Kink",
+        category_id: "psychological",
+        description: "Deriving arousal, pleasure, or validation from receiving verbal praise, compliments, or words of affirmation, often within a BDSM or power exchange dynamic.",
+        common_terms: ["Good girl/boy/pet", "Affirmation", "Validation", "Words of Affirmation (WoA)"],
+        safety_notes: [
+            "Discuss preferred types of praise and any words/phrases that are off-limits or triggering.",
+            "Ensure praise is genuine within the context of the dynamic to be effective.",
+            "Be mindful of emotional impact, especially if praise is withheld or used manipulatively (negotiate these aspects).",
+        ],
+        common_misconceptions: [
+            "It's only about being called 'good girl/boy' (False: Praise can be very specific and tailored to actions, efforts, or attributes).",
+            "It's a sign of low self-esteem (Not necessarily: Can be a way to experience connection, reward, and deepen a dynamic)."
+        ],
+        related_kinks_ids: ["ddlg_01", "pet_play_01", "degradation_humiliation_01"] // Degradation can be an opposite, or sometimes used in conjunction for contrast
+    },
+    // START ADDING YOUR EXPANDED LIST HERE!
+    // Example:
+    // {
+    //     id: "flogging_01",
+    //     name: "Flogging",
+    //     category_id: "impact",
+    //     description: "Using a flogger (a whip with multiple soft tails or falls) to strike the body, typically the back, buttocks, or thighs. Sensations can range from thuddy to stingy depending on the flogger type and technique.",
+    //     common_terms: ["Thuddy", "Stingy", "Falls", "Knots (on flogger handle)"],
+    //     safety_notes: [
+    //         "Avoid kidneys, spine, neck, and joints.",
+    //         "Start with lighter impacts and gradually increase intensity as negotiated.",
+    //         "Be aware of the 'wrap' of the flogger tails, especially around sensitive areas.",
+    //         "Check skin regularly for signs of excessive marking or breakage if that's not the intent."
+    //     ],
+    //     common_misconceptions: [
+    //         "All floggers are the same (False: Material, number of tails, length, and weight vary greatly, affecting sensation).",
+    //         "Flogging is always about intense pain (False: Can be used for rhythmic sensation, warmth, or a prelude to other activities)."
+    //     ],
+    //     related_kinks_ids: ["spanking_01", "caning_01", "impact_play_general_01"]
+    // },
+    // ... continue with many more kinks ...
 ];
 
 // --- ACADEMY MODULES ---
-// Content for your educational section.
 const ACADEMY_MODULES = [
     {
         id: "consent_101",
@@ -191,7 +265,7 @@ const ACADEMY_MODULES = [
             { type: "paragraph", text: "Essential if someone is gagged or otherwise unable to speak. This could be dropping an object, a specific number of taps, or a hand signal. Must be clearly agreed upon beforehand." }
         ]
     }
-    // Add more modules
+    // Add more modules (e.g., Aftercare, Risk Profiles, Finding Community Safely)
 ];
 
 // --- GLOSSARY TERMS ---
@@ -227,6 +301,14 @@ const GLOSSARY_TERMS = {
     "limit": {
         term: "Limit (Soft/Hard)",
         definition: "A boundary. A <strong>Soft Limit</strong> is something one might be willing to try under specific conditions or is unsure about. A <strong>Hard Limit</strong> is an absolute 'no-go' activity or boundary that should not be crossed."
+    },
+    "vanilla": {
+        term: "Vanilla",
+        definition: "A term used to describe conventional sex or relationships, without BDSM or kink elements. Can also refer to a person who is not involved in kink."
+    },
+    "scene": {
+        term: "Scene",
+        definition: "A pre-negotiated period of BDSM activity or roleplay, with a defined start and end, or specific activities."
     }
     // Add many more terms
 };
@@ -245,21 +327,5 @@ const JOURNAL_PROMPTS = [
     "What kind of aftercare (even self-aftercare after intense thought/research) do you find most comforting or grounding?"
 ];
 
-
-// To make these available to app.js, you can attach them to the window object
-// or, if you set up app.js as an ES6 module, you can export them.
-// For simplicity in this single-file approach, we can assign to window if not using modules.
-// This is generally not best practice for larger apps, but for a self-contained client-side app, it's a way.
-/*
-window.APP_DATA = {
-    KINK_CATEGORIES,
-    KINK_DEFINITIONS,
-    ACADEMY_MODULES,
-    GLOSSARY_TERMS,
-    JOURNAL_PROMPTS
-};
-*/
-// If using ES6 Modules (recommended for cleaner code, even if in one app.js for now):
-// You would `import { KINK_CATEGORIES, KINK_DEFINITIONS, ... } from './data.js';` in app.js
-// and this file wouldn't need the window.APP_DATA part. For now, we'll assume app.js will
-// just know these variables exist if this script is loaded before it.
+// No need to attach to window if app.js loads this script first.
+// The variables will be in the global scope for app.js to use.
