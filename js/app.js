@@ -10,13 +10,13 @@ document.addEventListener('DOMContentLoaded', () => {
         filteredKinksForDisplay: [], 
         userData: {
             kinkMasterData: {},
-            profiles: {},
-            activeProfileId: 'personal',
+            profiles: {}, // Will hold custom profiles like: { profileId1: { name: "Shareable", kink_ids: [] }}
+            activeProfileId: 'personal', // 'personal' or a custom profileId
             settings: {
                 showTabooKinks: false,
-                summaryNoteStyle: 'icon',
-                currentTheme: 'dark',
-                sidebarCollapsed: false, 
+                summaryNoteStyle: 'icon', // 'icon', 'brief', 'full' (for future UI)
+                currentTheme: 'dark', // 'dark' or 'light'
+                sidebarCollapsed: true, // Start collapsed on larger screens, CSS handles mobile override
                 summaryFilters: { categories: [], ratingTypes: [], hasNotesOnly: false }
             },
             journalEntries: [],
@@ -28,11 +28,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const DOMElements = {
         body: document.body,
         appContainer: document.getElementById('kink-atlas-app'),
-        sidebar: document.getElementById('sidebar'),
-        pageContentWrapper: document.getElementById('page-content-wrapper'),
+        sidebar: document.getElementById('sidebar'), // For sidebar functionality
+        pageContentWrapper: document.getElementById('page-content-wrapper'), // For sidebar
         sidebarToggleBtnHeader: document.getElementById('sidebar-toggle-btn-header'),
         sidebarToggleBtnFooter: document.getElementById('sidebar-toggle-btn-footer'),
-        appTitleSidebar: document.getElementById('app-title-sidebar'),
+        appTitleSidebar: document.getElementById('app-title-sidebar'), // For hiding when collapsed
         mainHeader: document.getElementById('main-header'),
         currentViewTitleHeader: document.getElementById('current-view-title'),
         mainNav: document.getElementById('main-nav'),
@@ -112,18 +112,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- SIDEBAR MANAGEMENT ---
     function applySidebarState(collapsed) {
-        if (DOMElements.sidebar) DOMElements.sidebar.classList.toggle('collapsed', collapsed);
-        if (DOMElements.sidebarToggleBtnFooter) {
-            const iconContainer = DOMElements.sidebarToggleBtnFooter.querySelector('.nav-icon') || DOMElements.sidebarToggleBtnFooter;
-            iconContainer.innerHTML = collapsed ? '»' : '«';
-            DOMElements.sidebarToggleBtnFooter.title = collapsed ? 'Expand Sidebar' : 'Collapse Sidebar';
+        if (DOMElements.sidebar) { // Check if sidebar element exists
+            DOMElements.sidebar.classList.toggle('collapsed', collapsed);
         }
+        // The CSS handles hiding text and changing footer icon based on .collapsed class
         state.userData.settings.sidebarCollapsed = collapsed;
     }
 
     function toggleSidebar() {
         applySidebarState(!state.userData.settings.sidebarCollapsed);
-        saveUserData();
+        saveUserData(); 
     }
 
     // --- DATA INITIALIZATION & LOCALSTORAGE ---
@@ -144,13 +142,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 summaryNoteStyle: loadedData.settings?.summaryNoteStyle || 'icon',
                 summaryFilters: loadedData.settings?.summaryFilters || { categories: [], ratingTypes: [], hasNotesOnly: false },
                 currentTheme: loadedData.settings?.currentTheme || 'dark',
-                sidebarCollapsed: loadedData.settings?.sidebarCollapsed || false
+                sidebarCollapsed: loadedData.settings?.sidebarCollapsed ?? (window.innerWidth < 769) // Default collapsed on mobile
             };
             state.userData.journalEntries = Array.isArray(loadedData.journalEntries) ? loadedData.journalEntries : [];
         } else {
             state.userData = {
                 kinkMasterData: {}, profiles: {}, activeProfileId: 'personal',
-                settings: { showTabooKinks: false, summaryNoteStyle: 'icon', summaryFilters: { categories: [], ratingTypes: [], hasNotesOnly: false }, currentTheme: 'dark', sidebarCollapsed: false },
+                settings: { 
+                    showTabooKinks: false, summaryNoteStyle: 'icon', 
+                    summaryFilters: { categories: [], ratingTypes: [], hasNotesOnly: false }, 
+                    currentTheme: 'dark', sidebarCollapsed: (window.innerWidth < 769) 
+                },
                 journalEntries: [],
             };
         }
@@ -179,7 +181,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let baseKinks = [...state.kinks];
         if (!state.userData.settings.showTabooKinks) baseKinks = baseKinks.filter(kink => !kink.isTaboo);
         state.filteredKinksForDisplay = baseKinks;
-        console.log(`Applied global filters. ${state.filteredKinksForDisplay.length} kinks available after global filtering.`);
     }
     function getKinksForActiveProfileView() { 
         const activeProfileId = state.userData.activeProfileId;
@@ -214,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!DOMElements.existingProfilesList || !DOMElements.noCustomProfilesNoteSettings) return;
         DOMElements.existingProfilesList.innerHTML = ''; let hasCustomProfiles = false;
         for (const profileId in state.userData.profiles) {
-            if (state.userData.profiles[profileId]?.isDefault) continue;
+            if (state.userData.profiles[profileId]?.isDefault) continue; // Should not exist, but good check
             const profile = state.userData.profiles[profileId];
             if (profile && profile.name) {
                 hasCustomProfiles = true;
@@ -233,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!profileName) { alert("Please enter a name for the new profile."); return; }
         const profileId = `profile_${Date.now()}`;
         if (state.userData.profiles[profileId] || profileId === 'personal') { alert("Profile ID error or name conflict. Try again."); return; }
-        state.userData.profiles[profileId] = { name: profileName, kink_ids: [] };
+        state.userData.profiles[profileId] = { name: profileName, kink_ids: [] }; // isDefault is false by omission
         DOMElements.newProfileNameInput.value = ''; saveUserData(); populateProfileSelectors(); renderExistingProfilesList();
         alert(`Profile "${profileName}" created!`);
     }
@@ -252,6 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
         state.userData.activeProfileId = event.target.value;
         if(DOMElements.profileSelectGalaxy && DOMElements.profileSelectGalaxy !== event.target) DOMElements.profileSelectGalaxy.value = state.userData.activeProfileId;
         if(DOMElements.profileSelectSummary && DOMElements.profileSelectSummary !== event.target) DOMElements.profileSelectSummary.value = state.userData.activeProfileId;
+        // saveUserData(); // Optionally save activeProfileId to persist selection
         if (state.currentView === 'galaxy-view') renderKinkGalaxy();
         if (state.currentView === 'summary-view') renderSummaryPage();
     }
@@ -259,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- VIEW MANAGEMENT ---
     function updateNavButtons() { 
         if (!DOMElements.mainNav) return;
-        const navLinks = DOMElements.mainNav.querySelectorAll('a, button');
+        const navLinks = DOMElements.mainNav.querySelectorAll('a'); // Nav items are now <a>
         navLinks.forEach(link => {
             link.classList.toggle('active-nav-btn', link.dataset.view === state.currentView);
         });
@@ -273,7 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (DOMElements.currentViewTitleHeader) {
             const activeNavLink = DOMElements.mainNav.querySelector(`.active-nav-btn .nav-text`);
-            DOMElements.currentViewTitleHeader.textContent = activeNavLink ? activeNavLink.textContent : viewId.replace('-view', '').split('_').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ');
+            DOMElements.currentViewTitleHeader.textContent = activeNavLink ? activeNavLink.textContent : viewId.replace('-view', '').split(/[-_]/g).map(w=>w[0].toUpperCase()+w.slice(1)).join(' ');
         }
 
         if (viewId === 'galaxy-view') renderKinkGalaxy();
@@ -284,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(`Switched to view: ${viewId}`);
     }
 
-    // --- NAVIGATION ---
+    // --- NAVIGATION (Sidebar) ---
     function setupNavigation() { 
         const navItems = [
             { id: 'nav-galaxy', text: 'Galaxy', viewId: 'galaxy-view', icon: '🌌' }, { id: 'nav-summary', text: 'Summary', viewId: 'summary-view', icon: '📊' },
@@ -301,41 +303,31 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- KINK GALAXY RENDERING ---
+    // --- KINK GALAXY RENDERING (Card Based) ---
     function renderKinkGalaxy() { 
         if (!DOMElements.kinkGalaxyViz) return; 
         DOMElements.kinkGalaxyViz.innerHTML = '';
-        const categories = KINK_CATEGORIES; let galaxyHTML = ''; 
+        let galaxyHTML = ''; 
         const kinksToList = getKinksForActiveProfileView();
         
         if (kinksToList.length === 0) {
             const profileName = state.userData.activeProfileId === 'personal' ? "Personal Atlas" : (state.userData.profiles[state.userData.activeProfileId]?.name || "selected profile");
             DOMElements.kinkGalaxyViz.innerHTML = `<p class="empty-state-message">No kinks to display for "${profileName}". Adjust Content Preferences, rate kinks, or add kinks to this profile.</p>`; return;
         }
-
-        for (const categoryId in categories) {
-            const category = categories[categoryId]; 
-            const kinksInCategory = kinksToList.filter(kink => kink.category_id === categoryId);
-            if (kinksInCategory.length > 0) {
-                galaxyHTML += `<div class="galaxy-category"><h3><span class="category-icon">${category.icon || ''}</span> ${category.name}</h3><div class="kink-list">`; // Added category-icon span
-                kinksInCategory.sort((a,b) => a.name.localeCompare(b.name)).forEach(kink => {
-                    const kinkUserData = getKinkUserData(kink.id);
-                    let ratingClass = kinkUserData.rating ? `rating-${kinkUserData.rating.toLowerCase().replace(/[^a-z0-9_]/g, '-').replace(/\s+/g, '-')}` : 'rating-none';
-                    // For Card View:
-                    galaxyHTML += `
-                        <div class="kink-card ${ratingClass}" data-kink-id="${kink.id}">
-                            <h4 class="kink-card-name">${kink.name}</h4>
-                            <p class="kink-card-category">${KINK_CATEGORIES[kink.category_id]?.name || 'Uncategorized'}</p>
-                            <div class="kink-card-indicators">
-                                ${kink.isHighRisk ? ' <span class="risk-indicator-high" title="High Risk">🔥</span>':''}
-                                ${kink.isTaboo && state.userData.settings.showTabooKinks ? ' <span class="risk-indicator-taboo" title="Advanced/Taboo">🚫</span>':''}
-                                <!-- Badge can be added here if desired for cards too -->
-                            </div>
-                        </div>`;
-                });
-                galaxyHTML += `</div></div>`;
-            }
-        }
+        // Render cards using kinksToList
+        kinksToList.sort((a,b) => a.name.localeCompare(b.name)).forEach(kink => {
+            const kinkUserData = getKinkUserData(kink.id);
+            let ratingClass = kinkUserData.rating ? `rating-${kinkUserData.rating.toLowerCase().replace(/[^a-z0-9_]/g, '-').replace(/\s+/g, '-')}` : 'rating-none';
+            galaxyHTML += `
+                <div class="kink-card ${ratingClass}" data-kink-id="${kink.id}">
+                    <h4 class="kink-card-name">${kink.name}</h4>
+                    <p class="kink-card-category">${KINK_CATEGORIES[kink.category_id]?.name || 'Uncategorized'}</p>
+                    <div class="kink-card-indicators">
+                        ${kink.isHighRisk ? ' <span class="risk-indicator-high" title="High Risk">🔥</span>':''}
+                        ${kink.isTaboo && state.userData.settings.showTabooKinks ? ' <span class="risk-indicator-taboo" title="Advanced/Taboo">🚫</span>':''}
+                    </div>
+                </div>`;
+        });
         DOMElements.kinkGalaxyViz.innerHTML = galaxyHTML || `<p class="empty-state-message">No kinks match filters.</p>`;
         DOMElements.kinkGalaxyViz.querySelectorAll('.kink-card').forEach(card => card.addEventListener('click', (e) => {
             const kinkId = e.currentTarget.dataset.kinkId; if (kinkId) openKinkDetailModal(kinkId);
@@ -377,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     customProfileCount++; const div = document.createElement('div'); div.classList.add('profile-checkbox-item');
                     const checkbox = document.createElement('input'); checkbox.type = 'checkbox';
                     checkbox.id = `modal-profile-${profileId}-${kinkId}`; checkbox.dataset.profileId = profileId;
-                    checkbox.checked = profile.kink_ids.includes(kinkId);
+                    checkbox.checked = profile.kink_ids?.includes(kinkId); // Add null check for kink_ids
                     const label = document.createElement('label'); label.htmlFor = checkbox.id;
                     label.classList.add('checkbox-label'); label.textContent = profile.name;
                     div.appendChild(checkbox); div.appendChild(label); DOMElements.modalProfileCheckboxesContainer.appendChild(div);
@@ -401,11 +393,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 DOMElements.modalProfileCheckboxesContainer.querySelectorAll('input[type="checkbox"]').forEach(cb => {
                     const profileId = cb.dataset.profileId;
                     if (state.userData.profiles[profileId]) {
-                        const currentKinkIds = state.userData.profiles[profileId].kink_ids || [];
-                        const kinkIdx = currentKinkIds.indexOf(state.currentOpenKinkId);
-                        if (cb.checked && kinkIdx === -1) { currentKinkIds.push(state.currentOpenKinkId); profilesChanged = true; }
-                        else if (!cb.checked && kinkIdx !== -1) { currentKinkIds.splice(kinkIdx, 1); profilesChanged = true; }
-                        state.userData.profiles[profileId].kink_ids = currentKinkIds;
+                        state.userData.profiles[profileId].kink_ids = state.userData.profiles[profileId].kink_ids || []; // Ensure kink_ids array exists
+                        const kinkIdx = state.userData.profiles[profileId].kink_ids.indexOf(state.currentOpenKinkId);
+                        if (cb.checked && kinkIdx === -1) { state.userData.profiles[profileId].kink_ids.push(state.currentOpenKinkId); profilesChanged = true; }
+                        else if (!cb.checked && kinkIdx !== -1) { state.userData.profiles[profileId].kink_ids.splice(kinkIdx, 1); profilesChanged = true; }
                     }
                 });
             }
@@ -434,7 +425,8 @@ document.addEventListener('DOMContentLoaded', () => {
         DOMElements.summaryFilterCategoryCheckboxes.innerHTML = '';
         if (typeof KINK_CATEGORIES !== 'undefined') {
             for (const catId in KINK_CATEGORIES) {
-                if (state.filteredKinksForDisplay.some(k => k.category_id === catId)) { // Only show cats with available (post-taboo filter) kinks
+                // Only show categories that actually have kinks after global taboo filtering
+                if (state.filteredKinksForDisplay.some(k => k.category_id === catId)) {
                     const cat = KINK_CATEGORIES[catId]; const div = document.createElement('div'); div.classList.add('filter-checkbox-item');
                     const cb = document.createElement('input'); cb.type = 'checkbox'; cb.id = `sum-cat-${catId}`; cb.value = catId;
                     cb.checked = state.userData.settings.summaryFilters.categories.includes(catId);
@@ -471,7 +463,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderSummaryPage() { populateSummaryFilterControls(); renderSummaryForActiveProfile(); }
     function renderSummaryForActiveProfile() { 
         if (!DOMElements.summaryContentArea) return; DOMElements.summaryContentArea.innerHTML = '';
-        applyGlobalKinkFilters(); // Ensure taboo filter is considered for the base list
+        applyGlobalKinkFilters(); 
         let kinksToConsider = getKinksForActiveProfileView();
         let ratedKinksForDisplay = kinksToConsider.filter(kink => getKinkUserData(kink.id).rating);
         const filters = state.userData.settings.summaryFilters;
@@ -490,33 +482,26 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!summaryByRating[rating]) summaryByRating[rating] = [];
             summaryByRating[rating].push({ ...kinkBaseData, ...kinkUserData });
         });
-
         ratingOrder.forEach(ratingKey => {
             if (summaryByRating[ratingKey] && summaryByRating[ratingKey].length > 0) {
-                const rgDetails = document.createElement('details'); // Use details for accordion
+                const rgDetails = document.createElement('details'); 
                 rgDetails.classList.add('summary-rating-group');
-                rgDetails.open = true; // Default to open, or manage state
+                rgDetails.open = true; 
 
                 const rgSummary = document.createElement('summary');
-                const titleText = document.createElement('span');
-                titleText.classList.add('accordion-title-text');
-                titleText.textContent = formatRating(ratingKey);
-                rgSummary.appendChild(titleText);
-
-                const kinkCount = document.createElement('span');
-                kinkCount.classList.add('accordion-kink-count');
-                kinkCount.textContent = `(${summaryByRating[ratingKey].length})`;
-                rgSummary.appendChild(kinkCount);
-                
-                const arrow = document.createElement('span');
-                arrow.classList.add('accordion-arrow');
-                arrow.innerHTML = '▸'; // Right pointing triangle, CSS will rotate
-                rgSummary.appendChild(arrow);
+                const titleText = document.createElement('span'); titleText.classList.add('accordion-title-text'); titleText.textContent = formatRating(ratingKey); rgSummary.appendChild(titleText);
+                const kinkCount = document.createElement('span'); kinkCount.classList.add('accordion-kink-count'); kinkCount.textContent = `(${summaryByRating[ratingKey].length})`; rgSummary.appendChild(kinkCount);
+                const arrow = document.createElement('span'); arrow.classList.add('accordion-arrow'); arrow.innerHTML = '▼'; rgSummary.appendChild(arrow); // Down arrow for open
                 rgDetails.appendChild(rgSummary);
+                rgSummary.addEventListener('click', () => { // Toggle arrow
+                    setTimeout(() => { // Allow <details> open state to update
+                         arrow.innerHTML = rgDetails.open ? '▼' : '▸';
+                    },0);
+                });
+
 
                 const pillsList = document.createElement('div'); 
                 pillsList.classList.add('summary-kink-pills-list', 'summary-kink-list-accordion-content');
-
                 summaryByRating[ratingKey].sort((a,b)=>a.name.localeCompare(b.name)).forEach(kink => {
                     const pill = document.createElement('div'); pill.classList.add('summary-kink-pill'); pill.dataset.kinkId = kink.id;
                     const dot = document.createElement('span'); dot.classList.add('category-dot', `category-dot-${kink.category_id.replace(/[^a-z0-9_]/g, '-')}`); pill.appendChild(dot);
@@ -764,10 +749,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if(DOMElements.createNewProfileBtn) DOMElements.createNewProfileBtn.addEventListener('click', createNewProfile);
         if(DOMElements.profileSelectGalaxy) DOMElements.profileSelectGalaxy.addEventListener('change', handleProfileSelectionChange);
         if(DOMElements.profileSelectSummary) DOMElements.profileSelectSummary.addEventListener('change', handleProfileSelectionChange);
-        if(DOMElements.printSummaryBtn) DOMElements.printSummaryBtn.addEventListener('click', () => window.print());
+        if(DOMElements.printSummaryBtn) DOMElements.printSummaryBtn.addEventListener('click', () => {
+            if(DOMElements.summaryView) DOMElements.summaryView.dataset.printDate = new Date().toLocaleDateString(); // For PDF footer
+            window.print();
+        });
         if(DOMElements.toggleSummaryFiltersBtn) DOMElements.toggleSummaryFiltersBtn.addEventListener('click', () => {
             if(DOMElements.summaryFiltersContainer) {
-                const isHidden = DOMElements.summaryFiltersContainer.style.display === 'none';
+                const isHidden = DOMElements.summaryFiltersContainer.style.display === 'none' || !DOMElements.summaryFiltersContainer.style.display ;
                 DOMElements.summaryFiltersContainer.style.display = isHidden ? 'block' : 'none';
                 DOMElements.toggleSummaryFiltersBtn.textContent = isHidden ? 'Hide Filters' : 'Show Filters';
             }
