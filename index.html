@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kink Atlas - Your Personal Journey</title>
     <link rel="stylesheet" href="css/style.css">
-    <!-- Favicon (optional, but good for polish) -->
+    <!-- Favicon (optional) -->
     <!-- <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon"> -->
 </head>
 <body>
@@ -15,20 +15,27 @@
         <!-- Header/Navigation Area -->
         <header id="main-header">
             <h1>Kink Atlas</h1>
-            <nav id="main-nav">
-                <!-- Navigation buttons will be created by JavaScript -->
-            </nav>
+            <div class="header-controls"> <!-- Wrapper for nav and theme toggle -->
+                <nav id="main-nav">
+                    <!-- Navigation buttons will be created by JavaScript -->
+                </nav>
+                <button id="theme-toggle-btn" title="Toggle Day/Night Mode">
+                    ☀️ <!-- Sun icon for day mode - will be replaced by JS/CSS -->
+                </button>
+            </div>
         </header>
 
-        <!-- Main Content Area (this will change based on the view) -->
+        <!-- Main Content Area -->
         <main id="main-content">
-            <!-- Initial welcome message or default view -->
+            <!-- Welcome View -->
             <section id="welcome-view" class="view active-view">
                 <h2>Welcome to Your Kink Atlas</h2>
                 <p>Embark on a personal journey of exploration and understanding. All your data is stored locally in this browser.</p>
                 <p><strong>Important:</strong> Your Kink Atlas data is saved only in this browser. If you clear your browser data or switch devices, your Atlas will be reset unless you export it.</p>
-                <p>You can manage content preferences (like displaying advanced/higher-risk kinks) and create custom Kink Profiles for sharing in the <button class="inline-nav-btn" data-view-target="settings-view">Settings</button> page.</p>
-                <button id="start-exploring-btn">Start Exploring</button>
+                <p>Manage content preferences and create custom Kink Profiles in <button class="inline-nav-btn" data-view-target="settings-view">Settings</button>.</p>
+                <div class="welcome-actions">
+                    <button id="start-exploring-btn" class="btn-primary">Start Exploring</button>
+                </div>
                 <div class="data-management">
                     <button id="export-data-btn">Export My Atlas Data</button>
                     <label for="import-file-input" class="button-like-label">Import My Atlas Data</label>
@@ -36,7 +43,7 @@
                 </div>
             </section>
 
-            <!-- Kink Galaxy View (hidden by default) -->
+            <!-- Kink Galaxy View -->
             <section id="galaxy-view" class="view">
                 <div class="view-header">
                     <h2>My Kink Galaxy</h2>
@@ -44,51 +51,34 @@
                         <label for="profile-select-galaxy">Viewing Profile:</label>
                         <select id="profile-select-galaxy">
                             <option value="personal">My Personal Atlas</option>
-                            <!-- Options will be populated by JS -->
                         </select>
                     </div>
                 </div>
                 <div id="kink-galaxy-visualization">
                     <p>Loading Kink Galaxy...</p>
                 </div>
-                <!-- Kink Filters placeholder - future feature
-                <div id="kink-filters">
-                    <h4>Filters (Coming Soon)</h4>
-                </div>
-                -->
             </section>
 
-            <!-- Kink Detail Modal (hidden by default, managed by JS) -->
-            <div id="kink-detail-modal" class="modal">
+            <!-- Kink Detail Modal -->
+            <div id="kink-detail-modal" class="modal"> <!-- Ensure this is outside main-content flow if fixed -->
                 <div class="modal-content">
-                    <span class="close-modal-btn">×</span>
+                    <span class="close-modal-btn" title="Close">×</span>
                     <h3 id="modal-kink-name">Kink Name</h3>
                     <p id="modal-kink-category">Category: </p>
-
-                    <div id="modal-kink-description-summary" class="kink-description-summary">
-                        {Kink description summary}
-                    </div>
+                    <div id="modal-kink-description-summary" class="kink-description-summary"></div>
                     <details id="modal-kink-description-details" class="kink-description-details">
                         <summary>More Details & Safety</summary>
-                        <div id="modal-kink-description-full-content">
-                            {Fuller description and safety notes}
-                        </div>
+                        <div id="modal-kink-description-full-content"></div>
                     </details>
-
-                    <div id="modal-kink-rating">
-                        <!-- Rating options populated by JS -->
-                    </div>
+                    <div id="modal-kink-rating"></div>
                     <textarea id="modal-kink-notes" placeholder="My private notes, fantasies, conditions..."></textarea>
-                    
                     <div id="modal-profile-assignment" class="modal-section">
                         <h4>Include in Profiles:</h4>
                         <div id="modal-profile-checkboxes-container">
-                            <p class="no-profiles-note" style="display:none;">No custom profiles created. Visit Settings to add some.</p>
-                            <!-- Profile checkboxes populated by JS -->
+                            <p class="no-profiles-note" style="display:none;">No custom profiles created.</p>
                         </div>
                     </div>
-                    
-                    <button id="save-modal-btn" style="margin-top: 20px;">Save & Close</button>
+                    <button id="save-modal-btn" class="btn-primary modal-save-btn">Save & Close</button>
                 </div>
             </div>
 
@@ -100,28 +90,56 @@
                         <label for="profile-select-summary">Viewing Profile:</label>
                         <select id="profile-select-summary">
                             <option value="personal">My Personal Atlas</option>
-                            <!-- Options populated by JS -->
                         </select>
+                    </div>
+                </div>
+                <div id="summary-filters-container" class="summary-filters">
+                    <h4>Filter Summary By:</h4>
+                    <div class="filter-section">
+                        <legend>Categories:</legend>
+                        <div id="summary-filter-category-checkboxes" class="filter-checkbox-group">
+                            <!-- Category checkboxes populated by JS -->
+                        </div>
+                    </div>
+                    <div class="filter-section">
+                        <legend>Rating Types:</legend>
+                        <div id="summary-filter-rating-checkboxes" class="filter-checkbox-group">
+                            <!-- Rating type checkboxes populated by JS -->
+                        </div>
+                    </div>
+                    <div class="filter-section">
+                        <legend>Other:</legend>
+                        <div class="filter-checkbox-item">
+                            <input type="checkbox" id="summary-filter-has-notes" name="has-notes">
+                            <label for="summary-filter-has-notes" class="checkbox-label">Only Kinks with Notes</label>
+                        </div>
+                    </div>
+                    <div class="filter-actions">
+                        <button id="apply-summary-filters-btn">Apply Filters</button>
+                        <button id="reset-summary-filters-btn" class="btn-secondary">Reset Filters</button>
                     </div>
                 </div>
                 <div class="summary-controls">
                     <button id="print-summary-btn">Print/Save as PDF</button>
-                    <!-- Future: On-screen note style toggle -->
-                    <!-- 
-                    <label for="summary-note-style-toggle">Note Display:</label>
-                    <select id="summary-note-style-toggle">
-                        <option value="icon">Icon Only (Hover for Full)</option>
-                        <option value="brief">Brief Snippet</option>
-                        <option value="full">Full Notes</option>
-                    </select>
-                     -->
                 </div>
                 <div id="summary-content-area">
                     <p>Loading summary...</p>
                 </div>
             </section>
+            
+            <!-- Notes Popover Modal -->
+            <div id="notes-popover-modal" class="modal notes-popover">
+                <div class="modal-content">
+                    <span id="notes-popover-close-btn" class="close-modal-btn" title="Close">×</span>
+                    <h4>Notes for: <span id="notes-popover-kink-name">Kink</span></h4>
+                    <div id="notes-popover-content">
+                        {Notes will appear here}
+                    </div>
+                </div>
+            </div>
 
-            <!-- Academy View (hidden by default) -->
+
+            <!-- Academy View -->
             <section id="academy-view" class="view">
                 <h2>The Academy of Desire</h2>
                 <div id="academy-content-area">
@@ -129,19 +147,21 @@
                 </div>
             </section>
 
-            <!-- Journal View (hidden by default) -->
+            <!-- Journal View -->
             <section id="journal-view" class="view">
                 <h2>My Reflective Chamber</h2>
-                <button id="new-journal-entry-btn">New Journal Entry</button>
+                <div class="journal-actions">
+                    <button id="new-journal-entry-btn" class="btn-primary">New Journal Entry</button>
+                </div>
                 <div id="journal-entries-container">
                     <p>Loading journal entries...</p>
                 </div>
             </section>
 
-            <!-- Settings/About View (hidden by default) -->
+            <!-- Settings/About View -->
             <section id="settings-view" class="view">
                 <h2>Settings & About</h2>
-                <p>Kink Atlas <span id="app-version">v0.1.7</span></p> <!-- Updated version -->
+                <p>Kink Atlas <span id="app-version">v0.1.8</span></p>
                 <p>This app stores all data locally in your browser. No data is sent to any server.</p>
                 
                 <h3 style="margin-top:25px;">Data Management</h3>
@@ -157,25 +177,12 @@
                         <input type="checkbox" id="setting-show-taboo-kinks" name="show-taboo-kinks">
                         <label for="setting-show-taboo-kinks" class="checkbox-label">Display Advanced/Higher-Risk Kinks</label>
                     </div>
-                    <p class="setting-description">Enabling this option will show kinks that may be considered explicit, involve higher psychological/physical risks, or explore themes often considered taboo. Please ensure you are comfortable viewing such content. Your preferences are saved locally.</p>
-                
-                    <!-- Placeholder for Summary Note Style setting -->
-                    <!--
-                    <div class="setting-item" style="margin-top: 15px;">
-                        <label for="setting-summary-note-style" class="select-label">Summary Note Display:</label>
-                        <select id="setting-summary-note-style">
-                            <option value="icon">Icon Only (Hover for Full)</option>
-                            <option value="brief">Brief Snippet</option>
-                            <option value="full">Full Notes Displayed</option>
-                        </select>
-                    </div>
-                    <p class="setting-description">Choose how notes are displayed on the Summary page.</p>
-                    -->
+                    <p class="setting-description">Enabling this will show kinks that may be explicit, high-risk, or explore taboo themes. View with discretion. Preferences are saved locally.</p>
                 </div>
                 
                 <h3 style="margin-top:25px;">Manage Kink Profiles</h3>
                 <div id="profile-management-area" class="settings-group">
-                    <p>Create and manage custom profiles (e.g., for sharing with partners or friends). The "My Personal Atlas" profile always shows all your rated kinks based on content settings.</p>
+                    <p>Create custom profiles (e.g., for sharing). "My Personal Atlas" always shows all your rated kinks based on content settings.</p>
                     <div class="profile-creation-form">
                         <input type="text" id="new-profile-name" placeholder="New Profile Name (e.g., Shareable)">
                         <button id="create-new-profile-btn">Create Profile</button>
@@ -183,7 +190,6 @@
                     <h4>Existing Custom Profiles:</h4>
                     <ul id="existing-profiles-list">
                         <li class="no-custom-profiles-note" style="display:list-item;">No custom profiles created yet.</li>
-                        <!-- List of profiles with delete buttons will be populated by JS -->
                     </ul>
                 </div>
 
@@ -192,14 +198,12 @@
                     <p>Theme selection will be available here in a future update.</p>
                 </div>
             </section>
-
         </main>
 
         <footer id="main-footer">
             <p>© <span id="current-year">2024</span> Kink Atlas. For personal exploration.</p>
         </footer>
-
-    </div> <!-- /#app-container -->
+    </div> 
 
     <script src="js/data.js"></script>
     <script src="js/app.js"></script>
