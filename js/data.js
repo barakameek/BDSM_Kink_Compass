@@ -291,22 +291,7 @@ const KINK_DEFINITIONS = [
         description: "Using UNLOADED firearms (with extreme caution and verification) or, much more safely, clearly identifiable, non-functional PROPS (e.g., blue guns, brightly colored toy guns, airsoft with no ammo/gas) in roleplay scenarios, often involving threat, power dynamics, or specific character play. Real firearms are EXTREMELY DANGEROUS.",
         common_terms: ["Threat play with (prop) firearm", "Hostage RP"], safety_notes: ["SAFEST: ONLY use clearly identifiable, non-functional props or dedicated training weapons. Brightly colored toys are even better to avoid any ambiguity or alarm if seen by others.", "If using a real firearm (STRONGLY DISCOURAGED for play), it must be rigorously verified as unloaded by multiple people, magazine removed, chamber cleared, and safety on. Store ammunition completely separately in a locked container. This practice is still exceptionally risky due to potential for error/complacency.", "NEVER point any firearm (real or prop) at someone unless all parties have explicitly consented to this specific form of play and understand all safety rules.", "Always treat any firearm as if it were loaded, even props, regarding muzzle direction when not actively in a negotiated scene.", "Finger off the trigger until ready to 'fire' (even with props).", "Be aware of legalities regarding props that look like real firearms in your location.", "Psychological impact of threat play needs aftercare."], common_misconceptions: ["It's safe if you 'know' it's unloaded (Negligence and assumptions kill. Props are far safer).", "Toy guns are childish (For safety in this play, obvious toys/props are best)."], related_kinks_ids: ["fear_play_01", "interrogation_rp_01", "power_exchange"]
     },
-    { 
-        id: "asphyxiation_non_neck_01", name: "Asphyxiation (Non-Neck Constriction)", category_id: "edge_play", isHighRisk: true,
-        description: "Restricting breath through means other than direct neck pressure, e.g., chest compression, covering airways with plastic (bag play - EXTREMELY DANGEROUS).",
-        common_terms: ["Bag play", "Vacuum bed (can restrict breathing)"],
-        safety_notes: ["ALL breath play warnings apply.", "High risk of rapid hypoxia and death.", "Never alone.", "Constant monitoring, immediate release mechanism.", "Plastic bags are exceptionally dangerous.", "Vacuum beds require careful monitoring of air supply and pressure."],
-        common_misconceptions: ["Safer than neck constriction (Can be just as, or more, dangerous)."],
-        related_kinks_ids: ["breath_play_01", "mummification_01", "sensory_deprivation_01"]
-    },
-    {
-        id: "water_boarding_simulated_01", name: "Water Boarding (Simulated)", category_id: "edge_play", isHighRisk:true,
-        description: "Simulating waterboarding by pouring water over the face/cloth covering airways. EXTREMELY DANGEROUS, high risk of actual drowning/lung damage even in simulation. Often considered too risky by most.",
-        common_terms: [],
-        safety_notes: ["Many consider this UNPLAYABLE SAFELY.", "Requires expert medical knowledge and immediate resuscitation capabilities ON HAND to even attempt a 'simulation'.", "Risk of water aspiration, laryngospasm, panic, death is severe.", "Not recommended for play."],
-        common_misconceptions: ["Can be simulated safely by amateurs (Extremely false)."],
-        related_kinks_ids: ["fear_play_01", "breath_play_01", "edge_play"]
-    },
+
     // --- FLUID PLAY (4) ---
     // Note: Description of "Watersports" modified to be less explicit for AI generation, but you can adjust.
     {
@@ -669,47 +654,7 @@ const KINK_DEFINITIONS = [
 
     // More Spiritual/Ritual
     {id: "body_painting_ritual_01", name: "Ritualistic Body Painting/Marking", category_id: "spiritual_ritual", description: "Detailed description (using paints or temporary markings on the body as part of a ritual or symbolic act)...", common_terms: [], safety_notes: ["Skin-safe paints. Allergies. Consent for designs/symbols..."], common_misconceptions: [], related_kinks_ids: ["ritualistic_bdsm_01", "body_worship_01"]},
- // --- ENDURANCE & ORDEALS (5) ---
-    {
-        id: "end_pain_01", name: "Pain Endurance Challenges", category_id: "endurance_ordeals", isHighRisk: true,
-        description: "Structured scenes focused on withstanding increasing or prolonged levels of pain as a test of will, devotion, or for achieving altered states.",
-        common_terms: ["Ordeal play", "Pain slut/masochist (self-identified)"],
-        safety_notes: ["Negotiate types and limits of pain VERY clearly.", "Constant monitoring for signs of going beyond safe limits (e.g., shock, dissociation, non-responsive).", "Safewords absolutely critical and must be easily usable.", "Hydration and ability to rest/recover.", "Distinguish between 'good pain' and 'bad pain'.", "Aftercare is vital for physical and emotional recovery."],
-        common_misconceptions: ["Masochists feel no pain (They process it differently or find pleasure/meaning in it)."],
-        related_kinks_ids: ["impact_play_general_01", "sensation_play_general_01", "edge_play"]
-    },
-    {
-        id: "end_positional_01", name: "Positional Endurance / Stress Positions", category_id: "endurance_ordeals", isHighRisk: true,
-        description: "Requiring a partner to hold uncomfortable or physically challenging positions for extended periods.",
-        common_terms: ["Stress holds"],
-        safety_notes: ["Risk of muscle strain, joint injury, nerve compression, or circulation issues.", "Set clear time limits or signals for breaks/release.", "Avoid positions that put extreme stress on joints or restrict breathing.", "Monitor for signs of distress (numbness, cramping, dizziness).", "Allow for safe release and recovery.", "Not for individuals with pre-existing joint/muscle conditions without care."],
-        common_misconceptions: ["Just about willpower (Physical limits are real)."],
-        related_kinks_ids: ["bondage", "power_exchange"]
-    },
-    {
-        id: "end_sleep_dep_01", name: "Sleep Deprivation (Consensual, Limited)", category_id: "endurance_ordeals", isHighRisk: true,
-        description: "Intentionally depriving a partner of sleep for a negotiated, limited period as part of a power dynamic or endurance play. Can lead to altered states, vulnerability.",
-        common_terms: [],
-        safety_notes: ["Significant health risks with prolonged sleep deprivation (cognitive impairment, mood swings, hallucinations, weakened immune system).", "Keep durations SHORT (e.g., one night, not multiple days).", "Clear agreement on limits and purpose.", "Constant check-ins on mental and physical state.", "Ensure adequate recovery sleep afterwards.", "Not for individuals with mental health conditions that could be exacerbated.", "Avoid if driving or operating machinery is required soon after."],
-        common_misconceptions: ["A little lost sleep is no big deal (Effects can be serious quickly)."],
-        related_kinks_ids: ["power_exchange", "psychological", "edge_play"]
-    },
-    {
-        id: "end_exposure_01", name: "Exposure to Elements (Consensual, Controlled)", category_id: "endurance_ordeals", isHighRisk: true,
-        description: "Consensual, controlled exposure to uncomfortable environmental conditions like cold, heat (not fire play), or wetness for sensation or endurance.",
-        common_terms: ["Cold play", "Heat play"],
-        safety_notes: ["Risk of hypothermia (cold) or hyperthermia/heat stroke (heat) is very real.", "Monitor core body temperature and signs of distress (shivering, dizziness, confusion, rapid pulse).", "Strict time limits.", "Have warming/cooling measures readily available.", "Hydration is crucial, especially with heat/sweat.", "Protect sensitive skin.", "Not for individuals with medical conditions affected by temperature extremes."],
-        common_misconceptions: ["It's just like being outside (Controlled setting but risks are amplified)."],
-        related_kinks_ids: ["sensation_play_general_01", "bondage", "edge_play"]
-    },
-    {
-        id: "end_task_01", name: "Task Endurance / Repetitive Tasks", category_id: "endurance_ordeals",
-        description: "Assigning repetitive, mundane, or physically/mentally tiring tasks to be completed as a form of service, discipline, or to induce a specific mental state.",
-        common_terms: ["Lines (writing)", "Counting grains of rice"],
-        safety_notes: ["Risk of repetitive strain injury; allow for breaks and ergonomic setup if possible.", "Ensure tasks are not genuinely harmful or impossible.", "Negotiate purpose (e.g., focus, meditation, 'punishment').", "Psychological impact of boredom or frustration.", "Define completion criteria clearly."],
-        common_misconceptions: ["Pointless (Can have symbolic meaning or psychological effects)."],
-        related_kinks_ids: ["power_exchange", "protocol_play_01", "psychological"]
-    }
+
     // Adding a few more placeholders to get closer to 80
     // You'll need to categorize and detail these:
     {id: "asphyxiation_breath_control_01", name: "Breath Control (Non-Neck)", category_id: "edge_play", isHighRisk:true, description: "Controlling breath via means other than direct neck pressure, e.g., gags combined with hoods, plastic bags (EXTREMELY DANGEROUS).", common_terms: [], safety_notes: ["See Breath Play. High risk of hypoxia. Never alone. Constant monitoring."], related_kinks_ids: ["breath_play_01", "sensory_deprivation_01"]},
