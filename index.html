@@ -86,14 +86,14 @@
                 <div id="summary-filters-container" class="summary-filters" style="display: none;"> <!-- Hidden by default -->
                     <h4>Filter Summary By:</h4>
                     <fieldset class="filter-section">
-                        <legend>Categories:</legend>
+                        <legend id="filter-cat-legend">Categories:</legend> <!-- Added id for aria-labelledby -->
                         <div id="summary-filter-category-checkboxes" class="filter-checkbox-group" role="group" aria-labelledby="filter-cat-legend">
                             <!-- Category checkboxes populated by JS -->
                             <p>Loading categories...</p>
                         </div>
                     </fieldset>
                     <fieldset class="filter-section">
-                        <legend>Rating Types:</legend>
+                        <legend id="filter-rating-legend">Rating Types:</legend> <!-- Added id for aria-labelledby -->
                         <div id="summary-filter-rating-checkboxes" class="filter-checkbox-group" role="group" aria-labelledby="filter-rating-legend">
                             <!-- Rating type checkboxes populated by JS -->
                             <p>Loading ratings...</p>
@@ -102,7 +102,7 @@
                     <fieldset class="filter-section">
                         <legend>Other:</legend>
                         <div class="filter-checkbox-item">
-                            <input type="checkbox" id="summary-filter-has-notes" name="has-notes">
+                            <input type="checkbox" id="summary-filter-has-notes" name="has-notes" class="visually-hidden-checkbox">
                             <label for="summary-filter-has-notes" class="checkbox-label">Only Kinks with Notes</label>
                         </div>
                     </fieldset>
@@ -157,7 +157,7 @@
                 <h3 style="margin-top:25px;">Content Preferences</h3>
                 <div class="settings-group">
                     <div class="setting-item">
-                        <input type="checkbox" id="setting-show-taboo-kinks" name="show-taboo-kinks" class="visually-hidden-checkbox"> <!-- Class for JS to target actual checkbox -->
+                        <input type="checkbox" id="setting-show-taboo-kinks" name="show-taboo-kinks" class="visually-hidden-checkbox">
                         <label for="setting-show-taboo-kinks" class="checkbox-label">Display Advanced/Higher-Risk Kinks</label>
                     </div>
                     <p class="setting-description">Enabling this will show kinks that may be explicit, involve higher risk, or explore taboo themes. Please view with discretion and ensure you understand the implications before engaging.</p>
@@ -177,12 +177,22 @@
                     </ul>
                 </div>
 
+                <!-- === DANGER ZONE AREA === -->
+                <h3 style="margin-top:25px; color: var(--danger-color);">Danger Zone</h3>
+                <div class="settings-group danger-zone-group">
+                    <p class="setting-description">These actions are irreversible. Ensure you have exported your data if you wish to keep a backup.</p>
+                    <button id="delete-all-data-btn" class="btn-danger">Reset Kink Atlas (Delete All Data)</button>
+                    <p class="setting-description" style="margin-top: 5px;">This will remove all your ratings, notes, profiles, journal entries, and settings from this browser.</p>
+                </div>
+                <!-- === END DANGER ZONE AREA  === -->
+
                  <h3 style="margin-top:25px;">About & Credits</h3>
                 <div class="settings-group">
                     <p>Kink Atlas is a tool for personal exploration and education. It is not a substitute for professional advice or therapy.</p>
                     <p>Inspired by various kink listing projects and the desire for a private, customizable tool.</p>
                     <p>Fonts used: Nunito, Open Sans, Great Vibes, EB Garamond via Google Fonts.</p>
                     <!-- Add any other credits or links here -->
+                    <p>Developed with care. Explore responsibly.</p>
                 </div>
             </section>
         </main>
@@ -219,6 +229,7 @@
                 <legend>My Rating:</legend>
                 <div id="modal-kink-rating" role="radiogroup" aria-label="Select your rating for this kink">
                     <!-- Rating buttons populated by JS -->
+                    <p>Loading ratings...</p>
                 </div>
             </fieldset>
             <div class="modal-section">
@@ -250,7 +261,8 @@
     <!-- ======================= -->
     <!-- === SCRIPTS         === -->
     <!-- ======================= -->
-    <script src="js/data.js"></script> <!-- KINK_DEFINITIONS, KINK_CATEGORIES, etc. -->
-    <script src="js/app.js"></script>   <!-- Main application logic -->
+    <!-- Ensure data.js (defining KINK_DEFINITIONS etc.) is loaded BEFORE app.js -->
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
