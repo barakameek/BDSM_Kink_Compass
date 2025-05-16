@@ -849,3 +849,32 @@ input[type="checkbox"]:focus + .checkbox-label::before { box-shadow: 0 0 0 3px v
     border: 0 !important;
     padding: 0 !important;
 }
+.modal.active #kink-detail-modal .modal-content {
+    opacity: 1; /* SHOULD BE THIS */
+    transform: scale(1); /* For desktop centered version */
+    /* OR for mobile bottom sheet: */
+    /* transform: translateY(0); */
+    animation: zoomInModal 0.3s var(--transition-timing) 0.1s forwards; /* This animation should also set opacity to 1 and transform to its final state */
+}
+
+/* And for mobile specifically: */
+@media (max-width: 768px) {
+    .modal.active #kink-detail-modal.modal-bottom-sheet .modal-content {
+        animation: slideUpModal 0.35s var(--transition-timing) forwards;
+        opacity: 1; /* Explicitly ensure opacity */
+        transform: translateY(0); /* Explicitly ensure transform */
+    }
+}
+@keyframes zoomInModal {
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1); /* If it's a centered modal */
+        /* or simply transform: scale(1); if translate is handled by flexbox parent */
+    }
+}
+@keyframes slideUpModal {
+    to {
+        transform: translateY(0);
+        opacity: 1; /* Ensure opacity is set here too if it starts at 0 */
+    }
+}
