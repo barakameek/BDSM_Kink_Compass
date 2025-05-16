@@ -80,7 +80,7 @@
                     </div>
                 </div>
                 <div class="summary-controls">
-                     <button id="toggle-summary-filters-btn" class="btn-secondary">Show Filters [+▼]</button> <!-- Icon indicates state -->
+                     <button id="toggle-summary-filters-btn" class="btn-secondary" aria-expanded="false">Show Filters [+▼]</button> <!-- Icon indicates state -->
                      <button id="print-summary-btn" class="btn-primary">Print Certificate</button>
                 </div>
                 <div id="summary-filters-container" class="summary-filters" style="display: none;"> <!-- Hidden by default -->
@@ -217,40 +217,57 @@
     <!-- ======================= -->
     <!-- === MODALS          === -->
     <!-- ======================= -->
-    <!-- Kink Detail Modal -->
-    <div id="kink-detail-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-kink-name" style="display: none;">
+    <!-- Kink Detail Modal (Reimagined as a Bottom Sheet for Mobile) -->
+    <div id="kink-detail-modal" class="modal modal-bottom-sheet" role="dialog" aria-modal="true" aria-labelledby="modal-kink-name-mobile" style="display: none;">
+        <div class="modal-overlay"></div> <!-- Added for background click-to-close -->
         <div class="modal-content">
-            <button class="close-modal-btn" title="Close" aria-label="Close Kink Detail Modal">×</button>
-            <h3 id="modal-kink-name">Kink Name</h3> <!-- This will be the accessible name for the modal -->
-            <p id="modal-kink-category" class="text-muted">Category: Loading...</p>
-            <div id="modal-kink-description-summary" class="kink-description-summary scrollable-content">
-                <p>Loading description...</p>
-            </div>
-            <details id="modal-kink-description-details" class="kink-description-details">
-                <summary>More Details & Safety Considerations</summary>
-                <div id="modal-kink-description-full-content" class="scrollable-content">
-                    <p>Loading full details...</p>
+            <header class="modal-header">
+                <h3 id="modal-kink-name-mobile">Kink Name</h3> <!-- Mobile-specific ID if needed, or reuse -->
+                <button class="close-modal-btn" title="Close" aria-label="Close Kink Detail Modal">×</button>
+            </header>
+
+            <div class="modal-body scrollable-content"> <!-- Main scrollable area -->
+                <p id="modal-kink-category" class="text-muted modal-meta-info">Category: Loading...</p>
+
+                <div class="modal-section">
+                    <h4>Summary</h4>
+                    <div id="modal-kink-description-summary" class="kink-description-summary">
+                        <p>Loading description...</p>
+                    </div>
                 </div>
-            </details>
-            <fieldset class="modal-section">
-                <legend>My Rating:</legend>
-                <div id="modal-kink-rating" role="radiogroup" aria-label="Select your rating for this kink">
-                    <!-- Rating buttons populated by JS -->
-                    <p>Loading ratings...</p>
+
+                <details id="modal-kink-description-details" class="kink-description-details modal-section">
+                    <summary>More Details & Safety</summary>
+                    <div id="modal-kink-description-full-content">
+                        <p>Loading full details...</p>
+                    </div>
+                </details>
+
+                <fieldset class="modal-section">
+                    <legend>My Rating:</legend>
+                    <div id="modal-kink-rating" class="modal-rating-grid" role="radiogroup" aria-label="Select your rating for this kink">
+                        <!-- Rating buttons populated by JS -->
+                        <p>Loading ratings...</p>
+                    </div>
+                </fieldset>
+
+                <div class="modal-section">
+                    <label for="modal-kink-notes">My Private Notes:</label>
+                    <textarea id="modal-kink-notes" placeholder="Fantasies, experiences, conditions, limits..." aria-label="Private notes for this kink"></textarea>
                 </div>
-            </fieldset>
-            <div class="modal-section">
-                <label for="modal-kink-notes">My Private Notes:</label>
-                <textarea id="modal-kink-notes" placeholder="Fantasies, experiences, conditions, limits..." aria-label="Private notes for this kink"></textarea>
-            </div>
-            <div id="modal-profile-assignment" class="modal-section" style="display: none;"> <!-- Hidden if no profiles -->
-                <h4>Include this Kink in Profiles:</h4>
-                <div id="modal-profile-checkboxes-container" role="group" aria-label="Select profiles to include this kink in">
-                    <p class="no-profiles-note" style="display:none;">No custom profiles have been created yet.</p>
-                    <!-- Profile checkboxes populated by JS -->
+
+                <div id="modal-profile-assignment" class="modal-section" style="display: none;">
+                    <h4>Include in Profiles:</h4>
+                    <div id="modal-profile-checkboxes-container" role="group" aria-label="Select profiles to include this kink in">
+                        <p class="no-profiles-note" style="display:none;">No custom profiles have been created yet.</p>
+                        <!-- Profile checkboxes populated by JS -->
+                    </div>
                 </div>
-            </div>
-            <button id="save-modal-btn" class="btn-primary modal-save-btn">Save & Close</button>
+            </div> <!-- End modal-body -->
+
+            <footer class="modal-footer">
+                <button id="save-modal-btn" class="btn-primary modal-save-btn">Save & Close</button>
+            </footer>
         </div>
     </div>
 
