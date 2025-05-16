@@ -1,4 +1,4 @@
-/* Kink Atlas - css/style.css - Playful & Polished Expression Theme - Top Navigation - FINAL FULL VERSION */
+/* Kink Atlas - css/style.css - Playful & Polished Expression Theme - Top Navigation - REVISED VERSION */
 
 /* --- FONT IMPORT --- */
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Open+Sans:wght@400;600&family=Great+Vibes&family=EB+Garamond&display=swap');
@@ -6,37 +6,51 @@
 /* --- THEME VARIABLES --- */
 :root {
     /* Dark Theme (Default) */
-    --primary-accent-dark: #ff69b4; 
-    --secondary-accent-dark: #ff85c6; 
-    --accent-color-dark: #ff6b6b;   
-    --text-color-dark: #e0e6f0;     
-    --text-color-headings-dark: #f5f5f5; 
-    --text-color-muted-dark: #a0aec0;  
-    --bg-main-dark: #2d3748;       
-    --bg-panel-dark: #4a5568;       
-    --bg-element-dark: #718096;     
-    --border-color-dark: #5a6578;   
+    --primary-accent-dark: #ff69b4; /* Hot Pink */
+    --primary-accent-dark-rgb: 255, 105, 180; /* FIXED: RGB for rgba() */
+    --secondary-accent-dark: #ff85c6; /* Lighter Hot Pink */
+    --accent-color-dark: #ff6b6b;   /* Coral Red */
+    --text-color-dark: #e0e6f0;     /* Light Grey/Blue */
+    --text-color-headings-dark: #f5f5f5; /* Off-white */
+    --text-color-muted-dark: #a0aec0;  /* Medium Grey/Blue */
+    --bg-main-dark: #2d3748;       /* Dark Slate Blue */
+    --bg-panel-dark: #4a5568;       /* Medium Slate Blue */
+    --bg-element-dark: #718096;     /* Light Slate Blue */
+    --border-color-dark: #5a6578;   /* Slate Grey */
     --modal-bg-overlay-dark: rgba(26, 32, 44, 0.85);
-    --shadow-color-umbra-dark: rgba(0,0,0,0.2); 
+    --shadow-color-umbra-dark: rgba(0,0,0,0.2);
     --shadow-color-penumbra-dark: rgba(0,0,0,0.14);
+    --success-color-dark: #28a745; /* Green for success/Favorite */
+    --info-color-dark: #17a2b8;    /* Teal for info/Like It */
+    --warning-color-dark: #ffc107; /* Yellow for warning/Curious */
+    --danger-color-dark: #dc3545;   /* Red for danger/Hard Limit */
+    --neutral-color-dark: #6c757d; /* Grey for neutral/Not For Me */
 
     /* Light Theme */
-    --primary-accent-light: #f670a0; 
-    --secondary-accent-light: #f88cb7;
-    --accent-color-light: #e74c3c;   
-    --text-color-light: #2d3748;     
-    --text-color-headings-light: #1a202c; 
-    --text-color-muted-light: #718096;  
-    --bg-main-light: #f7fafc;         
-    --bg-panel-light: #ffffff;       
-    --bg-element-light: #e2e8f0;     
-    --border-color-light: #cbd5e0;   
+    --primary-accent-light: #f670a0; /* Softer Pink */
+    --primary-accent-light-rgb: 246, 112, 160; /* FIXED: RGB for rgba() */
+    --secondary-accent-light: #f88cb7;/* Lighter Softer Pink */
+    --accent-color-light: #e74c3c;   /* Softer Red */
+    --text-color-light: #2d3748;     /* Dark Slate Blue (for text) */
+    --text-color-headings-light: #1a202c; /* Very Dark Blue/Black */
+    --text-color-muted-light: #718096;  /* Medium Slate Blue (for muted text) */
+    --bg-main-light: #f7fafc;         /* Very Light Grey/Blue */
+    --bg-panel-light: #ffffff;       /* White */
+    --bg-element-light: #e2e8f0;     /* Light Grey */
+    --border-color-light: #cbd5e0;   /* Medium Light Grey */
     --modal-bg-overlay-light: rgba(74, 85, 104, 0.75);
     --shadow-color-umbra-light: rgba(0,0,0,0.1);
     --shadow-color-penumbra-light: rgba(0,0,0,0.05);
+    --success-color-light: #218838; /* Darker Green for light theme contrast */
+    --info-color-light: #138496;    /* Darker Teal */
+    --warning-color-light: #e0a800; /* Darker Yellow */
+    --danger-color-light: #c82333;   /* Darker Red */
+    --neutral-color-light: #5a6268; /* Darker Grey */
 
-    /* Default to Dark Theme Variables */
+
+    /* Default to Dark Theme Variables (Generic names) */
     --primary-accent: var(--primary-accent-dark);
+    --primary-accent-rgb: var(--primary-accent-dark-rgb);
     --secondary-accent: var(--secondary-accent-dark);
     --accent-color: var(--accent-color-dark);
     --text-main: var(--text-color-dark);
@@ -49,16 +63,22 @@
     --modal-overlay-bg: var(--modal-bg-overlay-dark);
     --shadow-umbra: var(--shadow-color-umbra-dark);
     --shadow-penumbra: var(--shadow-color-penumbra-dark);
+    --success-color: var(--success-color-dark);
+    --info-color: var(--info-color-dark);
+    --warning-color: var(--warning-color-dark);
+    --danger-color: var(--danger-color-dark);
+    --neutral-color: var(--neutral-color-dark);
 
-    /* Rating specific colors & icons */
-    --rating-icon-favorite: '❤️'; --rating-bg-favorite: #28a745; --rating-text-favorite: white;
-    --rating-icon-want-to-try: '✨'; --rating-bg-want-to-try: #007bff; --rating-text-want-to-try: white;
-    --rating-icon-like-it: '👍'; --rating-bg-like-it: #17a2b8; --rating-text-like-it: white;
-    --rating-icon-curious-about: '👀'; --rating-bg-curious-about: #ffc107; --rating-text-curious-about: #2d3748;
-    --rating-icon-soft-limit: '☁️'; --rating-bg-soft-limit: #fd7e14; --rating-text-soft-limit: white;
-    --rating-icon-hard-limit: '🛑'; --rating-bg-hard-limit: #dc3545; --rating-text-hard-limit: white;
-    --rating-icon-not-for-me: '🚫'; --rating-bg-not-for-me: #6c757d; --rating-text-not-for-me: white;
-    
+
+    /* Rating specific colors & icons (Icons remain, colors now use general semantic variables) */
+    --rating-icon-favorite: '❤️';      --rating-bg-favorite: var(--success-color);       --rating-text-favorite: white;
+    --rating-icon-want-to-try: '✨';   --rating-bg-want-to-try: var(--primary-accent);   --rating-text-want-to-try: white; /* Kept primary for this special one */
+    --rating-icon-like-it: '👍';       --rating-bg-like-it: var(--info-color);           --rating-text-like-it: white;
+    --rating-icon-curious-about: '👀'; --rating-bg-curious-about: var(--warning-color);  --rating-text-curious-about: var(--text-color-headings-light); /* Dark text on yellow */
+    --rating-icon-soft-limit: '☁️';    --rating-bg-soft-limit: #fd7e14;                  --rating-text-soft-limit: white; /* Specific Orange */
+    --rating-icon-hard-limit: '🛑';    --rating-bg-hard-limit: var(--danger-color);        --rating-text-hard-limit: white;
+    --rating-icon-not-for-me: '🚫';    --rating-bg-not-for-me: var(--neutral-color);      --rating-text-not-for-me: white;
+
     /* Category specific colors (for dots in summary) */
     --category-color-impact: #e53e3e; --category-color-bondage: #3182ce; --category-color-power_exchange: #805ad5;
     --category-color-sensation: #dd6b20; --category-color-psychological: #2f855a; --category-color-edge_play: #c53030;
@@ -68,20 +88,34 @@
     --category-color-spiritual_ritual: #16a085; --category-color-endurance_ordeals: #a0aec0; --category-color-taboo_conceptual: #4a5568;
     --category-color-default: #a0aec0;
 
+    /* Fonts */
     --font-body: 'Open Sans', sans-serif;
     --font-heading: 'Nunito', sans-serif;
-    --font-certificate-title: 'Great Vibes', cursive; 
-    --font-certificate-body: 'EB Garamond', serif; 
+    --font-certificate-title: 'Great Vibes', cursive;
+    --font-certificate-body: 'EB Garamond', serif;
 
+    /* Sizes & Transitions */
     --header-height-main: 65px;
-    --border-radius: 8px; 
-    --transition-main: 0.2s ease-in-out;
+    --border-radius-small: 4px; /* FIXED: Added */
+    --border-radius: 8px;
+    --border-radius-medium: 12px; /* FIXED: Added, adjusted from 'large' */
+    --border-radius-large: 16px; /* FIXED: Added, was previously undefined 'large' */
+    --transition-duration: 0.25s; /* Standardized duration */
+    --transition-timing: ease-in-out; /* Standardized timing */
+    --transition-main: all var(--transition-duration) var(--transition-timing); /* Shortened */
+
+    /* Shadows */
+    --box-shadow-light: 0 2px 4px -1px var(--shadow-umbra), 0 1px 2px -1px var(--shadow-penumbra); /* Softer */
     --box-shadow-main: 0 4px 6px -1px var(--shadow-umbra), 0 2px 4px -1px var(--shadow-penumbra);
+    --box-shadow-medium: 0 6px 10px -3px var(--shadow-umbra), 0 4px 8px -2px var(--shadow-penumbra); /* FIXED: Added */
+    --box-shadow-heavy: 0 10px 15px -3px var(--shadow-umbra), 0 4px 6px -2px var(--shadow-penumbra);
+    --focus-ring-color: rgba(var(--primary-accent-rgb), 0.3); /* For focus states */
 }
 
 /* Light Theme Class */
 body.light-theme {
     --primary-accent: var(--primary-accent-light);
+    --primary-accent-rgb: var(--primary-accent-light-rgb);
     --secondary-accent: var(--secondary-accent-light);
     --accent-color: var(--accent-color-light);
     --text-main: var(--text-color-light);
@@ -94,242 +128,495 @@ body.light-theme {
     --modal-overlay-bg: var(--modal-bg-overlay-light);
     --shadow-umbra: var(--shadow-color-umbra-light);
     --shadow-penumbra: var(--shadow-color-penumbra-light);
-    --rating-text-curious-about: #212529;
-    --rating-text-not-for-me: #212529;
-    --category-color-taboo_conceptual: #718096;
+    --success-color: var(--success-color-light);
+    --info-color: var(--info-color-light);
+    --warning-color: var(--warning-color-light);
+    --danger-color: var(--danger-color-light);
+    --neutral-color: var(--neutral-color-light);
+
+    /* Specific overrides for light theme text on colored backgrounds */
+    --rating-text-curious-about: var(--text-color-headings-light);
+    --rating-text-not-for-me: var(--text-color-headings-dark); /* White text on this grey for better contrast in light */
+    --category-color-taboo_conceptual: #718096; /* Ensure this remains distinct */
 }
 
+/* --- GLOBAL RESET & BASE STYLES --- */
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; font-size: 16px; }
+html { scroll-behavior: smooth; font-size: 16px; } /* Base font size */
 body {
-    font-family: var(--font-body); background-color: var(--body-bg-color); color: var(--text-main);
-    line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh;
-    overflow-x: hidden; font-weight: 400; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
-    transition: background-color var(--transition-main), color var(--transition-main);
+    font-family: var(--font-body);
+    background-color: var(--body-bg-color);
+    color: var(--text-main);
+    line-height: 1.65; /* Slightly more generous line height */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden; /* Use with caution, fix overflow causes if possible */
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color var(--transition-duration) var(--transition-timing), color var(--transition-duration) var(--transition-timing);
 }
-::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar { width: 10px; height: 10px; } /* Slightly wider scrollbar */
 ::-webkit-scrollbar-track { background: var(--body-bg-color); }
-::-webkit-scrollbar-thumb { background: var(--element-bg-color); border-radius: var(--border-radius); }
+::-webkit-scrollbar-thumb { background: var(--element-bg-color); border-radius: var(--border-radius-small); border: 2px solid var(--body-bg-color); } /* Added border for definition */
 ::-webkit-scrollbar-thumb:hover { background: var(--main-border-color); }
 
-#app-container { width: 100%; max-width: 1600px; margin: 0 auto; display: flex; flex-direction: column; flex-grow: 1; }
+#app-container {
+    width: 100%;
+    max-width: 1600px; /* Max width for very large screens */
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
 
 /* --- TYPOGRAPHY --- */
-h1, h2, h3, h4 {
-    font-family: var(--font-heading); color: var(--text-headings); margin-bottom: 0.75em;
-    line-height: 1.25; font-weight: 700;
+h1, h2, h3, h4, h5, h6 { /* Added h5, h6 */
+    font-family: var(--font-heading);
+    color: var(--text-headings);
+    margin-bottom: 0.75em;
+    line-height: 1.3; /* Consistent line height for headings */
+    font-weight: 700;
 }
-h1 { font-size: 2.4rem; font-weight: 900; } 
-h2.view-title-main { font-size: 2rem; margin-bottom: 25px; text-align: center; font-weight: 900; color: var(--primary-accent); } 
-h3 { font-size: 1.5rem; color: var(--primary-accent); font-weight: 700; } 
-h4 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5em;}
-a { color: var(--primary-accent); text-decoration: none; transition: color var(--transition-main); font-weight: 600; }
-a:hover { color: var(--secondary-accent); text-decoration: underline; }
-p { margin-bottom: 1.1em; }
+h1 { font-size: clamp(2rem, 5vw, 2.6rem); font-weight: 900; } /* Responsive font size */
+h2 { font-size: clamp(1.8rem, 4vw, 2.2rem); font-weight: 900; }
+h3 { font-size: clamp(1.4rem, 3.5vw, 1.7rem); color: var(--primary-accent); font-weight: 700; }
+h4 { font-size: clamp(1.1rem, 3vw, 1.3rem); font-weight: 700; margin-bottom: 0.5em; }
+h5 { font-size: clamp(1rem, 2.5vw, 1.1rem); font-weight: 600; color: var(--text-muted); }
+h6 { font-size: clamp(0.9rem, 2vw, 1rem); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+
+
+a {
+    color: var(--primary-accent);
+    text-decoration: none;
+    transition: color var(--transition-duration) var(--transition-timing), text-decoration-color var(--transition-duration) var(--transition-timing);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: transparent; /* Underline appears on hover */
+}
+a:hover, a:focus { /* Added focus state */
+    color: var(--secondary-accent);
+    text-decoration-color: var(--secondary-accent); /* Show underline */
+    outline: none; /* Use custom focus if needed, or rely on browser default for links */
+}
+p { margin-bottom: 1.2em; max-width: 75ch; /* Improved readability for paragraphs */ }
 
 /* --- MAIN HEADER & TOP NAVIGATION --- */
 #main-header {
-    background-color: var(--panel-bg-color); 
-    padding: 0 25px; height: var(--header-height-main);
-    display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 1px solid var(--main-border-color); box-shadow: var(--box-shadow-main);
-    position: sticky; top: 0; z-index: 900;
-    transition: background-color var(--transition-main), border-color var(--transition-main);
+    background-color: var(--panel-bg-color);
+    padding: 0 25px;
+    height: var(--header-height-main);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--main-border-color);
+    box-shadow: var(--box-shadow-main);
+    position: sticky; /* Keep it sticky */
+    top: 0;
+    z-index: 900;
+    transition: background-color var(--transition-duration) var(--transition-timing), border-color var(--transition-duration) var(--transition-timing);
 }
-#main-header h1 {
-    margin: 0; font-size: 1.7rem; cursor: pointer; font-weight: 900;
+#main-header h1 { /* Site Title */
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 900;
     color: var(--primary-accent);
+    cursor: pointer; /* Assuming it links to home/welcome */
+    transition: color var(--transition-duration) var(--transition-timing);
 }
-.header-controls { display: flex; align-items: center; gap: 10px;}
-#main-nav { display: flex; gap: 5px; }
+#main-header h1:hover { color: var(--secondary-accent); }
+
+.header-controls { display: flex; align-items: center; gap: 15px; } /* Increased gap */
+#main-nav { display: flex; gap: 8px; } /* Increased gap */
 #main-nav button {
-    background: transparent; border: none; color: var(--text-muted);
-    padding: 10px 15px; cursor: pointer; border-radius: var(--border-radius);
-    font-size: 0.95rem; font-weight: 600; letter-spacing: 0.5px;
-    transition: color var(--transition-main), background-color var(--transition-main), border-bottom-color var(--transition-main);
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 10px 18px; /* Slightly more padding */
+    cursor: pointer;
+    border-radius: var(--border-radius);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: var(--transition-main); /* Use main transition */
     border-bottom: 3px solid transparent;
+    position: relative; /* For potential pseudo-elements */
 }
-#main-nav button:hover { color: var(--primary-accent); background-color: var(--element-bg-color); }
+#main-nav button:hover, #main-nav button:focus { /* Added focus */
+    color: var(--primary-accent);
+    background-color: var(--element-bg-color);
+    outline: none;
+}
 #main-nav button.active-nav-btn {
-    color: var(--primary-accent); font-weight: 700;
+    color: var(--primary-accent);
+    font-weight: 700;
     border-bottom-color: var(--primary-accent);
+    background-color: color-mix(in srgb, var(--element-bg-color) 50%, transparent); /* Subtle active bg */
 }
 #theme-toggle-btn {
-    background: transparent; color: var(--text-muted);
-    border: none; padding: 8px; margin-left: 15px; cursor: pointer;
-    border-radius: 50%; width: 40px; height: 40px;
-    font-size: 1.4rem; line-height: 1;
-    display: flex; align-items: center; justify-content: center;
-    transition: color var(--transition-main), transform var(--transition-main), background-color var(--transition-main);
+    background: transparent;
+    color: var(--text-muted);
+    border: none;
+    padding: 0; /* Size controlled by width/height */
+    cursor: pointer;
+    border-radius: 50%;
+    width: 44px; /* Slightly larger */
+    height: 44px;
+    font-size: 1.6rem; /* Larger icon */
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color var(--transition-duration) var(--transition-timing), transform var(--transition-duration) var(--transition-timing), background-color var(--transition-duration) var(--transition-timing);
 }
-#theme-toggle-btn:hover { color: var(--primary-accent); background-color: var(--element-bg-color); transform: rotate(15deg); }
+#theme-toggle-btn:hover, #theme-toggle-btn:focus { /* Added focus */
+    color: var(--primary-accent);
+    background-color: var(--element-bg-color);
+    transform: rotate(20deg) scale(1.1); /* Enhanced hover */
+    outline: none;
+}
 
-#main-content { padding: 30px; flex-grow: 1; }
+/* --- MAIN CONTENT & FOOTER --- */
+#main-content { padding: 30px 25px; flex-grow: 1; } /* Standardized padding */
 #main-footer {
-    background-color: var(--body-bg-color); text-align: center; padding: 20px;
-    font-size: 0.9rem; color: var(--text-muted); border-top: 1px solid var(--main-border-color);
-    transition: background-color var(--transition-main), border-color var(--transition-main);
+    background-color: var(--body-bg-color);
+    text-align: center;
+    padding: 25px; /* Increased padding */
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    border-top: 1px solid var(--main-border-color);
+    transition: background-color var(--transition-duration) var(--transition-timing), border-color var(--transition-duration) var(--transition-timing);
 }
 
 /* --- VIEW MANAGEMENT --- */
 .view {
-    display: none; padding: 30px; border-radius: var(--border-radius-large);
-    animation: fadeInView 0.5s var(--transition-timing);
-    background-color: var(--panel-bg-color); border: 1px solid var(--main-border-color);
-    margin-bottom: 30px; box-shadow: var(--box-shadow-main);
-    transition: background-color var(--transition-main), border-color var(--transition-main);
+    display: none;
+    padding: 30px;
+    border-radius: var(--border-radius-large); /* Use defined variable */
+    animation: fadeInView 0.4s var(--transition-timing); /* Slightly longer fade */
+    background-color: var(--panel-bg-color);
+    border: 1px solid var(--main-border-color);
+    margin-bottom: 30px;
+    box-shadow: var(--box-shadow-medium); /* Use medium shadow */
+    transition: background-color var(--transition-duration) var(--transition-timing), border-color var(--transition-duration) var(--transition-timing);
 }
-.view.active-view { display: block !important; }
-@keyframes fadeInView { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+.view.active-view { display: block !important; } /* Keep !important for JS toggle */
+@keyframes fadeInView {
+    from { opacity: 0; transform: translateY(20px) scale(0.98); } /* Added scale */
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
 
-.view-header { 
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 20px; flex-wrap: wrap; gap: 15px;
-    padding-bottom: 15px; border-bottom: 1px solid var(--main-border-color);
+.view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px; /* Increased margin */
+    flex-wrap: wrap;
+    gap: 20px; /* Increased gap */
+    padding-bottom: 20px; /* Increased padding */
+    border-bottom: 1px solid var(--main-border-color);
 }
-.view-header h2.view-title-main { margin-bottom: 0; text-align: left; }
+.view-header h2.view-title-main { margin-bottom: 0; text-align: left; } /* Already styled as h2 */
 .profile-selector-container { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-.profile-selector-container label { font-weight: 600; color: var(--text-muted); white-space: nowrap; font-size: 0.9rem; }
-input[type="text"], textarea, select {
-    width: 100%; padding: 12px 15px; margin-bottom: 15px;
-    border: 1px solid var(--main-border-color); background-color: var(--body-bg-color);
-    color: var(--text-main); border-radius: var(--border-radius);
-    font-size: 0.95rem; font-family: inherit; 
-    transition: all var(--transition-main);
-}
-input[type="text"]:focus, textarea:focus, select:focus {
-    outline: none; border-color: var(--primary-accent);
-    box-shadow: 0 0 0 3px rgba(var(--primary-accent), 0.2);
-}
-textarea { min-height: 100px; resize: vertical; line-height: 1.5; }
+.profile-selector-container label { font-weight: 600; color: var(--text-muted); white-space: nowrap; font-size: 0.95rem; } /* Increased font-size */
+
+/* --- FORMS & INPUTS --- */
+input[type="text"],
+input[type="search"], /* Added search type */
+textarea,
 select {
-    appearance: none; -webkit-appearance: none; -moz-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23a0aec0' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: right 12px center;
-    padding-right: 35px; 
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border: 1px solid var(--main-border-color);
+    background-color: var(--body-bg-color); /* Input bg same as body */
+    color: var(--text-main);
+    border-radius: var(--border-radius);
+    font-size: 1rem; /* Standardized input font size */
+    font-family: inherit;
+    transition: var(--transition-main);
 }
-.profile-selector-container select {
-    background-color: var(--element-bg-color); padding: 8px 12px; padding-right: 35px; 
-    font-size: 0.9rem; min-width: 200px; margin-bottom: 0; 
+input[type="text"]:focus,
+input[type="search"]:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: var(--primary-accent);
+    box-shadow: 0 0 0 3px var(--focus-ring-color); /* FIXED: Use var with RGB components */
+}
+textarea { min-height: 120px; resize: vertical; line-height: 1.5; }
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    /* FIXED: Use currentColor for SVG fill if possible, or CSS mask, or define two SVGs.
+       For simplicity, keeping the hardcoded color but acknowledging it's not theme-adaptive.
+       A better solution for themable select arrows is often a wrapper div and a ::after pseudo-element.
+       Or an SVG sprite.
+    */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23a0aec0' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center; /* Adjusted position */
+    padding-right: 40px; /* Ensure space for arrow */
+}
+.profile-selector-container select { /* Specific style for profile selects */
+    background-color: var(--element-bg-color);
+    padding: 10px 15px; padding-right: 40px;
+    font-size: 0.95rem; min-width: 220px; margin-bottom: 0;
 }
 
 /* --- BUTTONS --- */
 button, .button-like-label {
-    background-color: var(--primary-accent); color: white; border: none;
-    padding: 10px 20px; border-radius: var(--border-radius); cursor: pointer;
-    font-size: 0.9rem; font-weight: 700; transition: all var(--transition-main);
-    margin-top: 10px; margin-right: 10px; text-transform: uppercase;
-    display: inline-flex; align-items: center; justify-content: center;
-    box-shadow: 0 1px 3px var(--shadow-umbra); letter-spacing: 0.5px;
+    background-color: var(--primary-accent);
+    color: white;
+    border: none;
+    padding: 12px 24px; /* Consistent padding */
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 0.95rem; /* Consistent font size */
+    font-weight: 700;
+    transition: var(--transition-main);
+    margin-top: 10px; /* Keep default margins for now */
+    margin-right: 10px;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--box-shadow-light);
+    letter-spacing: 0.8px; /* Increased letter spacing */
+    line-height: 1.2; /* Ensure text fits well */
 }
-button:hover, .button-like-label:hover { background-color: var(--secondary-accent); transform: translateY(-1px); box-shadow: 0 2px 5px var(--shadow-umbra); }
-button:active, .button-like-label:active { transform: translateY(0px); box-shadow: inset 0 1px 2px rgba(0,0,0,0.2); }
-button.btn-primary { /* Default button is primary */ }
-button.btn-secondary { background-color: var(--element-bg-color); color: var(--text-main); border: 1px solid var(--main-border-color); text-transform: none; font-weight: 500; }
-button.btn-secondary:hover { background-color: var(--main-border-color); color: var(--text-headings); }
-.back-button { background-color: var(--element-bg-color); color: var(--text-main); border: 1px solid var(--main-border-color); margin-bottom: 20px; text-transform: none; font-weight: 500; padding: 8px 15px; }
-.back-button:hover { background-color: var(--main-border-color); }
+button:hover, .button-like-label:hover,
+button:focus, .button-like-label:focus { /* Added focus */
+    background-color: var(--secondary-accent);
+    transform: translateY(-2px); /* Slightly more lift */
+    box-shadow: var(--box-shadow-medium);
+    outline: none;
+}
+button:active, .button-like-label:active {
+    transform: translateY(0px);
+    box-shadow: inset 0 2px 3px rgba(0,0,0,0.15); /* Slightly deeper inset */
+}
+
+button.btn-primary { /* Default button is primary, this class is for explicit primary */ }
+button.btn-secondary {
+    background-color: var(--element-bg-color);
+    color: var(--text-main);
+    border: 1px solid var(--main-border-color);
+    text-transform: none;
+    font-weight: 600; /* Slightly bolder than normal text */
+    box-shadow: none; /* Secondary buttons often less prominent */
+}
+button.btn-secondary:hover, button.btn-secondary:focus {
+    background-color: var(--main-border-color);
+    color: var(--text-headings);
+    border-color: var(--text-headings); /* Darken border on hover */
+    transform: none; /* No lift for secondary by default */
+    box-shadow: var(--box-shadow-light); /* Subtle shadow on hover */
+}
+
+.back-button { /* Inherits from .btn-secondary or define separately */
+    background-color: var(--element-bg-color);
+    color: var(--text-main);
+    border: 1px solid var(--main-border-color);
+    margin-bottom: 20px;
+    text-transform: none;
+    font-weight: 500;
+    padding: 8px 15px;
+    box-shadow: none;
+}
+.back-button:hover, .back-button:focus {
+    background-color: var(--main-border-color);
+    color: var(--text-headings);
+    box-shadow: var(--box-shadow-light);
+}
+
 .inline-nav-btn {
-    background: none; border: none; color: var(--accent-color); padding: 0; margin: 0 3px;
+    background: none; border: none; color: var(--accent-color); padding: 0; margin: 0 5px; /* Added horizontal margin */
     text-decoration: underline; cursor: pointer; font-size: inherit; font-weight: 600;
     text-transform: none; box-shadow: none; display: inline;
+    text-underline-offset: 3px; /* Nicer underline */
 }
-.inline-nav-btn:hover { color: var(--primary-accent); background: none; transform: none; box-shadow: none; }
+.inline-nav-btn:hover, .inline-nav-btn:focus {
+    color: var(--primary-accent); background: none; transform: none; box-shadow: none;
+    text-decoration-color: var(--primary-accent); /* Make underline match text */
+    outline: none;
+}
 
 /* --- WELCOME PAGE --- */
-#welcome-view { text-align: center; padding: 30px 40px; } 
-#welcome-view h2 { margin-bottom: 25px; font-size: 2.2rem; }
-#welcome-view p { font-size: 1.05rem; line-height: 1.8; max-width: 700px; margin-left: auto; margin-right: auto; }
-.welcome-actions { margin: 25px 0; }
-#welcome-view .data-management { margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--main-border-color); }
-#welcome-view .data-management button, #welcome-view .data-management .button-like-label { margin: 8px; }
+#welcome-view { text-align: center; padding: 40px; } /* Increased padding */
+#welcome-view h2.view-title-main { margin-bottom: 30px; font-size: 2.4rem; } /* Use generic h2 styling */
+#welcome-view p { font-size: 1.1rem; line-height: 1.8; max-width: 700px; margin-left: auto; margin-right: auto; }
+.welcome-actions { margin: 30px 0; }
+#welcome-view .data-management { margin-top: 35px; padding-top: 25px; border-top: 1px solid var(--main-border-color); }
+#welcome-view .data-management button, #welcome-view .data-management .button-like-label { margin: 10px; }
 
-/* --- KINK GALAXY (PILLS WITH FULL BACKGROUND COLOR - REINFORCED + !important) --- */
-#kink-galaxy-visualization { padding: 15px 0; }
-.galaxy-category { margin-bottom: 30px; }
-.galaxy-category h3 {
-    color: var(--primary-accent); margin-top: 0; margin-bottom: 20px;
-    padding-bottom: 10px; border-bottom: 1px solid var(--main-border-color);
-    font-size: 1.5rem; display: flex; align-items: center;
+/* --- KINK GALAXY (PILLS) --- */
+#kink-galaxy-visualization { padding: 20px 0; }
+.galaxy-category { margin-bottom: 35px; }
+.galaxy-category h3 { /* Uses generic h3 styling already */
+    margin-top: 0; margin-bottom: 25px;
+    padding-bottom: 15px; border-bottom: 1px solid var(--main-border-color);
+    display: flex; align-items: center;
 }
-.galaxy-category h3 .category-icon { margin-right: 10px; font-size: 1.2em; }
-.kink-list { display: flex; flex-wrap: wrap; gap: 10px 12px; }
-.kink-star { /* Pill */
-    padding: 8px 16px; border-radius: 20px; cursor: pointer;
-    transition: all var(--transition-main);
-    font-size: 0.9rem; font-weight: 600; display: inline-flex;
-    align-items: center; box-shadow: 0 1px 2px var(--shadow-umbra);
-    background-color: var(--element-bg-color) !important; 
-    color: var(--text-main) !important; 
-    border: 1px solid var(--main-border-color) !important; 
+.galaxy-category h3 .category-icon { margin-right: 12px; font-size: 1.3em; } /* Slightly larger icon */
+.kink-list { display: flex; flex-wrap: wrap; gap: 12px 15px; } /* Increased gap */
+
+.kink-star { /* Pill Base Style - Attempting to remove !important by increasing specificity or context */
+    padding: 10px 20px; /* Increased padding for a more substantial pill */
+    border-radius: var(--border-radius-large); /* More rounded */
+    cursor: pointer;
+    transition: var(--transition-main); /* Use main transition */
+    font-size: 0.95rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    box-shadow: var(--box-shadow-light);
+    line-height: 1.3; /* Ensure text fits well */
+    /* Default state (unrated) */
+    background-color: var(--element-bg-color);
+    color: var(--text-main);
+    border: 1px solid var(--main-border-color);
 }
-.kink-star:hover { transform: translateY(-2px); box-shadow: 0 2px 4px var(--shadow-umbra); border-color: var(--primary-accent) !important; }
+#kink-galaxy-visualization .kink-list .kink-star:hover,
+#kink-galaxy-visualization .kink-list .kink-star:focus {
+    transform: translateY(-3px) scale(1.03); /* Enhanced hover/focus */
+    box-shadow: var(--box-shadow-medium);
+    border-color: var(--primary-accent);
+    outline: none;
+}
 .kink-star-rating-badge {
-    font-size: 0.75rem; padding: 2px 7px; border-radius: 10px;
-    margin-left: 8px; white-space: nowrap; font-weight: 700; flex-shrink: 0;
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    border-radius: var(--border-radius-small);
+    margin-left: 10px;
+    white-space: nowrap;
+    font-weight: 700;
+    flex-shrink: 0;
+    text-transform: uppercase; /* Badges often uppercase */
+    letter-spacing: 0.5px;
+    opacity: 0.9; /* Slightly subdued badge */
 }
-/* Galaxy Pill Colors - Using !important TO FORCE OVERRIDE BASE .kink-star */
-#kink-galaxy-visualization .kink-list div.kink-star.rating-want-to-try { background-color: var(--rating-bg-want-to-try) !important; border-color: var(--rating-bg-want-to-try) !important; color: var(--rating-text-want-to-try) !important; }
-#kink-galaxy-visualization .kink-list div.kink-star.rating-want-to-try .kink-star-rating-badge { background-color: rgba(255,255,255,0.15) !important; color:var(--rating-text-want-to-try) !important; }
-#kink-galaxy-visualization .kink-list div.kink-star.rating-favorite { background-color: var(--rating-bg-favorite) !important; border-color: var(--rating-bg-favorite) !important; color: var(--rating-text-favorite) !important; }
-#kink-galaxy-visualization .kink-list div.kink-star.rating-favorite .kink-star-rating-badge { background-color: rgba(255,255,255,0.15) !important; color:var(--rating-text-favorite) !important; }
-#kink-galaxy-visualization .kink-list div.kink-star.rating-like-it { background-color: var(--rating-bg-like-it) !important; border-color: var(--rating-bg-like-it) !important; color: var(--rating-text-like-it) !important; }
-#kink-galaxy-visualization .kink-list div.kink-star.rating-like-it .kink-star-rating-badge { background-color: rgba(255,255,255,0.15) !important; color:var(--rating-text-like-it) !important; }
-#kink-galaxy-visualization .kink-list div.kink-star.rating-curious-about { background-color: var(--rating-bg-curious-about) !important; border-color: var(--rating-bg-curious-about) !important; color: var(--rating-text-curious-about) !important; }
-#kink-galaxy-visualization .kink-list div.kink-star.rating-curious-about .kink-star-rating-badge { background-color: rgba(0,0,0,0.1) !important; color: var(--rating-text-curious-about) !important; }
-#kink-galaxy-visualization .kink-list div.kink-star.rating-soft-limit { background-color: var(--rating-bg-soft-limit) !important; border-color: var(--rating-bg-soft-limit) !important; color: var(--rating-text-soft-limit) !important; }
-#kink-galaxy-visualization .kink-list div.kink-star.rating-soft-limit .kink-star-rating-badge { background-color: rgba(255,255,255,0.15) !important; color:var(--rating-text-soft-limit) !important; }
-#kink-galaxy-visualization .kink-list div.kink-star.rating-hard-limit { background-color: var(--rating-bg-hard-limit) !important; border-color: var(--rating-bg-hard-limit) !important; color: var(--rating-text-hard-limit) !important; }
-#kink-galaxy-visualization .kink-list div.kink-star.rating-hard-limit .kink-star-rating-badge { background-color: rgba(255,255,255,0.15) !important; color:var(--rating-text-hard-limit) !important; }
-#kink-galaxy-visualization .kink-list div.kink-star.rating-not-for-me { background-color: var(--rating-bg-not-for-me) !important; border-color: var(--rating-bg-not-for-me) !important; color: var(--rating-text-not-for-me) !important; opacity: 0.85 !important; }
-#kink-galaxy-visualization .kink-list div.kink-star.rating-not-for-me .kink-star-rating-badge { background-color: rgba(0,0,0,0.1) !important; color: var(--rating-text-not-for-me) !important; }
-/* .kink-star.rating-none will use the base .kink-star styles, which now have !important for default state */
 
-.no-kinks-in-category { font-style: italic; color: var(--text-muted); padding: 10px 0; }
-#kink-filters { padding: 15px; background-color: var(--panel-bg-color); border-radius: var(--border-radius); margin-top: 20px; border: 1px solid var(--main-border-color);}
+/* Galaxy Pill Colors - Higher specificity to override base .kink-star without !important if possible */
+#kink-galaxy-visualization .kink-list div.kink-star.rating-want-to-try { background-color: var(--rating-bg-want-to-try); border-color: var(--rating-bg-want-to-try); color: var(--rating-text-want-to-try); }
+#kink-galaxy-visualization .kink-list div.kink-star.rating-want-to-try .kink-star-rating-badge { background-color: rgba(255,255,255,0.2); color:var(--rating-text-want-to-try); } /* Adjusted badge bg */
 
-/* --- KINK DETAIL MODAL (FIXED POSITIONING & Active Button Style) --- */
-.modal {
+#kink-galaxy-visualization .kink-list div.kink-star.rating-favorite { background-color: var(--rating-bg-favorite); border-color: var(--rating-bg-favorite); color: var(--rating-text-favorite); }
+#kink-galaxy-visualization .kink-list div.kink-star.rating-favorite .kink-star-rating-badge { background-color: rgba(255,255,255,0.2); color:var(--rating-text-favorite); }
+
+#kink-galaxy-visualization .kink-list div.kink-star.rating-like-it { background-color: var(--rating-bg-like-it); border-color: var(--rating-bg-like-it); color: var(--rating-text-like-it); }
+#kink-galaxy-visualization .kink-list div.kink-star.rating-like-it .kink-star-rating-badge { background-color: rgba(255,255,255,0.2); color:var(--rating-text-like-it); }
+
+#kink-galaxy-visualization .kink-list div.kink-star.rating-curious-about { background-color: var(--rating-bg-curious-about); border-color: var(--rating-bg-curious-about); color: var(--rating-text-curious-about); }
+#kink-galaxy-visualization .kink-list div.kink-star.rating-curious-about .kink-star-rating-badge { background-color: rgba(0,0,0,0.15); color: var(--rating-text-curious-about); }
+
+#kink-galaxy-visualization .kink-list div.kink-star.rating-soft-limit { background-color: var(--rating-bg-soft-limit); border-color: var(--rating-bg-soft-limit); color: var(--rating-text-soft-limit); }
+#kink-galaxy-visualization .kink-list div.kink-star.rating-soft-limit .kink-star-rating-badge { background-color: rgba(255,255,255,0.2); color:var(--rating-text-soft-limit); }
+
+#kink-galaxy-visualization .kink-list div.kink-star.rating-hard-limit { background-color: var(--rating-bg-hard-limit); border-color: var(--rating-bg-hard-limit); color: var(--rating-text-hard-limit); }
+#kink-galaxy-visualization .kink-list div.kink-star.rating-hard-limit .kink-star-rating-badge { background-color: rgba(255,255,255,0.2); color:var(--rating-text-hard-limit); }
+
+#kink-galaxy-visualization .kink-list div.kink-star.rating-not-for-me { background-color: var(--rating-bg-not-for-me); border-color: var(--rating-bg-not-for-me); color: var(--rating-text-not-for-me); opacity: 0.8; } /* Slightly less opacity */
+#kink-galaxy-visualization .kink-list div.kink-star.rating-not-for-me .kink-star-rating-badge { background-color: rgba(0,0,0,0.15); color: var(--rating-text-not-for-me); }
+
+/* .kink-star.rating-none will use the base .kink-star styles */
+.no-kinks-in-category, .empty-state-message { /* Consolidated empty state */
+    font-style: italic; color: var(--text-muted); padding: 20px 10px; text-align: center; font-size: 1.05rem;
+    background-color: var(--element-bg-color); border-radius: var(--border-radius);
+}
+/* Kink Filters section could be styled further if needed, for now it's a basic panel */
+#kink-filters { padding: 20px; background-color: var(--body-bg-color); border-radius: var(--border-radius-medium); margin-top: 25px; border: 1px solid var(--main-border-color); box-shadow: var(--box-shadow-light);}
+
+
+/* --- KINK DETAIL MODAL --- */
+.modal { /* Base modal style */
     display: none; position: fixed; z-index: 1000; left: 0; top: 0;
     width: 100%; height: 100%; background-color: var(--modal-overlay-bg);
-    animation: fadeInModal 0.2s var(--transition-timing); padding: 20px; overflow-y: auto; 
+    animation: fadeInModal 0.25s var(--transition-timing); padding: 20px; overflow-y: auto;
 }
+body.modal-open { overflow: hidden; } /* Prevent body scroll when modal is open */
+
 #kink-detail-modal .modal-content {
-    background-color: var(--panel-bg-color); margin: 5vh auto; padding: 25px 30px;
-    border: 1px solid var(--main-border-color); border-radius: var(--border-radius-large); 
-    width: 90%; max-width: 700px; position: relative; box-shadow: var(--box-shadow-medium);
-    animation: slideInModal 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    max-height: 90vh; display: flex; flex-direction: column; overflow-y: auto;
-    transition: background-color var(--transition-main), border-color var(--transition-main);
+    background-color: var(--panel-bg-color); margin: 5vh auto; padding: 30px 35px; /* Increased padding */
+    border: 1px solid var(--main-border-color); border-radius: var(--border-radius-large);
+    width: 90%; max-width: 750px; /* Slightly wider modal */
+    position: relative; box-shadow: var(--box-shadow-heavy); /* Heavier shadow for modal */
+    animation: slideInModal 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Keep custom cubic */
+    max-height: 90vh; display: flex; flex-direction: column;
+    /* overflow-y: auto; handled by .modal for main scroll, internal elements scroll if needed */
+    transition: background-color var(--transition-duration) var(--transition-timing), border-color var(--transition-duration) var(--transition-timing);
 }
+@keyframes slideInModal {
+    from { opacity: 0; transform: translateY(30px) scale(0.95); } /* Enhanced animation */
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes fadeInModal { /* For overlay */
+    from { opacity: 0; } to { opacity: 1; }
+}
+
+
 .close-modal-btn {
-    color: var(--text-muted); position: absolute; top: 15px; right: 20px;
-    font-size: 1.8rem; font-weight: bold; line-height: 1; padding: 5px;
+    color: var(--text-muted); position: absolute; top: 18px; right: 22px; /* Adjusted position */
+    font-size: 2rem; /* Larger close icon */
+    font-weight: bold; line-height: 1; padding: 5px;
     cursor: pointer; transition: color 0.2s ease, transform 0.2s ease;
+    border-radius: 50%; width: 36px; height: 36px; /* Make it circular for easier clicking */
+    display: flex; align-items: center; justify-content: center;
 }
-.close-modal-btn:hover { color: var(--accent-color); transform: scale(1.1); }
-#modal-kink-name { margin-top: 0; font-size: 1.8rem; margin-bottom: 0.3em;}
-#modal-kink-category { margin-bottom: 15px; font-size: 0.95rem; color: var(--text-muted);}
-.kink-description-summary { font-size: 0.95rem; margin-bottom: 10px; padding: 10px; background-color: var(--body-bg-color); border-radius: var(--border-radius); max-height: 100px; overflow-y: auto; border: 1px solid var(--main-border-color); }
-.kink-description-details { margin-bottom: 15px; }
-.kink-description-details summary { cursor: pointer; color: var(--primary-accent); font-weight: 600; padding: 5px 0; font-size: 1rem; }
-.kink-description-details summary:hover { color: var(--accent-color); }
-#modal-kink-description-full-content { font-size: 0.9rem; padding: 10px 15px; background-color: var(--body-bg-color); border-radius: var(--border-radius); margin-top: 5px; max-height: 180px; overflow-y: auto; border: 1px solid var(--main-border-color); }
-#modal-kink-description-full-content h4 { font-size: 1rem; color: var(--warning-color); margin-top: 10px; margin-bottom: 5px; font-weight: 600; }
-#modal-kink-description-full-content ul { padding-left: 20px; margin-bottom: 0; }
-#modal-kink-description-full-content li { margin-bottom: 5px; }
-#modal-kink-rating { margin: 20px 0; display: flex; flex-wrap: wrap; gap: 10px; }
-#modal-kink-rating button {
-    margin: 0; border: 2px solid var(--main-border-color); padding: 10px 15px;
+.close-modal-btn:hover, .close-modal-btn:focus { /* Added focus */
+    color: var(--accent-color); transform: scale(1.15) rotate(90deg); /* More interactive hover */
+    background-color: var(--element-bg-color);
+    outline: none;
+}
+
+#modal-kink-name { margin-top: 0; font-size: 2rem; margin-bottom: 0.3em; color: var(--primary-accent);} /* Use h_ styling for consistency */
+#modal-kink-category { margin-bottom: 20px; font-size: 1rem; color: var(--text-muted); font-style: italic;}
+.kink-description-summary {
+    font-size: 1rem; margin-bottom: 15px; padding: 15px; background-color: var(--body-bg-color);
+    border-radius: var(--border-radius); max-height: 120px; overflow-y: auto;
+    border: 1px solid var(--main-border-color); line-height: 1.5;
+}
+.kink-description-details { margin-bottom: 20px; }
+.kink-description-details summary {
+    cursor: pointer; color: var(--primary-accent); font-weight: 600; padding: 8px 0; /* Increased padding */
+    font-size: 1.05rem; display: list-item; /* Ensure marker shows */
+    transition: color var(--transition-duration) var(--transition-timing);
+}
+.kink-description-details summary:hover, .kink-description-details summary:focus { color: var(--accent-color); outline:none; }
+#modal-kink-description-full-content {
+    font-size: 0.95rem; padding: 15px 20px; background-color: var(--body-bg-color);
+    border-radius: var(--border-radius); margin-top: 8px; max-height: 200px; overflow-y: auto;
+    border: 1px solid var(--main-border-color);
+}
+#modal-kink-description-full-content h4 { /* Uses generic h4 */
+    color: var(--warning-color); /* Or a specific info color */
+    margin-top: 15px; margin-bottom: 8px;
+}
+#modal-kink-description-full-content ul { padding-left: 20px; margin-bottom: 0; list-style: disc; /* Ensure list style */ }
+#modal-kink-description-full-content li { margin-bottom: 6px; }
+
+#modal-kink-rating { margin: 25px 0; display: flex; flex-wrap: wrap; gap: 10px; }
+#modal-kink-rating button { /* Specific modal rating buttons */
+    margin: 0; border: 2px solid var(--element-bg-color); /* Border matches unselected bg for seamless look */
+    padding: 10px 18px;
     background-color: var(--element-bg-color); color: var(--text-main); font-weight: 500;
-    border-radius: var(--border-radius); transition: all var(--transition-main);
+    border-radius: var(--border-radius-medium); /* More rounded */
+    transition: var(--transition-main);
     text-transform: none; letter-spacing: normal; font-size: 0.9rem;
+    box-shadow: none; /* Remove general button shadow */
 }
-#modal-kink-rating button:hover { border-color: var(--primary-accent); transform: translateY(-1px); }
-#modal-kink-rating button.rating-btn-active { 
-    font-weight: 700;
-    /* Specific active colors are applied below based on rating type */
+#modal-kink-rating button:hover, #modal-kink-rating button:focus {
+    border-color: var(--primary-accent); transform: translateY(-2px);
+    box-shadow: 0 1px 3px var(--shadow-umbra); /* Add shadow on hover */
+    outline: none;
 }
+#modal-kink-rating button.rating-btn-active {
+    font-weight: 700; box-shadow: inset 0 1px 3px rgba(0,0,0,0.2); /* Inset shadow for active */
+    /* Specific active colors are applied below using combined classes */
+}
+/* Active Rating Button Colors (using combined classes ensures they override the base .rating-btn-active if needed) */
 #modal-kink-rating button.rating-btn-active.rating-btn-want-to-try { background-color: var(--rating-bg-want-to-try); border-color: var(--rating-bg-want-to-try); color: var(--rating-text-want-to-try); }
 #modal-kink-rating button.rating-btn-active.rating-btn-favorite { background-color: var(--rating-bg-favorite); border-color: var(--rating-bg-favorite); color: var(--rating-text-favorite); }
 #modal-kink-rating button.rating-btn-active.rating-btn-like-it { background-color: var(--rating-bg-like-it); border-color: var(--rating-bg-like-it); color: var(--rating-text-like-it); }
@@ -337,470 +624,494 @@ button.btn-secondary:hover { background-color: var(--main-border-color); color: 
 #modal-kink-rating button.rating-btn-active.rating-btn-soft-limit { background-color: var(--rating-bg-soft-limit); border-color: var(--rating-bg-soft-limit); color: var(--rating-text-soft-limit); }
 #modal-kink-rating button.rating-btn-active.rating-btn-hard-limit { background-color: var(--rating-bg-hard-limit); border-color: var(--rating-bg-hard-limit); color: var(--rating-text-hard-limit); }
 #modal-kink-rating button.rating-btn-active.rating-btn-not-for-me { background-color: var(--rating-bg-not-for-me); border-color: var(--rating-bg-not-for-me); color: var(--rating-text-not-for-me); }
-#modal-kink-rating button.rating-btn-clear-rating { border-color: var(--text-muted); color: var(--text-muted); background-color: transparent; }
-#modal-kink-rating button.rating-btn-clear-rating:hover { border-color: var(--accent-color); color: var(--accent-color); }
-#modal-kink-notes { min-height: 100px; margin-bottom: 20px; }
-.modal-save-btn { width: 100%; padding: 12px; font-size: 1rem; }
-#modal-profile-assignment { margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--main-border-color); }
-#modal-profile-assignment h4 { margin-bottom: 8px; font-size: 1rem; color: var(--text-headings); font-weight: 500; }
-#modal-profile-checkboxes-container .profile-checkbox-item { display: block; margin-bottom: 6px; }
+
+#modal-kink-rating button.rating-btn-clear-rating {
+    border-color: var(--text-muted); color: var(--text-muted); background-color: transparent;
+    font-weight: 500; /* Not bold */
+}
+#modal-kink-rating button.rating-btn-clear-rating:hover,
+#modal-kink-rating button.rating-btn-clear-rating:focus {
+    border-color: var(--accent-color); color: var(--accent-color);
+    background-color: color-mix(in srgb, var(--accent-color) 10%, transparent); /* Subtle bg on hover */
+}
+
+#modal-kink-notes { min-height: 100px; margin-bottom: 25px; }
+.modal-save-btn { width: 100%; padding: 14px; font-size: 1.05rem; } /* Larger save button */
+
+#modal-profile-assignment { margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--main-border-color); }
+#modal-profile-assignment h4 { margin-bottom: 10px; font-size: 1.05rem; color: var(--text-headings); font-weight: 600; }
+#modal-profile-checkboxes-container .profile-checkbox-item { display: block; margin-bottom: 8px; }
 /* General checkbox label style will apply */
 
-/* Notes Popover Modal */
-#notes-popover-modal.modal { padding: 0; background-color: rgba(0,0,0,0.5); }
+
+/* Notes Popover Modal (for Summary view) */
+#notes-popover-modal.modal { padding: 0; background-color: rgba(0,0,0,0.6); } /* Darker overlay for popover */
 #notes-popover-modal .modal-content {
-    background-color: var(--panel-bg-color); padding: 20px;
+    background-color: var(--panel-bg-color); padding: 25px;
     border-radius: var(--border-radius-medium); box-shadow: var(--box-shadow-medium);
-    max-width: 400px; width: 85%; border: 1px solid var(--main-border-color);
-    margin: auto; animation: fadeInModal 0.2s;
+    max-width: 450px; width: 90%; border: 1px solid var(--main-border-color);
+    margin: auto; /* Vertically and horizontally center */
+    animation: fadeInModal 0.2s var(--transition-timing); /* Use standard fade */
+    position: fixed; /* Ensure it can be centered */
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
 }
-#notes-popover-modal h4 { margin-top: 0; margin-bottom: 10px; color: var(--primary-accent); font-size: 1.1rem; }
-#notes-popover-content { font-size: 0.9rem; max-height: 200px; overflow-y: auto; line-height: 1.5; white-space: pre-wrap; }
-#notes-popover-close-btn { position: absolute; top: 8px; right: 8px; background: none; border: none; font-size: 1.3rem; color: var(--text-muted); cursor: pointer; }
-#notes-popover-close-btn:hover { color: var(--accent-color); }
+#notes-popover-modal h4 { margin-top: 0; margin-bottom: 15px; color: var(--primary-accent); font-size: 1.2rem; }
+#notes-popover-content { font-size: 0.95rem; max-height: 250px; overflow-y: auto; line-height: 1.6; white-space: pre-wrap; padding-right: 10px; /* Space for scrollbar */ }
+#notes-popover-close-btn { /* Uses .close-modal-btn styling, but can be overridden */
+    top: 10px; right: 10px; font-size: 1.5rem;
+}
+
 
 /* --- SUMMARY PAGE --- */
-.summary-filters { 
-    background-color: var(--body-bg-color); padding: 15px; margin-bottom: 20px;
-    border-radius: var(--border-radius); border: 1px solid var(--main-border-color);
-}
-#toggle-summary-filters-btn { margin-bottom: 15px; }
-.summary-filters h4 { margin-top: 0; margin-bottom: 10px; font-size: 1.1rem; }
-.filter-section { margin-bottom: 10px; }
-.filter-section legend { font-weight: 600; margin-bottom: 5px; font-size: 1rem; }
-.filter-checkbox-group { display: flex; flex-wrap: wrap; gap: 8px 12px; }
-.filter-checkbox-item { display: flex; align-items: center; } /* Uses general .checkbox-label */
-.filter-actions { margin-top: 15px; text-align: right; }
-.summary-controls { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--main-border-color); }
-#summary-content-area { }
-.summary-rating-group { margin-bottom: 20px; }
-.summary-rating-group > summary {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 10px 15px; font-family: var(--font-heading); font-size: 1.3rem;
-    font-weight: 600; color: var(--text-headings); cursor: pointer; list-style: none;
-    background-color: var(--element-bg-color); border-radius: var(--border-radius);
-    border: 1px solid var(--main-border-color);
-}
-.summary-rating-group > summary:hover { background-color: var(--main-border-color); }
-.summary-rating-group > summary::-webkit-details-marker { display: none; }
-.summary-rating-group > summary .accordion-title-text { flex-grow: 1; }
-.summary-rating-group > summary .accordion-kink-count { font-size: 0.9rem; color: var(--text-muted); margin-left: 10px; background-color: var(--body-bg-color); padding: 2px 6px; border-radius: var(--border-radius-small); }
-.summary-rating-group > summary .accordion-arrow { font-size: 1rem; transition: transform var(--transition-main); }
-.summary-rating-group[open] > summary .accordion-arrow { transform: rotate(90deg); }
-.summary-kink-list-accordion-content { padding: 10px 15px; background: var(--body-bg-color); border: 1px solid var(--main-border-color); border-top: none; border-radius: 0 0 var(--border-radius) var(--border-radius); }
-.summary-kink-pills-list { display: flex; flex-wrap: wrap; gap: 8px; }
-.summary-kink-pill {
-    background-color: var(--element-bg-color); color: var(--text-main);
-    padding: 6px 10px; border-radius: var(--border-radius); font-size: 0.85rem;
-    display: inline-flex; align-items: center; border: 1px solid var(--main-border-color);
-}
-.summary-kink-pill .category-dot { width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; background-color: var(--category-color-default); flex-shrink: 0;}
-.category-dot-impact { background-color: var(--category-color-impact); }
-.category-dot-bondage { background-color: var(--category-color-bondage); }
-.category-dot-power_exchange { background-color: var(--category-color-power_exchange); }
-.category-dot-sensation { background-color: var(--category-color-sensation); }
-.category-dot-psychological { background-color: var(--category-color-psychological); }
-.category-dot-edge_play { background-color: var(--category-color-edge_play); }
-.category-dot-fluid_play { background-color: var(--category-color-fluid_play); }
-.category-dot-medical_play { background-color: var(--category-color-medical_play); }
-.category-dot-object_insertion { background-color: var(--category-color-object_insertion); }
-.category-dot-fetishism_specific { background-color: var(--category-color-fetishism_specific); }
-.category-dot-verbal_play { background-color: var(--category-color-verbal_play); }
-.category-dot-sensory_modification { background-color: var(--category-color-sensory_modification); }
-.category-dot-exhibition_voyeurism { background-color: var(--category-color-exhibition_voyeurism); }
-.category-dot-animal_play { background-color: var(--category-color-animal_play); }
-.category-dot-food_play { background-color: var(--category-color-food_play); }
-.category-dot-spiritual_ritual { background-color: var(--category-color-spiritual_ritual); }
-.category-dot-endurance_ordeals { background-color: var(--category-color-endurance_ordeals); }
-.category-dot-taboo_conceptual { background-color: var(--category-color-taboo_conceptual); }
-.summary-kink-pill .summary-kink-pill-name { font-weight: 600; }
-.summary-kink-pill .notes-indicator { margin-left: 6px; font-size: 0.8em; color: var(--primary-accent); cursor: pointer; }
-.summary-kink-pill .notes-indicator:hover { color: var(--accent-color); }
-
-/* --- JOURNAL VIEW --- */
-#journal-view h2.view-title-main { text-align: left; }
-.journal-actions { text-align: left; margin-bottom: 20px; }
-.journal-entry-item {
-    background-color: var(--body-bg-color); padding: 20px; border-radius: var(--border-radius);
-    margin-bottom: 20px; border-left: 4px solid var(--primary-accent);
+.summary-filters {
+    background-color: var(--body-bg-color); padding: 20px; margin-bottom: 25px;
+    border-radius: var(--border-radius-medium); border: 1px solid var(--main-border-color);
     box-shadow: var(--box-shadow-light);
 }
+#toggle-summary-filters-btn { margin-bottom: 20px; font-weight: 600; /* Distinct button */ }
+.summary-filters h4 { margin-top: 0; margin-bottom: 15px; font-size: 1.2rem; }
+.filter-section { margin-bottom: 15px; }
+.filter-section legend { font-weight: 700; margin-bottom: 8px; font-size: 1.05rem; color: var(--text-headings); }
+.filter-checkbox-group { display: flex; flex-wrap: wrap; gap: 10px 15px; }
+.filter-checkbox-item { display: flex; align-items: center; } /* Uses general .checkbox-label */
+.filter-actions { margin-top: 20px; text-align: right; display: flex; gap: 10px; justify-content: flex-end; }
+.filter-actions button { margin-top: 0; } /* Reset top margin */
+
+.summary-controls { margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid var(--main-border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap:15px;}
+/* #summary-content-area {} */ /* Base styling is fine */
+
+.summary-rating-group { margin-bottom: 25px; }
+.summary-rating-group > summary {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 18px; font-family: var(--font-heading); font-size: 1.4rem;
+    font-weight: 700; color: var(--text-headings); cursor: pointer; list-style: none;
+    background-color: var(--element-bg-color); border-radius: var(--border-radius);
+    border: 1px solid var(--main-border-color);
+    transition: background-color var(--transition-duration) var(--transition-timing);
+}
+.summary-rating-group > summary:hover, .summary-rating-group > summary:focus {
+    background-color: var(--main-border-color); outline: none;
+}
+.summary-rating-group > summary::-webkit-details-marker { display: none; }
+.summary-rating-group > summary .accordion-title-text { flex-grow: 1; }
+.summary-rating-group > summary .accordion-kink-count {
+    font-size: 0.9rem; color: var(--text-muted); margin-left: 12px;
+    background-color: var(--body-bg-color); padding: 3px 8px;
+    border-radius: var(--border-radius-small); font-weight: 500; /* Less bold */
+}
+.summary-rating-group > summary .accordion-arrow {
+    font-size: 1.1rem; transition: transform var(--transition-duration) var(--transition-timing);
+    margin-left: 10px; /* Added margin for better spacing */
+}
+.summary-rating-group[open] > summary .accordion-arrow { transform: rotate(180deg); } /* Arrow points up when open */
+.summary-kink-list-accordion-content {
+    padding: 15px 20px; background: var(--body-bg-color);
+    border: 1px solid var(--main-border-color); border-top: none;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+}
+.summary-kink-pills-list { display: flex; flex-wrap: wrap; gap: 10px; }
+.summary-kink-pill {
+    background-color: var(--element-bg-color); color: var(--text-main);
+    padding: 8px 12px; border-radius: var(--border-radius); font-size: 0.9rem;
+    display: inline-flex; align-items: center; border: 1px solid transparent; /* Transparent border for hover effect */
+    transition: var(--transition-main);
+}
+.summary-kink-pill:hover {
+    border-color: var(--primary-accent);
+    transform: scale(1.02); /* Subtle scale on hover */
+}
+.summary-kink-pill .category-dot {
+    width: 10px; height: 10px; border-radius: 50%; margin-right: 8px;
+    background-color: var(--category-color-default); flex-shrink: 0;
+    border: 1px solid color-mix(in srgb, var(--main-border-color) 50%, black); /* Subtle border on dot */
+}
+/* Specific category dot colors will apply */
+.category-dot-impact { background-color: var(--category-color-impact); } /* ... and so on for all categories */
+.summary-kink-pill .summary-kink-pill-name { font-weight: 600; }
+.summary-kink-pill .notes-indicator {
+    margin-left: 8px; font-size: 0.9em; color: var(--primary-accent);
+    cursor: pointer; padding: 2px; border-radius: var(--border-radius-small);
+    transition: var(--transition-main);
+}
+.summary-kink-pill .notes-indicator:hover {
+    color: var(--accent-color); background-color: var(--main-border-color); transform: scale(1.1);
+}
+
+/* --- JOURNAL VIEW --- */
+#journal-view h2.view-title-main { text-align: left; } /* As before */
+.journal-actions { text-align: left; margin-bottom: 25px; }
+.journal-entry-item {
+    background-color: var(--body-bg-color); padding: 25px; border-radius: var(--border-radius-medium);
+    margin-bottom: 25px; border-left: 5px solid var(--primary-accent); /* Thicker accent border */
+    box-shadow: var(--box-shadow-light);
+    transition: var(--transition-main);
+}
+.journal-entry-item:hover { box-shadow: var(--box-shadow-medium); transform: translateY(-2px); }
 .journal-entry-item h5 { margin-top: 0; margin-bottom: 0.8em; color: var(--text-muted); font-size: 0.9rem; font-weight: 400; }
-.journal-entry-content { margin-bottom: 15px; line-height: 1.7; }
-.journal-item-actions { margin-top:10px; text-align: right; }
-.journal-item-actions button { padding: 6px 12px; font-size: 0.85rem; text-transform: none; margin-top: 0; margin-left: 8px; box-shadow: none;}
-.journal-item-actions .delete-journal-entry { background-color: var(--danger-color); }
-.journal-item-actions .delete-journal-entry:hover { background-color: #a02a1a; }
-.journal-prompts-container { margin-bottom: 25px; padding: 20px; background-color: var(--panel-bg-color); border-radius: var(--border-radius); }
+.journal-entry-content { margin-bottom: 20px; line-height: 1.75; }
+.journal-item-actions { margin-top:15px; text-align: right; display: flex; gap: 10px; justify-content: flex-end; }
+.journal-item-actions button { padding: 8px 15px; font-size: 0.85rem; text-transform: none; margin-top: 0; box-shadow: none;}
+.journal-item-actions .delete-journal-entry { background-color: var(--danger-color); color: white; }
+.journal-item-actions .delete-journal-entry:hover { background-color: color-mix(in srgb, var(--danger-color) 80%, black); } /* Darken on hover */
+
+.journal-prompts-container {
+    margin-bottom: 30px; padding: 25px; background-color: var(--panel-bg-color);
+    border-radius: var(--border-radius-medium); box-shadow: var(--box-shadow-light);
+}
+.journal-prompts-container h4 { margin-top: 0; margin-bottom: 15px; } /* Uses generic h4 */
 .journal-prompts-container ul { list-style: none; padding-left: 0; }
-.journal-prompts-container .prompt-button { display: block; width: 100%; text-align: left; margin-bottom: 10px; background-color: var(--element-bg-color); color: var(--text-main); font-weight: 500; text-transform: none; }
-.journal-prompts-container .prompt-button:hover { background-color: var(--main-border-color); }
+.journal-prompts-container .prompt-button { /* Style like secondary button */
+    display: block; width: 100%; text-align: left; margin-bottom: 10px;
+    background-color: var(--element-bg-color); color: var(--text-main);
+    font-weight: 500; text-transform: none; padding: 10px 15px;
+    border-radius: var(--border-radius); border: 1px solid var(--main-border-color);
+    transition: var(--transition-main);
+}
+.journal-prompts-container .prompt-button:hover, .journal-prompts-container .prompt-button:focus {
+    background-color: var(--main-border-color); color: var(--text-headings); border-color: var(--text-headings);
+    transform: translateX(3px); /* Slight nudge */
+    outline: none;
+}
+
 
 /* --- ACADEMY VIEW --- */
-#academy-content-area { padding-top: 15px; }
+#academy-content-area { padding-top: 20px; }
+#academy-content-area > h2 { margin-bottom: 25px; } /* Spacing for main "Knowledge Base" title */
 .academy-index-list { list-style: none; padding-left: 0; }
-.academy-index-list > h3 { margin-top: 25px; font-size: 1.3rem; }
-.academy-index-list li a {
-    display: block; padding: 10px 15px; border-bottom: 1px solid var(--main-border-color);
-    border-radius: var(--border-radius-small); margin-bottom: 5px;
-    transition: background-color var(--transition-main), padding-left var(--transition-main);
-    font-weight: 500;
+.academy-index-list > h3 { /* Uses generic h3 styling */
+    margin-top: 30px; padding-bottom: 10px; border-bottom: 1px solid var(--main-border-color);
 }
-.academy-index-list li a:hover { background-color: var(--element-bg-color); padding-left: 20px; color: var(--primary-accent); }
-.academy-kink-list { padding-left: 20px; }
-.academy-kink-list li a { font-weight: normal; border-bottom-style: dotted; }
-#academy-content-area dl dt { font-weight: 700; color: var(--primary-accent); margin-top: 1em; font-size: 1.1rem;}
-#academy-content-area dl dd { margin-left: 1.8em; margin-bottom: 0.8em; color: var(--text-muted); }
-#academy-content-area article h2, #academy-content-area section h2 { 
-    border-bottom: 1px solid var(--main-border-color); padding-bottom: 10px; margin-bottom: 20px; font-size: 1.8rem;
+.academy-index-list li a {
+    display: block; padding: 12px 18px; border-bottom: 1px solid var(--main-border-color);
+    border-radius: var(--border-radius-small); margin-bottom: 6px;
+    transition: background-color var(--transition-duration) var(--transition-timing), padding-left var(--transition-duration) var(--transition-timing), color var(--transition-duration) var(--transition-timing);
+    font-weight: 500; color: var(--text-main);
+}
+.academy-index-list li a:hover, .academy-index-list li a:focus {
+    background-color: var(--element-bg-color); padding-left: 25px; color: var(--primary-accent);
+    outline: none;
+}
+.academy-kink-list { padding-left: 25px; margin-top: 10px; } /* Indent kink list */
+.academy-kink-list li a { font-weight: normal; border-bottom-style: dotted; font-size: 0.95rem; }
+
+#academy-content-area article, #academy-content-area section > div:not(.back-button-container) { /* For generated content */
+    padding: 15px; background-color: var(--body-bg-color); border-radius: var(--border-radius); margin-top: 15px;
+}
+#academy-content-area dl dt { font-weight: 700; color: var(--primary-accent); margin-top: 1.2em; font-size: 1.15rem;}
+#academy-content-area dl dd { margin-left: 2em; margin-bottom: 1em; color: var(--text-muted); line-height: 1.5; }
+#academy-content-area article h2, #academy-content-area section h2 { /* Titles within academy pages */
+    border-bottom: 2px solid var(--primary-accent); /* More prominent title underline */
+    padding-bottom: 10px; margin-bottom: 25px; font-size: 1.8rem; color: var(--primary-accent);
 }
 .risk-indicator-high, .risk-indicator-taboo {
-    font-size: 0.8em; margin-left: 5px; padding: 2px 5px; 
+    font-size: 0.8em; margin-left: 8px; padding: 3px 6px;
     border-radius: var(--border-radius-small); font-weight: bold; vertical-align: middle;
+    display: inline-block; /* Ensure vertical align works */
 }
 .risk-indicator-high { background-color: var(--danger-color); color: white; }
-.risk-indicator-taboo { background-color: var(--warning-color); color: var(--body-bg-color); }
+.risk-indicator-taboo { background-color: var(--warning-color); color: var(--text-color-headings-light); /* Dark text on yellow */ }
 
 
 /* --- SETTINGS VIEW --- */
-#settings-view h3 { margin-top: 25px; border-bottom: 1px solid var(--main-border-color); padding-bottom: 8px; font-size: 1.4rem;}
+#settings-view h3 { /* Uses generic h3 styling */
+    margin-top: 30px; border-bottom: 1px solid var(--main-border-color); padding-bottom: 10px;
+}
 .settings-group {
-    padding: 15px 0; margin-bottom: 20px;
+    padding: 20px 0; margin-bottom: 25px;
     border-bottom: 1px dashed var(--main-border-color);
 }
 .settings-group:last-child { border-bottom: none; }
-.setting-item { display: flex; align-items: center; margin-bottom: 10px; }
-.checkbox-label { 
-    position: relative; padding-left: 30px; cursor: pointer; font-size: 1rem; 
-    user-select: none; display: inline-flex; align-items: center; min-height: 22px;
+.setting-item { display: flex; align-items: center; margin-bottom: 15px; flex-wrap: wrap; /* Allow wrap for description */ }
+
+/* Custom Checkbox Styling */
+.checkbox-label {
+    position: relative; padding-left: 35px; /* Increased padding for larger box */
+    cursor: pointer; font-size: 1rem;
+    user-select: none; display: inline-flex; align-items: center; min-height: 24px;
+    color: var(--text-main);
 }
-.checkbox-label::before { 
+/* Hide actual checkbox */
+.setting-item input[type="checkbox"],
+.filter-checkbox-item input[type="checkbox"] {
+    opacity: 0; width: 0; height: 0; position: absolute;
+}
+
+.checkbox-label::before { /* The box */
     content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
-    width: 20px; height: 20px; border: 2px solid var(--main-border-color);
+    width: 22px; height: 22px; border: 2px solid var(--main-border-color);
     background-color: var(--body-bg-color); border-radius: var(--border-radius-small);
-    transition: all var(--transition-main);
+    transition: var(--transition-main);
 }
-.checkbox-label::after { 
-    content: ''; position: absolute; left: 6px; top: 50%;    
+.checkbox-label::after { /* The checkmark */
+    content: ''; position: absolute; left: 7px; top: 50%; /* Adjusted for larger box */
     width: 6px; height: 12px; border: solid white;
-    border-width: 0 2px 2px 0; transform: translateY(-60%) rotate(45deg) scale(0);
-    transition: transform var(--transition-main);
+    border-width: 0 3px 3px 0; /* Thicker checkmark */
+    transform: translateY(-65%) rotate(45deg) scale(0); /* Adjusted for position */
+    transition: transform 0.15s var(--transition-timing);
 }
 input[type="checkbox"]:checked + .checkbox-label::before {
     background-color: var(--primary-accent); border-color: var(--primary-accent);
 }
 input[type="checkbox"]:checked + .checkbox-label::after {
-    transform: translateY(-60%) rotate(45deg) scale(1);
+    transform: translateY(-65%) rotate(45deg) scale(1);
 }
 input[type="checkbox"]:focus + .checkbox-label::before {
-    box-shadow: 0 0 0 3px rgba(var(--primary-accent), 0.25);
+    box-shadow: 0 0 0 3px var(--focus-ring-color); /* FIXED: Use var with RGB */
 }
-.setting-description { font-size: 0.9rem; color: var(--text-muted); margin-left: 0; margin-top: 5px; max-width: 600px; line-height: 1.5; }
-.profile-creation-form { display: flex; gap: 10px; align-items: center; margin-bottom: 20px; }
+.setting-description {
+    font-size: 0.9rem; color: var(--text-muted); margin-left: 35px; /* Align with checkbox text */
+    margin-top: 5px; max-width: 600px; line-height: 1.5;
+    flex-basis: 100%; /* Make it take full width below the checkbox */
+}
+
+.profile-creation-form { display: flex; gap: 12px; align-items: center; margin-bottom: 25px; }
 .profile-creation-form input[type="text"] { flex-grow: 1; margin-bottom: 0; }
-.profile-creation-form button { margin-top: 0; padding: 12px 20px; flex-shrink: 0; }
-#existing-profiles-list { list-style: none; padding-left: 0; }
+.profile-creation-form button { margin-top: 0; padding: 12px 20px; flex-shrink: 0; } /* Ensure button aligns well */
+
+#existing-profiles-list { list-style: none; padding-left: 0; margin-top: 15px; }
 #existing-profiles-list li {
-    background-color: var(--element-bg-color); padding: 12px 15px;
-    margin-bottom: 8px; border-radius: var(--border-radius);
+    background-color: var(--element-bg-color); padding: 14px 18px; /* Increased padding */
+    margin-bottom: 10px; border-radius: var(--border-radius);
     display: flex; justify-content: space-between; align-items: center;
     border: 1px solid var(--main-border-color);
+    transition: background-color var(--transition-duration) var(--transition-timing);
 }
 #existing-profiles-list li:hover { background-color: var(--main-border-color); }
-#existing-profiles-list li span { font-weight: 500; font-size: 1rem; }
+#existing-profiles-list li span { font-weight: 500; font-size: 1.05rem; color: var(--text-headings); }
 #existing-profiles-list .delete-profile-btn {
-    background-color: var(--danger-color); color: white; padding: 6px 12px;
-    font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.25px;
+    background-color: var(--danger-color); color: white; padding: 8px 14px; /* Increased padding */
+    font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; /* More prominent text */
     margin: 0 0 0 10px; box-shadow: none; border-radius: var(--border-radius-small);
+    transition: background-color var(--transition-duration) var(--transition-timing), transform var(--transition-duration) var(--transition-timing);
 }
-#existing-profiles-list .delete-profile-btn:hover { background-color: #a02a1a; transform: scale(1.05); }
-.no-custom-profiles-note { font-style: italic; color: var(--text-muted); padding: 8px 0;}
+#existing-profiles-list .delete-profile-btn:hover, #existing-profiles-list .delete-profile-btn:focus {
+    background-color: color-mix(in srgb, var(--danger-color) 80%, black); /* Darken */
+    transform: scale(1.05);
+    outline: none;
+}
+.no-custom-profiles-note { /* Already styled as .empty-state-message if using that class */
+    font-style: italic; color: var(--text-muted); padding: 10px 0;
+}
 
 /* --- PRINT STYLES for Summary ("Certificate of Self-Discovery") --- */
+/* (Refer to the previous detailed answer for the enhanced print styles - they are quite extensive.
+   Ensure the multi-column setup from the last answer is included there.) */
 @media print {
     body {
         font-family: var(--font-certificate-body), serif;
-        font-size: 10pt; /* Slightly increase base for readability if space allows */
-        line-height: 1.3; /* Adjust for better readability */
-        background-color: white !important;
-        color: black !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
+        font-size: 10pt;
+        line-height: 1.3;
+        background-color: white !important; color: black !important;
+        -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
     }
-
-    /* Hide non-certificate elements (KEEP AS IS - this is good) */
-    #main-header, #main-footer, /* ... (all other elements to hide) ... */
-    .view:not(#summary-view), #theme-toggle-btn, .view-header button,
+    #main-header, #main-footer, .summary-controls .profile-selector-container,
+    #toggle-summary-filters-btn, #summary-filters-container,
+    .view:not(#summary-view), #theme-toggle-btn, .view-header button:not(#print-summary-btn), /* Allow print button if it's in view-header */
     .data-management, .welcome-actions, .journal-actions, #kink-filters,
     #kink-detail-modal, #notes-popover-modal,
-    .summary-controls .profile-selector-container,
-    #toggle-summary-filters-btn, #summary-filters-container,
-    .summary-controls #print-summary-btn {
-        display: none !important;
-    }
+    #main-nav /* Hide nav buttons explicitly */
+     { display: none !important; }
 
     #app-container, #main-content {
         width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important;
         border: none !important; box-shadow: none !important; background-color: white !important;
     }
-
     .view { display: none !important; animation: none !important; }
 
-    /* --- CERTIFICATE STYLING --- */
     #summary-view.active-view {
         display: block !important;
-        /* A more elaborate border - you can nest divs or use box-shadows for layers */
-        width: 210mm; /* A4 width approx */
-        min-height: 277mm; /* A4 height minus some margin, adjust as needed for content */
-        margin: 10mm auto !important; /* Center on page, provide browser print margin */
-        padding: 12mm 15mm !important; /* Generous inner padding */
-        border: 1px solid #555; /* Outer thin border */
-        box-shadow: inset 0 0 0 2.5mm #e0e0e0, /* Inner "matting" color */
-                    inset 0 0 0 3mm #555;    /* Inner border line */
-        position: relative; /* For potential absolute positioned elements like a seal */
-        background-color: white !important; /* Ensure white background */
-        page-break-inside: avoid; /* Try to keep on one page */
-    }
-
-    /* Certificate Header Area */
-    #summary-view > .view-header {
-        display: block !important;
-        text-align: center;
-        border-bottom: none !important;
-        margin-bottom: 8mm !important; /* More space after header */
-        padding: 0 !important;
-    }
-
-    /* "This Certifies That" - Added via JS or static in HTML if always the same */
-    #summary-view > .view-header::before { /* Or a dedicated element */
-        content: "This Certifies That";
-        display: block;
-        font-family: var(--font-certificate-body);
-        font-size: 14pt;
-        color: #333;
-        margin-bottom: 2mm;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-
-    /* Profile Name - Passed via data attribute from JS */
-    #summary-view > .view-header > .certificate-profile-name { /* JS should create/populate this span */
-        display: block;
-        font-family: var(--font-certificate-title), cursive;
-        font-size: 28pt; /* Prominent name */
-        color: black;
-        margin-bottom: 5mm;
-        line-height: 1.1;
-    }
-
-
-    /* Main Certificate Title */
-    #summary-view > .view-header > h2.view-title-main { /* This will be "Certificate of Self-Discovery" */
-        font-family: var(--font-certificate-body); /* A more formal serif for this part */
-        font-size: 18pt !important;
-        font-weight: normal; /* Less heavy than the name */
-        color: #222 !important;
-        margin-bottom: 8mm !important;
-        padding-bottom: 3mm;
-        border-bottom: 1px solid #888; /* A more subtle line */
-        text-transform: uppercase;
-        letter-spacing: 2px;
-    }
-
-    /* Hide the original profile selector in the header */
-    #summary-view > .view-header > .profile-selector-container { display: none !important; }
-
-
-    /* Content Area */
-    #summary-content-area {
-        column-count: 2;
-        column-gap: 10mm; /* Increased gap */
-        padding: 0 !important;
-        margin-top: 5mm;
-        text-align: left; /* Ensure lists align left */
-    }
-
-    .summary-rating-group {
-        margin-bottom: 6mm !important;
-        padding-bottom: 0 !important; /* No extra padding */
-        border-bottom: none !important; /* Remove individual group borders, rely on column flow */
-        page-break-inside: avoid; /* Important for keeping groups together */
-    }
-
-    .summary-rating-group > summary {
-        font-family: var(--font-heading); /* Using Nunito for section titles can be nice */
-        font-size: 13pt !important;
-        margin-bottom: 2.5mm !important;
-        padding: 0 !important;
-        color: black !important;
-        font-weight: 700; /* Bold */
-        list-style: none;
-        background-color: transparent !important;
-        border: none !important;
-        display: block; /* Ensure it takes full width in its column */
-        text-align: left;
-        border-bottom: 1px solid #ccc; /* Light line under rating group title */
-        padding-bottom: 1mm;
-    }
-
-    .summary-rating-group > summary .accordion-kink-count,
-    .summary-rating-group > summary .accordion-arrow { display: none !important; }
-
-    .summary-kink-list-accordion-content {
-        display: block !important;
-        padding: 0 !important;
-        border: none !important;
-        background: none !important;
-    }
-
-    .summary-kink-pills-list {
-        display: block;
-        padding-left: 0mm; /* No extra indent for the list container */
-    }
-
-    .summary-kink-pill {
-        display: flex; /* Use flex for alignment */
-        align-items: center;
-        padding: 1.5mm 0 !important; /* Vertical spacing */
-        font-size: 9pt !important;
-        border: none !important;
-        background-color: transparent !important;
-        color: black !important;
-        margin: 0 0 1mm 0mm !important; /* Indent kink items slightly if desired, or 0mm */
-        border-radius: 0 !important;
+        width: 210mm;
+        min-height: 277mm;
+        margin: 10mm auto !important;
+        padding: 12mm 15mm !important;
+        border: 1px solid #555;
+        box-shadow: inset 0 0 0 2.5mm #e0e0e0, inset 0 0 0 3mm #555;
+        position: relative;
+        background-color: white !important;
         page-break-inside: avoid;
     }
-
-    .summary-kink-pill .category-dot {
-        display: inline-block;
-        width: 7px; /* Slightly larger dot */
-        height: 7px;
-        border-radius: 50%;
-        margin-right: 2mm; /* More space after dot */
-        vertical-align: middle;
-        border: 0.5px solid #777; /* Subtle border on the dot */
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        flex-shrink: 0;
+    #summary-view > .view-header {
+        display: block !important; text-align: center; border-bottom: none !important;
+        margin-bottom: 8mm !important; padding: 0 !important;
     }
+    #summary-view > .view-header::before {
+        content: "This Certifies That"; display: block; font-family: var(--font-certificate-body);
+        font-size: 14pt; color: #333; margin-bottom: 2mm; text-transform: uppercase; letter-spacing: 1px;
+    }
+    #summary-view > .view-header > .certificate-profile-name {
+        display: block; font-family: var(--font-certificate-title), cursive; font-size: 28pt;
+        color: black; margin-bottom: 5mm; line-height: 1.1;
+    }
+    #summary-view > .view-header > h2.view-title-main {
+        font-family: var(--font-certificate-body); font-size: 18pt !important; font-weight: normal;
+        color: #222 !important; margin-bottom: 8mm !important; padding-bottom: 3mm;
+        border-bottom: 1px solid #888; text-transform: uppercase; letter-spacing: 2px;
+    }
+    #summary-view > .view-header > .profile-selector-container { display: none !important; }
+    .summary-controls #print-summary-btn { display: none !important; } /* Hide the on-screen print button */
 
-    /* Keep category dot colors as they are - they are important */
+
+    #summary-content-area {
+        column-count: 3; /* Or 2, depending on preference */
+        column-gap: 8mm;
+        padding: 0 !important; margin-top: 5mm; text-align: left;
+    }
+    .summary-rating-group {
+        margin-bottom: 6mm !important; padding-bottom: 0 !important; border-bottom: none !important;
+        page-break-inside: avoid; break-inside: avoid-column;
+    }
+    .summary-rating-group > summary {
+        font-family: var(--font-heading); font-size: 13pt !important; margin-bottom: 2.5mm !important;
+        padding: 0 !important; color: black !important; font-weight: 700; list-style: none;
+        background-color: transparent !important; border: none !important; display: block;
+        text-align: left; border-bottom: 1px solid #ccc; padding-bottom: 1mm;
+        page-break-after: avoid; break-after: avoid-column;
+    }
+    .summary-rating-group > summary .accordion-kink-count,
+    .summary-rating-group > summary .accordion-arrow { display: none !important; }
+    .summary-kink-list-accordion-content { display: block !important; padding: 0 !important; border: none !important; background:none !important;}
+    .summary-kink-pills-list { display: block; padding-left: 0mm; }
+    .summary-kink-pill {
+        display: flex; align-items: center; padding: 1.5mm 0 !important; font-size: 9pt !important;
+        border: none !important; background-color: transparent !important; color: black !important;
+        margin: 0 0 1mm 0mm !important; border-radius: 0 !important; page-break-inside: avoid; break-inside: avoid-column;
+    }
+    .summary-kink-pill .category-dot {
+        display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 2mm;
+        vertical-align: middle; border: 0.5px solid #777;
+        -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; flex-shrink: 0;
+    }
     .category-dot-impact { background-color: var(--category-color-impact) !important; }
-    /* ... all other .category-dot- classes ... */
+    .category-dot-bondage { background-color: var(--category-color-bondage) !important; }
+    .category-dot-power_exchange { background-color: var(--category-color-power_exchange) !important; }
+    .category-dot-sensation { background-color: var(--category-color-sensation) !important; }
+    .category-dot-psychological { background-color: var(--category-color-psychological) !important; }
+    .category-dot-edge_play { background-color: var(--category-color-edge_play) !important; }
+    .category-dot-fluid_play { background-color: var(--category-color-fluid_play) !important; }
+    .category-dot-medical_play { background-color: var(--category-color-medical_play) !important; }
+    .category-dot-object_insertion { background-color: var(--category-color-object_insertion) !important; }
+    .category-dot-fetishism_specific { background-color: var(--category-color-fetishism_specific) !important; }
+    .category-dot-verbal_play { background-color: var(--category-color-verbal_play) !important; }
+    .category-dot-sensory_modification { background-color: var(--category-color-sensory_modification) !important; }
+    .category-dot-exhibition_voyeurism { background-color: var(--category-color-exhibition_voyeurism) !important; }
+    .category-dot-animal_play { background-color: var(--category-color-animal_play) !important; }
+    .category-dot-food_play { background-color: var(--category-color-food_play) !important; }
+    .category-dot-spiritual_ritual { background-color: var(--category-color-spiritual_ritual) !important; }
+    .category-dot-endurance_ordeals { background-color: var(--category-color-endurance_ordeals) !important; }
+    .category-dot-taboo_conceptual { background-color: var(--category-color-taboo_conceptual) !important; }
     .category-dot-default { background-color: var(--category-color-default) !important;}
 
-
-    .summary-kink-pill .summary-kink-pill-name {
-        font-weight: normal !important;
-        font-family: var(--font-certificate-body);
-    }
-
+    .summary-kink-pill .summary-kink-pill-name { font-weight: normal !important; font-family: var(--font-certificate-body); }
     .summary-kink-pill .notes-indicator { display: none !important; }
 
-    /* Certificate Footer / "Issued by" Area */
-    #summary-view > .certificate-footer { /* JS should create this div or style an existing footer */
-        text-align: center;
-        margin-top: 10mm; /* Space before footer */
-        padding-top: 5mm;
-        border-top: 1px solid #888;
-        font-size: 9pt;
-        color: #333;
-        page-break-before: auto; /* Avoid breaking just for footer if possible */
+    #summary-view > .certificate-footer {
+        text-align: center; margin-top: 10mm; padding-top: 5mm; border-top: 1px solid #888;
+        font-size: 9pt; color: #333; page-break-before: auto;
     }
-
-    #summary-view > .certificate-footer .issued-by {
-        display: block;
-        font-style: italic;
-        margin-bottom: 2mm;
+    #summary-view > .certificate-footer .issued-by { display: block; font-style: italic; margin-bottom: 2mm; }
+    #summary-view > .certificate-footer .date-issued { display: block; }
+    #summary-view > .certificate-footer .signature-line { display: block; width: 100mm; height: 0.5mm; background-color: #555; margin: 8mm auto 2mm auto; }
+    #summary-view > .certificate-footer .signature-title { font-size: 8pt; color: #444; }
+    #summary-view::after { /* Seal */
+        content: "KA"; position: absolute; bottom: 15mm; right: 15mm; width: 25mm; height: 25mm;
+        border: 1.5mm solid #bf9b30; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        font-family: var(--font-certificate-title), cursive; font-size: 16pt; color: #bf9b30;
+        background-color: #fdf7e3; font-weight: bold; transform: rotate(-15deg); opacity: 0.8;
     }
-    #summary-view > .certificate-footer .date-issued {
-        display: block;
-    }
-    #summary-view > .certificate-footer .signature-line {
-        display: block;
-        width: 100mm;
-        height: 0.5mm;
-        background-color: #555;
-        margin: 8mm auto 2mm auto; /* Space for a "signature" */
-    }
-    #summary-view > .certificate-footer .signature-title {
-        font-size: 8pt;
-        color: #444;
-    }
-
-    /* Optional: A simple seal/emblem (CSS only) */
-    #summary-view::after { /* Repurpose this if not used for data-print-date text */
-        content: "KA"; /* Kink Atlas Initials, or use an SVG */
-        position: absolute;
-        bottom: 15mm;
-        right: 15mm;
-        width: 25mm;
-        height: 25mm;
-        border: 1.5mm solid #bf9b30; /* Gold-ish border */
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: var(--font-certificate-title), cursive;
-        font-size: 16pt;
-        color: #bf9b30; /* Gold-ish text */
-        background-color: #fdf7e3; /* Light cream background for seal */
-        font-weight: bold;
-        transform: rotate(-15deg); /* Slight tilt */
-        opacity: 0.8;
-    }
-
-
     a { color: #0000EE !important; text-decoration: underline !important; }
 }
+
+
 /* --- RESPONSIVE DESIGN --- */
-@media (max-width: 1024px) { 
-    .summary-kink-item { flex-wrap: wrap; } 
-    .summary-kink-name, .summary-kink-rating, .summary-kink-notes {
-        flex-basis: 100% !important; text-align: left !important; margin: 5px 0 !important;
+@media (max-width: 1024px) {
+    /* No specific summary-kink-item changes needed if using flexbox pills */
+    .view-header {
+        flex-direction: column;
+        align-items: flex-start; /* Align items to start for stacked layout */
     }
-    .summary-kink-rating { text-align: left !important; display: inline-block; width: auto; } 
+    .view-header .profile-selector-container {
+        width: 100%; /* Make profile selector full width on smaller tablet */
+    }
 }
+
 @media (max-width: 768px) {
-    html { font-size: 15px; } 
-    #main-header { flex-direction: row; height: auto; padding: 10px 15px; }
-    #main-header h1 { font-size: 1.5rem; margin-right: auto; }
-    .header-controls { margin-left: auto; }
-    #main-nav { /* Hide by default, JS will toggle .mobile-active */ display: none; }
-    #main-nav.mobile-active { 
-        display: flex; flex-direction: column; position: absolute;
-        top: var(--header-height-main); left: 0; right: 0;
-        background-color: var(--panel-bg-color); box-shadow: var(--box-shadow-medium);
-        padding: 10px 0; z-index: 890; 
+    html { font-size: 15px; } /* Slightly smaller base font for mobile */
+    #main-header {
+        flex-direction: column; /* Stack site title and controls */
+        height: auto;
+        padding: 15px;
+        gap: 10px; /* Space between title and nav block */
     }
-    #main-nav.mobile-active button { width: 100%; margin: 0; text-align: center; border-bottom: 1px solid var(--main-border-color); border-radius:0; padding: 12px 15px;}
-    #main-nav.mobile-active button:last-child { border-bottom: none; }
-    /* You'll need a hamburger toggle button in HTML to control .mobile-active if you want this behavior */
-    /* For now, theme toggle remains, and main-nav might just wrap if space is an issue, or you reduce button count/padding */
+    #main-header h1 {
+        font-size: 1.6rem;
+        margin-right: 0; /* No auto margin needed when stacked */
+        text-align: center; /* Center title */
+    }
+    .header-controls {
+        width: 100%; /* Make controls full width */
+        justify-content: space-between; /* Space out nav and theme toggle */
+        gap: 0; /* Reset gap, #main-nav has its own */
+    }
+    #main-nav {
+        /* For a hamburger menu, this would be display: none; and toggled by JS.
+           For now, allowing it to wrap or be compact.
+           If using a hamburger, you'd style .mobile-active here.
+        */
+        flex-grow: 1; /* Allow nav to take available space */
+        justify-content: center; /* Center nav buttons */
+        gap: 5px; /* Reduce gap for smaller screens */
+    }
+    #main-nav button { padding: 8px 10px; font-size: 0.9rem; }
+    #theme-toggle-btn { margin-left: 0; /* No specific margin needed */ }
 
-    #theme-toggle-btn { margin-left: 10px; } 
-
-    .view-header { flex-direction: column; align-items: flex-start; gap: 10px; }
-    .profile-selector-container { width: 100%; }
     .profile-selector-container select { width: 100%; min-width: auto; }
-    .modal-content { width: 95%; margin: 5vh auto; padding: 20px; max-height: 85vh;}
-    h1 { font-size: 2.2rem; } h2.view-title-main { font-size: 1.8rem; } h3 {font-size: 1.4rem;}
+    #kink-detail-modal .modal-content { width: 95%; margin: 5vh auto; padding: 25px; max-height: 90vh;} /* Ensure modal is responsive */
+
     .summary-filters .filter-checkbox-group { flex-direction: column; align-items: flex-start; }
-    .summary-filters .filter-checkbox-item { display: block; width: 100%; }
-    @media print { #summary-content-area { column-count: 1; } } 
+    .summary-filters .filter-checkbox-item { display: block; width: 100%; margin-bottom: 5px; /* Add some space between stacked checkboxes */ }
+
+    @media print {
+        #summary-content-area { column-count: 2; } /* Reduce to 2 columns on smaller "print" views if needed, or 1 */
+    }
 }
+
 @media (max-width: 480px) {
     html { font-size: 14px; }
-    #main-content { padding: 20px 15px; } 
-    button, .button-like-label { padding: 10px 18px; font-size: 0.9rem; width: 100%; margin-bottom: 12px; margin-right: 0; }
+    #main-content { padding: 20px 15px; }
+    #main-header h1 { font-size: 1.4rem; }
+    #main-nav { flex-wrap: wrap; justify-content: center; } /* Allow nav buttons to wrap */
+    #main-nav button { font-size: 0.85rem; padding: 8px; }
+    #theme-toggle-btn { width: 40px; height: 40px; font-size: 1.4rem; }
+
+    button, .button-like-label {
+        padding: 12px 20px; /* Keep decent padding for tap targets */
+        font-size: 0.9rem;
+        /* width: 100%; Consider if all buttons should be full width, or only specific ones */
+        /* margin-bottom: 12px; margin-right: 0; */
+    }
+    /* Make specific button groups still allow side-by-side where appropriate */
     #welcome-view .data-management button, #welcome-view .data-management .button-like-label,
     #modal-kink-rating button, .journal-prompts-container .prompt-button,
-    .journal-item-actions button { width: auto; margin-right: 8px; margin-bottom: 8px;}
-    .journal-item-actions button:last-child {margin-right: 0;}
-    .kink-star { padding: 8px 12px; font-size: 0.85rem; }
-    .kink-star-rating-badge { padding: 3px 6px; font-size: 0.7rem; margin-left: 6px;}
-    #modal-kink-name { font-size: 1.5rem; }
-    .checkbox-label { padding-left: 28px; font-size: 0.95rem; } 
-    .checkbox-label::before { width: 18px; height: 18px; }
-    .checkbox-label::after { left: 5px; width: 5px; height: 10px; }
+    .journal-item-actions button, .filter-actions button {
+        width: auto; /* Allow these to not be full width */
+        margin-right: 8px;
+        margin-bottom: 8px;
+    }
+    .filter-actions { flex-direction: column; align-items: stretch; } /* Stack filter action buttons */
+    .filter-actions button { width: 100%; margin-right: 0; }
+
+
+    .kink-star { padding: 8px 14px; font-size: 0.9rem; }
+    .kink-star-rating-badge { padding: 2px 6px; font-size: 0.65rem; margin-left: 6px;}
+    #modal-kink-name { font-size: 1.6rem; }
+    #kink-detail-modal .modal-content { padding: 20px; }
+
+    .checkbox-label { padding-left: 30px; font-size: 0.95rem; }
+    .checkbox-label::before { width: 20px; height: 20px; }
+    .checkbox-label::after { left: 6px; width: 5px; height: 10px; transform: translateY(-60%) rotate(45deg) scale(0); }
+    input[type="checkbox"]:checked + .checkbox-label::after {  transform: translateY(-60%) rotate(45deg) scale(1); }
+
+    @media print {
+        #summary-content-area { column-count: 1; } /* Single column for very small "print" views */
+    }
 }
