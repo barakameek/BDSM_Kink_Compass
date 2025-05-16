@@ -3,206 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kink Atlas - Your Personal Journey</title>
+    <title>Kink Atlas - Your Personal Journey of Expression</title>
     <link rel="stylesheet" href="css/style.css">
-    <!-- Favicon (optional) -->
+    <!-- Favicon (Optional: Create a 32x32 or similar favicon.ico and uncomment) -->
     <!-- <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon"> -->
+    <!-- <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png"> -->
 </head>
-<body class="dark-theme"> <!-- Default to dark theme, JS will manage this class -->
+<body class="dark-theme"> <!-- Default theme, JS will manage this -->
 
     <div id="app-container">
 
-        <!-- Header/Navigation Area -->
+        <!-- ======================= -->
+        <!-- === MAIN HEADER     === -->
+        <!-- ======================= -->
         <header id="main-header">
-            <h1>Kink Atlas</h1>
+            <h1 title="Kink Atlas Home">Kink Atlas</h1>
             <div class="header-controls">
-                <nav id="main-nav">
-                    <!-- JS populates navigation buttons here -->
+                <nav id="main-nav" aria-label="Main navigation">
+                    <!-- Navigation buttons populated by JS (e.g., Galaxy, Summary, Settings) -->
+                    <button data-view="galaxy-view">Galaxy</button> <!-- Placeholder example -->
                 </nav>
-                <button id="theme-toggle-btn" title="Toggle Day/Night Mode">
-                    ☀️ <!-- Initial icon, JS will update based on theme -->
+                <button id="theme-toggle-btn" title="Switch to Light Mode" aria-label="Toggle Light/Dark Theme">
+                    ☀️ <!-- Icon updated by JS -->
                 </button>
             </div>
         </header>
 
-        <!-- Main Content Area -->
+        <!-- ======================= -->
+        <!-- === MAIN CONTENT    === -->
+        <!-- ======================= -->
         <main id="main-content">
-            <!-- Welcome View -->
-            <section id="welcome-view" class="view active-view">
-                <h2 class="view-title-main">Welcome to Your Kink Atlas</h2>
-                <p>Embark on a personal journey of exploration and understanding. All your data is stored locally in this browser.</p>
-                <p><strong>Important:</strong> Your Kink Atlas data is saved only in this browser. If you clear your browser data or switch devices, your Atlas will be reset unless you export it.</p>
+
+            <!-- === WELCOME VIEW === -->
+            <section id="welcome-view" class="view active-view" aria-labelledby="welcome-title">
+                <h2 id="welcome-title" class="view-title-main">Welcome to Your Kink Atlas</h2>
+                <p>Embark on a personal journey of exploration, understanding, and self-expression. All your data is stored <strong>locally in this browser only</strong>.</p>
+                <p><strong>Important:</strong> Your Kink Atlas data is not synced online. If you clear your browser data or switch devices, your Atlas will be reset unless you use the Export/Import feature.</p>
                 <p>Manage content preferences (like displaying advanced/higher-risk kinks) and create custom Kink Profiles for sharing in the <button class="inline-nav-btn" data-view-target="settings-view">Settings</button> page.</p>
                 <div class="welcome-actions">
-                    <button id="start-exploring-btn" class="btn-primary">Start Exploring</button>
+                    <button id="start-exploring-btn" class="btn-primary">Chart Your Constellation</button>
                 </div>
                 <div class="data-management">
-                    <button id="export-data-btn">Export My Atlas Data</button>
-                    <label for="import-file-input" class="button-like-label">Import My Atlas Data</label>
-                    <input type="file" id="import-file-input" accept=".json" style="display: none;">
+                    <button id="export-data-btn" class="btn-secondary">Export My Atlas</button>
+                    <label for="import-file-input" class="button-like-label btn-secondary">Import My Atlas</label>
+                    <input type="file" id="import-file-input" accept=".json" style="display: none;" aria-label="Import Atlas Data File">
                 </div>
             </section>
 
-            <!-- Kink Galaxy View -->
-            <section id="galaxy-view" class="view">
+            <!-- === KINK GALAXY VIEW === -->
+            <section id="galaxy-view" class="view" aria-labelledby="galaxy-title">
                 <div class="view-header">
-                    <h2 class="view-title-main">My Kink Galaxy</h2>
+                    <h2 id="galaxy-title" class="view-title-main">My Kink Galaxy</h2>
                     <div class="profile-selector-container">
-                        <label for="profile-select-galaxy">Viewing Profile:</label>
-                        <select id="profile-select-galaxy">
+                        <label for="profile-select-galaxy">Viewing Atlas:</label>
+                        <select id="profile-select-galaxy" aria-label="Select Kink Profile for Galaxy View">
                             <option value="personal">My Personal Atlas</option>
-                            <!-- Options populated by JS -->
+                            <!-- JS populates other profile options -->
                         </select>
                     </div>
                 </div>
-                <div id="kink-galaxy-visualization">
-                    <p>Loading Kink Galaxy...</p> <!-- JS populates this with pills -->
+                <div id="kink-galaxy-visualization" aria-live="polite">
+                    <p class="empty-state-message">Loading your Kink Galaxy...</p> <!-- JS populates this with kink pills -->
                 </div>
             </section>
 
-            <!-- Summary View -->
-            <section id="summary-view" class="view">
+            <!-- === SUMMARY VIEW === -->
+            <section id="summary-view" class="view" aria-labelledby="summary-title">
                 <div class="view-header">
-                    <h2 class="view-title-main">My Kink Summary</h2>
+                    <h2 id="summary-title" class="view-title-main">My Kink Summary</h2>
                     <div class="profile-selector-container">
-                        <label for="profile-select-summary">Viewing Profile:</label>
-                        <select id="profile-select-summary">
+                        <label for="profile-select-summary">Viewing Atlas:</label>
+                        <select id="profile-select-summary" aria-label="Select Kink Profile for Summary View">
                             <option value="personal">My Personal Atlas</option>
-                            <!-- Options populated by JS -->
+                            <!-- JS populates other profile options -->
                         </select>
-                    </div>
-                </div>
-                <div id="summary-filters-collapsible-section">
-                    <button id="toggle-summary-filters-btn" class="btn-secondary">Show Filters</button>
-                    <div id="summary-filters-container" class="summary-filters" style="display: none;">
-                        <h4>Filter Summary By:</h4>
-                        <div class="filter-section">
-                            <legend>Categories:</legend>
-                            <div id="summary-filter-category-checkboxes" class="filter-checkbox-group">
-                                <!-- Category checkboxes populated by JS -->
-                            </div>
-                        </div>
-                        <div class="filter-section">
-                            <legend>Rating Types:</legend>
-                            <div id="summary-filter-rating-checkboxes" class="filter-checkbox-group">
-                                <!-- Rating type checkboxes populated by JS -->
-                            </div>
-                        </div>
-                        <div class="filter-section">
-                            <legend>Other:</legend>
-                            <div class="filter-checkbox-item">
-                                <input type="checkbox" id="summary-filter-has-notes" name="has-notes">
-                                <label for="summary-filter-has-notes" class="checkbox-label">Only Kinks with Notes</label>
-                            </div>
-                        </div>
-                        <div class="filter-actions">
-                            <button id="apply-summary-filters-btn">Apply Filters</button>
-                            <button id="reset-summary-filters-btn" class="btn-secondary">Reset Filters</button>
-                        </div>
                     </div>
                 </div>
                 <div class="summary-controls">
-                    <button id="print-summary-btn">Print/Save as PDF</button>
+                     <button id="toggle-summary-filters-btn" class="btn-secondary">Show Filters [+▼]</button> <!-- Icon indicates state -->
+                     <button id="print-summary-btn" class="btn-primary">Print Certificate</button>
                 </div>
-                <div id="summary-content-area">
-                    <p>Loading summary...</p> <!-- JS populates this with accordion/pills -->
+                <div id="summary-filters-container" class="summary-filters" style="display: none;"> <!-- Hidden by default -->
+                    <h4>Filter Summary By:</h4>
+                    <fieldset class="filter-section">
+                        <legend>Categories:</legend>
+                        <div id="summary-filter-category-checkboxes" class="filter-checkbox-group" role="group" aria-labelledby="filter-cat-legend">
+                            <!-- Category checkboxes populated by JS -->
+                            <p>Loading categories...</p>
+                        </div>
+                    </fieldset>
+                    <fieldset class="filter-section">
+                        <legend>Rating Types:</legend>
+                        <div id="summary-filter-rating-checkboxes" class="filter-checkbox-group" role="group" aria-labelledby="filter-rating-legend">
+                            <!-- Rating type checkboxes populated by JS -->
+                            <p>Loading ratings...</p>
+                        </div>
+                    </fieldset>
+                    <fieldset class="filter-section">
+                        <legend>Other:</legend>
+                        <div class="filter-checkbox-item">
+                            <input type="checkbox" id="summary-filter-has-notes" name="has-notes">
+                            <label for="summary-filter-has-notes" class="checkbox-label">Only Kinks with Notes</label>
+                        </div>
+                    </fieldset>
+                    <div class="filter-actions">
+                        <button id="apply-summary-filters-btn" class="btn-primary">Apply Filters</button>
+                        <button id="reset-summary-filters-btn" class="btn-secondary">Reset Filters</button>
+                    </div>
+                </div>
+                <div id="summary-content-area" aria-live="polite">
+                    <p class="empty-state-message">Loading your Kink Summary...</p> <!-- JS populates this -->
                 </div>
             </section>
 
-            <!-- Academy View -->
-            <section id="academy-view" class="view">
-                <h2 class="view-title-main">The Academy of Desire</h2>
-                <div id="academy-content-area">
-                    <!-- JS populates this -->
+            <!-- === ACADEMY VIEW === -->
+            <section id="academy-view" class="view" aria-labelledby="academy-title">
+                <div class="view-header"> <!-- Added consistent view-header -->
+                    <h2 id="academy-title" class="view-title-main">The Academy of Desire</h2>
+                </div>
+                <div id="academy-content-area" aria-live="polite">
+                    <p class="empty-state-message">Loading Academy content...</p> <!-- JS populates this -->
                 </div>
             </section>
 
-            <!-- Journal View -->
-            <section id="journal-view" class="view">
-                <h2 class="view-title-main">My Reflective Chamber</h2>
+            <!-- === JOURNAL VIEW === -->
+            <section id="journal-view" class="view" aria-labelledby="journal-title">
+                <div class="view-header"> <!-- Added consistent view-header -->
+                     <h2 id="journal-title" class="view-title-main">My Reflective Chamber</h2>
+                </div>
                 <div class="journal-actions">
                     <button id="new-journal-entry-btn" class="btn-primary">New Journal Entry</button>
                 </div>
-                <div id="journal-entries-container">
-                    <!-- JS populates this -->
+                <div id="journal-entries-container" aria-live="polite">
+                    <p class="empty-state-message">Loading journal entries...</p> <!-- JS populates this -->
                 </div>
             </section>
 
-            <!-- Settings/About View -->
-            <section id="settings-view" class="view">
-                <h2 class="view-title-main">Settings & About</h2>
-                <p>Kink Atlas <span id="app-version">v0.1.9</span></p>
-                <p>This app stores all data locally in your browser.</p>
-                
+            <!-- === SETTINGS VIEW === -->
+            <section id="settings-view" class="view" aria-labelledby="settings-title">
+                <div class="view-header"> <!-- Added consistent view-header -->
+                    <h2 id="settings-title" class="view-title-main">Settings & About</h2>
+                </div>
+                <p>Kink Atlas <span id="app-version">vX.X.X</span></p> <!-- JS updates version -->
+                <p>This application stores all data locally in your web browser. No data is sent to any server.</p>
+
                 <h3 style="margin-top:25px;">Data Management</h3>
-                <div class="settings-group">
-                    <button id="export-data-settings-btn">Export Data</button>
-                    <label for="import-file-settings-input" class="button-like-label">Import Data</label>
-                    <input type="file" id="import-file-settings-input" accept=".json" style="display: none;">
+                <div class="settings-group data-management"> <!-- Reused data-management class -->
+                    <button id="export-data-settings-btn" class="btn-secondary">Export Data</button>
+                    <label for="import-file-settings-input" class="button-like-label btn-secondary">Import Data</label>
+                    <input type="file" id="import-file-settings-input" accept=".json" style="display: none;" aria-label="Import Atlas Data File from Settings">
                 </div>
 
                 <h3 style="margin-top:25px;">Content Preferences</h3>
                 <div class="settings-group">
                     <div class="setting-item">
-                        <input type="checkbox" id="setting-show-taboo-kinks" name="show-taboo-kinks">
+                        <input type="checkbox" id="setting-show-taboo-kinks" name="show-taboo-kinks" class="visually-hidden-checkbox"> <!-- Class for JS to target actual checkbox -->
                         <label for="setting-show-taboo-kinks" class="checkbox-label">Display Advanced/Higher-Risk Kinks</label>
                     </div>
-                    <p class="setting-description">Enabling this shows kinks that may be explicit, high-risk, or explore taboo themes. View with discretion.</p>
+                    <p class="setting-description">Enabling this will show kinks that may be explicit, involve higher risk, or explore taboo themes. Please view with discretion and ensure you understand the implications before engaging.</p>
                 </div>
-                
+
                 <h3 style="margin-top:25px;">Manage Kink Profiles</h3>
                 <div id="profile-management-area" class="settings-group">
-                    <p>Create custom profiles (e.g., for sharing). "My Personal Atlas" shows all your rated kinks based on content settings.</p>
+                    <p>Create custom profiles to curate specific sets of kinks (e.g., for sharing with a partner, or exploring different facets of your identity). "My Personal Atlas" always reflects all your rated kinks based on current content settings.</p>
                     <div class="profile-creation-form">
-                        <input type="text" id="new-profile-name" placeholder="New Profile Name">
-                        <button id="create-new-profile-btn">Create Profile</button>
+                        <input type="text" id="new-profile-name" placeholder="New Profile Name (e.g., 'For Partner X')" aria-label="New Profile Name">
+                        <button id="create-new-profile-btn" class="btn-primary">Create Profile</button>
                     </div>
                     <h4>Existing Custom Profiles:</h4>
                     <ul id="existing-profiles-list">
                         <li class="no-custom-profiles-note" style="display:list-item;">No custom profiles created yet.</li>
+                        <!-- JS populates this list -->
                     </ul>
                 </div>
-            </section>
-        </main> 
 
+                 <h3 style="margin-top:25px;">About & Credits</h3>
+                <div class="settings-group">
+                    <p>Kink Atlas is a tool for personal exploration and education. It is not a substitute for professional advice or therapy.</p>
+                    <p>Inspired by various kink listing projects and the desire for a private, customizable tool.</p>
+                    <p>Fonts used: Nunito, Open Sans, Great Vibes, EB Garamond via Google Fonts.</p>
+                    <!-- Add any other credits or links here -->
+                </div>
+            </section>
+        </main>
+
+        <!-- ======================= -->
+        <!-- === MAIN FOOTER     === -->
+        <!-- ======================= -->
         <footer id="main-footer">
-            <p>© <span id="current-year">2024</span> Kink Atlas. For personal exploration.</p>
+            <p>© <span id="current-year">2024</span> Kink Atlas. For personal exploration and expression. Use responsibly.</p>
         </footer>
 
     </div> <!-- End #app-container -->
 
-    <!-- Modals (kept outside main content flow for positioning) -->
-    <div id="kink-detail-modal" class="modal">
+
+    <!-- ======================= -->
+    <!-- === MODALS          === -->
+    <!-- ======================= -->
+    <!-- Kink Detail Modal -->
+    <div id="kink-detail-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-kink-name" style="display: none;">
         <div class="modal-content">
-            <span class="close-modal-btn" title="Close">×</span>
-            <h3 id="modal-kink-name">Kink Name</h3>
-            <p id="modal-kink-category">Category: </p>
-            <div id="modal-kink-description-summary" class="kink-description-summary"></div>
+            <button class="close-modal-btn" title="Close" aria-label="Close Kink Detail Modal">×</button>
+            <h3 id="modal-kink-name">Kink Name</h3> <!-- This will be the accessible name for the modal -->
+            <p id="modal-kink-category" class="text-muted">Category: Loading...</p>
+            <div id="modal-kink-description-summary" class="kink-description-summary scrollable-content">
+                <p>Loading description...</p>
+            </div>
             <details id="modal-kink-description-details" class="kink-description-details">
-                <summary>More Details & Safety</summary>
-                <div id="modal-kink-description-full-content"></div>
+                <summary>More Details & Safety Considerations</summary>
+                <div id="modal-kink-description-full-content" class="scrollable-content">
+                    <p>Loading full details...</p>
+                </div>
             </details>
-            <div id="modal-kink-rating"></div>
-            <textarea id="modal-kink-notes" placeholder="My private notes, fantasies, conditions..."></textarea>
-            <div id="modal-profile-assignment" class="modal-section">
-                <h4>Include in Profiles:</h4>
-                <div id="modal-profile-checkboxes-container">
-                    <p class="no-profiles-note" style="display:none;">No custom profiles created.</p>
+            <fieldset class="modal-section">
+                <legend>My Rating:</legend>
+                <div id="modal-kink-rating" role="radiogroup" aria-label="Select your rating for this kink">
+                    <!-- Rating buttons populated by JS -->
+                </div>
+            </fieldset>
+            <div class="modal-section">
+                <label for="modal-kink-notes">My Private Notes:</label>
+                <textarea id="modal-kink-notes" placeholder="Fantasies, experiences, conditions, limits..." aria-label="Private notes for this kink"></textarea>
+            </div>
+            <div id="modal-profile-assignment" class="modal-section" style="display: none;"> <!-- Hidden if no profiles -->
+                <h4>Include this Kink in Profiles:</h4>
+                <div id="modal-profile-checkboxes-container" role="group" aria-label="Select profiles to include this kink in">
+                    <p class="no-profiles-note" style="display:none;">No custom profiles have been created yet.</p>
+                    <!-- Profile checkboxes populated by JS -->
                 </div>
             </div>
             <button id="save-modal-btn" class="btn-primary modal-save-btn">Save & Close</button>
         </div>
     </div>
 
-    <div id="notes-popover-modal" class="modal notes-popover">
+    <!-- Notes Popover Modal (for Summary View Notes) -->
+    <div id="notes-popover-modal" class="modal notes-popover" role="dialog" aria-modal="true" aria-labelledby="notes-popover-title" style="display: none;">
         <div class="modal-content">
-            <span id="notes-popover-close-btn" class="close-modal-btn" title="Close">×</span>
-            <h4>Notes for: <span id="notes-popover-kink-name">Kink</span></h4>
-            <div id="notes-popover-content"></div>
+            <button id="notes-popover-close-btn" class="close-modal-btn" title="Close Notes" aria-label="Close Kink Notes Popover">×</button>
+            <h4 id="notes-popover-title">Notes for: <span id="notes-popover-kink-name">Kink</span></h4>
+            <div id="notes-popover-content" class="scrollable-content">
+                <p>Loading notes...</p>
+            </div>
         </div>
     </div>
 
-    <script src="js/data.js"></script>
-    <script src="js/app.js"></script>
+    <!-- ======================= -->
+    <!-- === SCRIPTS         === -->
+    <!-- ======================= -->
+    <script src="js/data.js"></script> <!-- KINK_DEFINITIONS, KINK_CATEGORIES, etc. -->
+    <script src="js/app.js"></script>   <!-- Main application logic -->
 </body>
 </html>
