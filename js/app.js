@@ -97,7 +97,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         currentYearSpan: document.getElementById('current-year'),
     };
-
+if (DOMElements.deleteAllDataBtn) { // NEW
+        DOMElements.deleteAllDataBtn.addEventListener('click', deleteAllUserData);
+    }
+}
     // --- THEME MANAGEMENT ---
     function applyTheme(theme) {
         if (!DOMElements.body) return;
