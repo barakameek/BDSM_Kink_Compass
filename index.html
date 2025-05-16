@@ -177,14 +177,21 @@
                     </ul>
                 </div>
 
-                <!-- === DANGER ZONE AREA === -->
-                <h3 style="margin-top:25px; color: var(--danger-color);">Danger Zone</h3>
+                <!-- === APPLICATION RESET AREA === -->
+                <h3 style="margin-top:30px; color: var(--danger-color);">Application Reset</h3>
                 <div class="settings-group danger-zone-group">
-                    <p class="setting-description">These actions are irreversible. Ensure you have exported your data if you wish to keep a backup.</p>
-                    <button id="delete-all-data-btn" class="btn-danger">Reset Kink Atlas (Delete All Data)</button>
-                    <p class="setting-description" style="margin-top: 5px;">This will remove all your ratings, notes, profiles, journal entries, and settings from this browser.</p>
+                    <p class="setting-description" style="margin-bottom: 15px;">
+                        This will permanently remove all your Kink Atlas data (ratings, notes, profiles, journal entries, and settings) from this browser.
+                        <strong>This action cannot be undone.</strong>
+                    </p>
+                    <div class="reset-action-container">
+                        <button id="delete-all-data-btn" class="btn-danger">Reset Kink Atlas</button>
+                        <p class="setting-description" style="margin-top: 8px; font-size: 0.85rem;">
+                            It's highly recommended to <button type="button" id="export-data-from-danger-zone" class="inline-nav-btn">Export Your Data</button> first if you wish to keep a backup.
+                        </p>
+                    </div>
                 </div>
-                <!-- === END DANGER ZONE AREA  === -->
+                <!-- === END APPLICATION RESET AREA  === -->
 
                  <h3 style="margin-top:25px;">About & Credits</h3>
                 <div class="settings-group">
