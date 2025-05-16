@@ -878,3 +878,41 @@ input[type="checkbox"]:focus + .checkbox-label::before { box-shadow: 0 0 0 3px v
         opacity: 1; /* Ensure opacity is set here too if it starts at 0 */
     }
 }
+/* --- VERY FORCEFUL MODAL VISIBILITY DEBUG --- */
+/* Apply this ONLY for debugging. Remove or refine after finding the cause. */
+
+.modal.active #kink-detail-modal .modal-content {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translate(-50%, -50%) scale(1) !important; /* For desktop centered */
+    /* If you are testing on mobile and expect bottom sheet, use this transform instead: */
+    /* transform: translateY(0) !important; */
+    border: 3px solid lime !important; /* Make it OBVIOUS if it appears */
+    background-color: purple !important; /* Make it OBVIOUS */
+    color: white !important; /* Ensure text is visible */
+    animation: none !important; /* Disable any animations that might be hiding it */
+    transition: none !important; /* Disable any transitions */
+}
+
+/* If specifically testing the mobile bottom sheet view */
+@media (max-width: 768px) {
+    .modal.active #kink-detail-modal.modal-bottom-sheet .modal-content {
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: translateY(0) !important; /* For bottom sheet */
+        border: 3px solid red !important; /* Different obvious border for mobile */
+        background-color: orange !important;
+        color: black !important;
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* Ensure the modal container itself is also visible */
+.modal.active {
+    display: flex !important;
+    opacity: 1 !important; /* Though overlay handles this, good to be sure */
+    visibility: visible !important;
+    background-color: rgba(0, 255, 0, 0.2) !important; /* Light green tint for the whole modal area */
+}
+/* --- END VERY FORCEFUL MODAL VISIBILITY DEBUG --- */
