@@ -1512,3 +1512,22 @@ document.addEventListener('DOMContentLoaded', () => {
     init(); // Start the application
 
 });
+function deleteAllUserData() {
+    if (confirm("ARE YOU ABSOLUTELY SURE?\n\nThis will permanently delete ALL your Kink Atlas data from this browser, including ratings, notes, profiles, journal entries, and settings. This action cannot be undone.\n\nIt is highly recommended to EXPORT your data first if you might want it later.")) {
+        if (confirm("SECOND CONFIRMATION:\n\nReally delete everything? There is no going back.")) {
+            try {
+                localStorage.removeItem('kinkAtlasUserData');
+                alert("All Kink Atlas data has been deleted from this browser. The application will now reload to its initial state.");
+                // Reload the application to reflect the reset state
+                window.location.reload();
+            } catch (error) {
+                console.error("Error deleting data from localStorage:", error);
+                alert("An error occurred while trying to delete your data. Please check the console for details.");
+            }
+        } else {
+            alert("Data deletion cancelled.");
+        }
+    } else {
+        alert("Data deletion cancelled.");
+    }
+}
