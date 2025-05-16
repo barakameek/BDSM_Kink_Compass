@@ -1148,3 +1148,48 @@ button.btn-danger:active {
 }
 
 
+/* --- SETTINGS VIEW - DANGER ZONE / RESET --- */
+#settings-view h3[style*="--danger-color"] { /* Target the "Application Reset" heading */
+    margin-bottom: 10px; /* Reduce space after this specific heading */
+}
+
+#settings-view .danger-zone-group {
+    border: 2px solid var(--danger-color); /* More prominent border */
+    background-color: color-mix(in srgb, var(--danger-color) 5%, var(--panel-bg-color)); /* Subtle red tint on panel bg */
+    padding: 15px 20px; /* Adjusted padding */
+    border-radius: var(--border-radius-medium);
+    margin-bottom: 25px; /* Keep consistent group bottom margin */
+}
+
+#settings-view .danger-zone-group .setting-description {
+    color: var(--text-main); /* Slightly more prominent than typical muted */
+    margin-left: 0;
+    max-width: none;
+    line-height: 1.5;
+}
+#settings-view .danger-zone-group .setting-description strong {
+    color: var(--danger-color);
+}
+
+.reset-action-container {
+    margin-top: 15px;
+    text-align: center; /* Center the button and its sub-text */
+}
+
+#delete-all-data-btn.btn-danger {
+    padding: 10px 20px; /* Standard danger button padding */
+    font-size: 0.95rem;
+    display: inline-block; /* Don't force full width unless desired */
+    width: auto;
+    margin-bottom: 0; /* Remove bottom margin if sub-text is close */
+}
+
+/* Style for the inline export button within the danger zone text */
+.danger-zone-group .setting-description .inline-nav-btn {
+    color: var(--primary-accent); /* Make it stand out like other links */
+    font-weight: 600;
+    font-size: inherit; /* Inherit size from the paragraph */
+}
+.danger-zone-group .setting-description .inline-nav-btn:hover {
+    color: var(--secondary-accent);
+}
